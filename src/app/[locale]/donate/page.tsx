@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
@@ -25,9 +25,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function DonatePage() {
     const router = useRouter();
+    const pathname = usePathname();
     const t = useTranslations("donate");
     const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
     const [donationType, setDonationType] = useState<'traditional' | 'crypto'>('traditional');
+
+    // Extract current locale from pathname
+    const currentLocale = pathname.split('/')[1] || 'en';
 
     const copyToClipboard = async (address: string) => {
         try {
@@ -71,16 +75,30 @@ export default function DonatePage() {
             icon: Share2,
             text: t("share"),
             color: "bg-blue-900/30 text-blue-400",
+            action: () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'WageWatchers - European Salary Transparency Platform',
+                        text: 'Check out WageWatchers - Community-driven salary transparency across European markets!',
+                        url: globalThis.location.origin,
+                    });
+                } else {
+                    // Fallback: copy URL to clipboard
+                    navigator.clipboard.writeText(globalThis.location.origin);
+                }
+            },
         },
         {
             icon: FileText,
             text: t("contribute"),
             color: "bg-green-900/30 text-green-400",
+            action: () => router.push(`/${currentLocale}/add`),
         },
         {
             icon: MessageSquare,
             text: t("feedback"),
             color: "bg-purple-900/30 text-purple-400",
+            action: () => router.push(`/${currentLocale}/feedback`),
         },
     ];
 
@@ -454,15 +472,16 @@ export default function DonatePage() {
                         {otherWays.map((way) => (
                             <Card
                                 key={way.text}
-                                className="hover:shadow-md transition-shadow cursor-default"
+                                className="hover:shadow-lg hover:shadow-stone-700/20 hover:border-stone-600 transition-all duration-300 cursor-pointer group"
+                                onClick={way.action}
                             >
-                                <CardContent className="pt-6 text-center">
+                                <CardContent className="text-center">
                                     <div
-                                        className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${way.color} mb-3`}
+                                        className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${way.color} mb-3 group-hover:ring-2 group-hover:ring-offset-2 group-hover:ring-offset-stone-950 transition-all duration-300`}
                                     >
-                                        <way.icon className="h-6 w-6" />
+                                        <way.icon className="h-6 w-6 group-hover:brightness-110 transition-all duration-300" />
                                     </div>
-                                    <p className="font-medium text-stone-300">
+                                    <p className="font-medium text-stone-300 group-hover:text-stone-100 transition-colors duration-300">
                                         {way.text}
                                     </p>
                                 </CardContent>
@@ -519,12 +538,23 @@ export default function DonatePage() {
                     </CardContent>
                 </Card>
 
-                {/* Footer Message */}
-                <div className="text-center mt-12 pb-8">
-                    <p className="text-stone-400 italic">
-                        💙 Made with love for the community
+                {/* Footer */}
+                <footer className="mt-16 md:mt-24 text-center px-4">
+                    <p className="text-stone-500 text-sm mb-2">
+                        🧡 Community-driven salary transparency
                     </p>
-                </div>
+                    <p className="text-stone-400 text-xs">
+                        Made with ❤️ for the community •{" "}
+                        <a
+                            href="https://github.com/Berthje/wagewatchers"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-stone-400 hover:text-stone-300 underline transition-colors"
+                        >
+                            View on GitHub
+                        </a>
+                    </p>
+                </footer>
             </div>
         </div >
     );

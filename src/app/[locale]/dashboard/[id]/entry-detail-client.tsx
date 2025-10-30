@@ -20,7 +20,7 @@ import {
     ArrowLeft,
     User,
     Briefcase,
-    DollarSign,
+    Coins,
     MapPin,
     Calendar,
     Clock,
@@ -174,7 +174,7 @@ export function EntryDetailClient({
                     <Card className="bg-stone-800 border-stone-700">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-stone-400 flex items-center">
-                                <DollarSign className="mr-2 h-4 w-4" />
+                                <Coins className="mr-2 h-4 w-4" />
                                 {t("grossSalary")}
                             </CardTitle>
                         </CardHeader>
@@ -195,7 +195,7 @@ export function EntryDetailClient({
                     <Card className="bg-stone-800 border-stone-700">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-stone-400 flex items-center">
-                                <DollarSign className="mr-2 h-4 w-4" />
+                                <Coins className="mr-2 h-4 w-4" />
                                 {t("netSalary")}
                             </CardTitle>
                         </CardHeader>

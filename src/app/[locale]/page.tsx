@@ -179,8 +179,19 @@ async function HomeContent({ locale }: Readonly<{ locale: string }>) {
 
                 {/* Footer */}
                 <footer className="mt-16 md:mt-24 text-center px-4">
-                    <p className="text-stone-500 text-sm">
+                    <p className="text-stone-500 text-sm mb-2">
                         {t("footer")}
+                    </p>
+                    <p className="text-stone-400 text-xs">
+                        Made with ❤️ for the community •{" "}
+                        <a
+                            href="https://github.com/Berthje/wagewatchers"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-stone-400 hover:text-stone-300 underline transition-colors"
+                        >
+                            View on GitHub
+                        </a>
                     </p>
                 </footer>
             </main>
@@ -190,9 +201,9 @@ async function HomeContent({ locale }: Readonly<{ locale: string }>) {
 
 export default async function Home({
     params,
-}: {
+}: Readonly<{
     params: Promise<{ locale: string }>;
-}) {
+}>) {
     const { locale } = await params;
     return <HomeContent locale={locale} />;
 }
