@@ -1,4 +1,4 @@
-Hey, thanks for sharing your salary details here! Please also contribute to the https://www.wagewatchers.com/platform (the anonymous and fast website equivalent of BESalary), so we can build initial data to share with the community.
+Hey, thanks for sharing your salary details here! Please also contribute to the https://www.wagewatchers.com (the anonymous and fast website equivalent of BESalary), so we can build initial data to share with the community.
 
 I discussed this with the mods of this subreddit to ensure it's aligned with the community. This will be an equivalent of the existing BESalary Vercel app, but as a different developer, I thought of making it better, cleaner, and with extra features (of course, always 100% free) to provide transparency in the Belgian market and soon other countries too. You can always use filters to have personalized results.
 
