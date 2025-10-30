@@ -131,7 +131,6 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             // Work-Life Balance
             teleworkDays: z
                 .number({ message: t("validation.numberExpected") })
-                .int({ message: t("validation.integerExpected") })
                 .min(0)
                 .max(7, { message: t("validation.teleworkMax") }),
             dayOffEase: z.string().min(1, { message: t("validation.dayOffEaseRequired") }),

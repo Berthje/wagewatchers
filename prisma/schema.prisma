@@ -23,8 +23,8 @@ model SalaryEntry {
   jobTitle            String?
   jobDescription      String?
   seniority           Int?
-  officialHours       Int?
-  averageHours        Int?
+  officialHours       Float?
+  averageHours        Float?
   shiftDescription    String?
   onCall              String?
   vacationDays        Int?
@@ -43,7 +43,7 @@ model SalaryEntry {
   commuteDistance     String?
   commuteMethod       String?
   commuteCompensation String?
-  teleworkDays        Int?
+  teleworkDays        Float?
   dayOffEase          String?
   stressLevel         String?
   reports             Int?
