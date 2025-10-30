@@ -98,6 +98,7 @@ export const createFieldConfigs = (
             { value: "IT", label: t("formOptions.sector.IT") },
             { value: "Finance", label: t("formOptions.sector.Finance") },
             { value: "Healthcare", label: t("formOptions.sector.Healthcare") },
+            { value: "Pharmaceutical", label: t("formOptions.sector.Pharmaceutical") },
             { value: "Education", label: t("formOptions.sector.Education") },
             { value: "Manufacturing", label: t("formOptions.sector.Manufacturing") },
             { value: "Energy", label: t("formOptions.sector.Energy") },
