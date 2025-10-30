@@ -80,11 +80,13 @@ function escapeRegex(str: string): string {
 /**
  * Helper function to extract number after a label
  */
-function extractNumber(text: string, label: string): number | null {
+function extractNumber(text: string, label: string, isInteger: boolean = false): number | null {
     const value = extractValue(text, label);
     if (!value) return null;
     const match = new RegExp(/(\d+(?:[.,]\d+)?)/).exec(value);
-    return match ? Number.parseFloat(match[1].replace(",", ".")) : null;
+    if (!match) return null;
+    const numStr = match[1].replace(",", ".");
+    return isInteger ? Number.parseInt(numStr) : Number.parseFloat(numStr);
 }
 
 /**
@@ -97,9 +99,9 @@ function parseBESalaryTemplate(
     const entry: Partial<BeSalaryTemplate> = {};
 
     // 1. PERSONALIA
-    entry.age = extractNumber(selftext, "Age") ?? undefined;
+    entry.age = extractNumber(selftext, "Age", true) ?? undefined;
     entry.education = extractValue(selftext, "Education") ?? undefined;
-    entry.workExperience = extractNumber(selftext, "Work experience") ??
+    entry.workExperience = extractNumber(selftext, "Work experience", true) ??
         undefined;
     entry.civilStatus = extractValue(selftext, "Civil status") ?? undefined;
     entry.dependents = extractNumber(selftext, "Dependent people/children") ??

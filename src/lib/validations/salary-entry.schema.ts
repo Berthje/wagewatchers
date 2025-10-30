@@ -53,10 +53,12 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             // Working Hours
             officialHours: z
                 .number({ message: t("validation.numberExpected") })
+                .int({ message: t("validation.integerExpected") })
                 .min(1, { message: t("validation.hoursMin") })
                 .max(80, { message: t("validation.hoursMax") }),
             averageHours: z
                 .number({ message: t("validation.numberExpected") })
+                .int({ message: t("validation.integerExpected") })
                 .min(1, { message: t("validation.hoursMin") })
                 .max(80, { message: t("validation.hoursMax") }),
             shiftDescription: z
@@ -131,6 +133,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             // Work-Life Balance
             teleworkDays: z
                 .number({ message: t("validation.numberExpected") })
+                .int({ message: t("validation.integerExpected") })
                 .min(0)
                 .max(7, { message: t("validation.teleworkMax") }),
             dayOffEase: z.string().min(1, { message: t("validation.dayOffEaseRequired") }),

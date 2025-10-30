@@ -345,23 +345,17 @@ function AddEntryContent() {
                     />
                 );
             case "number": {
-                // Special handling for float fields that should allow decimal values
-                const floatFields = ["officialHours", "averageHours", "teleworkDays"];
-                const isFloatField = fieldName && floatFields.includes(fieldName);
-                const parseFunction = isFloatField ? Number.parseFloat : Number.parseInt;
-
                 return (
                     <Input
                         type="number"
                         min="0"
-                        step={isFloatField ? "0.1" : "1"}
                         placeholder={config.placeholder}
                         className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
                         {...field}
                         onChange={(e) =>
                             field.onChange(
                                 e.target.value
-                                    ? parseFunction(e.target.value)
+                                    ? Number.parseInt(e.target.value)
                                     : undefined
                             )
                         }
