@@ -9,16 +9,18 @@ export async function POST(request: NextRequest) {
     try {
         const { email, password } = await request.json();
 
-        if (!email || !password) {
+        if (!email?.trim() || !password?.trim()) {
             return NextResponse.json(
                 { error: "Email and password are required" },
                 { status: 400 },
             );
         }
 
+        const trimmedEmail = email.trim();
+
         // Find admin by email
         const admin = await prisma.admin.findUnique({
-            where: { email },
+            where: { email: trimmedEmail },
         });
 
         if (!admin) {
