@@ -104,7 +104,7 @@ function parseBESalaryTemplate(
     entry.workExperience = extractNumber(selftext, "Work experience", true) ??
         undefined;
     entry.civilStatus = extractValue(selftext, "Civil status") ?? undefined;
-    entry.dependents = extractNumber(selftext, "Dependent people/children") ??
+    entry.dependents = extractNumber(selftext, "Dependent people/children", true) ??
         undefined;
 
     // 2. EMPLOYER PROFILE
@@ -122,15 +122,15 @@ function parseBESalaryTemplate(
     entry.jobTitle = extractValue(selftext, "Current job title") ?? undefined;
     entry.jobDescription = extractValue(selftext, "Job description") ??
         undefined;
-    entry.seniority = extractNumber(selftext, "Seniority") ?? undefined;
-    entry.officialHours = extractNumber(selftext, "Official hours/week") ??
+    entry.seniority = extractNumber(selftext, "Seniority", true) ?? undefined;
+    entry.officialHours = extractNumber(selftext, "Official hours/week", true) ??
         undefined;
-    entry.averageHours = extractNumber(selftext, "Average real hours/week") ??
+    entry.averageHours = extractNumber(selftext, "Average real hours/week", true) ??
         undefined;
     entry.shiftDescription = extractValue(selftext, "Shiftwork or 9 to 5") ??
         undefined;
     entry.onCall = extractValue(selftext, "On-call duty") ?? undefined;
-    entry.vacationDays = extractNumber(selftext, "Vacation days/year") ??
+    entry.vacationDays = extractNumber(selftext, "Vacation days/year", true) ??
         undefined;
 
     // 4. SALARY
@@ -159,7 +159,7 @@ function parseBESalaryTemplate(
     entry.commuteCompensation =
         extractValue(selftext, "How is the travel home-work compensated") ??
         undefined;
-    entry.teleworkDays = extractNumber(selftext, "Telework days/week") ??
+    entry.teleworkDays = extractNumber(selftext, "Telework days/week", true) ??
         undefined;
 
     // 6. OTHER
@@ -168,7 +168,7 @@ function parseBESalaryTemplate(
         undefined;
     entry.stressLevel = extractValue(selftext, "Is your job stressful?") ??
         undefined;
-    entry.reports = extractNumber(selftext, "Responsible for personnel") ??
+    entry.reports = extractNumber(selftext, "Responsible for personnel", true) ??
         undefined;
 
     return entry;
