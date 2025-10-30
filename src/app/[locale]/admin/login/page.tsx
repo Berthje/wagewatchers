@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,24 @@ export default function AdminLoginPage() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        // Check if already authenticated and redirect to reports
+        const checkAuth = async () => {
+            try {
+                const response = await fetch("/api/admin/verify");
+                const data = await response.json();
+
+                if (data.authenticated) {
+                    router.push("/admin/reports");
+                }
+            } catch (error) {
+                console.error("Auth check error:", error);
+            }
+        };
+
+        checkAuth();
+    }, [router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
