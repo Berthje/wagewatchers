@@ -37,6 +37,12 @@ export async function generateMetadata({
         },
         alternates: {
             canonical: `https://wagewatchers.com/${locale}/my-entries`,
+            languages: {
+                en: "https://wagewatchers.com/en/my-entries",
+                nl: "https://wagewatchers.com/nl/my-entries",
+                fr: "https://wagewatchers.com/fr/my-entries",
+                de: "https://wagewatchers.com/de/my-entries",
+            },
         },
     };
 }

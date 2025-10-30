@@ -17,6 +17,15 @@ export async function generateMetadata({
     return {
         title: t("title"),
         description: t("subtitle"),
+        alternates: {
+            canonical: `https://wagewatchers.com/${locale}/feedback`,
+            languages: {
+                en: "https://wagewatchers.com/en/feedback",
+                nl: "https://wagewatchers.com/nl/feedback",
+                fr: "https://wagewatchers.com/fr/feedback",
+                de: "https://wagewatchers.com/de/feedback",
+            },
+        },
     };
 }
 

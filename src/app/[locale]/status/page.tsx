@@ -32,6 +32,15 @@ export async function generateMetadata({
                 locale === "en" ? "en_US" : `${locale}_${locale.toUpperCase()}`,
             type: "website",
         },
+        alternates: {
+            canonical: `https://wagewatchers.com/${locale}/status`,
+            languages: {
+                en: "https://wagewatchers.com/en/status",
+                nl: "https://wagewatchers.com/nl/status",
+                fr: "https://wagewatchers.com/fr/status",
+                de: "https://wagewatchers.com/de/status",
+            },
+        },
     };
 }
 
