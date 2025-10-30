@@ -45,7 +45,7 @@
         "commuteMethod": "e.g. Car, Public transport",
         "commuteCompensation": "e.g. Fuel allowance",
         "teleworkDays": "e.g. 2",
-        "dayOffEase": "e.g. Easy",
+        "dayOffEase": "Select ease of taking a day off",
         "stressLevel": "Select stress level",
         "reports": "e.g. 5",
         "extraNotes": "Add any additional notes about this salary entry...",
@@ -551,6 +551,15 @@
                 "veryHigh": "Very High",
                 "situational": "Depends on situation",
                 "none": "None"
+            },
+            "dayOffEase": {
+                "veryEasy": "Very Easy",
+                "easy": "Easy",
+                "moderate": "Moderate",
+                "hard": "Hard",
+                "veryHard": "Very Hard",
+                "situational": "Depends on situation",
+                "impossible": "Nearly Impossible"
             }
         },
         "validation": {

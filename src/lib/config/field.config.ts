@@ -316,8 +316,17 @@ export const createFieldConfigs = (
     },
     dayOffEase: {
         labelKey: "sections.workLife.dayOffEase",
-        type: "text",
+        type: "select",
         placeholder: t("placeholders.dayOffEase"),
+        options: [
+            { value: "veryEasy", label: t("formOptions.dayOffEase.veryEasy") },
+            { value: "easy", label: t("formOptions.dayOffEase.easy") },
+            { value: "moderate", label: t("formOptions.dayOffEase.moderate") },
+            { value: "hard", label: t("formOptions.dayOffEase.hard") },
+            { value: "veryHard", label: t("formOptions.dayOffEase.veryHard") },
+            { value: "situational", label: t("formOptions.dayOffEase.situational") },
+            { value: "impossible", label: t("formOptions.dayOffEase.impossible") },
+        ],
         helpKey: "help.dayOffEase",
         width: "half",
     },

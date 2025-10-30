@@ -45,7 +45,7 @@
         "commuteMethod": "bijv. Auto, Openbaar vervoer",
         "commuteCompensation": "bijv. Brandstofvergoeding",
         "teleworkDays": "bijv. 2",
-        "dayOffEase": "bijv. Gemakkelijk",
+        "dayOffEase": "Selecteer gemak van vrij nemen",
         "stressLevel": "bijv. Matig",
         "reports": "bijv. 5",
         "extraNotes": "Voeg eventuele aanvullende opmerkingen toe over deze salarisvermelding...",
@@ -507,6 +507,15 @@
                 "veryHigh": "Zeer Hoog",
                 "situational": "Afhankelijk van situatie",
                 "none": "Geen"
+            },
+            "dayOffEase": {
+                "veryEasy": "Zeer Gemakkelijk",
+                "easy": "Gemakkelijk",
+                "moderate": "Gemiddeld",
+                "hard": "Moeilijk",
+                "veryHard": "Zeer Moeilijk",
+                "situational": "Afhankelijk van situatie",
+                "impossible": "Bijna Onmogelijk"
             }
         },
         "validation": {

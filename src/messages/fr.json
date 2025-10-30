@@ -45,7 +45,7 @@
         "commuteMethod": "ex. Voiture, Transport public",
         "commuteCompensation": "ex. Indemnité carburant",
         "teleworkDays": "ex. 2",
-        "dayOffEase": "ex. Facile",
+        "dayOffEase": "Sélectionner la facilité de prendre un congé",
         "stressLevel": "ex. Modéré",
         "reports": "ex. 5",
         "extraNotes": "Ajoutez des notes supplémentaires sur cette entrée de salaire...",
@@ -507,6 +507,15 @@
                 "veryHigh": "Très Élevé",
                 "situational": "Selon la situation",
                 "none": "Aucun"
+            },
+            "dayOffEase": {
+                "veryEasy": "Très Facile",
+                "easy": "Facile",
+                "moderate": "Modéré",
+                "hard": "Difficile",
+                "veryHard": "Très Difficile",
+                "situational": "Selon la situation",
+                "impossible": "Presque Impossible"
             }
         },
         "validation": {

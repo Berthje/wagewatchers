@@ -45,7 +45,7 @@
         "commuteMethod": "z.B. Auto, Öffentliche Verkehrsmittel",
         "commuteCompensation": "z.B. Benzinkostenzuschuss",
         "teleworkDays": "z.B. 2",
-        "dayOffEase": "z.B. Einfach",
+        "dayOffEase": "Leichtigkeit freizunehmen auswählen",
         "stressLevel": "z.B. Moderat",
         "reports": "z.B. 5",
         "extraNotes": "Fügen Sie zusätzliche Notizen zu diesem Gehaltseintrag hinzu...",
@@ -507,6 +507,15 @@
                 "veryHigh": "Sehr Hoch",
                 "situational": "Situationsabhängig",
                 "none": "Kein"
+            },
+            "dayOffEase": {
+                "veryEasy": "Sehr Einfach",
+                "easy": "Einfach",
+                "moderate": "Moderat",
+                "hard": "Schwierig",
+                "veryHard": "Sehr Schwierig",
+                "situational": "Situationsabhängig",
+                "impossible": "Fast Unmöglich"
             }
         },
         "validation": {
