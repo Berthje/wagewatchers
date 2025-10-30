@@ -643,68 +643,6 @@ export function DashboardClient({
                         <Card className="bg-stone-800 border-stone-700">
                             <CardHeader>
                                 <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                                    {t("stats.avgNetSalary")}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-xl font-bold text-stone-100">
-                                    {(() => {
-                                        if (filteredEntries.length === 0)
-                                            return "N/A";
-                                        const salariesWithCurrency = filteredEntries
-                                            .map((e) => ({
-                                                salary: e.netSalary,
-                                                currency: e.currency,
-                                            }))
-                                            .filter(
-                                                (
-                                                    s
-                                                ): s is {
-                                                    salary: number;
-                                                    currency: string | null;
-                                                } =>
-                                                    s.salary !== null &&
-                                                    s.salary !== undefined
-                                            );
-                                        if (salariesWithCurrency.length === 0)
-                                            return "N/A";
-                                        const sum = salariesWithCurrency.reduce(
-                                            (acc, s) => {
-                                                // Convert each salary to the display currency and period
-                                                const converted = convertCurrency(
-                                                    s.salary,
-                                                    s.currency,
-                                                    preferences.currency
-                                                );
-                                                // Convert period if needed (assuming source is monthly)
-                                                const periodConverted = convertPeriod(
-                                                    converted,
-                                                    "monthly",
-                                                    preferences.period
-                                                );
-                                                return acc + periodConverted;
-                                            },
-                                            0
-                                        );
-                                        const avg = Math.round(
-                                            sum / salariesWithCurrency.length
-                                        );
-                                        return formatSalaryWithPreferences(
-                                            avg,
-                                            preferences.currency,
-                                            preferences.period === "annual",
-                                            preferences.currency,
-                                            preferences.period,
-                                            locale,
-                                            isMobile
-                                        );
-                                    })()}
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-stone-800 border-stone-700">
-                            <CardHeader>
-                                <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
                                     {t("stats.salaryRange")}
                                 </CardTitle>
                             </CardHeader>
