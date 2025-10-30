@@ -553,7 +553,9 @@
                 "low": "Low",
                 "moderate": "Moderate",
                 "high": "High",
-                "veryHigh": "Very High"
+                "veryHigh": "Very High",
+                "situational": "Depends on situation",
+                "none": "None"
             }
         },
         "validation": {

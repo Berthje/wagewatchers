@@ -509,7 +509,9 @@
                 "low": "Laag",
                 "moderate": "Gemiddeld",
                 "high": "Hoog",
-                "veryHigh": "Zeer Hoog"
+                "veryHigh": "Zeer Hoog",
+                "situational": "Afhankelijk van situatie",
+                "none": "Geen"
             }
         },
         "validation": {

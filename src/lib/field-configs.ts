@@ -351,6 +351,8 @@ export const createFieldConfigs = (
             { value: "moderate", label: t("formOptions.stressLevel.moderate") },
             { value: "high", label: t("formOptions.stressLevel.high") },
             { value: "veryHigh", label: t("formOptions.stressLevel.veryHigh") },
+            { value: "situational", label: t("formOptions.stressLevel.situational") },
+            { value: "none", label: t("formOptions.stressLevel.none") },
         ],
         helpKey: "help.stressLevel",
         width: "half",
