@@ -3,7 +3,7 @@
  * Types for dashboard filtering, sorting, and pagination
  */
 
-export type SortField = "experience" | "age" | "grossSalary" | "createdAt";
+export type SortField = "experience" | "age" | "grossSalary" | "netSalary" | "createdAt";
 export type SortDirection = "asc" | "desc" | null;
 
 export interface DashboardFilters {

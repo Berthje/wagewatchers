@@ -397,6 +397,10 @@ export function DashboardClient({
                     aValue = a.grossSalary;
                     bValue = b.grossSalary;
                     break;
+                case "netSalary":
+                    aValue = a.netSalary;
+                    bValue = b.netSalary;
+                    break;
                 case "age":
                     aValue = a.age;
                     bValue = b.age;
@@ -588,6 +592,68 @@ export function DashboardClient({
                                         const salariesWithCurrency = filteredEntries
                                             .map((e) => ({
                                                 salary: e.grossSalary,
+                                                currency: e.currency,
+                                            }))
+                                            .filter(
+                                                (
+                                                    s
+                                                ): s is {
+                                                    salary: number;
+                                                    currency: string | null;
+                                                } =>
+                                                    s.salary !== null &&
+                                                    s.salary !== undefined
+                                            );
+                                        if (salariesWithCurrency.length === 0)
+                                            return "N/A";
+                                        const sum = salariesWithCurrency.reduce(
+                                            (acc, s) => {
+                                                // Convert each salary to the display currency and period
+                                                const converted = convertCurrency(
+                                                    s.salary,
+                                                    s.currency,
+                                                    preferences.currency
+                                                );
+                                                // Convert period if needed (assuming source is monthly)
+                                                const periodConverted = convertPeriod(
+                                                    converted,
+                                                    "monthly",
+                                                    preferences.period
+                                                );
+                                                return acc + periodConverted;
+                                            },
+                                            0
+                                        );
+                                        const avg = Math.round(
+                                            sum / salariesWithCurrency.length
+                                        );
+                                        return formatSalaryWithPreferences(
+                                            avg,
+                                            preferences.currency,
+                                            preferences.period === "annual",
+                                            preferences.currency,
+                                            preferences.period,
+                                            locale,
+                                            isMobile
+                                        );
+                                    })()}
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-stone-800 border-stone-700">
+                            <CardHeader>
+                                <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
+                                    {t("stats.avgNetSalary")}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-xl font-bold text-stone-100">
+                                    {(() => {
+                                        if (filteredEntries.length === 0)
+                                            return "N/A";
+                                        const salariesWithCurrency = filteredEntries
+                                            .map((e) => ({
+                                                salary: e.netSalary,
                                                 currency: e.currency,
                                             }))
                                             .filter(
@@ -894,6 +960,17 @@ export function DashboardClient({
                                         <TableHead
                                             className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
                                             onClick={() =>
+                                                handleSort("netSalary")
+                                            }
+                                        >
+                                            <div className="flex items-center h-[20px] min-h-[20px] max-h-[20px] overflow-hidden">
+                                                {t("table.netSalary")}
+                                                {getSortIcon("netSalary")}
+                                            </div>
+                                        </TableHead>
+                                        <TableHead
+                                            className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
+                                            onClick={() =>
                                                 handleSort("createdAt")
                                             }
                                         >
@@ -921,12 +998,13 @@ export function DashboardClient({
                                                 <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
                                                 <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
                                                 <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
+                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
                                             </TableRow>
                                         ))
                                     ) : filteredEntries.length === 0 ? (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={8}
+                                                colSpan={9}
                                                 className="text-center py-8 text-stone-400"
                                             >
                                                 {t("table.noResults")}
@@ -984,6 +1062,17 @@ export function DashboardClient({
                                                 <TableCell className="font-semibold text-stone-100">
                                                     {formatSalaryWithPreferences(
                                                         entry.grossSalary,
+                                                        entry.currency,
+                                                        false, // Assuming monthly data
+                                                        preferences.currency,
+                                                        preferences.period,
+                                                        locale,
+                                                        isMobile
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="font-semibold text-stone-100">
+                                                    {formatSalaryWithPreferences(
+                                                        entry.netSalary,
                                                         entry.currency,
                                                         false, // Assuming monthly data
                                                         preferences.currency,
