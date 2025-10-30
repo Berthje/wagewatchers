@@ -105,6 +105,7 @@ export const createFieldConfigs = (
             { value: "Consulting", label: t("formOptions.sector.Consulting") },
             { value: "Retail", label: t("formOptions.sector.Retail") },
             { value: "Public Sector", label: t("formOptions.sector.Public Sector") },
+            { value: "Public Affairs", label: t("formOptions.sector.Public Affairs") },
             { value: "Transportation", label: t("formOptions.sector.Transportation") },
             { value: "Construction", label: t("formOptions.sector.Construction") },
             { value: "Telecommunications", label: t("formOptions.sector.Telecommunications") },
