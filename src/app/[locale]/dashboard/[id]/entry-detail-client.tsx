@@ -510,11 +510,11 @@ export function EntryDetailClient({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InfoItem
                                 label={t("dayOffEase")}
-                                value={entry.dayOffEase}
+                                value={getFieldDisplayValue("dayOffEase", entry.dayOffEase, fieldConfigs, tAdd)}
                             />
                             <InfoItem
                                 label={t("stressLevel")}
-                                value={entry.stressLevel}
+                                value={getFieldDisplayValue("stressLevel", entry.stressLevel, fieldConfigs, tAdd)}
                             />
                             <InfoItem
                                 label={t("reports")}
