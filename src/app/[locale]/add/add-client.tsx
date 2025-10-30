@@ -665,7 +665,7 @@ function AddEntryContent() {
                                                     section.title
                                                 ) && (
                                                     <div className="px-6 pb-4 my-4 border-stone-700">
-                                                        <div className="bg-stone-800/50 rounded-lg p-4 border-stone-600">
+                                                        <div className="bg-stone-800/50 rounded-lg p-4 border border-stone-600">
                                                             <h4 className="font-semibold text-stone-100 mb-3">
                                                                 {t(
                                                                     "fieldExplanations"
