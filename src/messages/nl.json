@@ -74,11 +74,6 @@
                 "description": "Vakantie- en vrije tijd informatie",
                 "vacationDays": "Vakantiedagen per Jaar"
             },
-            "mobility": {
-                "title": "6. Mobiliteit",
-                "description": "Werk mobiliteitsvereisten",
-                "mobility": "Mobiliteit"
-            },
             "commute": {
                 "title": "8. Woon-Werk Verkeer",
                 "description": "Uw dagelijkse woon-werk verkeer details",
@@ -329,14 +324,14 @@
                 "seniority": "Senioriteit"
             },
             "salary": {
-                "title": "5. Salaris",
+                "title": "7. Salaris",
                 "description": "Uw compensatie details",
                 "grossSalary": "Bruto Salaris (€/maand)",
                 "netSalary": "Netto Salaris (€/maand)",
                 "netCompensation": "Netto Compensatie (€/maand)"
             },
             "benefits": {
-                "title": "6. Voordelen",
+                "title": "9. Voordelen",
                 "description": "Extra compensatie en voordelen",
                 "thirteenthMonth": "13de Maand",
                 "mealVouchers": "Maaltijdcheques (€/dag)",
@@ -347,7 +342,7 @@
                 "otherBenefitsPlaceholder": "bijv. Bedrijfswagen, opleidingsbudget, etc."
             },
             "workLife": {
-                "title": "7. Work-Life Balance",
+                "title": "11. Work-Life Balance",
                 "description": "Uw work-life balance ervaring",
                 "teleworkDays": "Thuiswerkdagen per Week",
                 "dayOffEase": "Gemak om een Dag Vrij te Nemen",
@@ -355,7 +350,7 @@
                 "reports": "Rapporteert aan"
             },
             "workingHours": {
-                "title": "4. Werkuren",
+                "title": "5. Werkuren",
                 "description": "Uw werkschema en uren",
                 "officialHours": "Officiële Uren per Week",
                 "averageHours": "Gemiddelde Uren per Week",
@@ -363,17 +358,17 @@
                 "onCall": "Bereikbaarheidsdienst"
             },
             "vacation": {
-                "title": "5. Vakantie",
+                "title": "6. Vakantie",
                 "description": "Vakantie en vrije tijd informatie",
                 "vacationDays": "Vakantiedagen per Jaar"
             },
             "mobility": {
-                "title": "6. Mobiliteit",
+                "title": "8. Mobiliteit",
                 "description": "Werk mobiliteitsvereisten",
                 "mobility": "Mobiliteit"
             },
             "commute": {
-                "title": "8. Woon-Werk Verkeer",
+                "title": "10. Woon-Werk Verkeer",
                 "description": "Uw dagelijkse woon-werk verkeer details",
                 "workCity": "Werkstad",
                 "commuteDistance": "Woon-Werk Afstand",

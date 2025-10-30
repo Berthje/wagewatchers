@@ -74,11 +74,6 @@
                 "description": "Vacation and time off information",
                 "vacationDays": "Vacation Days per Year"
             },
-            "mobility": {
-                "title": "6. Mobility",
-                "description": "Job mobility requirements",
-                "mobility": "Mobility"
-            },
             "commute": {
                 "title": "8. Commute",
                 "description": "Your daily commute details",
@@ -373,14 +368,14 @@
                 "seniority": "Seniority"
             },
             "salary": {
-                "title": "5. Salary",
+                "title": "7. Salary",
                 "description": "Your compensation details",
                 "grossSalary": "Gross Salary (€/month)",
                 "netSalary": "Net Salary (€/month)",
                 "netCompensation": "Net Compensation (€/month)"
             },
             "benefits": {
-                "title": "6. Benefits",
+                "title": "9. Benefits",
                 "description": "Additional compensation and perks",
                 "thirteenthMonth": "13th Month",
                 "mealVouchers": "Meal Vouchers (€/day)",
@@ -391,7 +386,7 @@
                 "otherBenefitsPlaceholder": "e.g. Company car, training budget, etc."
             },
             "workLife": {
-                "title": "7. Work-Life Balance",
+                "title": "11. Work-Life Balance",
                 "description": "Your work-life balance experience",
                 "teleworkDays": "Telework Days per Week",
                 "dayOffEase": "Ease of Taking a Day Off",
@@ -399,7 +394,7 @@
                 "reports": "Reports"
             },
             "workingHours": {
-                "title": "4. Working Hours",
+                "title": "5. Working Hours",
                 "description": "Your working schedule and hours",
                 "officialHours": "Official Hours per Week",
                 "averageHours": "Average Hours per Week",
@@ -407,17 +402,17 @@
                 "onCall": "On-Call"
             },
             "vacation": {
-                "title": "5. Vacation",
+                "title": "6. Vacation",
                 "description": "Vacation and time off information",
                 "vacationDays": "Vacation Days per Year"
             },
             "mobility": {
-                "title": "6. Mobility",
+                "title": "8. Mobility",
                 "description": "Job mobility requirements",
                 "mobility": "Mobility"
             },
             "commute": {
-                "title": "8. Commute",
+                "title": "10. Commute",
                 "description": "Your daily commute details",
                 "workCity": "Work City",
                 "commuteDistance": "Commute Distance",

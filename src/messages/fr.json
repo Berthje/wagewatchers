@@ -74,11 +74,6 @@
                 "description": "Informations sur les vacances et congés",
                 "vacationDays": "Jours de Vacances par An"
             },
-            "mobility": {
-                "title": "6. Mobilité",
-                "description": "Exigences de mobilité professionnelle",
-                "mobility": "Mobilité"
-            },
             "commute": {
                 "title": "8. Trajet Domicile-Travail",
                 "description": "Détails de votre trajet quotidien",
@@ -329,14 +324,14 @@
                 "seniority": "Séniorité"
             },
             "salary": {
-                "title": "5. Salaire",
+                "title": "7. Salaire",
                 "description": "Détails de votre compensation",
                 "grossSalary": "Salaire Brut (€/mois)",
                 "netSalary": "Salaire Net (€/mois)",
                 "netCompensation": "Compensation Nette (€/mois)"
             },
             "benefits": {
-                "title": "6. Avantages",
+                "title": "9. Avantages",
                 "description": "Compensation et avantages supplémentaires",
                 "thirteenthMonth": "13ème Mois",
                 "mealVouchers": "Chèques Repas (€/jour)",
@@ -347,7 +342,7 @@
                 "otherBenefitsPlaceholder": "ex. Voiture de société, budget formation, etc."
             },
             "workLife": {
-                "title": "7. Équilibre Vie-Travail",
+                "title": "11. Équilibre Vie-Travail",
                 "description": "Votre expérience d'équilibre vie-travail",
                 "teleworkDays": "Jours de Télétravail par Semaine",
                 "dayOffEase": "Facilité de Prendre un Jour de Congé",
@@ -355,7 +350,7 @@
                 "reports": "Rapports"
             },
             "workingHours": {
-                "title": "4. Heures de Travail",
+                "title": "5. Heures de Travail",
                 "description": "Votre horaire et heures de travail",
                 "officialHours": "Heures Officielles par Semaine",
                 "averageHours": "Heures Moyennes par Semaine",
@@ -363,17 +358,17 @@
                 "onCall": "Astreinte"
             },
             "vacation": {
-                "title": "5. Vacances",
+                "title": "6. Vacances",
                 "description": "Informations sur les vacances et congés",
                 "vacationDays": "Jours de Vacances par An"
             },
             "mobility": {
-                "title": "6. Mobilité",
+                "title": "8. Mobilité",
                 "description": "Exigences de mobilité professionnelle",
                 "mobility": "Mobilité"
             },
             "commute": {
-                "title": "8. Trajet Domicile-Travail",
+                "title": "10. Trajet Domicile-Travail",
                 "description": "Détails de votre trajet quotidien",
                 "workCity": "Ville de Travail",
                 "commuteDistance": "Distance Domicile-Travail",

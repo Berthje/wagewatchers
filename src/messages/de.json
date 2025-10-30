@@ -150,11 +150,6 @@
                 "description": "Urlaubs- und Freizeitinformationen",
                 "vacationDays": "Urlaubstage pro Jahr"
             },
-            "mobility": {
-                "title": "6. Mobilität",
-                "description": "Berufliche Mobilitätsanforderungen",
-                "mobility": "Mobilität"
-            },
             "commute": {
                 "title": "8. Arbeitsweg",
                 "description": "Details Ihres täglichen Arbeitswegs",
@@ -329,14 +324,14 @@
                 "seniority": "Seniorität"
             },
             "salary": {
-                "title": "5. Gehalt",
+                "title": "7. Gehalt",
                 "description": "Ihre Vergütungsdetails",
                 "grossSalary": "Bruttogehalt (€/Monat)",
                 "netSalary": "Nettogehalt (€/Monat)",
                 "netCompensation": "Nettovergütung (€/Monat)"
             },
             "benefits": {
-                "title": "6. Vorteile",
+                "title": "9. Vorteile",
                 "description": "Zusätzliche Vergütung und Vorteile",
                 "thirteenthMonth": "13. Monat",
                 "mealVouchers": "Essensgutscheine (€/Tag)",
@@ -347,7 +342,7 @@
                 "otherBenefitsPlaceholder": "z.B. Firmenwagen, Schulungsbudget, etc."
             },
             "workLife": {
-                "title": "7. Work-Life-Balance",
+                "title": "11. Work-Life-Balance",
                 "description": "Ihre Work-Life-Balance Erfahrung",
                 "teleworkDays": "Heimarbeitstage pro Woche",
                 "dayOffEase": "Leichtigkeit einen Tag freizunehmen",
@@ -363,17 +358,17 @@
                 "onCall": "Bereitschaftsdienst"
             },
             "vacation": {
-                "title": "5. Urlaub",
+                "title": "6. Urlaub",
                 "description": "Urlaubs- und Freizeitinformationen",
                 "vacationDays": "Urlaubstage pro Jahr"
             },
             "mobility": {
-                "title": "6. Mobilität",
+                "title": "8. Mobilität",
                 "description": "Berufliche Mobilitätsanforderungen",
                 "mobility": "Mobilität"
             },
             "commute": {
-                "title": "8. Arbeitsweg",
+                "title": "10. Arbeitsweg",
                 "description": "Details Ihres täglichen Arbeitswegs",
                 "workCity": "Arbeitsstadt",
                 "commuteDistance": "Pendelstrecke",
