@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Block access to admin areas
+Disallow: /admin/
+
+# Block access to API routes
+Disallow: /api/
+
+# Allow crawling of all localized routes
+Allow: /en/
+Allow: /nl/
+Allow: /fr/
+Allow: /de/
+
+# Sitemap
+Sitemap: https://wagewatchers.com/sitemap.xml

@@ -1,0 +1,7 @@
+Hey, thanks for sharing your salary details here! Please also contribute to the https://www.wagewatchers.com/platform (the anonymous and fast website equivalent of BESalary), so we can build initial data to share with the community.
+
+I discussed this with the mods of this subreddit to ensure it's aligned with the community. This will be an equivalent of the existing BESalary Vercel app, but as a different developer, I thought of making it better, cleaner, and with extra features (of course, always 100% free) to provide transparency in the Belgian market and soon other countries too. You can always use filters to have personalized results.
+
+Soon, I will scrape all historical data from this subreddit, of course, to provide users with a good portion of data to browse (and have their post link also in there). This will also allow users to enter their salary manually without the need to create a different Reddit account, comments, etc. Upvotes will also be a system on this WageWatchers platform. (Maybe also automatically post people their entries on the subreddit here that did manually add it on the platform)
+
+It's still in the middle of development with bugs being fixed, but feel free to contribute by adding your feedback in the feedback section on the navbar and contributing with your data. The MVP is already done, so feel free to share this with others! :)

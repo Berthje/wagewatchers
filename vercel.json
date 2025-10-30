@@ -1,0 +1,8 @@
+{
+    "crons": [
+        {
+            "path": "/api/jobs/fetch-exchange-rates",
+            "schedule": "0 0 * * *"
+        }
+    ]
+}

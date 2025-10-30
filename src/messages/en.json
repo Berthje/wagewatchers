@@ -1,0 +1,927 @@
+{
+    "nav": {
+        "dashboard": "Dashboard",
+        "statistics": "Statistics",
+        "analytics": "Analytics",
+        "addEntry": "Share Salary",
+        "feedback": "Feedback",
+        "status": "Status",
+        "donate": "Donate",
+        "displaySettings": "Display Settings",
+        "currency": "Currency",
+        "period": "Period",
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "currencies": {
+            "EUR": "Euro (€)",
+            "USD": "US Dollar ($)",
+            "GBP": "British Pound (£)"
+        }
+    },
+    "placeholders": {
+        "age": "e.g. 30",
+        "education": "Select or enter education level",
+        "workExperience": "e.g. 5",
+        "employeeCount": "Select employee count range",
+        "jobTitle": "e.g. Software Engineer",
+        "seniority": "e.g. 3",
+        "jobDescription": "Describe your job responsibilities",
+        "officialHours": "e.g. 40",
+        "averageHours": "e.g. 45",
+        "shiftDescription": "e.g. Standard office hours",
+        "onCall": "e.g. Occasionally",
+        "vacationDays": "e.g. 25",
+        "grossSalary": "e.g. 5000",
+        "netSalary": "e.g. 3500",
+        "netCompensation": "e.g. 150",
+        "mobility": "e.g. Home office possible",
+        "thirteenthMonth": "Select 13th month option",
+        "mealVouchers": "e.g. 8/day",
+        "ecoCheques": "e.g. 250",
+        "groupInsurance": "e.g. Yes, comprehensive",
+        "otherInsurances": "e.g. Health insurance",
+        "workCity": "e.g. Brussels",
+        "commuteDistance": "e.g. 15 km",
+        "commuteMethod": "e.g. Car, Public transport",
+        "commuteCompensation": "e.g. Fuel allowance",
+        "teleworkDays": "e.g. 2",
+        "dayOffEase": "e.g. Easy",
+        "stressLevel": "e.g. Moderate",
+        "reports": "e.g. 5",
+        "extraNotes": "Add any additional notes about this salary entry...",
+        "dependents": "e.g. 2"
+    },
+    "home": {
+        "title": {
+            "workLife": {
+                "title": "7. Work-Life Balance",
+                "description": "Work-life balance assessment",
+                "teleworkDays": "Telework Days per Week",
+                "dayOffEase": "Ease of Taking a Day Off",
+                "stressLevel": "Stress Level",
+                "reports": "Responsible for Personnel"
+            },
+            "workingHours": {
+                "title": "4. Working Hours",
+                "description": "Your working schedule and hours",
+                "officialHours": "Official Hours per Week",
+                "averageHours": "Average Hours per Week",
+                "shiftDescription": "Shift Description",
+                "onCall": "On-Call"
+            },
+            "vacation": {
+                "title": "5. Vacation",
+                "description": "Vacation and time off information",
+                "vacationDays": "Vacation Days per Year"
+            },
+            "mobility": {
+                "title": "6. Mobility",
+                "description": "Job mobility requirements",
+                "mobility": "Mobility"
+            },
+            "commute": {
+                "title": "8. Commute",
+                "description": "Your daily commute details",
+                "workCity": "Work City",
+                "commuteDistance": "Commute Distance",
+                "commuteMethod": "Commute Method",
+                "commuteCompensation": "Commute Compensation"
+            },
+            "salary": "Salary",
+            "transparency": "Transparency"
+        },
+        "subtitle": "Understand market compensation across European markets. Compare salaries, benefits, and work conditions with data from community-driven salary discussions.",
+        "exploreData": "Explore Salaries",
+        "shareSalary": "Share Salary",
+        "features": {
+            "multiCountry": {
+                "title": "Multi-Country Support",
+                "description": "Salary data from Belgian communities with localized compensation insights."
+            },
+            "privacy": {
+                "title": "Privacy Focused",
+                "description": "Anonymous salary sharing with comprehensive data protection. Community-driven transparency."
+            },
+            "analysis": {
+                "title": "Comprehensive Analysis",
+                "description": "Detailed breakdowns of compensation packages, benefits, work hours, and work-life balance."
+            }
+        },
+        "footer": "🧡 Community-driven salary transparency"
+    },
+    "dashboard": {
+        "title": "Salary Dashboard",
+        "subtitle": "Explore {count} salary entries from European job markets",
+        "myEntries": "My Entries",
+        "nav": {
+            "analytics": "Analytics",
+            "addEntry": "Share Salary"
+        },
+        "stats": {
+            "totalEntries": "Total Entries",
+            "avgGrossSalary": "Avg Gross Salary",
+            "avgNetSalary": "Avg Net Salary",
+            "medianSalary": "Median Salary",
+            "salaryRange": "Salary Range",
+            "avgAge": "Avg Age",
+            "sectors": "Sectors",
+            "topSector": "Top Sector",
+            "entries": "entries",
+            "perMonth": "/month",
+            "perYear": "/year"
+        },
+        "filters": {
+            "title": "Filters",
+            "description": "Filter salary data by various criteria",
+            "country": "Country",
+            "location": "Location",
+            "sector": "Sector",
+            "city": "City",
+            "minSalary": "Min Salary",
+            "maxSalary": "Max Salary",
+            "noLimit": "No limit",
+            "seniority": "Seniority",
+            "allCountries": "All countries",
+            "allLocations": "All locations",
+            "allCities": "All cities",
+            "allSectors": "All sectors",
+            "allLevels": "All levels",
+            "junior": "Junior (0-2 years)",
+            "mid": "Mid (3-5 years)",
+            "senior": "Senior (6+ years)",
+            "search": "Search",
+            "searchPlaceholder": "Search by multiple keywords separated by commas (e.g., developer, engineer, manager)...",
+            "activeFilters": "Active Filters",
+            "activeFiltersLabel": "Active Filters",
+            "activeFilter": "active filter",
+            "noActiveFilters": "No active filters",
+            "clearAll": "Clear All",
+            "apply": "Apply Filters",
+            "filters": "Filters",
+            "locationSection": "Location",
+            "workSection": "Work Details",
+            "selectedCountries": "selected countries",
+            "selectedLocations": "selected locations",
+            "selectedCities": "selected cities",
+            "selectedSectors": "selected sectors",
+            "countries": "Countries",
+            "locations": "Locations",
+            "cities": "Cities",
+            "sectors": "Sectors",
+            "countriesSelected": "countries selected",
+            "locationsSelected": "locations selected",
+            "citiesSelected": "cities selected",
+            "sectorsSelected": "sectors selected"
+        },
+        "table": {
+            "title": "Salary Entries",
+            "description": "Detailed view of all salary data",
+            "country": "Country",
+            "location": "Location",
+            "age": "Age",
+            "sector": "Sector",
+            "jobTitle": "Job Title",
+            "experience": "Experience",
+            "seniority": "Seniority",
+            "grossSalary": "Gross Salary",
+            "netSalary": "Net Salary",
+            "submittedOn": "Submitted",
+            "years": "years",
+            "noResults": "No entries found matching your filters",
+            "source": "Source",
+            "viewSource": "View source",
+            "clickToViewDetails": "Click any row to view full details",
+            "viewDetails": "View details"
+        },
+        "pagination": {
+            "showing": "Showing",
+            "to": "to",
+            "of": "of",
+            "results": "results",
+            "previous": "Previous",
+            "next": "Next",
+            "page": "Page",
+            "rowsPerPage": "Rows per page"
+        }
+    },
+    "statistics": {
+        "title": "Salary Statistics",
+        "subtitle": "Visual insights into salary trends and distributions",
+        "filters": {
+            "title": "Filters",
+            "countries": "Countries",
+            "allCountries": "All countries",
+            "selectCountries": "Select countries...",
+            "countriesSelected": "countries selected",
+            "sectors": "Sectors",
+            "allSectors": "All sectors",
+            "selectSectors": "Select sectors...",
+            "sectorsSelected": "sectors selected",
+            "clearFilters": "Clear Filters"
+        },
+        "export": {
+            "csv": "Export to CSV",
+            "pdf": "Export to PDF"
+        },
+        "nav": {
+            "dashboard": "Dashboard",
+            "addEntry": "Share Salary"
+        },
+        "charts": {
+            "topSectors": {
+                "title": "Top 10 Sectors by Average Salary",
+                "description": "Highest paying sectors across all entries"
+            },
+            "experienceGrowth": {
+                "title": "Salary Growth by Experience",
+                "description": "How salary increases with years of experience",
+                "xAxisLabel": "Years"
+            },
+            "topCountries": {
+                "title": "Top Countries by Salary",
+                "description": "Average salaries across different countries"
+            },
+            "salaryDistribution": {
+                "title": "Salary Distribution",
+                "description": "Number of entries in each salary range"
+            },
+            "ageDemographics": {
+                "title": "Age Demographics",
+                "description": "Distribution of respondents by age group"
+            },
+            "scatterPlot": {
+                "title": "Experience vs Salary Scatter Plot",
+                "description": "Individual data points showing relationship between experience and salary",
+                "xAxisLabel": "Years of Experience",
+                "yAxisLabel": "Gross Salary (€)"
+            },
+            "yearOverYear": {
+                "title": "Year-over-Year Salary Trends",
+                "description": "Compare average and median salaries across different years"
+            },
+            "industryInsights": {
+                "title": "Industry-Specific Salary Insights",
+                "description": "Detailed breakdown of salary statistics by sector",
+                "sector": "Sector",
+                "entries": "Entries",
+                "avg": "Average",
+                "median": "Median",
+                "range": "Range",
+                "percentile": "25th-75th Percentile"
+            },
+            "locationHeatmap": {
+                "title": "Salary by Location",
+                "description": "Average salaries in different cities (min. 3 entries per location)"
+            },
+            "tooltips": {
+                "avgSalary": "Avg Salary (€/month)",
+                "medianSalary": "Median Salary (€/month)",
+                "entries": "Entries"
+            }
+        }
+    },
+    "analytics": {
+        "title": "Salary Analytics",
+        "subtitle": "Visual insights into salary trends and distributions",
+        "nav": {
+            "dashboard": "Dashboard",
+            "addEntry": "Share Salary"
+        },
+        "charts": {
+            "topSectors": {
+                "title": "Top 10 Sectors by Average Salary",
+                "description": "Highest paying sectors across all entries"
+            },
+            "experienceGrowth": {
+                "title": "Salary Growth by Experience",
+                "description": "How salary increases with years of experience",
+                "xAxisLabel": "Years"
+            },
+            "topCountries": {
+                "title": "Top Countries by Salary",
+                "description": "Average salaries in different countries"
+            },
+            "salaryDistribution": {
+                "title": "Salary Distribution",
+                "description": "Number of entries in each salary range"
+            },
+            "ageDemographics": {
+                "title": "Age Demographics",
+                "description": "Distribution of respondents by age group"
+            },
+            "scatterPlot": {
+                "title": "Experience vs Salary Scatter Plot",
+                "description": "Individual data points showing relationship between experience and salary",
+                "xAxisLabel": "Years of Experience",
+                "yAxisLabel": "Gross Salary (€)"
+            },
+            "tooltips": {
+                "avgSalary": "Avg Salary",
+                "entries": "Entries"
+            }
+        }
+    },
+    "add": {
+        "title": "Share Your Salary",
+        "subtitle": "Share your salary information anonymously to help build transparency",
+        "editTitle": "Edit Salary Entry",
+        "editSubtitle": "Update your salary information below",
+        "goBack": "Go Back",
+        "loadingEntry": "Loading entry data...",
+        "fieldExplanations": "Field Explanations",
+        "example": "Example",
+        "fields": {
+            "country": {
+                "label": "Country",
+                "placeholder": "Select country"
+            },
+            "subreddit": {
+                "label": "Subreddit",
+                "placeholder": "Select subreddit"
+            }
+        },
+        "sections": {
+            "location": {
+                "title": "1. Location Information",
+                "description": "Country information",
+                "country": "Country",
+                "subreddit": "Subreddit",
+                "selectCountry": "Select country",
+                "selectSubreddit": "Select subreddit"
+            },
+            "personal": {
+                "title": "2. Personal Information",
+                "description": "Basic personal details",
+                "age": "Age",
+                "education": "Education",
+                "workExperience": "Work Experience",
+                "civilStatus": "Civil Status",
+                "dependents": "Dependents"
+            },
+            "employer": {
+                "title": "3. Employer Profile",
+                "description": "Information about your employer",
+                "sector": "Sector",
+                "employeeCount": "Employee Count",
+                "multinational": "Multinational"
+            },
+            "job": {
+                "title": "4. Job Profile",
+                "description": "Details about your role and responsibilities",
+                "jobTitle": "Job Title",
+                "jobDescription": "Job Description",
+                "seniority": "Seniority"
+            },
+            "salary": {
+                "title": "5. Salary",
+                "description": "Your compensation details",
+                "grossSalary": "Gross Salary (€/month)",
+                "netSalary": "Net Salary (€/month)",
+                "netCompensation": "Net Compensation (€/month)"
+            },
+            "benefits": {
+                "title": "6. Benefits",
+                "description": "Additional compensation and perks",
+                "thirteenthMonth": "13th Month",
+                "mealVouchers": "Meal Vouchers (€/day)",
+                "ecoCheques": "Eco-Cheques (€/year)",
+                "groupInsurance": "Group Insurance",
+                "otherInsurances": "Other Insurances",
+                "otherBenefits": "Other Benefits",
+                "otherBenefitsPlaceholder": "e.g. Company car, training budget, etc."
+            },
+            "workLife": {
+                "title": "7. Work-Life Balance",
+                "description": "Your work-life balance experience",
+                "teleworkDays": "Telework Days per Week",
+                "dayOffEase": "Ease of Taking a Day Off",
+                "stressLevel": "Stress Level",
+                "reports": "Reports"
+            },
+            "workingHours": {
+                "title": "4. Working Hours",
+                "description": "Your working schedule and hours",
+                "officialHours": "Official Hours per Week",
+                "averageHours": "Average Hours per Week",
+                "shiftDescription": "Shift Description",
+                "onCall": "On-Call"
+            },
+            "vacation": {
+                "title": "5. Vacation",
+                "description": "Vacation and time off information",
+                "vacationDays": "Vacation Days per Year"
+            },
+            "mobility": {
+                "title": "6. Mobility",
+                "description": "Job mobility requirements",
+                "mobility": "Mobility"
+            },
+            "commute": {
+                "title": "8. Commute",
+                "description": "Your daily commute details",
+                "workCity": "Work City",
+                "commuteDistance": "Commute Distance",
+                "commuteMethod": "Commute Method",
+                "commuteCompensation": "Commute Compensation"
+            },
+            "notes": {
+                "title": "12. Additional Notes",
+                "description": "Optional notes for this entry",
+                "extraNotes": "Additional Notes"
+            }
+        },
+        "options": {
+            "yes": "Yes",
+            "no": "No",
+            "partial": "Partial",
+            "full": "Full",
+            "none": "None",
+            "selectOption": "Select option"
+        },
+        "countries": {
+            "belgium": "Belgium",
+            "netherlands": "Netherlands",
+            "unitedKingdom": "United Kingdom"
+        },
+        "submit": "Share Salary",
+        "success": "Salary shared successfully!",
+        "successDetails": "You can now edit this entry for 1 day. Find it in 'My Entries'.",
+        "error": "Failed to share salary",
+        "errorGeneric": "An error occurred while submitting",
+        "errorLoadingEntry": "Error Loading Entry",
+        "help": {
+            "age": "Your current age in years",
+            "education": "Your highest level of education completed",
+            "workExperience": "Total years of professional work experience",
+            "civilStatus": "Your current marital status",
+            "dependents": "Number of people financially dependent on you",
+            "sector": "The industry or sector your company operates in",
+            "employeeCount": "Approximate number of employees in your company",
+            "multinational": "Whether your company operates in multiple countries",
+            "jobTitle": "Your official job title or position name",
+            "jobDescription": "Brief description of your main responsibilities",
+            "seniority": "Years in your current role or similar positions",
+            "officialHours": "Contracted working hours per week",
+            "averageHours": "Actual average hours worked per week",
+            "shiftDescription": "Description of your work schedule (e.g., 9-5, shifts)",
+            "onCall": "Frequency of on-call duties or availability requirements",
+            "vacationDays": "Total paid vacation days per year",
+            "grossSalary": "Monthly gross salary before taxes and deductions",
+            "netSalary": "Monthly take-home pay after taxes",
+            "netCompensation": "Total monthly compensation including all benefits",
+            "mobility": "Requirements for business travel or relocation",
+            "thirteenthMonth": "End-of-year bonus or 13th month payment",
+            "mealVouchers": "Daily value of meal vouchers or lunch allowances",
+            "ecoCheques": "Annual value of eco-cheques or gift vouchers",
+            "groupInsurance": "Company-provided health or group insurance details",
+            "otherInsurances": "Any additional insurance coverage provided",
+            "otherBenefits": "Other perks like company car, training, gym membership, etc.",
+            "workCity": "City where your primary workplace is located",
+            "commuteDistance": "Distance from home to work",
+            "commuteMethod": "How you commute to work (car, public transport, etc.)",
+            "commuteCompensation": "Any reimbursement for commute expenses",
+            "teleworkDays": "Number of days per week you work from home",
+            "dayOffEase": "How easy it is to take unplanned time off",
+            "stressLevel": "Your overall work-related stress level",
+            "reports": "Number of people who report directly to you",
+            "extraNotes": "Additional notes or context about this salary entry"
+        },
+        "formOptions": {
+            "education": {
+                "highSchool": "High School",
+                "associate": "Associate Degree",
+                "bachelor": "Bachelor's Degree",
+                "master": "Master's Degree",
+                "phd": "PhD / Doctorate",
+                "professional": "Professional Degree (MD, JD, etc.)",
+                "vocational": "Vocational Training",
+                "someCollege": "Some College"
+            },
+            "employeeCount": {
+                "range1": "1-10",
+                "range2": "11-50",
+                "range3": "51-200",
+                "range4": "201-500",
+                "range5": "501-1000",
+                "range6": "1000+"
+            },
+            "thirteenthMonth": {
+                "full": "Full",
+                "partial": "Partial",
+                "none": "None"
+            },
+            "civilStatus": {
+                "single": "Single",
+                "married": "Married",
+                "divorced": "Divorced",
+                "widowed": "Widowed"
+            },
+            "sector": {
+                "IT": "IT",
+                "Finance": "Finance",
+                "Healthcare": "Healthcare",
+                "Education": "Education",
+                "Manufacturing": "Manufacturing",
+                "Consulting": "Consulting",
+                "Retail": "Retail",
+                "Telecom": "Telecom",
+                "Other": "Other"
+            },
+            "combobox": {
+                "custom": "Custom",
+                "select": "Select"
+            }
+        },
+        "validation": {
+            "numberExpected": "Number expected",
+            "integerExpected": "Integer expected",
+            "stringExpected": "Text expected",
+            "countryRequired": "Country is required",
+            "ageMin": "Age must be at least 18",
+            "ageMax": "Age cannot exceed 100",
+            "workExperienceMax": "Work experience cannot exceed 82 years",
+            "dependentsMax": "Number of dependents cannot exceed 20",
+            "educationRequired": "Education is required",
+            "civilStatusRequired": "Civil status is required",
+            "sectorRequired": "Sector is required",
+            "employeeCountRequired": "Employee count is required",
+            "jobTitleRequired": "Job title is required",
+            "currencyRequired": "Currency is required",
+            "mobilityRequired": "Mobility is required",
+            "thirteenthMonthRequired": "13th month is required",
+            "groupInsuranceRequired": "Group insurance is required",
+            "workCityRequired": "Work city is required",
+            "commuteDistanceRequired": "Commute distance is required",
+            "commuteMethodRequired": "Commute method is required",
+            "commuteCompensationRequired": "Commute compensation is required",
+            "dayOffEaseRequired": "Day off ease is required",
+            "stressLevelRequired": "Stress level is required",
+            "jobTitleMax": "Job title cannot exceed 200 characters",
+            "jobDescriptionMax": "Job description cannot exceed 5000 characters",
+            "seniorityMax": "Seniority cannot exceed 50 years",
+            "hoursMin": "Hours must be at least 1",
+            "hoursMax": "Hours cannot exceed 80 per week",
+            "shiftDescriptionMax": "Shift description cannot exceed 1000 characters",
+            "vacationDaysMax": "Vacation days cannot exceed 365 per year",
+            "teleworkMax": "Telework days cannot exceed 7 per week",
+            "grossSalaryPositive": "Gross salary must be positive",
+            "salaryMax": "Salary cannot exceed €1,000,000",
+            "mealVouchersMax": "Meal vouchers cannot exceed €12 per day",
+            "ecoChequesMax": "Eco-cheques cannot exceed €10,000 per year",
+            "otherInsurancesMax": "Other insurances description cannot exceed 2000 characters",
+            "otherBenefitsMax": "Other benefits description cannot exceed 2000 characters",
+            "workCityMax": "Work city cannot exceed 200 characters",
+            "commuteDistanceMax": "Commute distance cannot exceed 500 characters",
+            "commuteCompensationMax": "Commute compensation cannot exceed 1000 characters",
+            "reportsMax": "Number of reports cannot exceed 1000",
+            "urlInvalid": "Please enter a valid URL",
+            "urlDomainInvalid": "Please use a URL from a job-related website (Reddit, LinkedIn, Indeed, etc.)",
+            "extraNotesMax": "Additional notes cannot exceed 5000 characters",
+            "atLeastOneSalary": "At least one salary field (gross, net, or net compensation) is required",
+            "workExperienceVsAge": "Work experience cannot exceed the years since you turned 18",
+            "seniorityVsExperience": "Seniority in current role cannot exceed total work experience",
+            "averageHoursVsOfficial": "Average hours should not exceed official hours by more than 20 hours",
+            "workCityRequiredForCommute": "Work city is required when providing commute details",
+            "netSalaryVsGross": "Net salary should not exceed gross salary"
+        },
+        "validationSummary": {
+            "title": "Please fix the following errors:",
+            "errorCount": "{count, plural, =1 {1 error found} other {# errors found}}"
+        }
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "export": "Export",
+        "optional": "optional"
+    },
+    "language": {
+        "english": "English",
+        "dutch": "Nederlands",
+        "french": "Français",
+        "german": "Deutsch",
+        "toggle": "Toggle language"
+    },
+    "feedback": {
+        "meta": {
+            "title": "Submit Feedback - WageWatchers",
+            "description": "Help improve the salary transparency platform by reporting bugs, requesting features, or suggesting improvements."
+        },
+        "title": "Submit Feedback",
+        "subtitle": "Help us improve the salary transparency platform by reporting bugs, requesting features, or suggesting improvements.",
+        "nav": {
+            "goBack": "Go Back"
+        },
+        "form": {
+            "title": "Title",
+            "titlePlaceholder": "Brief summary of your feedback",
+            "description": "Description",
+            "descriptionPlaceholder": "Detailed description of your feedback",
+            "type": "Type",
+            "priority": "Priority",
+            "email": "Email (Optional)",
+            "emailPlaceholder": "your.email@example.com",
+            "emailHint": "Provide your email if you'd like us to follow up on your feedback.",
+            "emailInvalid": "Invalid email provided",
+            "submit": "Submit Feedback",
+            "submitting": "Submitting..."
+        },
+        "types": {
+            "bug": {
+                "label": "Bug Report",
+                "description": "Report a problem or error"
+            },
+            "feature": {
+                "label": "Feature",
+                "description": "Suggest a new feature for the application"
+            },
+            "improvement": {
+                "label": "Improvement",
+                "description": "Suggest an enhancement"
+            }
+        },
+        "priorities": {
+            "low": {
+                "label": "Low",
+                "description": "Nice to have, no urgency"
+            },
+            "medium": {
+                "label": "Medium",
+                "description": "Should be addressed eventually"
+            },
+            "high": {
+                "label": "High",
+                "description": "Important for user experience"
+            },
+            "critical": {
+                "label": "Critical",
+                "description": "Breaks functionality or security"
+            }
+        },
+        "validation": {
+            "titleRequired": "Title is required",
+            "titleTooLong": "Title too long",
+            "descriptionRequired": "Description is required",
+            "descriptionTooLong": "Description too long"
+        },
+        "success": "Thank you for your feedback! We've received your report.",
+        "error": "Failed to submit feedback. Please try again.",
+        "rateLimit": {
+            "title": "Submission Limit Reached",
+            "message": "You've reached the daily limit of 5 feedback submissions. This helps us prevent spam and ensure quality feedback.",
+            "resetInfo": "You can submit again after {resetTime}.",
+            "remaining": "You have {count} {count, plural, one {submission} other {submissions}} remaining today."
+        },
+        "trackingId": {
+            "title": "Your Tracking ID",
+            "instruction": "Save this ID to track your report status at any time."
+        },
+        "emailSent": "We've sent a confirmation email to {email} with your tracking ID and report details.",
+        "noEmail": "Use your tracking ID to check the status of your report on the Status page."
+    },
+    "status": {
+        "title": "Check Report Status",
+        "subtitle": "Track the status of your submitted bug reports or feature requests.",
+        "loading": "Loading your reports...",
+        "nav": {
+            "home": "Home",
+            "feedback": "Feedback",
+            "addEntry": "Share Salary"
+        },
+        "search": {
+            "searchTitle": "Search Your Reports",
+            "searchAnother": "Search Another Report",
+            "label": "Tracking ID or Email",
+            "placeholder": "XXXX-XXXX",
+            "placeholderEmail": "your@email.com",
+            "hint": "Enter the 8 characters after TRK- or your email address",
+            "button": "Search Reports",
+            "searching": "Searching...",
+            "instruction": "Enter your tracking ID or email address to view the status of your feedback.",
+            "invalidFormat": "Invalid format. Tracking ID must be 8 characters (XXXX-XXXX) or a valid email.",
+            "searchType": {
+                "trackingId": "Tracking ID",
+                "email": "Email Address"
+            }
+        },
+        "results": {
+            "title": "Your Reports",
+            "recentTitle": "Recent Reports",
+            "savedTitle": "My Saved Reports",
+            "recentSavedTitle": "My Recent Reports",
+            "total": "total",
+            "allReportsTitle": "All Your Reports",
+            "allReportsSubtitle": "Complete overview of all your submitted reports and their current status.",
+            "showingAll": "Showing all {count} reports",
+            "backToStatus": "Back to Status",
+            "submittedOn": "Submitted on",
+            "trackingId": "Tracking ID:",
+            "lastUpdated": "Last updated:",
+            "noReportsTitle": "No reports found",
+            "noReportsMessage": "We couldn't find any reports matching that identifier. Please check your tracking ID or email address.",
+            "viewAll": "View All",
+            "showRecent": "Show Recent"
+        },
+        "statuses": {
+            "TODO": "To Do",
+            "IN_PROGRESS": "In Progress",
+            "DONE": "Completed",
+            "CANCELLED": "Cancelled"
+        },
+        "noResults": "No reports found with that identifier",
+        "errors": {
+            "empty": "Please enter a reporter ID or email address",
+            "network": "Failed to search reports. Please try again."
+        }
+    },
+    "donate": {
+        "goBack": "Go Back",
+        "title": "Buy Me a Coffee",
+        "subtitle": "Help keep WageWatchers running!",
+        "description": "WageWatchers is free and community-driven, but it costs money to keep the lights on. Server hosting, database costs, and development time all add up. If you find this platform valuable, consider supporting it with a small donation!",
+        "whyDonate": "Why Donate?",
+        "benefits": {
+            "hosting": {
+                "title": "Server Hosting",
+                "description": "Keep the platform fast and available 24/7"
+            },
+            "database": {
+                "title": "Database Costs",
+                "description": "Store and process thousands of salary entries"
+            },
+            "development": {
+                "title": "Development",
+                "description": "Add new features and improvements"
+            },
+            "free": {
+                "title": "Keep it Free",
+                "description": "No paywalls, no premium features, ever"
+            }
+        },
+        "amount": "Choose an amount",
+        "monthly": "Monthly",
+        "oneTime": "One-Time",
+        "custom": "Custom",
+        "donate": "Donate via PayPal",
+        "donateOptions": "Choose Your Donation Method",
+        "buyMeCoffee": "Buy Me a Coffee",
+        "paypal": "PayPal",
+        "kofi": "Ko-fi",
+        "github": "GitHub Sponsors",
+        "crypto": "Cryptocurrency",
+        "copyAddress": "Copy Address",
+        "addressCopied": "Address copied!",
+        "bitcoin": "Bitcoin (BTC)",
+        "ethereum": "Ethereum (ETH)",
+        "ethereumNote": "Supports multiple ERC-20 tokens (USDC, LRC, LINK, UNI, etc.)",
+        "usdc": "USD Coin (USDC)",
+        "solana": "Solana (SOL)",
+        "traditional": "Traditional",
+        "otherWays": "Other Ways to Support",
+        "share": "Share with friends",
+        "contribute": "Contribute salary data",
+        "feedback": "Give feedback",
+        "thankYou": "Thank you for your support! 🎉",
+        "thankYouMessage": "Every contribution, big or small, helps keep this platform alive and free for everyone.",
+        "connect": "Connect with me",
+        "socials": {
+            "reddit": "Reddit",
+            "portfolio": "Portfolio",
+            "github": "GitHub"
+        }
+    },
+    "entryDetail": {
+        "backToDashboard": "Go Back",
+        "untitled": "Untitled Position",
+        "submittedOn": "Submitted on",
+        "grossSalary": "Gross Salary",
+        "netSalary": "Net Salary",
+        "netCompensation": "Net Compensation",
+        "personalInfo": "Personal Information",
+        "age": "Age",
+        "education": "Education",
+        "workExperience": "Work Experience",
+        "civilStatus": "Civil Status",
+        "dependents": "Dependents",
+        "years": "years",
+        "jobInfo": "Job Information",
+        "jobTitle": "Job Title",
+        "sector": "Sector",
+        "seniority": "Seniority",
+        "employeeCount": "Employee Count",
+        "multinational": "Multinational",
+        "jobDescription": "Job Description",
+        "yes": "Yes",
+        "no": "No",
+        "workSchedule": "Work Schedule",
+        "officialHours": "Official Hours",
+        "averageHours": "Average Hours",
+        "hoursPerWeek": "hours/week",
+        "vacationDays": "Vacation Days",
+        "days": "days",
+        "teleworkDays": "Telework Days",
+        "daysPerWeek": "days/week",
+        "shiftDescription": "Shift Description",
+        "onCall": "On-Call",
+        "benefits": "Benefits & Compensation",
+        "mobility": "Mobility",
+        "thirteenthMonth": "13th Month",
+        "mealVouchers": "Meal Vouchers (€/day)",
+        "ecoCheques": "Eco Cheques",
+        "groupInsurance": "Group Insurance",
+        "otherInsurances": "Other Insurances",
+        "otherBenefits": "Other Benefits",
+        "locationCommute": "Location & Commute",
+        "workCity": "Work City",
+        "commuteDistance": "Commute Distance",
+        "commuteMethod": "Commute Method",
+        "commuteCompensation": "Commute Compensation",
+        "workEnvironment": "Work Environment",
+        "dayOffEase": "Ease of Taking Time Off",
+        "stressLevel": "Stress Level",
+        "reports": "Responsible for Personnel",
+        "sourceLink": "Source",
+        "viewRedditPost": "View Reddit Post",
+        "viewSource": "View Original Source",
+        "sourceDescription": "Source",
+        "extraNotes": "Additional Notes",
+        "additionalNotes": "Additional Notes"
+    },
+    "comments": {
+        "title": "Comments",
+        "loading": "Loading comments...",
+        "noComments": "No comments available",
+        "reply": "reply",
+        "replies": "replies",
+        "collapsed": "collapsed",
+        "ago": "ago",
+        "justNow": "just now"
+    },
+    "myEntries": {
+        "title": "My Salary Entries",
+        "description": "View and manage your submitted salary entries",
+        "howItWorks": "How does it work?",
+        "loading": "Loading your entries...",
+        "noEntries": "No entries found",
+        "noEntriesDescription": "You haven't submitted any salary entries yet. Your entries will appear here for easy management.",
+        "addFirst": "Share Your First Salary",
+        "yourEntries": "Your Entries ({count})",
+        "table": {
+            "location": "Location",
+            "country": "Country",
+            "jobTitle": "Job Title",
+            "salary": "Gross Salary",
+            "submitted": "Submitted",
+            "editStatus": "Edit Status",
+            "actions": "Actions",
+            "noTitle": "No title provided",
+            "editableFor": "{days}d left",
+            "readonly": "Read-only"
+        },
+        "deleteConfirm": "Are you sure you want to delete this entry? This action cannot be undone.",
+        "deleteError": "Failed to delete entry",
+        "infoTitle": "ℹ️ How does it work?",
+        "info1": "Your entries are stored anonymously in your browser using secure tokens",
+        "info2": "You can edit or delete entries for 1 day after submission",
+        "info3": "After the edit window, entries become read-only but remain visible",
+        "info4": "Clearing browser data will remove your access to manage these entries",
+        "deleteDialog": {
+            "title": "Delete Salary Entry",
+            "deletingEntry": "You are about to delete:",
+            "canEdit": "You can edit this entry instead of deleting it",
+            "permanent": "This action cannot be undone",
+            "helpsOthers": "Your entry helps others understand fair compensation",
+            "typeToConfirm": "Type DELETE to confirm",
+            "confirmPlaceholder": "Type DELETE here",
+            "confirmHint": "Type the word DELETE (in capital letters) to enable the delete button",
+            "cancel": "Cancel",
+            "confirmDelete": "Yes, Delete Entry",
+            "deleting": "Deleting..."
+        }
+    },
+    "edit": {
+        "meta": {
+            "title": "Edit Salary Entry - WageWatchers",
+            "description": "Edit your submitted salary entry anonymously. Update salary information, benefits, and work conditions."
+        },
+        "title": "Edit Salary Entry",
+        "loading": "Loading entry...",
+        "redirecting": "Redirecting to edit form...",
+        "errorTitle": "Cannot Edit Entry",
+        "goBack": "Go Back",
+        "goToMyEntries": "Go to My Entries",
+        "goToDashboard": "Go to Dashboard",
+        "errors": {
+            "noToken": "You don't have permission to edit this entry. It may have been submitted from a different browser.",
+            "notFound": "Entry not found. It may have been deleted.",
+            "notOwner": "You don't have permission to edit this entry.",
+            "expired": "The edit window for this entry has expired (1 day after submission).",
+            "generic": "Failed to load entry. Please try again."
+        }
+    }
+}
