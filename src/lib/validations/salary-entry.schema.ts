@@ -161,46 +161,46 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                 .max(5000, { message: t("validation.extraNotesMax") })
                 .optional(),
         })
-        .refine(
-            (data) => {
-                // At least one salary field is required
-                const hasGross = data.grossSalary !== undefined && data.grossSalary !== "";
-                const hasNet = data.netSalary !== undefined && data.netSalary !== "";
-                const hasNetComp = data.netCompensation !== undefined && data.netCompensation !== "";
-                return hasGross || hasNet || hasNetComp;
-            },
-            {
-                message: t("validation.atLeastOneSalary"),
-                path: ["grossSalary"], // Show error on first salary field
-            }
-        )
-        .refine(
-            (data) => {
-                // Work experience cannot exceed years since age 18
-                if (data.age && data.workExperience) {
-                    const maxPossibleExperience = data.age - 18;
-                    return data.workExperience <= maxPossibleExperience;
+            .refine(
+                (data) => {
+                    // At least one salary field is required
+                    const hasGross = data.grossSalary !== undefined && data.grossSalary !== "";
+                    const hasNet = data.netSalary !== undefined && data.netSalary !== "";
+                    const hasNetComp = data.netCompensation !== undefined && data.netCompensation !== "";
+                    return hasGross || hasNet || hasNetComp;
+                },
+                {
+                    message: t("validation.atLeastOneSalary"),
+                    path: ["grossSalary"], // Show error on first salary field
                 }
-                return true;
-            },
-            {
-                message: t("validation.workExperienceVsAge"),
-                path: ["workExperience"],
-            }
-        )
-        .refine(
-            (data) => {
-                // Seniority cannot exceed total work experience
-                if (data.seniority && data.workExperience) {
-                    return data.seniority <= data.workExperience;
+            )
+            .refine(
+                (data) => {
+                    // Work experience cannot exceed years since age 18
+                    if (data.age && data.workExperience) {
+                        const maxPossibleExperience = data.age - 18;
+                        return data.workExperience <= maxPossibleExperience;
+                    }
+                    return true;
+                },
+                {
+                    message: t("validation.workExperienceVsAge"),
+                    path: ["workExperience"],
                 }
-                return true;
-            },
-            {
-                message: t("validation.seniorityVsExperience"),
-                path: ["seniority"],
-            }
-        )
+            )
+            .refine(
+                (data) => {
+                    // Seniority cannot exceed total work experience
+                    if (data.seniority && data.workExperience) {
+                        return data.seniority <= data.workExperience;
+                    }
+                    return true;
+                },
+                {
+                    message: t("validation.seniorityVsExperience"),
+                    path: ["seniority"],
+                }
+            )
     );
 };
 
