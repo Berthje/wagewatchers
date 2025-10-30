@@ -343,8 +343,15 @@ export const createFieldConfigs = (
     },
     stressLevel: {
         labelKey: "sections.workLife.stressLevel",
-        type: "text",
-        placeholder: "e.g. Moderate",
+        type: "select",
+        placeholder: "Select stress level",
+        options: [
+            { value: "veryLow", label: t("formOptions.stressLevel.veryLow") },
+            { value: "low", label: t("formOptions.stressLevel.low") },
+            { value: "moderate", label: t("formOptions.stressLevel.moderate") },
+            { value: "high", label: t("formOptions.stressLevel.high") },
+            { value: "veryHigh", label: t("formOptions.stressLevel.veryHigh") },
+        ],
         helpKey: "help.stressLevel",
         width: "half",
     },

@@ -503,6 +503,13 @@
             "combobox": {
                 "custom": "Personnalisé",
                 "select": "Sélectionner"
+            },
+            "stressLevel": {
+                "veryLow": "Très Faible",
+                "low": "Faible",
+                "moderate": "Modéré",
+                "high": "Élevé",
+                "veryHigh": "Très Élevé"
             }
         },
         "validation": {

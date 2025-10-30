@@ -46,7 +46,7 @@
         "commuteCompensation": "e.g. Fuel allowance",
         "teleworkDays": "e.g. 2",
         "dayOffEase": "e.g. Easy",
-        "stressLevel": "e.g. Moderate",
+        "stressLevel": "Select stress level",
         "reports": "e.g. 5",
         "extraNotes": "Add any additional notes about this salary entry...",
         "dependents": "e.g. 2"
@@ -547,6 +547,13 @@
             "combobox": {
                 "custom": "Custom",
                 "select": "Select"
+            },
+            "stressLevel": {
+                "veryLow": "Very Low",
+                "low": "Low",
+                "moderate": "Moderate",
+                "high": "High",
+                "veryHigh": "Very High"
             }
         },
         "validation": {
