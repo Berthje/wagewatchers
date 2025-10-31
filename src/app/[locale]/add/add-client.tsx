@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HelpCircle, ArrowLeft } from "lucide-react";
+import { HelpCircle, ArrowLeft, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +41,7 @@ import {
     createSalaryEntrySchema,
     SalaryEntryFormData,
 } from "@/lib/validations/salary-entry.schema";
+import { getEntryToken, isEntryEditable } from "@/lib/entry-ownership";
 
 const getSubmitButtonText = (isSubmitting: boolean, isEditMode: boolean) => {
     if (isSubmitting) {
@@ -63,6 +64,7 @@ function AddEntryContent() {
     const t = useTranslations("add");
     const tNav = useTranslations("nav");
     const tCommon = useTranslations("common");
+    const tEdit = useTranslations("edit");
 
     const getSectionHelpContent = (
         sectionKey: string,
@@ -106,13 +108,40 @@ function AddEntryContent() {
             setIsEditMode(true);
             setIsLoadingEntry(true);
 
+            // Check if we have the token for ownership verification
+            const token = getEntryToken(entryId);
+            if (!token) {
+                setError(tEdit("errors.noToken"));
+                setIsLoadingEntry(false);
+                return;
+            }
+
             // Load the entry data
             fetch(`/api/entries/${entryId}`)
                 .then((res) => {
-                    if (!res.ok) throw new Error("Failed to load entry");
+                    if (!res.ok) {
+                        if (res.status === 404) {
+                            throw new Error(tEdit("errors.notFound"));
+                        }
+                        throw new Error(tEdit("errors.generic"));
+                    }
                     return res.json();
                 })
                 .then((data) => {
+                    // Verify ownership
+                    if (data.ownerToken !== token) {
+                        setError(tEdit("errors.notOwner"));
+                        setIsLoadingEntry(false);
+                        return;
+                    }
+
+                    // Check if entry is still editable
+                    if (!isEntryEditable(data.editableUntil)) {
+                        setError(tEdit("errors.expired"));
+                        setIsLoadingEntry(false);
+                        return;
+                    }
+
                     // Populate the form with the entry data
                     form.reset({
                         country: data.country || undefined,
@@ -158,11 +187,11 @@ function AddEntryContent() {
                 })
                 .catch((error) => {
                     console.error("Error loading entry:", error);
+                    setError(error.message || tEdit("errors.generic"));
                     setIsLoadingEntry(false);
-                    router.push(`/${locale}/dashboard`);
                 });
         }
-    }, [searchParams, form, router, locale]);
+    }, [searchParams, form, router, locale, t]);
 
     const onSubmit = async (data: SalaryEntryFormData) => {
         setIsSubmitting(true);
@@ -508,50 +537,83 @@ function AddEntryContent() {
             </div>
 
             <main className="container mx-auto px-4 py-6 md:py-8 max-w-4xl">
-                <div className="mb-6 md:mb-8">
-                    {isEditMode && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => router.back()}
-                            className="mb-4 -ml-2 text-stone-400 hover:text-stone-100"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            {t("goBack")}
-                        </Button>
-                    )}
-                    <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-2">
-                        {isEditMode ? t("editTitle") : t("title")}
-                    </h1>
-                    <p className="text-sm md:text-base text-stone-400">
-                        {isEditMode ? t("editSubtitle") : t("subtitle")}
-                    </p>
-                </div>
+                {/* Show error UI for edit mode */}
+                {error && isEditMode && (
+                    <div className="min-h-[60vh] flex items-center justify-center">
+                        <Card className="bg-stone-800 border-stone-700 max-w-md w-full">
+                            <CardContent className="py-12 text-center">
+                                <Lock className="mx-auto h-12 w-12 text-red-500 mb-4" />
+                                <h2 className="text-2xl font-bold text-stone-100 mb-2">
+                                    {tEdit("errorTitle")}
+                                </h2>
+                                <p className="text-stone-400 mb-6">
+                                    {error}
+                                </p>
+                                <div className="space-x-4">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => router.back()}
+                                    >
+                                        {tEdit("goBack")}
+                                    </Button>
+                                    <Button
+                                        onClick={() =>
+                                            router.push(`/${locale}/my-entries`)
+                                        }
+                                    >
+                                        {tEdit("goToMyEntries")}
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
-                {error && (
+                {/* Show error UI for add mode */}
+                {error && !isEditMode && (
                     <ErrorPage
                         title={t("error")}
                         message={error}
                         onRetry={() => {
-                            if (isEditMode) {
-                                setError(null);
-                                router.back();
-                            } else {
-                                // Retry submission with the same form data
-                                const formData = form.getValues();
-                                onSubmit(formData);
-                            }
+                            // Retry submission with the same form data
+                            const formData = form.getValues();
+                            onSubmit(formData);
                         }}
                         onGoHome={() => router.push(`/${locale}/dashboard`)}
                     />
                 )}
 
+                {/* Show title/description only when not in edit mode error */}
+                {!error && (
+                    <div className="mb-6 md:mb-8">
+                        {isEditMode && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => router.back()}
+                                className="mb-4 -ml-2 text-stone-400 hover:text-stone-100"
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                {t("goBack")}
+                            </Button>
+                        )}
+                        <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-2">
+                            {isEditMode ? t("editTitle") : t("title")}
+                        </h1>
+                        <p className="text-sm md:text-base text-stone-400">
+                            {isEditMode ? t("editSubtitle") : t("subtitle")}
+                        </p>
+                    </div>
+                )}
+
                 {!error && (isLoadingEntry ? (
-                    <LoadingSpinner
-                        message={t("loadingEntry")}
-                        fullScreen={false}
-                        size="lg"
-                    />
+                    <div className="min-h-[40vh] flex items-center justify-center">
+                        <LoadingSpinner
+                            message={t("loadingEntry")}
+                            fullScreen={false}
+                            size="lg"
+                        />
+                    </div>
                 ) : (
                     <Form {...form}>
                         <form
