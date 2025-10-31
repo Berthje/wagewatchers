@@ -727,7 +727,7 @@ function AddEntryContent() {
                             {/* Show remaining sections only when country is selected */}
                             {selectedCountry && formConfig && (
                                 <>
-                                    {formConfig.sections.map((section) => (
+                                    {formConfig.sections.map((section, index) => (
                                         <Card
                                             key={section.title}
                                             className="bg-stone-800 border-stone-700 relative"
@@ -756,7 +756,7 @@ function AddEntryContent() {
                                             </Button>
                                             <CardHeader>
                                                 <CardTitle className="text-stone-100 mb-3">
-                                                    {t(
+                                                    {index + 1}. {t(
                                                         `sections.${getSectionKey(section.title)}.title`
                                                     )}
                                                 </CardTitle>

@@ -184,7 +184,6 @@ export default function StatisticsClient() {
         if (filteredEntries.length === 0) return;
 
         const entries = filteredEntries;
-        // 1. Aggregate sectors data
         const sectorAgg: Record<string, SectorData> = entries.reduce(
             (acc: Record<string, SectorData>, entry: SalaryEntry) => {
                 const sector = entry.sector || "Unknown";
@@ -221,7 +220,6 @@ export default function StatisticsClient() {
                 .slice(0, 10)
         );
 
-        // 2. Aggregate countries data
         const countryAgg: Record<string, CountryData> = entries.reduce(
             (acc: Record<string, CountryData>, entry: SalaryEntry) => {
                 const country = entry.country || "Unknown";
@@ -258,7 +256,6 @@ export default function StatisticsClient() {
                 .slice(0, 8)
         );
 
-        // 3. Aggregate experience data
         const expAgg: Record<number, ExperienceData> = {};
         for (const entry of entries) {
             const exp = entry.workExperience || 0;
@@ -291,7 +288,6 @@ export default function StatisticsClient() {
             Object.values(expAgg).sort((a, b) => a.experience - b.experience)
         );
 
-        // 4. Salary ranges data
         const ranges = [
             { min: 0, max: 30000, label: "<30k" },
             { min: 30000, max: 50000, label: "30-50k" },
@@ -315,7 +311,6 @@ export default function StatisticsClient() {
         }));
         setSalaryRangeData(rangeCount);
 
-        // 5. Age demographics
         const ageGroups = [
             { min: 0, max: 25, label: "<25" },
             { min: 25, max: 30, label: "25-30" },
@@ -332,7 +327,6 @@ export default function StatisticsClient() {
         }));
         setAgeData(ageCount.filter((g) => g.count > 0));
 
-        // 6. Scatter plot data (experience vs salary)
         const scatterPoints = entries
             .filter(
                 (entry) =>
@@ -364,7 +358,6 @@ export default function StatisticsClient() {
             });
         setScatterData(scatterPoints);
 
-        // 7. Year-over-year data
         const yearAgg: Record<number, { salaries: number[]; count: number }> =
             {};
         for (const entry of entries) {
@@ -408,7 +401,6 @@ export default function StatisticsClient() {
             .sort((a, b) => a.year - b.year);
         setYearlyData(yearlyStats);
 
-        // 8. Industry-specific insights
         const industryAgg: Record<
             string,
             { salaries: number[]; experiences: number[] }
@@ -441,7 +433,6 @@ export default function StatisticsClient() {
             }
         }
 
-        // 9. Location-based heatmap data
         const locationAgg: Record<
             string,
             { salaries: number[]; country: string }

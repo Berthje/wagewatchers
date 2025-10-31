@@ -1,9 +1,4 @@
-export interface SubredditConfig {
-    country: string;
-    currency: string;
-    templateSections: string[];
-    fieldMappings: Record<string, RegExp>;
-}
+import { SubredditConfig } from "@/types/config";
 
 export const SUBREDDIT_CONFIGS: Record<string, SubredditConfig> = {
     "BESalary": {
@@ -60,24 +55,12 @@ export const SUBREDDIT_CONFIGS: Record<string, SubredditConfig> = {
     },
 };
 
-export const getConfigForSubreddit = (
-    subreddit: string,
-): SubredditConfig | null => {
-    return SUBREDDIT_CONFIGS[subreddit] || null;
-};
-
 export const getAllCountries = (): string[] => {
     return Array.from(
         new Set(
             Object.values(SUBREDDIT_CONFIGS).map((config) => config.country),
         ),
     );
-};
-
-export const getSubredditsForCountry = (country: string): string[] => {
-    return Object.entries(SUBREDDIT_CONFIGS)
-        .filter(([, config]) => config.country === country)
-        .map(([subreddit]) => subreddit);
 };
 
 export interface FormSection {

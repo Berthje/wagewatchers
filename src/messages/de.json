@@ -130,7 +130,7 @@
     "home": {
         "title": {
             "workLife": {
-                "title": "7. Work-Life-Balance",
+                "title": "Work-Life-Balance",
                 "description": "Work-Life-Balance Bewertung",
                 "teleworkDays": "Heimarbeitstage pro Woche",
                 "dayOffEase": "Leichtigkeit einen Tag freizunehmen",
@@ -138,7 +138,7 @@
                 "reports": "Verantwortlich für Personal"
             },
             "workingHours": {
-                "title": "4. Arbeitszeiten",
+                "title": "Arbeitszeiten",
                 "description": "Ihr Arbeitsplan und Stunden",
                 "officialHours": "Offizielle Stunden pro Woche",
                 "averageHours": "Durchschnittliche Stunden pro Woche",
@@ -151,7 +151,7 @@
                 "vacationDays": "Urlaubstage pro Jahr"
             },
             "commute": {
-                "title": "8. Arbeitsweg",
+                "title": "Arbeitsweg",
                 "description": "Details Ihres täglichen Arbeitswegs",
                 "workCity": "Arbeitsstadt",
                 "commuteDistance": "Pendeldistanz",
@@ -298,7 +298,7 @@
         },
         "sections": {
             "location": {
-                "title": "1. Standortinformationen",
+                "title": "Standortinformationen",
                 "description": "Land Informationen",
                 "country": "Land",
                 "subreddit": "Subreddit",
@@ -306,7 +306,7 @@
                 "selectSubreddit": "Subreddit auswählen"
             },
             "personal": {
-                "title": "2. Persönliche Informationen",
+                "title": "Persönliche Informationen",
                 "description": "Grundlegende persönliche Daten",
                 "age": "Alter",
                 "education": "Bildung",
@@ -315,28 +315,28 @@
                 "dependents": "Unterhaltsberechtigte"
             },
             "employer": {
-                "title": "3. Arbeitgeberprofil",
+                "title": "Arbeitgeberprofil",
                 "description": "Informationen über Ihren Arbeitgeber",
                 "sector": "Branche",
                 "employeeCount": "Mitarbeiterzahl",
                 "multinational": "Multinational"
             },
             "job": {
-                "title": "4. Jobprofil",
+                "title": "Jobprofil",
                 "description": "Details zu Ihrer Rolle und Verantwortlichkeiten",
                 "jobTitle": "Jobtitel",
                 "jobDescription": "Jobbeschreibung",
                 "seniority": "Seniorität"
             },
             "salary": {
-                "title": "7. Gehalt",
+                "title": "Gehalt",
                 "description": "Ihre Vergütungsdetails",
                 "grossSalary": "Bruttogehalt (€/Monat)",
                 "netSalary": "Nettogehalt (€/Monat)",
                 "netCompensation": "Nettovergütung (€/Monat)"
             },
             "benefits": {
-                "title": "9. Vorteile",
+                "title": "Vorteile",
                 "description": "Zusätzliche Vergütung und Vorteile",
                 "thirteenthMonth": "13. Monat",
                 "mealVouchers": "Essensgutscheine (€/Tag)",
@@ -347,7 +347,7 @@
                 "otherBenefitsPlaceholder": "z.B. Firmenwagen, Schulungsbudget, etc."
             },
             "workLife": {
-                "title": "11. Work-Life-Balance",
+                "title": "Work-Life-Balance",
                 "description": "Ihre Work-Life-Balance Erfahrung",
                 "teleworkDays": "Heimarbeitstage pro Woche",
                 "dayOffEase": "Leichtigkeit einen Tag freizunehmen",
@@ -355,7 +355,7 @@
                 "reports": "Berichtet an"
             },
             "workingHours": {
-                "title": "4. Arbeitszeiten",
+                "title": "Arbeitszeiten",
                 "description": "Ihr Arbeitsplan und Stunden",
                 "officialHours": "Offizielle Stunden pro Woche",
                 "averageHours": "Durchschnittliche Stunden pro Woche",
@@ -363,17 +363,17 @@
                 "onCall": "Bereitschaftsdienst"
             },
             "vacation": {
-                "title": "6. Urlaub",
+                "title": "Urlaub",
                 "description": "Urlaubs- und Freizeitinformationen",
                 "vacationDays": "Urlaubstage pro Jahr"
             },
             "mobility": {
-                "title": "8. Mobilität",
+                "title": "Mobilität",
                 "description": "Berufliche Mobilitätsanforderungen",
                 "mobility": "Mobilität"
             },
             "commute": {
-                "title": "10. Arbeitsweg",
+                "title": "Arbeitsweg",
                 "description": "Details Ihres täglichen Arbeitswegs",
                 "workCity": "Arbeitsstadt",
                 "commuteDistance": "Pendelstrecke",

@@ -54,7 +54,7 @@
     "home": {
         "title": {
             "workLife": {
-                "title": "7. Équilibre Vie-Travail",
+                "title": "Équilibre Vie-Travail",
                 "description": "Évaluation de l'équilibre vie-travail",
                 "teleworkDays": "Jours de Télétravail par Semaine",
                 "dayOffEase": "Facilité de Prendre un Jour de Congé",
@@ -62,7 +62,7 @@
                 "reports": "Responsable du Personnel"
             },
             "workingHours": {
-                "title": "4. Heures de Travail",
+                "title": "Heures de Travail",
                 "description": "Votre horaire et heures de travail",
                 "officialHours": "Heures Officielles par Semaine",
                 "averageHours": "Heures Moyennes par Semaine",

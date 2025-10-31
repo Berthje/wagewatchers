@@ -54,7 +54,7 @@
     "home": {
         "title": {
             "workLife": {
-                "title": "7. Work-Life Balance",
+                "title": "Work-Life Balance",
                 "description": "Work-life balance assessment",
                 "teleworkDays": "Telework Days per Week",
                 "dayOffEase": "Ease of Taking a Day Off",
@@ -62,7 +62,7 @@
                 "reports": "Responsible for Personnel"
             },
             "workingHours": {
-                "title": "4. Working Hours",
+                "title": "Working Hours",
                 "description": "Your working schedule and hours",
                 "officialHours": "Official Hours per Week",
                 "averageHours": "Average Hours per Week",
@@ -70,12 +70,12 @@
                 "onCall": "On-Call"
             },
             "vacation": {
-                "title": "5. Vacation",
+                "title": "Vacation",
                 "description": "Vacation and time off information",
                 "vacationDays": "Vacation Days per Year"
             },
             "commute": {
-                "title": "8. Commute",
+                "title": "Commute",
                 "description": "Your daily commute details",
                 "workCity": "Work City",
                 "commuteDistance": "Commute Distance",
@@ -342,7 +342,7 @@
         },
         "sections": {
             "location": {
-                "title": "1. Location Information",
+                "title": "Location Information",
                 "description": "Country information",
                 "country": "Country",
                 "subreddit": "Subreddit",
@@ -350,7 +350,7 @@
                 "selectSubreddit": "Select subreddit"
             },
             "personal": {
-                "title": "2. Personal Information",
+                "title": "Personal Information",
                 "description": "Basic personal details",
                 "age": "Age",
                 "education": "Education",
@@ -359,28 +359,28 @@
                 "dependents": "Dependents"
             },
             "employer": {
-                "title": "3. Employer Profile",
+                "title": "Employer Profile",
                 "description": "Information about your employer",
                 "sector": "Sector",
                 "employeeCount": "Employee Count",
                 "multinational": "Multinational"
             },
             "job": {
-                "title": "4. Job Profile",
+                "title": "Job Profile",
                 "description": "Details about your role and responsibilities",
                 "jobTitle": "Job Title",
                 "jobDescription": "Job Description",
                 "seniority": "Seniority"
             },
             "salary": {
-                "title": "7. Salary",
+                "title": "Salary",
                 "description": "Your compensation details",
                 "grossSalary": "Gross Salary (€/month)",
                 "netSalary": "Net Salary (€/month)",
                 "netCompensation": "Net Compensation (€/month)"
             },
             "benefits": {
-                "title": "9. Benefits",
+                "title": "Benefits",
                 "description": "Additional compensation and perks",
                 "thirteenthMonth": "13th Month",
                 "mealVouchers": "Meal Vouchers (€/day)",
@@ -391,7 +391,7 @@
                 "otherBenefitsPlaceholder": "e.g. Company car, training budget, etc."
             },
             "workLife": {
-                "title": "11. Work-Life Balance",
+                "title": "Work-Life Balance",
                 "description": "Your work-life balance experience",
                 "teleworkDays": "Telework Days per Week",
                 "dayOffEase": "Ease of Taking a Day Off",
@@ -399,7 +399,7 @@
                 "reports": "Reports"
             },
             "workingHours": {
-                "title": "5. Working Hours",
+                "title": "Working Hours",
                 "description": "Your working schedule and hours",
                 "officialHours": "Official Hours per Week",
                 "averageHours": "Average Hours per Week",
@@ -407,17 +407,17 @@
                 "onCall": "On-Call"
             },
             "vacation": {
-                "title": "6. Vacation",
+                "title": "Vacation",
                 "description": "Vacation and time off information",
                 "vacationDays": "Vacation Days per Year"
             },
             "mobility": {
-                "title": "8. Mobility",
+                "title": "Mobility",
                 "description": "Job mobility requirements",
                 "mobility": "Mobility"
             },
             "commute": {
-                "title": "10. Commute",
+                "title": "Commute",
                 "description": "Your daily commute details",
                 "workCity": "Work City",
                 "commuteDistance": "Commute Distance",
@@ -425,7 +425,7 @@
                 "commuteCompensation": "Commute Compensation"
             },
             "notes": {
-                "title": "12. Additional Notes",
+                "title": "Additional Notes",
                 "description": "Optional notes for this entry",
                 "extraNotes": "Additional Notes"
             }

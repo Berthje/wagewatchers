@@ -54,7 +54,7 @@
     "home": {
         "title": {
             "workLife": {
-                "title": "7. Work-Life Balance",
+                "title": "11. Work-Life Balance",
                 "description": "Work-life balance beoordeling",
                 "teleworkDays": "Thuiswerkdagen per Week",
                 "dayOffEase": "Gemak om een Dag Vrij te Nemen",
@@ -298,7 +298,7 @@
         },
         "sections": {
             "location": {
-                "title": "1. Locatie Informatie",
+                "title": "Locatie Informatie",
                 "description": "Land informatie",
                 "country": "Land",
                 "subreddit": "Subreddit",
@@ -306,7 +306,7 @@
                 "selectSubreddit": "Selecteer subreddit"
             },
             "personal": {
-                "title": "2. Persoonlijke Informatie",
+                "title": "Persoonlijke Informatie",
                 "description": "Basis persoonlijke gegevens",
                 "age": "Leeftijd",
                 "education": "Opleiding",
@@ -315,7 +315,7 @@
                 "dependents": "Afhankelijken"
             },
             "employer": {
-                "title": "3. Werkgever Profiel",
+                "title": "Werkgever Profiel",
                 "description": "Informatie over uw werkgever",
                 "sector": "Sector",
                 "employeeCount": "Aantal Werknemers",
@@ -329,7 +329,7 @@
                 "seniority": "Senioriteit"
             },
             "salary": {
-                "title": "7. Salaris",
+                "title": "6 Salaris",
                 "description": "Uw compensatie details",
                 "grossSalary": "Bruto Salaris (€/maand)",
                 "netSalary": "Netto Salaris (€/maand)",
