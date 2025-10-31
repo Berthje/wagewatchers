@@ -1,13 +1,7 @@
 "use client";
 
 import { Input } from "./input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "./select";
+import { CurrencySelector } from "./currency-selector";
 
 interface CurrencyInputProps {
     value: number | string | undefined;
@@ -33,41 +27,15 @@ export function CurrencyInput({
     className = "",
     disabled = false,
 }: Readonly<CurrencyInputProps>) {
-    const selectedCurrency =
-        currencies.find((c) => c.value === currency) || currencies[0];
-
     return (
         <div className="flex gap-2">
             {/* Currency Selector */}
-            <Select
+            <CurrencySelector
                 value={currency}
                 onValueChange={onCurrencyChange}
                 disabled={disabled}
-            >
-                <SelectTrigger
-                    className={`w-fit bg-stone-700 border-stone-600 text-stone-100 ${disabled ? "opacity-50" : ""}`}
-                >
-                    <SelectValue>
-                        <span className="text-lg">
-                            {selectedCurrency.symbol}
-                        </span>
-                    </SelectValue>
-                </SelectTrigger>
-                <SelectContent className="bg-stone-700 border-stone-600">
-                    {currencies.map((curr) => (
-                        <SelectItem
-                            key={curr.value}
-                            value={curr.value}
-                            className="text-stone-100 focus:bg-stone-600"
-                        >
-                            <span className="flex items-center gap-2">
-                                <span className="text-lg">{curr.symbol}</span>
-                                <span>{curr.value}</span>
-                            </span>
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                className="w-fit"
+            />
 
             {/* Number Input */}
             <Input

@@ -335,6 +335,10 @@
                 "label": "Country",
                 "placeholder": "Select country"
             },
+            "currency": {
+                "label": "Currency",
+                "placeholder": "Select currency"
+            },
             "subreddit": {
                 "label": "Subreddit",
                 "placeholder": "Select subreddit"

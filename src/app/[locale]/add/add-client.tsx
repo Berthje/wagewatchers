@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/form";
 import { Combobox } from "@/components/ui/combobox";
 import { SmartCityInput } from "@/components/ui/smart-city-input";
-import { CurrencyInput } from "@/components/ui/currency-input";
+import { CurrencySelector } from "@/components/ui/currency-selector";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
 import { getAllCountries, getFormConfigForCountry } from "@/lib/salary-config";
@@ -339,8 +339,6 @@ function AddEntryContent() {
         );
     };
 
-    const selectedCurrency = form.watch("currency");
-
     const getFieldElement = (config: any, field: any, fieldName?: string) => {
         // Special handling for workCity field with smart city input
         if (fieldName === "workCity") {
@@ -365,14 +363,18 @@ function AddEntryContent() {
         ];
         if (fieldName && moneyFields.includes(fieldName)) {
             return (
-                <CurrencyInput
-                    value={field.value}
-                    onChange={field.onChange}
-                    currency={selectedCurrency || "EUR"}
-                    onCurrencyChange={(currency) =>
-                        form.setValue("currency", currency)
-                    }
+                <Input
+                    type="number"
+                    min="0"
                     placeholder={config.placeholder}
+                    className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
+                    {...field}
+                    value={field.value?.toString() || ""}
+                    onChange={(e) =>
+                        field.onChange(
+                            e.target.value ? Number.parseFloat(e.target.value) : undefined
+                        )
+                    }
                 />
             );
         }
@@ -667,20 +669,69 @@ function AddEntryContent() {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <FormField
-                                        control={form.control}
-                                        name="country"
-                                        render={({ field, fieldState }) => (
-                                            <FormItem>
-                                                <FormLabel className="text-stone-300">
-                                                    {t("fields.country.label")}
-                                                </FormLabel>
-                                                <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    defaultValue={field.value}
-                                                >
+                                    <div className="grid grid-cols-[4fr_1fr] gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="country"
+                                            render={({ field, fieldState }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-stone-300">
+                                                        {t("fields.country.label")}
+                                                    </FormLabel>
+                                                    <Select
+                                                        onValueChange={
+                                                            field.onChange
+                                                        }
+                                                        defaultValue={field.value}
+                                                    >
+                                                        <FormControl>
+                                                            <div
+                                                                className="relative"
+                                                                title={
+                                                                    fieldState.error
+                                                                        ?.message
+                                                                }
+                                                            >
+                                                                <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
+                                                                    <SelectValue
+                                                                        placeholder={t(
+                                                                            "fields.country.placeholder"
+                                                                        )}
+                                                                    />
+                                                                </SelectTrigger>
+                                                            </div>
+                                                        </FormControl>
+                                                        <SelectContent className="bg-stone-700 border-stone-600">
+                                                            {getAllCountries().map(
+                                                                (country) => (
+                                                                    <SelectItem
+                                                                        key={
+                                                                            country
+                                                                        }
+                                                                        className="text-stone-100 focus:bg-stone-600"
+                                                                        value={
+                                                                            country
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            `countries.${country.toLowerCase()}`
+                                                                        )}
+                                                                    </SelectItem>
+                                                                )
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="currency"
+                                            render={({ field, fieldState }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-stone-300">
+                                                        {t("fields.currency.label")}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <div
                                                             className="relative"
@@ -689,38 +740,18 @@ function AddEntryContent() {
                                                                     ?.message
                                                             }
                                                         >
-                                                            <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
-                                                                <SelectValue
-                                                                    placeholder={t(
-                                                                        "fields.country.placeholder"
-                                                                    )}
-                                                                />
-                                                            </SelectTrigger>
+                                                            <CurrencySelector
+                                                                value={field.value}
+                                                                onValueChange={field.onChange}
+                                                                placeholder={t("fields.currency.placeholder")}
+                                                                showFullLabel={true}
+                                                            />
                                                         </div>
                                                     </FormControl>
-                                                    <SelectContent className="bg-stone-700 border-stone-600">
-                                                        {getAllCountries().map(
-                                                            (country) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        country
-                                                                    }
-                                                                    className="text-stone-100 focus:bg-stone-600"
-                                                                    value={
-                                                                        country
-                                                                    }
-                                                                >
-                                                                    {t(
-                                                                        `countries.${country.toLowerCase()}`
-                                                                    )}
-                                                                </SelectItem>
-                                                            )
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormItem>
-                                        )}
-                                    />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
                                 </CardContent>
                             </Card>
 

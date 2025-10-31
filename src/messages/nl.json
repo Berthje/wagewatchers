@@ -291,6 +291,10 @@
                 "label": "Land",
                 "placeholder": "Selecteer land"
             },
+            "currency": {
+                "label": "Valuta",
+                "placeholder": "Selecteer valuta"
+            },
             "subreddit": {
                 "label": "Subreddit",
                 "placeholder": "Selecteer subreddit"

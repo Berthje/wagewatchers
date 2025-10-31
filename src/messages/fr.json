@@ -291,6 +291,10 @@
                 "label": "Pays",
                 "placeholder": "Sélectionner le pays"
             },
+            "currency": {
+                "label": "Devise",
+                "placeholder": "Sélectionner la devise"
+            },
             "subreddit": {
                 "label": "Subreddit",
                 "placeholder": "Sélectionner le subreddit"
