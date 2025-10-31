@@ -41,7 +41,11 @@ import {
     createSalaryEntrySchema,
     SalaryEntryFormData,
 } from "@/lib/validations/salary-entry.schema";
-import { getEntryToken, isEntryEditable } from "@/lib/entry-ownership";
+import {
+    getEntryToken,
+    isEntryEditable,
+    verifyOwnerToken,
+} from "@/lib/entry-ownership";
 
 const getSubmitButtonText = (isSubmitting: boolean, isEditMode: boolean) => {
     if (isSubmitting) {
@@ -128,8 +132,8 @@ function AddEntryContent() {
                     return res.json();
                 })
                 .then((data) => {
-                    // Verify ownership
-                    if (data.ownerToken !== token) {
+                    // Verify ownership using proper token verification
+                    if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
                         setError(tEdit("errors.notOwner"));
                         setIsLoadingEntry(false);
                         return;

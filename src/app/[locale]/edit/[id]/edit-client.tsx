@@ -7,8 +7,13 @@ import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Lock } from "lucide-react";
-import { getEntryToken, isEntryEditable } from "@/lib/entry-ownership";
+import {
+    getEntryToken,
+    isEntryEditable,
+    verifyOwnerToken,
+} from "@/lib/entry-ownership";
 
 export default function EditEntryClient() {
     const params = useParams();
@@ -56,8 +61,8 @@ export default function EditEntryClient() {
 
                 const data: SalaryEntry = await res.json();
 
-                // Verify ownership
-                if (data.ownerToken !== token) {
+                // Verify ownership using proper token verification
+                if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
                     setError(t("errors.notOwner"));
                     setIsLoading(false);
                     return;
@@ -95,7 +100,11 @@ export default function EditEntryClient() {
             <div className="min-h-screen bg-stone-900">
                 <Navbar locale={locale} translations={navTranslations} />
                 <main className="container mx-auto px-4 py-8">
-                    <div className="text-center">{t("loading")}</div>
+                    <LoadingSpinner
+                        message={t("loading")}
+                        fullScreen={false}
+                        size="lg"
+                    />
                 </main>
             </div>
         );
@@ -142,7 +151,11 @@ export default function EditEntryClient() {
         <div className="min-h-screen bg-stone-900">
             <Navbar locale={locale} translations={navTranslations} />
             <main className="container mx-auto px-4 py-8">
-                <div className="text-center">{t("redirecting")}</div>
+                <LoadingSpinner
+                    message={t("redirecting")}
+                    fullScreen={false}
+                    size="lg"
+                />
             </main>
         </div>
     );
