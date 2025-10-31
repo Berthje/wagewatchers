@@ -322,21 +322,14 @@ export function DashboardClient({
 
     // Filter cities based on selected countries
     const cities = useMemo(() => {
-        let entriesToConsider = entries;
-
-        // If countries are selected, only show cities from those countries
-        if (selectedCountries.length > 0) {
-            entriesToConsider = entries.filter((e) =>
-                selectedCountries.includes(e.country || "")
-            );
-        }
-
+        // Always show all cities, regardless of country selection
+        // The filtering will handle the logic of which entries to show
         const uniqueCities = Array.from(
-            new Set(entriesToConsider.map((e) => e.workCity).filter(Boolean))
+            new Set(entries.map((e) => e.workCity).filter(Boolean))
         ).sort((a, b) => (a || "").localeCompare(b || ""));
 
         return uniqueCities;
-    }, [entries, selectedCountries]); // Filter entries
+    }, [entries]); // Only depend on entries, not selectedCountries
     const filteredEntries = useMemo(() => {
         return entries.filter((entry) => {
             // Country filter (multi-select)
@@ -364,10 +357,11 @@ export function DashboardClient({
             }
 
             // Age range filter
-            if (minAge !== null && entry.age !== null && entry.age < minAge) {
+            const entryAge = typeof entry.age === 'string' ? Number.parseInt(entry.age, 10) : entry.age;
+            if (minAge !== null && entryAge !== null && !Number.isNaN(entryAge) && entryAge < minAge) {
                 return false;
             }
-            if (maxAge !== null && entry.age !== null && entry.age > maxAge) {
+            if (maxAge !== null && entryAge !== null && !Number.isNaN(entryAge) && entryAge > maxAge) {
                 return false;
             }
 
