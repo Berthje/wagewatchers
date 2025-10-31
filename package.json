@@ -38,7 +38,6 @@
         "dotenv": "^17.2.3",
         "drizzle-kit": "^0.31.6",
         "drizzle-orm": "^0.44.7",
-        "glin-profanity": "^2.3.8",
         "jsonwebtoken": "^9.0.2",
         "jspdf": "^3.0.3",
         "jspdf-autotable": "^5.0.2",

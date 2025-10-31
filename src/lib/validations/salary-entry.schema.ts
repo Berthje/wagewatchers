@@ -1,10 +1,21 @@
 import { z } from "zod";
-import { validateContent } from "@/lib/content-validation";
 
 /**
  * Salary Entry Form Validation Schema
  * Comprehensive validation for manual salary entry submissions
  */
+
+// Custom URL validation - checks for common URL patterns
+const noUrls = (fieldName: string) => z.string().refine(
+    (value) => {
+        if (!value) return true; // Allow empty strings
+        const urlRegex = /(https?:\/\/|www\.|\.com|\.org|\.net|\.edu|\.gov|\.mil|\.info|\.biz|\.co|\.uk|\.de|\.fr|\.nl|\.be)/i;
+        return !urlRegex.test(value);
+    },
+    {
+        message: `URLs are not allowed in ${fieldName}`,
+    }
+);
 
 export const createSalaryEntrySchema = (t: (key: string) => string) => {
     return z.preprocess(
@@ -47,26 +58,14 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             multinational: z.boolean(),
 
             // Job Profile
-            jobTitle: z
-                .string()
+            jobTitle: noUrls("job title")
                 .min(1, { message: t("validation.jobTitleRequired") })
                 .max(200, { message: t("validation.jobTitleMax") })
-                .refine(
-                    (val) => validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
-            jobDescription: z
-                .string()
+            ,
+            jobDescription: noUrls("job description")
                 .max(5000, { message: t("validation.jobDescriptionMax") })
                 .optional()
-                .refine(
-                    (val) => !val || validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            ,
             seniority: z
                 .number({ message: t("validation.numberExpected") })
                 .int({ message: t("validation.integerExpected") })
@@ -84,23 +83,12 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                 .int({ message: t("validation.integerExpected") })
                 .min(1, { message: t("validation.hoursMin") })
                 .max(80, { message: t("validation.hoursMax") }),
-            shiftDescription: z
-                .string()
+            shiftDescription: noUrls("shift description")
                 .max(1000, { message: t("validation.shiftDescriptionMax") })
                 .optional()
-                .refine(
-                    (val) => !val || validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            ,
             onCall: z.string().optional()
-                .refine(
-                    (val) => !val || validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            ,
 
             // Vacation
             vacationDays: z
@@ -143,63 +131,30 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                     z.string(),
                 ]),
             groupInsurance: z.string().min(1, { message: t("validation.groupInsuranceRequired") }),
-            otherInsurances: z
-                .string()
+            otherInsurances: noUrls("other insurances")
                 .max(2000, { message: t("validation.otherInsurancesMax") })
                 .optional()
-                .refine(
-                    (val) => !val || validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
-            otherBenefits: z
-                .string()
+            ,
+            otherBenefits: noUrls("other benefits")
                 .max(2000, { message: t("validation.otherBenefitsMax") })
                 .optional()
-                .refine(
-                    (val) => !val || validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            ,
 
             // Commute
             workCity: z.string().min(1, { message: t("validation.workCityRequired") }).max(200, { message: t("validation.workCityMax") })
-                .refine(
-                    (val) => validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            ,
             commuteDistance: z
                 .union([
                     z.string().min(1, { message: t("validation.commuteDistanceRequired") }).max(500, { message: t("validation.commuteDistanceMax") })
-                        .refine(
-                            (val) => validateContent(val).isValid,
-                            {
-                                message: t("validation.contentContainsBadWords"),
-                            }
-                        ),
+                    ,
                     z.number().positive({ message: t("validation.commuteDistanceRequired") }),
                 ]),
             commuteMethod: z.string().min(1, { message: t("validation.commuteMethodRequired") })
-                .refine(
-                    (val) => validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
-            commuteCompensation: z
-                .string()
+            ,
+            commuteCompensation: noUrls("commute compensation")
                 .min(1, { message: t("validation.commuteCompensationRequired") })
                 .max(1000, { message: t("validation.commuteCompensationMax") })
-                .refine(
-                    (val) => validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            ,
 
             // Work-Life Balance
             teleworkDays: z
@@ -217,8 +172,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
 
             // Additional
             sourceUrl: z.string().optional(),
-            extraNotes: z
-                .string()
+            extraNotes: noUrls("extra notes")
                 .max(5000, { message: t("validation.extraNotesMax") })
                 .optional(),
         })
