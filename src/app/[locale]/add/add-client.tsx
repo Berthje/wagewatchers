@@ -296,7 +296,7 @@ function AddEntryContent() {
             } else {
                 const errorData = await res.json().catch(() => ({}));
                 console.error("Submission failed:", errorData);
-                
+
                 // Handle rate limit errors with retry timing
                 if (res.status === 429 && errorData.retryAfter) {
                     setRetryAfter(new Date(errorData.retryAfter));
@@ -566,24 +566,26 @@ function AddEntryContent() {
                                 </p>
                                 {retryAfter && (
                                     <p className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded-md border border-amber-800/30 mb-6">
-                                        {t("rateLimitRetry", { time: (() => {
-                                            const now = new Date();
-                                            const diffMs = retryAfter.getTime() - now.getTime();
-                                            if (diffMs <= 0) return "now";
-                                            const diffMins = Math.floor(diffMs / 60000);
-                                            const diffHours = Math.floor(diffMins / 60);
-                                            const remainingMins = diffMins % 60;
-                                            if (diffHours > 0) {
-                                                const hourText = diffHours === 1 ? 'hour' : 'hours';
-                                                const minText = remainingMins === 1 ? 'minute' : 'minutes';
-                                                return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
-                                            } else if (diffMins > 0) {
-                                                const minText = diffMins === 1 ? 'minute' : 'minutes';
-                                                return `${diffMins} ${minText}`;
-                                            } else {
-                                                return "less than a minute";
-                                            }
-                                        })() })}
+                                        {t("rateLimitRetry", {
+                                            time: (() => {
+                                                const now = new Date();
+                                                const diffMs = retryAfter.getTime() - now.getTime();
+                                                if (diffMs <= 0) return "now";
+                                                const diffMins = Math.floor(diffMs / 60000);
+                                                const diffHours = Math.floor(diffMins / 60);
+                                                const remainingMins = diffMins % 60;
+                                                if (diffHours > 0) {
+                                                    const hourText = diffHours === 1 ? 'hour' : 'hours';
+                                                    const minText = remainingMins === 1 ? 'minute' : 'minutes';
+                                                    return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
+                                                } else if (diffMins > 0) {
+                                                    const minText = diffMins === 1 ? 'minute' : 'minutes';
+                                                    return `${diffMins} ${minText}`;
+                                                } else {
+                                                    return "less than a minute";
+                                                }
+                                            })()
+                                        })}
                                     </p>
                                 )}
                                 <div className="space-x-4">
