@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 
 const prisma = new PrismaClient();
 
@@ -9,9 +10,30 @@ export const revalidate = 3600;
 /**
  * GET endpoint to retrieve current exchange rates
  * Used by the frontend to get live rates
+ * Rate limited to 2 requests per day per IP
  */
-export async function GET() {
+export async function GET(request: Request) {
     try {
+        // Rate limiting: 2 requests per day per IP (exchange rates don't change often)
+        const clientIP = getClientIP(request.headers);
+        const rateLimit = checkRateLimit(`${clientIP}:exchange-rates`, 2);
+
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                {
+                    error: "Rate limit exceeded",
+                    message: rateLimit.message,
+                    retryAfter: rateLimit.resetAt.toISOString(),
+                },
+                {
+                    status: 429,
+                    headers: {
+                        "Retry-After": Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 1000).toString(),
+                    },
+                }
+            );
+        }
+
         const rates = await prisma.exchangeRate.findMany({
             select: {
                 currency: true,
@@ -44,7 +66,7 @@ export async function GET() {
 
         // Get the most recent update time
         const lastUpdated = rates.reduce((latest, rate) => {
-            return rate.updatedAt > latest ? rate.updatedAt : latest;
+            return new Date(Math.max(latest.getTime(), rate.updatedAt.getTime()));
         }, rates[0].updatedAt);
 
         return NextResponse.json({

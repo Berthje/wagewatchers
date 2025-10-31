@@ -4,6 +4,7 @@ import {
     generateOwnerToken,
     getEditableUntilDate,
 } from "@/lib/entry-ownership";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 
 const prisma = new PrismaClient();
 
@@ -48,6 +49,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
+        // Rate limiting: 5 submissions per day per IP
+        const clientIP = getClientIP(request.headers);
+        const rateLimit = checkRateLimit(`${clientIP}:entries-create`, 5);
+
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                {
+                    error: "Rate limit exceeded",
+                    message: rateLimit.message,
+                    retryAfter: rateLimit.resetAt.toISOString(),
+                },
+                {
+                    status: 429,
+                    headers: {
+                        "Retry-After": Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 1000).toString(),
+                    },
+                }
+            );
+        }
+
         const body = await request.json();
 
         const bodyTyped: Omit<
