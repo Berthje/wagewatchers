@@ -444,6 +444,8 @@
         "error": "Failed to share salary",
         "errorGeneric": "An error occurred while submitting",
         "errorLoadingEntry": "Error Loading Entry",
+        "rateLimitExceeded": "Rate limit exceeded",
+        "rateLimitRetry": "You can try again in {time}",
         "help": {
             "age": "Your current age in years",
             "education": "Your highest level of education completed",

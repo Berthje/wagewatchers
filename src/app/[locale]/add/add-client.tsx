@@ -65,6 +65,7 @@ function AddEntryContent() {
     const [editEntryId, setEditEntryId] = useState<number | null>(null);
     const [isLoadingEntry, setIsLoadingEntry] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [retryAfter, setRetryAfter] = useState<Date | null>(null);
     const t = useTranslations("add");
     const tNav = useTranslations("nav");
     const tCommon = useTranslations("common");
@@ -199,6 +200,8 @@ function AddEntryContent() {
 
     const onSubmit = async (data: SalaryEntryFormData) => {
         setIsSubmitting(true);
+        setError(null);
+        setRetryAfter(null);
         try {
             // Determine if we're editing or creating
             const url =
@@ -293,7 +296,15 @@ function AddEntryContent() {
             } else {
                 const errorData = await res.json().catch(() => ({}));
                 console.error("Submission failed:", errorData);
-                setError(errorData.details || errorData.error || t("error"));
+                
+                // Handle rate limit errors with retry timing
+                if (res.status === 429 && errorData.retryAfter) {
+                    setRetryAfter(new Date(errorData.retryAfter));
+                    setError(errorData.message || "Rate limit exceeded. Please try again later.");
+                } else {
+                    setRetryAfter(null);
+                    setError(errorData.details || errorData.error || t("error"));
+                }
             }
         } catch (err) {
             console.error("Submission error:", err);
@@ -550,9 +561,31 @@ function AddEntryContent() {
                                 <h2 className="text-2xl font-bold text-stone-100 mb-2">
                                     {tEdit("errorTitle")}
                                 </h2>
-                                <p className="text-stone-400 mb-6">
+                                <p className="text-stone-400 mb-4">
                                     {error}
                                 </p>
+                                {retryAfter && (
+                                    <p className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded-md border border-amber-800/30 mb-6">
+                                        {t("rateLimitRetry", { time: (() => {
+                                            const now = new Date();
+                                            const diffMs = retryAfter.getTime() - now.getTime();
+                                            if (diffMs <= 0) return "now";
+                                            const diffMins = Math.floor(diffMs / 60000);
+                                            const diffHours = Math.floor(diffMins / 60);
+                                            const remainingMins = diffMins % 60;
+                                            if (diffHours > 0) {
+                                                const hourText = diffHours === 1 ? 'hour' : 'hours';
+                                                const minText = remainingMins === 1 ? 'minute' : 'minutes';
+                                                return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
+                                            } else if (diffMins > 0) {
+                                                const minText = diffMins === 1 ? 'minute' : 'minutes';
+                                                return `${diffMins} ${minText}`;
+                                            } else {
+                                                return "less than a minute";
+                                            }
+                                        })() })}
+                                    </p>
+                                )}
                                 <div className="space-x-4">
                                     <Button
                                         variant="outline"
@@ -578,6 +611,7 @@ function AddEntryContent() {
                     <ErrorPage
                         title={t("error")}
                         message={error}
+                        retryAfter={retryAfter}
                         onRetry={() => {
                             // Retry submission with the same form data
                             const formData = form.getValues();

@@ -400,6 +400,8 @@
         "error": "Échec du partage du salaire",
         "errorGeneric": "Une erreur s'est produite lors de la soumission",
         "errorLoadingEntry": "Erreur de Chargement de l'Entrée",
+        "rateLimitExceeded": "Limite de fréquence dépassée",
+        "rateLimitRetry": "Vous pouvez réessayer dans {time}",
         "help": {
             "age": "Votre âge actuel en années",
             "education": "Votre niveau d'études le plus élevé complété",

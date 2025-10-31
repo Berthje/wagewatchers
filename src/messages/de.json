@@ -400,6 +400,8 @@
         "error": "Gehalt teilen fehlgeschlagen",
         "errorGeneric": "Beim Senden ist ein Fehler aufgetreten",
         "errorLoadingEntry": "Fehler beim Laden des Eintrags",
+        "rateLimitExceeded": "Ratenlimit überschritten",
+        "rateLimitRetry": "Sie können es in {time} erneut versuchen",
         "help": {
             "age": "Ihr aktuelles Alter in Jahren",
             "education": "Ihr höchster abgeschlossener Bildungsabschluss",

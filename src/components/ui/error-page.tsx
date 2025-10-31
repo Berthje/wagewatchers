@@ -1,6 +1,8 @@
 import { AlertCircle, Home, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatTimeUntilRetry } from "@/lib/utils/format.utils";
+import { useTranslations } from "next-intl";
 
 interface ErrorPageProps {
     title?: string;
@@ -8,6 +10,7 @@ interface ErrorPageProps {
     onRetry?: () => void;
     onGoHome?: () => void;
     showHomeButton?: boolean;
+    retryAfter?: Date | null;
 }
 
 export function ErrorPage({
@@ -16,7 +19,10 @@ export function ErrorPage({
     onRetry,
     onGoHome,
     showHomeButton = true,
+    retryAfter,
 }: Readonly<ErrorPageProps>) {
+    const t = useTranslations("add");
+
     return (
         <div className="min-h-screen flex items-center justify-center">
             <Card className="w-full max-w-md bg-stone-800 border-stone-700">
@@ -34,6 +40,11 @@ export function ErrorPage({
                     <p className="text-stone-400">
                         {message}
                     </p>
+                    {retryAfter && (
+                        <p className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded-md border border-amber-800/30">
+                            {t("rateLimitRetry", { time: formatTimeUntilRetry(retryAfter) })}
+                        </p>
+                    )}
                     <div className="flex gap-3">
                         {onRetry && (
                             <Button

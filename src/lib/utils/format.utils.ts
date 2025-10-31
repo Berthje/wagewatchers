@@ -59,8 +59,29 @@ export function getCurrencySymbol(currency?: string | null): string {
 }
 
 /**
- * Format date with locale
+ * Format time until retry (e.g., "2 hours 15 minutes")
  */
+export function formatTimeUntilRetry(retryAfter: Date): string {
+    const now = new Date();
+    const diffMs = retryAfter.getTime() - now.getTime();
+    
+    if (diffMs <= 0) return "now";
+    
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const remainingMins = diffMins % 60;
+    
+    if (diffHours > 0) {
+        const hourText = diffHours === 1 ? 'hour' : 'hours';
+        const minText = remainingMins === 1 ? 'minute' : 'minutes';
+        return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
+    } else if (diffMins > 0) {
+        const minText = diffMins === 1 ? 'minute' : 'minutes';
+        return `${diffMins} ${minText}`;
+    } else {
+        return "less than a minute";
+    }
+}
 export function formatDate(
     date: Date | string,
     locale: string = "en-US",

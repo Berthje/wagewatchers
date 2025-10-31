@@ -97,7 +97,7 @@ export function checkRateLimit(
         allowed: false,
         remaining: 0,
         resetAt: entry.resetAt,
-        message: `Rate limit exceeded. Try again after ${entry.resetAt.toLocaleString()}`,
+        message: `Rate limit exceeded.`,
     };
 }
 

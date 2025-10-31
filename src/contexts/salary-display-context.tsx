@@ -51,12 +51,6 @@ export function SalaryDisplayProvider({
                     const data = await response.json();
                     if (data.rates) {
                         EXCHANGE_RATES = data.rates;
-                        console.log(
-                            "Exchange rates loaded:",
-                            data.rates,
-                            "Source:",
-                            data.source
-                        );
                     }
                 }
             } catch (error) {

@@ -400,6 +400,8 @@
         "error": "Salaris delen mislukt",
         "errorGeneric": "Er is een fout opgetreden tijdens het verzenden",
         "errorLoadingEntry": "Fout bij Laden van Invoer",
+        "rateLimitExceeded": "Frequentielimiet overschreden",
+        "rateLimitRetry": "U kunt het opnieuw proberen over {time}",
         "help": {
             "age": "Uw huidige leeftijd in jaren",
             "education": "Uw hoogst voltooide opleidingsniveau",

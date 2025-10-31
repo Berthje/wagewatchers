@@ -79,7 +79,7 @@ export function checkRateLimit(
             remaining: 0,
             resetAt: entry.resetAt,
             message:
-                `Rate limit exceeded. You can submit ${limit} reports per day. Try again after ${entry.resetAt.toLocaleString()}.`,
+                `Rate limit exceeded. You can submit ${limit} calls per day.`,
         };
     }
 
