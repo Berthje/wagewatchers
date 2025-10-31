@@ -572,7 +572,9 @@
             "seniorityVsExperience": "Dienstjaren in huidige functie mogen niet hoger zijn dan totale werkervaring",
             "averageHoursVsOfficial": "Gemiddelde uren mogen niet meer dan 20 uur boven de officiële uren liggen",
             "workCityRequiredForCommute": "Werkstad is verplicht wanneer je woon-werkdetails opgeeft",
-            "netSalaryVsGross": "Nettosalaris mag niet hoger zijn dan brutosalaris"
+            "netSalaryVsGross": "Nettosalaris mag niet hoger zijn dan brutosalaris",
+            "contentContainsBadWords": "Inhoud bevat ongepaste taal",
+            "contentContainsUrls": "URLs zijn niet toegestaan in dit veld"
         },
         "validationSummary": {
             "title": "Corrigeer de volgende fouten:",
@@ -698,7 +700,9 @@
             "titleRequired": "Titel is verplicht",
             "titleTooLong": "Titel te lang",
             "descriptionRequired": "Beschrijving is verplicht",
-            "descriptionTooLong": "Beschrijving te lang"
+            "descriptionTooLong": "Beschrijving te lang",
+            "contentContainsBadWords": "Inhoud bevat ongepaste taal",
+            "contentContainsUrls": "URLs zijn niet toegestaan in feedback"
         },
         "success": "Bedankt voor uw feedback! We hebben uw rapport ontvangen.",
         "error": "Feedback verzenden mislukt. Probeer het opnieuw.",

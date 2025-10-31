@@ -572,7 +572,9 @@
             "seniorityVsExperience": "L'ancienneté dans le poste actuel ne peut pas dépasser l'expérience professionnelle totale",
             "averageHoursVsOfficial": "Les heures moyennes ne devraient pas dépasser les heures officielles de plus de 20 heures",
             "workCityRequiredForCommute": "La ville de travail est requise lorsque vous fournissez des détails de trajet",
-            "netSalaryVsGross": "Le salaire net ne devrait pas dépasser le salaire brut"
+            "netSalaryVsGross": "Le salaire net ne devrait pas dépasser le salaire brut",
+            "contentContainsBadWords": "Le contenu contient un langage inapproprié",
+            "contentContainsUrls": "Les URLs ne sont pas autorisées dans ce champ"
         },
         "validationSummary": {
             "title": "Veuillez corriger les erreurs suivantes :",
@@ -698,7 +700,9 @@
             "titleRequired": "Le titre est requis",
             "titleTooLong": "Titre trop long",
             "descriptionRequired": "La description est requise",
-            "descriptionTooLong": "Description trop longue"
+            "descriptionTooLong": "Description trop longue",
+            "contentContainsBadWords": "Le contenu contient un langage inapproprié",
+            "contentContainsUrls": "Les URLs ne sont pas autorisées dans les commentaires"
         },
         "success": "Merci pour votre commentaire ! Nous avons reçu votre rapport.",
         "error": "Échec de la soumission du commentaire. Veuillez réessayer.",

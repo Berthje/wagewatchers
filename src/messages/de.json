@@ -569,10 +569,12 @@
             "extraNotesMax": "Zusätzliche Notizen dürfen 5000 Zeichen nicht überschreiten",
             "atLeastOneSalary": "Mindestens ein Gehaltsfeld (brutto, netto oder netto Vergütung) ist erforderlich",
             "workExperienceVsAge": "Berufserfahrung darf die Jahre seit Ihrem 18. Geburtstag nicht überschreiten",
-            "seniorityVsExperience": "Betriebszugehörigkeit in der aktuellen Position darf die Gesamterfahrung nicht überschreiten",
+            "seniorityVsExperience": "Dienstalter in der aktuellen Position darf die Gesamterfahrung nicht überschreiten",
             "averageHoursVsOfficial": "Durchschnittliche Stunden sollten die offiziellen Stunden nicht um mehr als 20 Stunden überschreiten",
-            "workCityRequiredForCommute": "Arbeitsstadt ist erforderlich, wenn Pendeldetails angegeben werden",
-            "netSalaryVsGross": "Nettogehalt sollte Bruttogehalt nicht überschreiten"
+            "workCityRequiredForCommute": "Arbeitsstadt ist erforderlich, wenn Sie Pendeldetails angeben",
+            "netSalaryVsGross": "Nettogehalt sollte Bruttogehalt nicht überschreiten",
+            "contentContainsBadWords": "Inhalt enthält unangemessene Sprache",
+            "contentContainsUrls": "URLs sind in diesem Feld nicht erlaubt"
         },
         "validationSummary": {
             "title": "Bitte korrigieren Sie die folgenden Fehler:",
@@ -698,7 +700,9 @@
             "titleRequired": "Titel ist erforderlich",
             "titleTooLong": "Titel zu lang",
             "descriptionRequired": "Beschreibung ist erforderlich",
-            "descriptionTooLong": "Beschreibung zu lang"
+            "descriptionTooLong": "Beschreibung zu lang",
+            "contentContainsBadWords": "Inhalt enthält unangemessene Sprache",
+            "contentContainsUrls": "URLs sind in Feedback nicht erlaubt"
         },
         "success": "Vielen Dank für Ihr Feedback! Wir haben Ihren Bericht erhalten.",
         "error": "Feedback einreichen fehlgeschlagen. Bitte versuchen Sie es erneut.",

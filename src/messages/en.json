@@ -616,7 +616,9 @@
             "seniorityVsExperience": "Seniority in current role cannot exceed total work experience",
             "averageHoursVsOfficial": "Average hours should not exceed official hours by more than 20 hours",
             "workCityRequiredForCommute": "Work city is required when providing commute details",
-            "netSalaryVsGross": "Net salary should not exceed gross salary"
+            "netSalaryVsGross": "Net salary should not exceed gross salary",
+            "contentContainsBadWords": "Content contains inappropriate language",
+            "contentContainsUrls": "URLs are not allowed in this field"
         },
         "validationSummary": {
             "title": "Please fix the following errors:",
@@ -701,7 +703,9 @@
             "titleRequired": "Title is required",
             "titleTooLong": "Title too long",
             "descriptionRequired": "Description is required",
-            "descriptionTooLong": "Description too long"
+            "descriptionTooLong": "Description too long",
+            "contentContainsBadWords": "Content contains inappropriate language",
+            "contentContainsUrls": "URLs are not allowed in feedback"
         },
         "success": "Thank you for your feedback! We've received your report.",
         "error": "Failed to submit feedback. Please try again.",

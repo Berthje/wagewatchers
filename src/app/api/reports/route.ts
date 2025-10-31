@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
+import { validateContent } from "@/lib/content-validation";
 
 const prisma = new PrismaClient();
 
@@ -17,10 +18,20 @@ async function createReportSchema(locale: string = "en") {
         title: z.string().min(1, t("titleRequired")).max(
             200,
             t("titleTooLong"),
+        ).refine(
+            (val) => validateContent(val).isValid,
+            {
+                message: t("contentContainsBadWords"),
+            }
         ),
         description: z.string().min(1, t("descriptionRequired")).max(
             2000,
             t("descriptionTooLong"),
+        ).refine(
+            (val) => validateContent(val).isValid,
+            {
+                message: t("contentContainsBadWords"),
+            }
         ),
         type: z.enum(["BUG", "FEATURE", "IMPROVEMENT"]),
         priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).optional(),
@@ -168,7 +179,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         if (error instanceof z.ZodError) {
             return NextResponse.json(
-                { error: "Validation failed", details: error.issues },
+                { error: "Validation failed. Check the types or you may have used bad words / URLS.", details: error.issues },
                 { status: 400 },
             );
         }

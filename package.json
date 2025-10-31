@@ -38,6 +38,7 @@
         "canvas-confetti": "^1.9.3",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "glin-profanity": "^2.3.8",
         "jsonwebtoken": "^9.0.2",
         "jspdf": "^3.0.3",
         "jspdf-autotable": "^5.0.2",
