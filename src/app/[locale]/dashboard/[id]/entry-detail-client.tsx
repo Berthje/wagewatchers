@@ -129,7 +129,7 @@ export function EntryDetailClient({
                 <Button
                     variant="ghost"
                     className="mb-6 text-stone-300 hover:text-stone-100"
-                    onClick={() => router.back()}
+                    onClick={() => router.push(`/${locale}/dashboard`)}
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t("backToDashboard")}

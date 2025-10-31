@@ -127,7 +127,7 @@ export default function EditEntryClient() {
                             <div className="space-x-4">
                                 <Button
                                     variant="outline"
-                                    onClick={() => router.back()}
+                                    onClick={() => router.push(`/${locale}/dashboard`)}
                                 >
                                     {t("goBack")}
                                 </Button>

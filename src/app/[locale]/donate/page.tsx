@@ -108,7 +108,7 @@ export default function DonatePage() {
                 {/* Back Button */}
                 <Button
                     variant="ghost"
-                    onClick={() => router.back()}
+                    onClick={() => router.push(`/${currentLocale}`)}
                     className="inline-flex items-center gap-2 text-stone-400 hover:text-orange-400 transition-colors mb-6 -ml-4"
                 >
                     <ArrowLeft className="h-4 w-4" />

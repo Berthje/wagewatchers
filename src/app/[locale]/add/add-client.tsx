@@ -591,7 +591,7 @@ function AddEntryContent() {
                                 <div className="space-x-4">
                                     <Button
                                         variant="outline"
-                                        onClick={() => router.back()}
+                                        onClick={() => router.push(`/${locale}/dashboard`)}
                                     >
                                         {tEdit("goBack")}
                                     </Button>
@@ -630,7 +630,7 @@ function AddEntryContent() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => router.back()}
+                                onClick={() => router.push(`/${locale}/dashboard`)}
                                 className="mb-4 -ml-2 text-stone-400 hover:text-stone-100"
                             >
                                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -828,7 +828,7 @@ function AddEntryContent() {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            onClick={() => router.back()}
+                                            onClick={() => router.push(`/${locale}/dashboard`)}
                                         >
                                             Cancel
                                         </Button>
