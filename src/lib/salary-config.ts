@@ -94,7 +94,7 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
     Belgium: {
         sections: [
             {
-                title: "2. Personal Information",
+                title: "Personal Information",
                 description: "Basic personal details",
                 fields: [
                     "age",
@@ -105,17 +105,17 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
                 ],
             },
             {
-                title: "3. Employer Profile",
+                title: "Employer Profile",
                 description: "Information about your employer",
                 fields: ["sector", "employeeCount", "multinational"],
             },
             {
-                title: "4. Job Profile",
+                title: "Job Profile",
                 description: "Details about your job position",
                 fields: ["jobTitle", "seniority", "jobDescription"],
             },
             {
-                title: "5. Working Hours",
+                title: "Working Hours",
                 description: "Your working schedule and hours",
                 fields: [
                     "officialHours",
@@ -125,22 +125,17 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
                 ],
             },
             {
-                title: "6. Vacation",
-                description: "Vacation and time off information",
-                fields: ["vacationDays"],
-            },
-            {
-                title: "7. Salary",
+                title: "Salary",
                 description: "Your compensation details",
                 fields: ["grossSalary", "netSalary", "netCompensation"],
             },
             {
-                title: "8. Mobility",
+                title: "Mobility",
                 description: "Job mobility requirements",
                 fields: ["mobility"],
             },
             {
-                title: "9. Benefits",
+                title: "Benefits",
                 description: "Additional benefits and perks",
                 fields: [
                     "thirteenthMonth",
@@ -152,7 +147,7 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
                 ],
             },
             {
-                title: "10. Commute",
+                title: "Commute",
                 description: "Your daily commute details",
                 fields: [
                     "workCity",
@@ -162,192 +157,25 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
                 ],
             },
             {
-                title: "11. Work-Life Balance",
+                title: "Work-Life Balance",
                 description: "Work-life balance assessment",
                 fields: [
                     "teleworkDays",
+                    "vacationDays",
+                    "reports",
                     "dayOffEase",
                     "stressLevel",
-                    "reports",
                 ],
             },
             {
-                title: "12. Additional Notes",
+                title: "Additional Notes",
                 description: "Optional notes for this entry",
                 fields: ["extraNotes"],
             },
         ],
     },
-    Netherlands: {
-        sections: [
-            {
-                title: "2. Personal Information",
-                description: "Basic personal details",
-                fields: [
-                    "age",
-                    "education",
-                    "workExperience",
-                    "civilStatus",
-                    "dependents",
-                ],
-            },
-            {
-                title: "3. Employer Profile",
-                description: "Information about your employer",
-                fields: ["sector", "employeeCount", "multinational"],
-            },
-            {
-                title: "4. Job Profile",
-                description: "Details about your job position",
-                fields: ["jobTitle", "seniority", "jobDescription"],
-            },
-            {
-                title: "5. Working Hours",
-                description: "Your working schedule and hours",
-                fields: [
-                    "officialHours",
-                    "averageHours",
-                    "shiftDescription",
-                    "onCall",
-                ],
-            },
-            {
-                title: "6. Vacation",
-                description: "Vacation and time off information",
-                fields: ["vacationDays"],
-            },
-            {
-                title: "7. Salary",
-                description: "Your compensation details",
-                fields: ["grossSalary", "netSalary", "netCompensation"],
-            },
-            {
-                title: "8. Mobility",
-                description: "Job mobility requirements",
-                fields: ["mobility"],
-            },
-            {
-                title: "9. Benefits",
-                description: "Additional benefits and perks",
-                fields: [
-                    "thirteenthMonth",
-                    "groupInsurance",
-                    "otherInsurances",
-                    "otherBenefits",
-                ],
-            },
-            {
-                title: "10. Commute",
-                description: "Your daily commute details",
-                fields: [
-                    "workCity",
-                    "commuteDistance",
-                    "commuteMethod",
-                    "commuteCompensation",
-                ],
-            },
-            {
-                title: "11. Work-Life Balance",
-                description: "Work-life balance assessment",
-                fields: [
-                    "teleworkDays",
-                    "dayOffEase",
-                    "stressLevel",
-                    "reports",
-                ],
-            },
-            {
-                title: "12. Additional Notes",
-                description: "Optional notes for this entry",
-                fields: ["extraNotes"],
-            },
-        ],
-    },
-    Spain: {
-        sections: [
-            {
-                title: "2. Personal Information",
-                description: "Basic personal details",
-                fields: [
-                    "age",
-                    "education",
-                    "workExperience",
-                    "civilStatus",
-                    "dependents",
-                ],
-            },
-            {
-                title: "3. Employer Profile",
-                description: "Information about your employer",
-                fields: ["sector", "employeeCount", "multinational"],
-            },
-            {
-                title: "4. Job Profile",
-                description: "Details about your job position",
-                fields: ["jobTitle", "seniority", "jobDescription"],
-            },
-            {
-                title: "5. Working Hours",
-                description: "Your working schedule and hours",
-                fields: [
-                    "officialHours",
-                    "averageHours",
-                    "shiftDescription",
-                    "onCall",
-                ],
-            },
-            {
-                title: "6. Vacation",
-                description: "Vacation and time off information",
-                fields: ["vacationDays"],
-            },
-            {
-                title: "7. Salary",
-                description: "Your compensation details",
-                fields: ["grossSalary", "netSalary", "netCompensation"],
-            },
-            {
-                title: "8. Mobility",
-                description: "Job mobility requirements",
-                fields: ["mobility"],
-            },
-            {
-                title: "9. Benefits",
-                description: "Additional benefits and perks",
-                fields: [
-                    "thirteenthMonth",
-                    "groupInsurance",
-                    "otherInsurances",
-                    "otherBenefits",
-                ],
-            },
-            {
-                title: "10. Commute",
-                description: "Your daily commute details",
-                fields: [
-                    "workCity",
-                    "commuteDistance",
-                    "commuteMethod",
-                    "commuteCompensation",
-                ],
-            },
-            {
-                title: "11. Work-Life Balance",
-                description: "Work-life balance assessment",
-                fields: [
-                    "teleworkDays",
-                    "dayOffEase",
-                    "stressLevel",
-                    "reports",
-                ],
-            },
-            {
-                title: "12. Additional Notes",
-                description: "Optional notes for this entry",
-                fields: ["extraNotes"],
-            },
-        ],
-    },
+
+
 };
 
 export const getFormConfigForCountry = (

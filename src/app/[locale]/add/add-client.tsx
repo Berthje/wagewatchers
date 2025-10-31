@@ -323,17 +323,16 @@ function AddEntryContent() {
 
     const getSectionKey = (title: string): string => {
         const sectionMappings: Record<string, string> = {
-            "2. Personal Information": "personal",
-            "3. Employer Profile": "employer",
-            "4. Job Profile": "job",
-            "5. Working Hours": "workingHours",
-            "6. Vacation": "vacation",
-            "7. Salary": "salary",
-            "8. Mobility": "mobility",
-            "9. Benefits": "benefits",
-            "10. Commute": "commute",
-            "11. Work-Life Balance": "workLife",
-            "12. Additional Notes": "notes",
+            "Personal Information": "personal",
+            "Employer Profile": "employer",
+            "Job Profile": "job",
+            "Working Hours": "workingHours",
+            "Salary": "salary",
+            "Mobility": "mobility",
+            "Benefits": "benefits",
+            "Commute": "commute",
+            "Work-Life Balance": "workLife",
+            "Additional Notes": "notes",
         };
         return (
             sectionMappings[title] || title.toLowerCase().replace(/\s+/g, "")

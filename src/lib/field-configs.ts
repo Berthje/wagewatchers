@@ -222,6 +222,7 @@ export const createFieldConfigs = (
         type: "number",
         placeholder: "e.g. 25",
         helpKey: "help.vacationDays",
+        width: "third"
     },
     grossSalary: {
         labelKey: "sections.salary.grossSalary",
@@ -334,7 +335,7 @@ export const createFieldConfigs = (
         type: "number",
         placeholder: "e.g. 2",
         helpKey: "help.teleworkDays",
-        width: "half",
+        width: "third",
     },
     dayOffEase: {
         labelKey: "sections.workLife.dayOffEase",
@@ -373,7 +374,7 @@ export const createFieldConfigs = (
         type: "number",
         placeholder: "e.g. 5",
         helpKey: "help.reports",
-        width: "half",
+        width: "third",
     },
     extraNotes: {
         labelKey: "sections.notes.extraNotes",
@@ -403,7 +404,6 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
         "averageHours",
         "shiftDescription",
         "onCall",
-        "vacationDays",
         "grossSalary",
         "netSalary",
         "netCompensation",
@@ -419,9 +419,10 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
         "commuteMethod",
         "commuteCompensation",
         "teleworkDays",
+        "vacationDays",
+        "reports",
         "dayOffEase",
         "stressLevel",
-        "reports",
         "extraNotes",
     ],
 };
