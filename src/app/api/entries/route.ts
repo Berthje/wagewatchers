@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, SalaryEntry } from "@prisma/client";
+import { db } from "@/lib/db";
+import { salaryEntries } from "@/lib/db/schema";
+import { eq, inArray, desc } from "drizzle-orm";
 import {
     generateOwnerToken,
     getEditableUntilDate,
 } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
     try {
@@ -22,19 +22,12 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json([]);
             }
 
-            const entries: SalaryEntry[] = await prisma.salaryEntry.findMany({
-                where: {
-                    id: { in: entryIds },
-                },
-                orderBy: { createdAt: "desc" },
-            });
+            const entries = await db.select().from(salaryEntries).where(inArray(salaryEntries.id, entryIds)).orderBy(desc(salaryEntries.createdAt));
             return NextResponse.json(entries);
         }
 
         // Otherwise return all entries (default behavior)
-        const entries: SalaryEntry[] = await prisma.salaryEntry.findMany({
-            orderBy: { createdAt: "desc" },
-        });
+        const entries = await db.select().from(salaryEntries).orderBy(desc(salaryEntries.createdAt));
         return NextResponse.json(entries);
     } catch (error) {
         console.error(error);
@@ -72,33 +65,28 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
 
         const bodyTyped: Omit<
-            SalaryEntry,
+            typeof salaryEntries.$inferInsert,
             "id" | "createdAt" | "ownerToken" | "editableUntil"
         > = body;
 
         // Generate ownership token and editable window
         const editableUntil = getEditableUntilDate();
 
-        const entry = await prisma.salaryEntry.create({
-            data: {
-                ...bodyTyped,
-                ownerToken: "", // Temporary, will update after getting ID
-                editableUntil,
-            },
-        });
+        const entry = await db.insert(salaryEntries).values({
+            ...bodyTyped,
+            ownerToken: "", // Temporary, will update after getting ID
+            editableUntil,
+        }).returning();
 
         // Generate token with the actual entry ID
-        const ownerToken = generateOwnerToken(entry.id);
+        const ownerToken = generateOwnerToken(entry[0].id);
 
         // Update with the proper token
-        const updatedEntry = await prisma.salaryEntry.update({
-            where: { id: entry.id },
-            data: { ownerToken },
-        });
+        const updatedEntry = await db.update(salaryEntries).set({ ownerToken }).where(eq(salaryEntries.id, entry[0].id)).returning();
 
         // Return entry with the owner token (client will store it)
         return NextResponse.json({
-            ...updatedEntry,
+            ...updatedEntry[0],
             ownerToken, // Include token in response for client storage
         });
     } catch (error) {

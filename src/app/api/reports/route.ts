@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
+import { reports } from "@/lib/db/schema";
+import { eq, desc, and } from "drizzle-orm";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
-import { validateContent } from "@/lib/content-validation";
-
-const prisma = new PrismaClient();
 
 // Function to create the report schema with translated messages
 async function createReportSchema(locale: string = "en") {
@@ -18,20 +17,10 @@ async function createReportSchema(locale: string = "en") {
         title: z.string().min(1, t("titleRequired")).max(
             200,
             t("titleTooLong"),
-        ).refine(
-            (val) => validateContent(val).isValid,
-            {
-                message: t("contentContainsBadWords"),
-            }
         ),
         description: z.string().min(1, t("descriptionRequired")).max(
             2000,
             t("descriptionTooLong"),
-        ).refine(
-            (val) => validateContent(val).isValid,
-            {
-                message: t("contentContainsBadWords"),
-            }
         ),
         type: z.enum(["BUG", "FEATURE", "IMPROVEMENT"]),
         priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).optional(),
@@ -63,26 +52,23 @@ export async function GET(request: NextRequest) {
         const trackingId = searchParams.get("trackingId");
         const email = searchParams.get("email");
 
-        const where: any = {};
-
         // Public search by tracking ID or email
         if (trackingId) {
-            where.trackingId = trackingId.toUpperCase();
+            const report = await db.select().from(reports).where(eq(reports.trackingId, trackingId.toUpperCase())).limit(1);
+            return NextResponse.json(report);
         } else if (email) {
-            where.email = email;
+            const reportList = await db.select().from(reports).where(eq(reports.email, email)).orderBy(desc(reports.createdAt));
+            return NextResponse.json(reportList);
         } else {
             // Admin filters
-            if (status) where.status = status;
-            if (type) where.type = type;
-            if (priority) where.priority = priority;
+            const conditions = [];
+            if (status) conditions.push(eq(reports.status, status as any));
+            if (type) conditions.push(eq(reports.type, type as any));
+            if (priority) conditions.push(eq(reports.priority, priority as any));
+
+            const reportList = await db.select().from(reports).where(and(...conditions)).orderBy(desc(reports.createdAt));
+            return NextResponse.json(reportList);
         }
-
-        const reports = await prisma.report.findMany({
-            where,
-            orderBy: { createdAt: "desc" },
-        });
-
-        return NextResponse.json(reports);
     } catch (error) {
         console.error("Error fetching reports:", error);
         return NextResponse.json(
@@ -130,24 +116,22 @@ export async function POST(request: NextRequest) {
 
         // Ensure tracking ID is unique
         while (attempts < maxAttempts) {
-            const existing = await prisma.report.findUnique({
-                where: { trackingId },
-            });
-            if (!existing) break;
+            const existing = await db.select().from(reports).where(eq(reports.trackingId, trackingId)).limit(1);
+            if (!existing[0]) break;
             trackingId = generateTrackingId();
             attempts++;
         }
 
-        const report = await prisma.report.create({
-            data: {
-                title: validatedData.title,
-                description: validatedData.description,
-                type: validatedData.type,
-                priority: validatedData.priority || "MEDIUM",
-                trackingId,
-                email: validatedData.email,
-            },
-        });
+        const report = await db.insert(reports).values({
+            title: validatedData.title,
+            description: validatedData.description,
+            type: validatedData.type,
+            priority: validatedData.priority || "MEDIUM",
+            trackingId,
+            email: validatedData.email,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }).returning();
 
         // If email was provided, send confirmation email
         if (validatedData.email) {
@@ -157,7 +141,7 @@ export async function POST(request: NextRequest) {
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ report }),
+                        body: JSON.stringify({ report: report[0] }),
                     },
                 );
             } catch (emailError) {
@@ -168,7 +152,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json(
             {
-                ...report,
+                ...report[0],
                 rateLimit: {
                     remaining: rateLimitResult.remaining,
                     resetAt: rateLimitResult.resetAt.toISOString(),
@@ -206,11 +190,9 @@ export async function PATCH(request: NextRequest) {
         }
 
         // Get the current report to check if status is changing to DONE
-        const currentReport = await prisma.report.findUnique({
-            where: { id: Number.parseInt(id) },
-        });
+        const currentReport = await db.select().from(reports).where(eq(reports.id, Number.parseInt(id))).limit(1);
 
-        if (!currentReport) {
+        if (!currentReport[0]) {
             return NextResponse.json(
                 { error: "Report not found" },
                 { status: 404 },
@@ -221,14 +203,11 @@ export async function PATCH(request: NextRequest) {
         if (status) updateData.status = status;
         if (priority) updateData.priority = priority;
 
-        const report = await prisma.report.update({
-            where: { id: Number.parseInt(id) },
-            data: updateData,
-        });
+        const report = await db.update(reports).set(updateData).where(eq(reports.id, Number.parseInt(id))).returning();
 
         // If status was changed to DONE and report has an email, send update email
         if (
-            status === "DONE" && currentReport.status !== "DONE" && report.email
+            status === "DONE" && currentReport[0].status !== "DONE" && report[0].email
         ) {
             try {
                 await fetch(
@@ -237,7 +216,7 @@ export async function PATCH(request: NextRequest) {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            report,
+                            report: report[0],
                             emailType: "status_update",
                         }),
                     },
@@ -251,7 +230,7 @@ export async function PATCH(request: NextRequest) {
             }
         }
 
-        return NextResponse.json(report);
+        return NextResponse.json(report[0]);
     } catch (error) {
         console.error("Error updating report:", error);
         return NextResponse.json(
@@ -274,9 +253,7 @@ export async function DELETE(request: NextRequest) {
             );
         }
 
-        await prisma.report.delete({
-            where: { id: Number.parseInt(id) },
-        });
+        await db.delete(reports).where(eq(reports.id, Number.parseInt(id)));
 
         return NextResponse.json({ success: true });
     } catch (error) {

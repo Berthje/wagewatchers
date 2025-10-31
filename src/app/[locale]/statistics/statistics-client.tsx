@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { SalaryEntry } from "@prisma/client";
+import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";

@@ -1,20 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-// Type definition for Comment (matches Prisma schema)
-interface Comment {
-    id: number;
-    externalId: string | null;
-    body: string;
-    author: string | null;
-    score: number | null;
-    createdAt: Date;
-    depth: number;
-    parentId: number | null;
-    salaryEntryId: number;
-}
+import { db } from "@/lib/db";
+import { comments } from "@/lib/db/schema";
+import { eq, asc } from "drizzle-orm";
+import type { Comment } from "@/lib/db/schema";
 
 interface CommentWithReplies extends Comment {
     replies: CommentWithReplies[];
@@ -36,29 +24,22 @@ export async function GET(
         }
 
         // Fetch all comments for this entry
-        const comments = await prisma.comment.findMany({
-            where: {
-                salaryEntryId: entryId,
-            },
-            orderBy: {
-                createdAt: "asc",
-            },
-        });
+        const commentList = await db.select().from(comments).where(eq(comments.salaryEntryId, entryId)).orderBy(asc(comments.createdAt));
 
         // Build threaded structure
         const commentMap = new Map<number, CommentWithReplies>();
         const topLevelComments: CommentWithReplies[] = [];
 
         // First pass: create map of all comments
-        comments.forEach((comment) => {
+        for (const comment of commentList) {
             commentMap.set(comment.id, {
                 ...comment,
                 replies: [],
             });
-        });
+        }
 
         // Second pass: build tree structure
-        comments.forEach((comment) => {
+        for (const comment of commentList) {
             const commentWithReplies = commentMap.get(comment.id);
             if (commentWithReplies) {
                 if (comment.parentId === null) {
@@ -70,11 +51,11 @@ export async function GET(
                     }
                 }
             }
-        });
+        }
 
         return NextResponse.json({
             comments: topLevelComments,
-            totalCount: comments.length,
+            totalCount: commentList.length,
         });
     } catch (error) {
         console.error("Error fetching comments:", error);

@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { SalaryEntry } from "@prisma/client";
+import type { SalaryEntry } from "@/lib/db/schema";
 
 interface SectorData {
     sector: string;

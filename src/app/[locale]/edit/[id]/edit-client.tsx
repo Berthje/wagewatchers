@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { SalaryEntry } from "@prisma/client";
+import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
@@ -127,7 +127,7 @@ export default function EditEntryClient() {
                             <div className="space-x-4">
                                 <Button
                                     variant="outline"
-                                    onClick={() => router.push(`/${locale}/dashboard`)}
+                                    onClick={() => router.push(`/${locale}/my-entries`)}
                                 >
                                     {t("goBack")}
                                 </Button>

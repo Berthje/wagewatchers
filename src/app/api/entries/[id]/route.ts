@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
+import { salaryEntries } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
-
-const prisma = new PrismaClient();
 
 export async function GET(
     request: NextRequest,
@@ -19,18 +19,16 @@ export async function GET(
             );
         }
 
-        const entry = await prisma.salaryEntry.findUnique({
-            where: { id },
-        });
+        const entry = await db.select().from(salaryEntries).where(eq(salaryEntries.id, id)).limit(1);
 
-        if (!entry) {
+        if (!entry[0]) {
             return NextResponse.json(
                 { error: "Entry not found" },
                 { status: 404 },
             );
         }
 
-        return NextResponse.json(entry);
+        return NextResponse.json(entry[0]);
     } catch (error) {
         console.error(error);
         return NextResponse.json(
@@ -77,12 +75,13 @@ export async function PUT(
         const body = await request.json();
         const { ownerToken, ...updateData } = body;
 
-        // Verify the entry exists
-        const existingEntry = await prisma.salaryEntry.findUnique({
-            where: { id },
-        });
+        console.log("Received updateData:", updateData);
+        console.log("Types:", Object.keys(updateData).map(key => `${key}: ${typeof updateData[key]}`));
 
-        if (!existingEntry) {
+        // Verify the entry exists
+        const existingEntry = await db.select().from(salaryEntries).where(eq(salaryEntries.id, id)).limit(1);
+
+        if (!existingEntry[0]) {
             return NextResponse.json(
                 { error: "Entry not found" },
                 { status: 404 },
@@ -90,7 +89,7 @@ export async function PUT(
         }
 
         // Verify ownership
-        if (!ownerToken || !verifyOwnerToken(ownerToken, id, existingEntry.ownerToken, existingEntry.editableUntil)) {
+        if (!ownerToken || !verifyOwnerToken(ownerToken, id, existingEntry[0].ownerToken, existingEntry[0].editableUntil)) {
             return NextResponse.json(
                 { error: "Unauthorized: Invalid or missing owner token" },
                 { status: 403 },
@@ -98,7 +97,7 @@ export async function PUT(
         }
 
         // Check if entry is still editable
-        if (!isEntryEditable(existingEntry.editableUntil)) {
+        if (!isEntryEditable(existingEntry[0].editableUntil)) {
             return NextResponse.json(
                 {
                     error:
@@ -115,12 +114,11 @@ export async function PUT(
         delete updateData.createdAt;
 
         // Update the entry
-        const updatedEntry = await prisma.salaryEntry.update({
-            where: { id },
-            data: updateData,
-        });
+        console.log("Final updateData before query:", updateData);
+        const updatedEntry = await db.update(salaryEntries).set(updateData).where(eq(salaryEntries.id, id)).returning();
+        console.log("Updated entry result:", updatedEntry[0]);
 
-        return NextResponse.json(updatedEntry);
+        return NextResponse.json(updatedEntry[0]);
     } catch (error) {
         console.error("Failed to update entry:", error);
 
@@ -155,11 +153,9 @@ export async function DELETE(
         const { ownerToken } = body;
 
         // Verify the entry exists
-        const existingEntry = await prisma.salaryEntry.findUnique({
-            where: { id },
-        });
+        const existingEntry = await db.select().from(salaryEntries).where(eq(salaryEntries.id, id)).limit(1);
 
-        if (!existingEntry) {
+        if (!existingEntry[0]) {
             return NextResponse.json(
                 { error: "Entry not found" },
                 { status: 404 },
@@ -167,7 +163,7 @@ export async function DELETE(
         }
 
         // Verify ownership
-        if (!ownerToken || existingEntry.ownerToken !== ownerToken) {
+        if (!ownerToken || existingEntry[0].ownerToken !== ownerToken) {
             return NextResponse.json(
                 { error: "Unauthorized: Invalid or missing owner token" },
                 { status: 403 },
@@ -175,7 +171,7 @@ export async function DELETE(
         }
 
         // Check if entry is still editable (allow deletion within edit window)
-        if (!isEntryEditable(existingEntry.editableUntil)) {
+        if (!isEntryEditable(existingEntry[0].editableUntil)) {
             return NextResponse.json(
                 {
                     error:
@@ -186,9 +182,7 @@ export async function DELETE(
         }
 
         // Delete the entry
-        await prisma.salaryEntry.delete({
-            where: { id },
-        });
+        await db.delete(salaryEntries).where(eq(salaryEntries.id, id));
 
         return NextResponse.json({ success: true, message: "Entry deleted" });
     } catch (error) {

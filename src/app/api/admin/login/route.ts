@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
+import { admins } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,11 +19,9 @@ export async function POST(request: NextRequest) {
         const trimmedEmail = email.trim();
 
         // Find admin by email
-        const admin = await prisma.admin.findUnique({
-            where: { email: trimmedEmail },
-        });
+        const admin = await db.select().from(admins).where(eq(admins.email, trimmedEmail)).limit(1);
 
-        if (!admin) {
+        if (!admin[0]) {
             return NextResponse.json(
                 { error: "Invalid email or password" },
                 { status: 401 },
@@ -31,7 +29,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Verify password
-        const isValidPassword = await bcrypt.compare(password, admin.password);
+        const isValidPassword = await bcrypt.compare(password, admin[0].password);
 
         if (!isValidPassword) {
             return NextResponse.json(
@@ -42,7 +40,7 @@ export async function POST(request: NextRequest) {
 
         // Create JWT token
         const token = jwt.sign(
-            { adminId: admin.id, email: admin.email },
+            { adminId: admin[0].id, email: admin[0].email },
             process.env.JWT_SECRET || "fallback-secret-key",
             { expiresIn: "24h" },
         );
@@ -50,7 +48,7 @@ export async function POST(request: NextRequest) {
         // Create response with token
         const response = NextResponse.json({
             message: "Login successful",
-            admin: { id: admin.id, email: admin.email },
+            admin: { id: admin[0].id, email: admin[0].email },
         });
 
         // Set HTTP-only cookie with the token
@@ -68,7 +66,5 @@ export async function POST(request: NextRequest) {
             { error: "Internal server error" },
             { status: 500 },
         );
-    } finally {
-        await prisma.$disconnect();
     }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { SalaryEntry } from "@prisma/client";
+import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";

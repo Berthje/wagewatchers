@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
+import { salaryEntries } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { EntryDetailClient } from "./entry-detail-client";
 import { Metadata } from "next";
-
-const prisma = new PrismaClient();
 
 export async function generateMetadata({
     params,
@@ -12,22 +12,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
     const { locale, id } = await params;
 
-    const entry = await prisma.salaryEntry.findUnique({
-        where: { id: Number.parseInt(id) },
-    });
+    const entry = await db.select().from(salaryEntries).where(eq(salaryEntries.id, Number.parseInt(id))).limit(1);
 
-    if (!entry) {
+    if (!entry[0]) {
         return {
             title: "Entry Not Found",
         };
     }
 
     // Create SEO-friendly title and description
-    const jobTitle = entry.jobTitle || "Position";
-    const sector = entry.sector || "";
-    const country = entry.country || "";
-    const city = entry.workCity || "";
-    const salary = entry.grossSalary || entry.netSalary;
+    const jobTitle = entry[0].jobTitle || "Position";
+    const sector = entry[0].sector || "";
+    const country = entry[0].country || "";
+    const city = entry[0].workCity || "";
+    const salary = entry[0].grossSalary || entry[0].netSalary;
 
     const location = [city, country].filter(Boolean).join(", ");
     const sectorText = sector ? ` in ${sector}` : "";
@@ -38,8 +36,8 @@ export async function generateMetadata({
         jobTitle,
         sector && `in ${sector}`,
         location && `located in ${location}`,
-        salary && `earning ${salary} ${entry.currency || "EUR"}`,
-        entry.workExperience && `with ${entry.workExperience} years experience`,
+        salary && `earning ${salary} ${entry[0].currency || "EUR"}`,
+        entry[0].workExperience && `with ${entry[0].workExperience} years experience`,
     ].filter(Boolean);
 
     const description = `Salary data for ${descriptionParts.join(
@@ -83,13 +81,11 @@ export default async function EntryDetailPage({
 }>) {
     const { locale, id } = await params;
 
-    const entry = await prisma.salaryEntry.findUnique({
-        where: { id: Number.parseInt(id) },
-    });
+    const entry = await db.select().from(salaryEntries).where(eq(salaryEntries.id, Number.parseInt(id))).limit(1);
 
-    if (!entry) {
+    if (!entry[0]) {
         notFound();
     }
 
-    return <EntryDetailClient entry={entry} locale={locale} />;
+    return <EntryDetailClient entry={entry[0]} locale={locale} />;
 }

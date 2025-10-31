@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
+import { salaryEntries } from "@/lib/db/schema";
+import { count } from "drizzle-orm";
 import { DashboardClient } from "./dashboard-client";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { Suspense } from "react";
-
-const prisma = new PrismaClient();
 
 export const dynamic = "force-dynamic";
 
@@ -16,10 +16,10 @@ export async function generateMetadata({
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: "dashboard" });
 
-    const entryCount = await prisma.salaryEntry.count();
+    const entryCount = await db.select({ count: count() }).from(salaryEntries);
 
     const title = t("title");
-    const description = t("subtitle", { count: entryCount });
+    const description = t("subtitle", { count: entryCount[0].count });
 
     return {
         title,

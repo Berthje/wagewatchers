@@ -220,13 +220,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             extraNotes: z
                 .string()
                 .max(5000, { message: t("validation.extraNotesMax") })
-                .optional()
-                .refine(
-                    (val) => !val || validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+                .optional(),
         })
             .refine(
                 (data) => {

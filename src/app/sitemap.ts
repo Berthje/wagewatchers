@@ -1,20 +1,17 @@
 import { MetadataRoute } from "next";
 import { locales } from "../i18n";
-import { PrismaClient } from "@prisma/client";
+import { db } from "../lib/db";
+import { salaryEntries } from "../lib/db/schema";
+import { desc } from "drizzle-orm";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = "https://wagewatchers.com";
-    const prisma = new PrismaClient();
 
     // Generate sitemap entries for all locales and main pages
     const sitemapEntries: MetadataRoute.Sitemap = [];
 
     // Get recent entries for sitemap (limit to avoid huge sitemaps)
-    const recentEntries = await prisma.salaryEntry.findMany({
-        select: { id: true, createdAt: true },
-        orderBy: { createdAt: "desc" },
-        take: 1000, // Limit to 1000 most recent entries
-    });
+    const recentEntries = await db.select({ id: salaryEntries.id, createdAt: salaryEntries.createdAt }).from(salaryEntries).orderBy(desc(salaryEntries.createdAt)).limit(1000);
 
     // Add entries for each locale
     for (const locale of locales) {

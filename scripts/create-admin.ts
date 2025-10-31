@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { db } from "../src/lib/db";
+import { admins } from "../src/lib/db/schema";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
-import * as readline from "readline";
-
-const prisma = new PrismaClient();
+import * as readline from "node:readline";
 
 async function createAdmin() {
     const rl = readline.createInterface({
@@ -28,11 +28,9 @@ async function createAdmin() {
         }
 
         // Check if admin already exists
-        const existingAdmin = await prisma.admin.findUnique({
-            where: { email },
-        });
+        const existingAdmin = await db.select().from(admins).where(eq(admins.email, email)).limit(1);
 
-        if (existingAdmin) {
+        if (existingAdmin[0]) {
             console.log("Admin user already exists with this email");
             process.exit(1);
         }
@@ -41,22 +39,21 @@ async function createAdmin() {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create the admin user
-        const admin = await prisma.admin.create({
-            data: {
-                email,
-                password: hashedPassword,
-            },
-        });
+        const admin = await db.insert(admins).values({
+            email,
+            password: hashedPassword,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }).returning();
 
         console.log(`Admin user created successfully!`);
-        console.log(`Email: ${admin.email}`);
-        console.log(`Created at: ${admin.createdAt}`);
+        console.log(`Email: ${admin[0].email}`);
+        console.log(`Created at: ${admin[0].createdAt}`);
     } catch (error) {
         console.error("Error creating admin user:", error);
         process.exit(1);
     } finally {
         rl.close();
-        await prisma.$disconnect();
     }
 }
 

@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { db } from "@/lib/db";
+import { exchangeRates } from "@/lib/db/schema";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 /**
  * Cron job to fetch and update exchange rates daily
- * Protected by CRON_SECRET environment variable
  * 
  * FreeCurrency API documentation: https://freecurrencyapi.com/docs/
  */
@@ -74,13 +72,12 @@ export async function GET(request: Request) {
         // Update rates in database
         const updatePromises = Object.entries(rates).map(
             async ([currency, rate]) => {
-                await prisma.exchangeRate.upsert({
-                    where: { currency },
-                    update: { rate: rate as number },
-                    create: {
-                        currency,
-                        rate: rate as number,
-                    },
+                await db.insert(exchangeRates).values({
+                    currency,
+                    rate: rate as number,
+                }).onConflictDoUpdate({
+                    target: exchangeRates.currency,
+                    set: { rate: rate as number, updatedAt: new Date() },
                 });
             }
         );
