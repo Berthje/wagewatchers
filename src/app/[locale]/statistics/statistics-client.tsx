@@ -91,6 +91,8 @@ export default function StatisticsClient() {
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
     const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
+    const [minAge, setMinAge] = useState<number | null>(null);
+    const [maxAge, setMaxAge] = useState<number | null>(null);
     const [sectorData, setSectorData] = useState<SectorData[]>([]);
     const [countryData, setCountryData] = useState<CountryData[]>([]);
     const [experienceData, setExperienceData] = useState<ExperienceData[]>([]);
@@ -146,7 +148,7 @@ export default function StatisticsClient() {
         }));
     }, [allEntries]);
 
-    // Filter entries based on selected countries and sectors
+    // Filter entries based on selected countries, sectors, and age
     const filteredEntries = useMemo(() => {
         let filtered = allEntries;
 
@@ -162,8 +164,20 @@ export default function StatisticsClient() {
             );
         }
 
+        // Age range filter
+        if (minAge !== null) {
+            filtered = filtered.filter((entry) =>
+                entry.age !== null && entry.age >= minAge
+            );
+        }
+        if (maxAge !== null) {
+            filtered = filtered.filter((entry) =>
+                entry.age !== null && entry.age <= maxAge
+            );
+        }
+
         return filtered;
-    }, [allEntries, selectedCountries, selectedSectors]);
+    }, [allEntries, selectedCountries, selectedSectors, minAge, maxAge]);
 
     // Process data whenever filtered entries change
     useEffect(() => {
@@ -528,9 +542,15 @@ export default function StatisticsClient() {
                                 selectedSectors={selectedSectors}
                                 onSectorsChange={setSelectedSectors}
                                 availableSectors={sectorOptions}
+                                minAge={minAge}
+                                maxAge={maxAge}
+                                onMinAgeChange={setMinAge}
+                                onMaxAgeChange={setMaxAge}
                                 activeFilterCount={
                                     selectedCountries.length +
-                                    selectedSectors.length
+                                    selectedSectors.length +
+                                    (minAge !== null ? 1 : 0) +
+                                    (maxAge !== null ? 1 : 0)
                                 }
                             />
                             <Button
