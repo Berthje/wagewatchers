@@ -18,6 +18,10 @@ export async function generateMetadata({
     return {
         title: t("meta.title"),
         description: t("meta.description"),
+        robots: {
+            index: false,
+            follow: false,
+        },
         alternates: {
             canonical: `https://wagewatchers.com/${locale}/edit/${id}`,
             languages: {

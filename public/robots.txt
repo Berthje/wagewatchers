@@ -7,6 +7,12 @@ Disallow: /admin/
 # Block access to API routes
 Disallow: /api/
 
+# Block access to edit pages (contain sensitive user data)
+Disallow: /edit/
+
+# Block access to my-entries pages (contain sensitive user data)
+Disallow: /my-entries/
+
 # Allow crawling of all localized routes
 Allow: /en/
 Allow: /nl/

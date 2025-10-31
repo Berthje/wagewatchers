@@ -24,6 +24,10 @@ export async function generateMetadata({
             "anonymous ownership",
             "salary transparency",
         ],
+        robots: {
+            index: false,
+            follow: false,
+        },
         openGraph: {
             title,
             description,
