@@ -45,16 +45,11 @@ export function CurrencyInput({
                 disabled={disabled}
             >
                 <SelectTrigger
-                    className={`w-[100px] bg-stone-700 border-stone-600 text-stone-100 ${disabled ? "opacity-50" : ""}`}
+                    className={`w-fit bg-stone-700 border-stone-600 text-stone-100 ${disabled ? "opacity-50" : ""}`}
                 >
                     <SelectValue>
-                        <span className="flex items-center gap-1">
-                            <span className="text-lg">
-                                {selectedCurrency.symbol}
-                            </span>
-                            <span className="text-sm">
-                                {selectedCurrency.value}
-                            </span>
+                        <span className="text-lg">
+                            {selectedCurrency.symbol}
                         </span>
                     </SelectValue>
                 </SelectTrigger>
@@ -67,7 +62,7 @@ export function CurrencyInput({
                         >
                             <span className="flex items-center gap-2">
                                 <span className="text-lg">{curr.symbol}</span>
-                                <span>{curr.label}</span>
+                                <span>{curr.value}</span>
                             </span>
                         </SelectItem>
                     ))}
