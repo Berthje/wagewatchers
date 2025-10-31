@@ -5,6 +5,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 
 // Cache rates for 1 hour to avoid frequent DB queries
 export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 /**
  * GET endpoint to retrieve current exchange rates

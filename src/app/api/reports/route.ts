@@ -6,6 +6,8 @@ import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 
+export const dynamic = 'force-dynamic';
+
 // Function to create the report schema with translated messages
 async function createReportSchema(locale: string = "en") {
     const t = await getTranslations({
