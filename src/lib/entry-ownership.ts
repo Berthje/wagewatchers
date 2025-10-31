@@ -5,16 +5,26 @@
  * Users can manage their own entries without traditional authentication.
  */
 
-import { randomBytes } from "node:crypto";
+import jwt from "jsonwebtoken";
 
 const STORAGE_KEY = "wagewatchers_entry_tokens";
 const EDIT_WINDOW_DAYS = 1; // Users can edit entries for 1 day
 
+// JWT secret from env
+const JWT_SECRET = process.env.JWT_SECRET;
+
 /**
- * Generate a secure random token for entry ownership
+ * Generate a secure JWT token for entry ownership
  */
-export function generateOwnerToken(): string {
-    return randomBytes(32).toString("base64url");
+export function generateOwnerToken(entryId: number): string {
+    if (!JWT_SECRET) {
+        throw new Error("JWT_SECRET environment variable is required");
+    }
+    const payload = {
+        entryId,
+        editableUntil: getEditableUntilDate().toISOString(),
+    };
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: `${EDIT_WINDOW_DAYS}d` });
 }
 
 /**
@@ -116,5 +126,24 @@ export function clearAllEntryTokens(): void {
         localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
         console.error("Failed to clear entry tokens:", error);
+    }
+}
+
+/**
+ * Verify an owner token (JWT or legacy plain token)
+ */
+export function verifyOwnerToken(token: string, entryId: number, storedToken: string | null, editableUntil: Date | null): boolean {
+    if (!JWT_SECRET) {
+        // If no JWT_SECRET, fall back to legacy comparison
+        return !!storedToken && token === storedToken && isEntryEditable(editableUntil);
+    }
+    try {
+        // Try to verify as JWT
+        const decoded = jwt.verify(token, JWT_SECRET) as { entryId: number; editableUntil: string };
+        // Check if entryId matches and still editable
+        return decoded.entryId === entryId && isEntryEditable(new Date(decoded.editableUntil));
+    } catch {
+        // If JWT verification fails, fall back to legacy plain token comparison
+        return !!storedToken && token === storedToken && isEntryEditable(editableUntil);
     }
 }

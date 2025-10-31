@@ -228,13 +228,13 @@ function MyEntriesContent() {
     const getEditStatus = (entry: SalaryEntry) => {
         const editable = isEntryEditable(entry.editableUntil);
         if (editable) {
-            const daysLeft = Math.ceil(
+            const hoursLeft = Math.ceil(
                 (new Date(entry.editableUntil!).getTime() - Date.now()) /
-                (1000 * 60 * 60 * 24)
+                (1000 * 60 * 60)
             );
-            return { editable: true, daysLeft };
+            return { editable: true, hoursLeft };
         }
-        return { editable: false, daysLeft: 0 };
+        return { editable: false, hoursLeft: 0 };
     };
 
     return (
@@ -401,7 +401,7 @@ function MyEntriesContent() {
                                                                 {t(
                                                                     "table.editableFor",
                                                                     {
-                                                                        days: editStatus.daysLeft,
+                                                                        hours: editStatus.hoursLeft,
                                                                     }
                                                                 )}
                                                             </Badge>

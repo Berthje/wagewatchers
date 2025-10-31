@@ -910,7 +910,7 @@
             "editStatus": "Edit Status",
             "actions": "Actions",
             "noTitle": "No title provided",
-            "editableFor": "{days}d left",
+            "editableFor": "{hours}h left",
             "readonly": "Read-only"
         },
         "deleteConfirm": "Are you sure you want to delete this entry? This action cannot be undone.",

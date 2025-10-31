@@ -56,20 +56,28 @@ export async function POST(request: NextRequest) {
         > = body;
 
         // Generate ownership token and editable window
-        const ownerToken = generateOwnerToken();
         const editableUntil = getEditableUntilDate();
 
         const entry = await prisma.salaryEntry.create({
             data: {
                 ...bodyTyped,
-                ownerToken,
+                ownerToken: "", // Temporary, will update after getting ID
                 editableUntil,
             },
         });
 
+        // Generate token with the actual entry ID
+        const ownerToken = generateOwnerToken(entry.id);
+
+        // Update with the proper token
+        const updatedEntry = await prisma.salaryEntry.update({
+            where: { id: entry.id },
+            data: { ownerToken },
+        });
+
         // Return entry with the owner token (client will store it)
         return NextResponse.json({
-            ...entry,
+            ...updatedEntry,
             ownerToken, // Include token in response for client storage
         });
     } catch (error) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { isEntryEditable } from "@/lib/entry-ownership";
+import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
 
 const prisma = new PrismaClient();
 
@@ -69,7 +69,7 @@ export async function PUT(
         }
 
         // Verify ownership
-        if (!ownerToken || existingEntry.ownerToken !== ownerToken) {
+        if (!ownerToken || !verifyOwnerToken(ownerToken, id, existingEntry.ownerToken, existingEntry.editableUntil)) {
             return NextResponse.json(
                 { error: "Unauthorized: Invalid or missing owner token" },
                 { status: 403 },

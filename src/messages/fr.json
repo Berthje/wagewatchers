@@ -907,7 +907,7 @@
             "editStatus": "Statut d'Édition",
             "actions": "Actions",
             "noTitle": "Aucun titre fourni",
-            "editableFor": "{days}j restant",
+            "editableFor": "{hours}h restantes",
             "readonly": "Lecture seule"
         },
         "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette entrée ? Cette action ne peut pas être annulée.",

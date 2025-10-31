@@ -907,7 +907,7 @@
             "editStatus": "Bewerkingsstatus",
             "actions": "Acties",
             "noTitle": "Geen titel opgegeven",
-            "editableFor": "{days}d over",
+            "editableFor": "{hours}u over",
             "readonly": "Alleen-lezen"
         },
         "deleteConfirm": "Weet u zeker dat u deze invoer wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
