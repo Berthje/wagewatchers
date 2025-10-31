@@ -76,6 +76,14 @@ export function DashboardClient({
         const param = searchParams.get("cities");
         return param ? param.split(",") : [];
     });
+    const [minAge, setMinAge] = useState<number | null>(() => {
+        const param = searchParams.get("minAge");
+        return param ? Number.parseInt(param, 10) : null;
+    });
+    const [maxAge, setMaxAge] = useState<number | null>(() => {
+        const param = searchParams.get("maxAge");
+        return param ? Number.parseInt(param, 10) : null;
+    });
     const [searchQuery, setSearchQuery] = useState<string>(() => {
         return searchParams.get("search") || "";
     });
@@ -135,6 +143,8 @@ export function DashboardClient({
             countries?: string[];
             sectors?: string[];
             cities?: string[];
+            minAge?: number | null;
+            maxAge?: number | null;
             search?: string;
             page?: number;
             perPage?: number;
@@ -176,6 +186,16 @@ export function DashboardClient({
             updateArrayParam("countries", updates.countries);
             updateArrayParam("sectors", updates.sectors);
             updateArrayParam("cities", updates.cities);
+            if (updates.minAge !== undefined) {
+                updates.minAge !== null
+                    ? params.set("minAge", updates.minAge.toString())
+                    : params.delete("minAge");
+            }
+            if (updates.maxAge !== undefined) {
+                updates.maxAge !== null
+                    ? params.set("maxAge", updates.maxAge.toString())
+                    : params.delete("maxAge");
+            }
             updateStringParam("search", updates.search);
             updateNumericParam("page", updates.page, 1);
             updateNumericParam("perPage", updates.perPage, 10);
@@ -199,6 +219,8 @@ export function DashboardClient({
             countries: selectedCountries,
             sectors: selectedSectors,
             cities: selectedCities,
+            minAge: minAge,
+            maxAge: maxAge,
             search: debouncedSearch,
             page: currentPage,
             perPage: rowsPerPage,
@@ -209,6 +231,8 @@ export function DashboardClient({
         selectedCountries,
         selectedSectors,
         selectedCities,
+        minAge,
+        maxAge,
         debouncedSearch,
         currentPage,
         rowsPerPage,
@@ -250,7 +274,7 @@ export function DashboardClient({
     // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCountries, selectedSectors, selectedCities, debouncedSearch]);
+    }, [selectedCountries, selectedSectors, selectedCities, minAge, maxAge, debouncedSearch]);
 
     // Mobile detection
     useEffect(() => {
@@ -339,6 +363,14 @@ export function DashboardClient({
                 return false;
             }
 
+            // Age range filter
+            if (minAge !== null && entry.age !== null && entry.age < minAge) {
+                return false;
+            }
+            if (maxAge !== null && entry.age !== null && entry.age > maxAge) {
+                return false;
+            }
+
             // Comma-separated search filter
             if (debouncedSearch) {
                 const searchTerms = debouncedSearch
@@ -374,6 +406,8 @@ export function DashboardClient({
         selectedCountries,
         selectedSectors,
         selectedCities,
+        minAge,
+        maxAge,
         debouncedSearch,
     ]);
 
@@ -767,10 +801,16 @@ export function DashboardClient({
                                         value: sector as string,
                                         label: sector as string,
                                     }))}
+                                    minAge={minAge}
+                                    maxAge={maxAge}
+                                    onMinAgeChange={setMinAge}
+                                    onMaxAgeChange={setMaxAge}
                                     activeFilterCount={
                                         selectedCountries.length +
                                         selectedCities.length +
-                                        selectedSectors.length
+                                        selectedSectors.length +
+                                        (minAge !== null ? 1 : 0) +
+                                        (maxAge !== null ? 1 : 0)
                                     }
                                 />
 
@@ -814,6 +854,18 @@ export function DashboardClient({
                                         value: sector,
                                         category: "sector" as const,
                                     })),
+                                    ...(minAge !== null ? [{
+                                        id: `min-age-${minAge}`,
+                                        label: `${t("filters.minAge")}: ${minAge}`,
+                                        value: minAge.toString(),
+                                        category: "age" as const,
+                                    }] : []),
+                                    ...(maxAge !== null ? [{
+                                        id: `max-age-${maxAge}`,
+                                        label: `${t("filters.maxAge")}: ${maxAge}`,
+                                        value: maxAge.toString(),
+                                        category: "age" as const,
+                                    }] : []),
                                 ]}
                                 onRemoveFilter={(value, category) => {
                                     if (category === "country") {
@@ -834,12 +886,20 @@ export function DashboardClient({
                                                 (s) => s !== value
                                             )
                                         );
+                                    } else if (category === "age") {
+                                        if (minAge !== null && minAge.toString() === value) {
+                                            setMinAge(null);
+                                        } else if (maxAge !== null && maxAge.toString() === value) {
+                                            setMaxAge(null);
+                                        }
                                     }
                                 }}
                                 onClearAll={() => {
                                     setSelectedCountries([]);
                                     setSelectedCities([]);
                                     setSelectedSectors([]);
+                                    setMinAge(null);
+                                    setMaxAge(null);
                                 }}
                             />
                         </div>

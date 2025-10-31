@@ -8,7 +8,7 @@ interface ActiveFilter {
     id: string;
     label: string;
     value: string;
-    category: "country" | "city" | "sector";
+    category: "country" | "city" | "sector" | "age";
 }
 
 interface ActiveFiltersDisplayProps {

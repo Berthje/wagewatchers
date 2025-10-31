@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -30,6 +31,12 @@ interface FiltersModalProps {
     onSectorsChange: (sectors: string[]) => void;
     availableSectors: { value: string; label: string }[];
 
+    // Age filters
+    minAge?: number | null;
+    maxAge?: number | null;
+    onMinAgeChange?: (age: number | null) => void;
+    onMaxAgeChange?: (age: number | null) => void;
+
     // Active filter count
     activeFilterCount: number;
 }
@@ -44,6 +51,10 @@ export function FiltersModal({
     selectedSectors,
     onSectorsChange,
     availableSectors,
+    minAge,
+    maxAge,
+    onMinAgeChange,
+    onMaxAgeChange,
     activeFilterCount,
 }: Readonly<FiltersModalProps>) {
     const t = useTranslations("dashboard");
@@ -53,6 +64,8 @@ export function FiltersModal({
         onCountriesChange([]);
         onCitiesChange([]);
         onSectorsChange([]);
+        onMinAgeChange?.(null);
+        onMaxAgeChange?.(null);
     };
 
     const hasActiveFilters = activeFilterCount > 0;
@@ -158,6 +171,56 @@ export function FiltersModal({
                             />
                         </div>
                     </div>
+
+                    {/* Age Section */}
+                    {minAge !== undefined && maxAge !== undefined && onMinAgeChange && onMaxAgeChange && (
+                        <>
+                            {/* Divider */}
+                            <div className="border-t border-stone-700" />
+
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                                    {t("filters.ageSection")}
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4 pl-0">
+                                    <div className="space-y-2">
+                                        <label className="text-sm block font-medium text-stone-300">
+                                            {t("filters.minAge")}
+                                        </label>
+                                        <Input
+                                            type="number"
+                                            placeholder={t("filters.minAgePlaceholder")}
+                                            value={minAge ?? ""}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                onMinAgeChange(value ? Number.parseInt(value, 10) : null);
+                                            }}
+                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
+                                            min="18"
+                                            max="100"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm block font-medium text-stone-300">
+                                            {t("filters.maxAge")}
+                                        </label>
+                                        <Input
+                                            type="number"
+                                            placeholder={t("filters.maxAgePlaceholder")}
+                                            value={maxAge ?? ""}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                onMaxAgeChange(value ? Number.parseInt(value, 10) : null);
+                                            }}
+                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
+                                            min="18"
+                                            max="100"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Footer with summary */}
