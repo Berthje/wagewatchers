@@ -104,10 +104,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                         <Button
                             size="sm"
                             className={cn(
-                                "px-4 transition-colors",
-                                isActiveRoute(`/${locale}/add`)
-                                    ? "bg-stone-200 text-stone-900 ring-2 ring-stone-100 ring-offset-2"
-                                    : "bg-stone-100 hover:bg-stone-200 text-stone-900"
+                                "px-4 transition-colors bg-stone-100 hover:bg-stone-200 text-stone-900"
                             )}
                             aria-current={
                                 isActiveRoute(`/${locale}/add`)
