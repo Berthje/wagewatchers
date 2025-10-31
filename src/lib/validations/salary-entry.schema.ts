@@ -42,13 +42,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                 .max(20, { message: t("validation.dependentsMax") }),
 
             // Employer Profile
-            sector: z.string().min(1, { message: t("validation.sectorRequired") })
-                .refine(
-                    (val) => validateContent(val).isValid,
-                    {
-                        message: t("validation.contentContainsBadWords"),
-                    }
-                ),
+            sector: z.string().min(1, { message: t("validation.sectorRequired") }),
             employeeCount: z.string().min(1, { message: t("validation.employeeCountRequired") }),
             multinational: z.boolean(),
 
