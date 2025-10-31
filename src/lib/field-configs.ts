@@ -77,6 +77,8 @@ export const createFieldConfigs = (
         type: "select",
         options: [
             { value: "single", label: t("formOptions.civilStatus.single") },
+            { value: "cohabiting", label: t("formOptions.civilStatus.cohabiting") },
+            { value: "civilUnion", label: t("formOptions.civilStatus.civilUnion") },
             { value: "married", label: t("formOptions.civilStatus.married") },
             { value: "divorced", label: t("formOptions.civilStatus.divorced") },
             { value: "widowed", label: t("formOptions.civilStatus.widowed") },

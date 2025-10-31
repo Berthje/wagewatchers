@@ -463,6 +463,8 @@
             },
             "civilStatus": {
                 "single": "Célibataire",
+                "cohabiting": "Concubinage/Pacsé",
+                "civilUnion": "Union Civile/Pacte Civil de Solidarité",
                 "married": "Marié(e)",
                 "divorced": "Divorcé(e)",
                 "widowed": "Veuf/Veuve"

@@ -463,6 +463,8 @@
             },
             "civilStatus": {
                 "single": "Ledig",
+                "cohabiting": "Eheähnliche Gemeinschaft",
+                "civilUnion": "Eingetragene Lebenspartnerschaft",
                 "married": "Verheiratet",
                 "divorced": "Geschieden",
                 "widowed": "Verwitwet"

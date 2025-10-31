@@ -507,6 +507,8 @@
             },
             "civilStatus": {
                 "single": "Single",
+                "cohabiting": "Cohabiting/Partnered",
+                "civilUnion": "Civil Union/Registered Partnership",
                 "married": "Married",
                 "divorced": "Divorced",
                 "widowed": "Widowed"

@@ -463,6 +463,8 @@
             },
             "civilStatus": {
                 "single": "Ongehuwd",
+                "cohabiting": "Samenwonend/Gehuisvest",
+                "civilUnion": "Geregistreerd Partnerschap",
                 "married": "Gehuwd",
                 "divorced": "Gescheiden",
                 "widowed": "Weduwe/Weduwnaar"
