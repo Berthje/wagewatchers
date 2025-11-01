@@ -121,6 +121,7 @@ export default function RootLayout({
                         __html: JSON.stringify(jsonLd),
                     }}
                 />
+                <script defer src="https://cloud.umami.is/script.js" data-website-id="0f4e9670-9f8f-4a5a-a487-c663d552662c"></script>
             </head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
