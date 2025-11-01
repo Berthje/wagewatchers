@@ -569,7 +569,6 @@ function InfoItem({
     label: string;
     value: string | number | null | undefined;
 }>) {
-    console.log(label, value)
     const displayValue = value == null || value === "" ? "/" : value;
     return (
         <div>

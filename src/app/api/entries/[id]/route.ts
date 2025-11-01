@@ -77,9 +77,6 @@ export async function PUT(
         const body = await request.json();
         const { ownerToken, ...updateData } = body;
 
-        console.log("Received updateData:", updateData);
-        console.log("Types:", Object.keys(updateData).map(key => `${key}: ${typeof updateData[key]}`));
-
         // Verify the entry exists
         const existingEntry = await db.select().from(salaryEntries).where(eq(salaryEntries.id, id)).limit(1);
 
@@ -116,9 +113,7 @@ export async function PUT(
         delete updateData.createdAt;
 
         // Update the entry
-        console.log("Final updateData before query:", updateData);
         const updatedEntry = await db.update(salaryEntries).set(updateData).where(eq(salaryEntries.id, id)).returning();
-        console.log("Updated entry result:", updatedEntry[0]);
 
         return NextResponse.json(updatedEntry[0]);
     } catch (error) {
