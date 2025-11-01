@@ -335,16 +335,16 @@
             "salary": {
                 "title": "6 Salaris",
                 "description": "Uw compensatie details",
-                "grossSalary": "Bruto Salaris (€/maand)",
-                "netSalary": "Netto Salaris (€/maand)",
-                "netCompensation": "Netto Compensatie (€/maand)"
+                "grossSalary": "Bruto Salaris ({symbol}/maand)",
+                "netSalary": "Netto Salaris ({symbol}/maand)",
+                "netCompensation": "Netto Compensatie ({symbol}/maand)"
             },
             "benefits": {
                 "title": "9. Voordelen",
                 "description": "Extra compensatie en voordelen",
                 "thirteenthMonth": "13de Maand",
-                "mealVouchers": "Maaltijdcheques (€/dag)",
-                "ecoCheques": "Ecocheques (€/jaar)",
+                "mealVouchers": "Maaltijdcheques ({symbol}/dag)",
+                "ecoCheques": "Ecocheques ({symbol}/jaar)",
                 "groupInsurance": "Groepsverzekering",
                 "otherInsurances": "Andere Verzekeringen",
                 "otherBenefits": "Andere Voordelen",

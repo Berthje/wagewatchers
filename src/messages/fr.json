@@ -335,16 +335,16 @@
             "salary": {
                 "title": "7. Salaire",
                 "description": "Détails de votre compensation",
-                "grossSalary": "Salaire Brut (€/mois)",
-                "netSalary": "Salaire Net (€/mois)",
-                "netCompensation": "Compensation Nette (€/mois)"
+                "grossSalary": "Salaire Brut ({symbol}/mois)",
+                "netSalary": "Salaire Net ({symbol}/mois)",
+                "netCompensation": "Compensation Nette ({symbol}/mois)"
             },
             "benefits": {
                 "title": "9. Avantages",
                 "description": "Compensation et avantages supplémentaires",
                 "thirteenthMonth": "13ème Mois",
-                "mealVouchers": "Chèques Repas (€/jour)",
-                "ecoCheques": "Éco-Chèques (€/an)",
+                "mealVouchers": "Chèques Repas ({symbol}/jour)",
+                "ecoCheques": "Éco-Chèques ({symbol}/an)",
                 "groupInsurance": "Assurance Collective",
                 "otherInsurances": "Autres Assurances",
                 "otherBenefits": "Autres Avantages",

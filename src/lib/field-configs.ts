@@ -227,14 +227,14 @@ export const createFieldConfigs = (
     grossSalary: {
         labelKey: "sections.salary.grossSalary",
         type: "number",
-        placeholder: "e.g. 5000 €/month",
+        placeholder: "e.g. 5000",
         helpKey: "help.grossSalary",
         width: "third",
     },
     netSalary: {
         labelKey: "sections.salary.netSalary",
         type: "number",
-        placeholder: "e.g. 3500 €/month",
+        placeholder: "e.g. 3500",
         helpKey: "help.netSalary",
         width: "third",
     },

@@ -379,16 +379,16 @@
             "salary": {
                 "title": "Salary",
                 "description": "Your compensation details",
-                "grossSalary": "Gross Salary (€/month)",
-                "netSalary": "Net Salary (€/month)",
-                "netCompensation": "Net Compensation (€/month)"
+                "grossSalary": "Gross Salary ({symbol}/month)",
+                "netSalary": "Net Salary ({symbol}/month)",
+                "netCompensation": "Net Compensation ({symbol}/month)"
             },
             "benefits": {
                 "title": "Benefits",
                 "description": "Additional compensation and perks",
                 "thirteenthMonth": "13th Month",
-                "mealVouchers": "Meal Vouchers (€/day)",
-                "ecoCheques": "Eco-Cheques (€/year)",
+                "mealVouchers": "Meal Vouchers",
+                "ecoCheques": "Eco-Cheques",
                 "groupInsurance": "Group Insurance",
                 "otherInsurances": "Other Insurances",
                 "otherBenefits": "Other Benefits",

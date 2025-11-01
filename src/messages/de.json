@@ -335,16 +335,16 @@
             "salary": {
                 "title": "Gehalt",
                 "description": "Ihre Vergütungsdetails",
-                "grossSalary": "Bruttogehalt (€/Monat)",
-                "netSalary": "Nettogehalt (€/Monat)",
-                "netCompensation": "Nettovergütung (€/Monat)"
+                "grossSalary": "Bruttogehalt ({symbol}/Monat)",
+                "netSalary": "Nettogehalt ({symbol}/Monat)",
+                "netCompensation": "Nettovergütung ({symbol}/Monat)"
             },
             "benefits": {
                 "title": "Vorteile",
                 "description": "Zusätzliche Vergütung und Vorteile",
                 "thirteenthMonth": "13. Monat",
-                "mealVouchers": "Essensgutscheine (€/Tag)",
-                "ecoCheques": "Öko-Gutscheine (€/Jahr)",
+                "mealVouchers": "Essensgutscheine ({symbol}/Tag)",
+                "ecoCheques": "Öko-Gutscheine ({symbol}/Jahr)",
                 "groupInsurance": "Gruppenversicherung",
                 "otherInsurances": "Andere Versicherungen",
                 "otherBenefits": "Andere Vorteile",

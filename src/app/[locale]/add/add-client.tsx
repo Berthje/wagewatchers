@@ -78,14 +78,38 @@ function AddEntryContent() {
         // Dynamically generate help content based on the section's fields
         return {
             title: t(`sections.${sectionKey}.title`),
-            fields: sectionFields.map((fieldName) => ({
-                name: t(fieldConfigs[fieldName]?.labelKey || fieldName),
-                description: t(
-                    fieldConfigs[fieldName]?.helpKey || `help.${fieldName}`
-                ),
-                example: fieldConfigs[fieldName]?.placeholder || "",
-            })),
+            fields: sectionFields.map((fieldName) => {
+                const moneyFields = [
+                    "grossSalary",
+                    "netSalary",
+                    "netCompensation",
+                    "mealVouchers",
+                    "ecoCheques",
+                ];
+
+                const labelKey = fieldConfigs[fieldName]?.labelKey || fieldName;
+                const name = moneyFields.includes(fieldName)
+                    ? t(labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
+                    : t(labelKey);
+
+                return {
+                    name,
+                    description: t(
+                        fieldConfigs[fieldName]?.helpKey || `help.${fieldName}`
+                    ),
+                    example: fieldConfigs[fieldName]?.placeholder || "",
+                };
+            }),
         };
+    };
+
+    // Helper function to get currency symbol
+    const getCurrencySymbol = (currency: string) => {
+        const currencies = [
+            { value: "EUR", symbol: "€" },
+            { value: "USD", symbol: "$" },
+        ];
+        return currencies.find((c) => c.value === currency)?.symbol || "€";
     };
 
     // Create the validation schema with translations
@@ -100,6 +124,7 @@ function AddEntryContent() {
     });
 
     const selectedCountry = form.watch("country");
+    const selectedCurrency = form.watch("currency");
     const formConfig = selectedCountry
         ? getFormConfigForCountry(selectedCountry)
         : null;
@@ -514,7 +539,21 @@ function AddEntryContent() {
                 render={({ field, fieldState }) => (
                     <FormItem className={widthClass}>
                         <FormLabel className="text-stone-300">
-                            {t(config.labelKey)}
+                            {(() => {
+                                const moneyFields = [
+                                    "grossSalary",
+                                    "netSalary",
+                                    "netCompensation",
+                                    "mealVouchers",
+                                    "ecoCheques",
+                                ];
+
+                                if (moneyFields.includes(fieldName)) {
+                                    return t(config.labelKey, { symbol: getCurrencySymbol(selectedCurrency) });
+                                }
+
+                                return t(config.labelKey);
+                            })()}
                             {config.optional && (
                                 <span className="text-stone-400 text-xs font-normal ml-2">
                                     ({tCommon("optional")})
