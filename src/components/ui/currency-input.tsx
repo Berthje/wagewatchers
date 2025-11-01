@@ -13,11 +13,6 @@ interface CurrencyInputProps {
     disabled?: boolean;
 }
 
-const currencies = [
-    { value: "EUR", label: "€", symbol: "€" },
-    { value: "USD", label: "$", symbol: "$" },
-];
-
 export function CurrencyInput({
     value,
     onChange,
