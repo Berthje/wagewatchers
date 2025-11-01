@@ -249,7 +249,7 @@ export function EntryDetailClient({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InfoItem
                                 label={t("age")}
-                                value={entry.age ? `${entry.age} ${t("years")}` : undefined}
+                                value={entry.age !== null && entry.age !== undefined ? `${entry.age} ${t("years")}` : undefined}
                             />
                             <InfoItem
                                 label={t("education")}
@@ -344,7 +344,7 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("officialHours")}
                                 value={
-                                    entry.officialHours
+                                    entry.officialHours !== null && entry.officialHours !== undefined
                                         ? `${entry.officialHours} ${t("hoursPerWeek")}`
                                         : undefined
                                 }
@@ -352,7 +352,7 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("averageHours")}
                                 value={
-                                    entry.averageHours
+                                    entry.averageHours !== null && entry.averageHours !== undefined
                                         ? `${entry.averageHours} ${t("hoursPerWeek")}`
                                         : undefined
                                 }
@@ -360,7 +360,7 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("vacationDays")}
                                 value={
-                                    entry.vacationDays
+                                    entry.vacationDays !== null && entry.vacationDays !== undefined
                                         ? `${entry.vacationDays} ${t("days")}`
                                         : undefined
                                 }
@@ -368,7 +368,7 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("teleworkDays")}
                                 value={
-                                    entry.teleworkDays !== null
+                                    entry.teleworkDays !== null && entry.teleworkDays !== undefined
                                         ? `${entry.teleworkDays} ${t("daysPerWeek")}`
                                         : undefined
                                 }
@@ -411,7 +411,7 @@ export function EntryDetailClient({
                                 <InfoItem
                                     label={t("mealVouchers", { symbol })}
                                     value={
-                                        entry.mealVouchers
+                                        entry.mealVouchers !== null && entry.mealVouchers !== undefined
                                             ? formatSalaryWithPreferences(
                                                 entry.mealVouchers,
                                                 entry.currency,
@@ -429,7 +429,7 @@ export function EntryDetailClient({
                                 <InfoItem
                                     label={t("ecoCheques", { symbol })}
                                     value={
-                                        entry.ecoCheques
+                                        entry.ecoCheques !== null && entry.ecoCheques !== undefined
                                             ? formatSalaryWithPreferences(
                                                 entry.ecoCheques,
                                                 entry.currency,
@@ -485,7 +485,7 @@ export function EntryDetailClient({
                             />
                             <InfoItem
                                 label={t("commuteDistance")}
-                                value={entry.commuteDistance ? `${entry.commuteDistance} km` : undefined}
+                                value={entry.commuteDistance !== null && entry.commuteDistance !== undefined ? `${entry.commuteDistance} km` : undefined}
                             />
                             <InfoItem
                                 label={t("commuteMethod")}
@@ -569,12 +569,14 @@ function InfoItem({
     label: string;
     value: string | number | null | undefined;
 }>) {
+    console.log(label, value)
+    const displayValue = value == null || value === "" ? "/" : value;
     return (
         <div>
             <p className="text-sm font-medium text-stone-400 mb-1">
                 {label}
             </p>
-            <p className="text-stone-100">{value ?? "/"}</p>
+            <p className="text-stone-100">{displayValue}</p>
         </div>
     );
 }

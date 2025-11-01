@@ -147,7 +147,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                 .union([
                     z.string().min(1, { message: t("validation.commuteDistanceRequired") }).max(500, { message: t("validation.commuteDistanceMax") })
                     ,
-                    z.number().positive({ message: t("validation.commuteDistanceRequired") }),
+                    z.number().min(0, { message: t("validation.commuteDistanceRequired") }),
                 ]),
             commuteMethod: z.string().min(1, { message: t("validation.commuteMethodRequired") })
             ,
