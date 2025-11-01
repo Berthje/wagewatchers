@@ -381,11 +381,17 @@ export default function DonatePage() {
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg
-                                                className="h-7 w-7 text-orange-400"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
+                                                className="h-10 w-10 text-orange-400"
+                                                viewBox="0 0 64 64"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                height="64"
+                                                width="64"
+                                                version="1.1"
                                             >
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.25 8.5h-1.5v1.5h1.5v1.5h-1.5v1.5h-1.5v-1.5h-1.5v-1.5h1.5v-1.5h-1.5v-1.5h1.5v-1.5h1.5v1.5h1.5v1.5zm-3.25-3.25h1.5v1.5h-1.5v-1.5zm0 6.5h1.5v1.5h-1.5v-1.5z" />
+                                                <g transform="translate(0.00630876,-0.00301984)">
+                                                    <path fill="#f7931a" d="m63.033,39.744c-4.274,17.143-21.637,27.576-38.782,23.301-17.138-4.274-27.571-21.638-23.295-38.78,4.272-17.145,21.635-27.579,38.775-23.305,17.144,4.274,27.576,21.64,23.302,38.784z" />
+                                                    <path fill="#FFF" d="m46.103,27.444c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4,5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439,5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934,3.75s2.605,0.597,2.55,0.634c1.422,0.355,1.679,1.296,1.636,2.042l-1.638,6.571c0.098,0.025,0.225,0.061,0.365,0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296,9.205c-0.174,0.432-0.615,1.08-1.609,0.834,0.035,0.051-2.552-0.637-2.552-0.637l-1.743,4.019,4.569,1.139c0.85,0.213,1.683,0.436,2.503,0.646l-1.453,5.834,3.507,0.875,1.439-5.772c0.958,0.26,1.888,0.5,2.798,0.726l-1.434,5.745,3.511,0.875,1.453-5.823c5.987,1.133,10.489,0.676,12.384-4.739,1.527-4.36-0.076-6.875-3.226-8.515,2.294-0.529,4.022-2.038,4.483-5.155zm-8.022,11.249c-1.085,4.36-8.426,2.003-10.806,1.412l1.928-7.729c2.38,0.594,10.012,1.77,8.878,6.317zm1.086-11.312c-0.99,3.966-7.1,1.951-9.082,1.457l1.748-7.01c1.982,0.494,8.365,1.416,7.334,5.553z" />
+                                                </g>
                                             </svg>
                                         </div>
                                         <div className="flex-1">
@@ -423,11 +429,36 @@ export default function DonatePage() {
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg
-                                                className="h-7 w-7 text-purple-400"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
+                                                className="h-8 w-8 text-purple-400"
+                                                version="1.1"
+                                                id="Layer_1"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                xmlnsXlink="http://www.w3.org/1999/xlink"
+                                                x="0px"
+                                                y="0px"
+                                                viewBox="0 0 397.7 311.7"
+                                                xmlSpace="preserve"
                                             >
-                                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                                <style type="text/css">
+                                                    {`.st0{fill:url(#SVGID_1_);}
+                                                    .st1{fill:url(#SVGID_2_);}
+                                                    .st2{fill:url(#SVGID_3_);}`}
+                                                </style>
+                                                <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="360.8791" y1="351.4553" x2="141.213" y2="-69.2936" gradientTransform="matrix(1 0 0 -1 0 314)">
+                                                    <stop offset="0" style={{ stopColor: '#00FFA3' }} />
+                                                    <stop offset="1" style={{ stopColor: '#DC1FFF' }} />
+                                                </linearGradient>
+                                                <path className="st0" d="M64.6,237.9c2.4-2.4,5.7-3.8,9.2-3.8h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5  c-5.8,0-8.7-7-4.6-11.1L64.6,237.9z" />
+                                                <linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="264.8291" y1="401.6014" x2="45.163" y2="-19.1475" gradientTransform="matrix(1 0 0 -1 0 314)">
+                                                    <stop offset="0" style={{ stopColor: '#00FFA3' }} />
+                                                    <stop offset="1" style={{ stopColor: '#DC1FFF' }} />
+                                                </linearGradient>
+                                                <path className="st1" d="M64.6,3.8C67.1,1.4,70.4,0,73.8,0h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5  c-5.8,0-8.7-7-4.6-11.1L64.6,3.8z" />
+                                                <linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="312.5484" y1="376.688" x2="92.8822" y2="-44.061" gradientTransform="matrix(1 0 0 -1 0 314)">
+                                                    <stop offset="0" style={{ stopColor: '#00FFA3' }} />
+                                                    <stop offset="1" style={{ stopColor: '#DC1FFF' }} />
+                                                </linearGradient>
+                                                <path className="st2" d="M333.1,120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8,0-8.7,7-4.6,11.1l62.7,62.7c2.4,2.4,5.7,3.8,9.2,3.8h317.4  c5.8,0,8.7-7,4.6-11.1L333.1,120.1z" />
                                             </svg>
                                         </div>
                                         <div className="flex-1">
