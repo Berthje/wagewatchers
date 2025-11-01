@@ -11,7 +11,7 @@ import { Navbar } from "@/components/navbar";
 import { CommentSection } from "@/components/comment-thread";
 import { shouldDisplayField } from "@/lib/salary-config";
 import { createFieldConfigs } from "@/lib/field-configs";
-import { getFieldDisplayValue } from "@/lib/utils/format.utils";
+import { getFieldDisplayValue, getCurrencySymbol } from "@/lib/utils/format.utils";
 import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
@@ -54,6 +54,7 @@ export function EntryDetailClient({
     const tAdd = useTranslations("add");
     const tNav = useTranslations("nav");
     const { preferences } = useSalaryDisplay();
+    const symbol = getCurrencySymbol(preferences.currency);
 
     const [comments, setComments] = useState<Comment[]>([]);
     const [commentsLoading, setCommentsLoading] = useState(false);
@@ -175,7 +176,7 @@ export function EntryDetailClient({
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-stone-400 flex items-center">
                                 <Coins className="mr-2 h-4 w-4" />
-                                {t("grossSalary")}
+                                {t("grossSalary", { symbol })}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
@@ -196,7 +197,7 @@ export function EntryDetailClient({
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-stone-400 flex items-center">
                                 <Coins className="mr-2 h-4 w-4" />
-                                {t("netSalary")}
+                                {t("netSalary", { symbol })}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
@@ -217,7 +218,7 @@ export function EntryDetailClient({
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-stone-400 flex items-center">
                                 <TrendingUp className="mr-2 h-4 w-4" />
-                                {t("netCompensation")}
+                                {t("netCompensation", { symbol })}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
@@ -408,7 +409,7 @@ export function EntryDetailClient({
                             )}
                             {shouldShow("mealVouchers") && (
                                 <InfoItem
-                                    label={t("mealVouchers")}
+                                    label={t("mealVouchers", { symbol })}
                                     value={
                                         entry.mealVouchers
                                             ? formatSalaryWithPreferences(
@@ -426,7 +427,7 @@ export function EntryDetailClient({
                             )}
                             {shouldShow("ecoCheques") && (
                                 <InfoItem
-                                    label={t("ecoCheques")}
+                                    label={t("ecoCheques", { symbol })}
                                     value={
                                         entry.ecoCheques
                                             ? formatSalaryWithPreferences(
