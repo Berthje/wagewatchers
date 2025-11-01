@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { exchangeRates } from "@/lib/db/schema";
+import { getSupportedCurrencyCodes } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -36,9 +37,10 @@ export async function GET(request: Request) {
         }
 
         // Fetch exchange rates from FreeCurrency API
-        // Base currency is EUR, fetching USD and GBP rates
+        // Base currency is EUR, fetching all supported currencies
+        const supportedCurrencies = getSupportedCurrencyCodes().join(',');
         const response = await fetch(
-            `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=EUR&currencies=USD,GBP,EUR`,
+            `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=EUR&currencies=${supportedCurrencies}`,
             {
                 method: "GET",
                 headers: {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { exchangeRates } from "@/lib/db/schema";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
+import { FALLBACK_EXCHANGE_RATES } from "@/lib/config";
 
 // Cache rates for 1 hour to avoid frequent DB queries
 export const revalidate = 3600;
@@ -43,11 +44,7 @@ export async function GET(request: Request) {
         // If no rates in database, return default hardcoded rates
         if (rates.length === 0) {
             return NextResponse.json({
-                rates: {
-                    EUR: 1,
-                    USD: 1.09,
-                    GBP: 0.86,
-                },
+                rates: FALLBACK_EXCHANGE_RATES,
                 source: "default",
                 lastUpdated: null,
             });
@@ -77,11 +74,7 @@ export async function GET(request: Request) {
 
         // Fallback to default rates on error
         return NextResponse.json({
-            rates: {
-                EUR: 1,
-                USD: 1.09,
-                GBP: 0.86,
-            },
+            rates: FALLBACK_EXCHANGE_RATES,
             source: "fallback",
             lastUpdated: null,
             error: error instanceof Error ? error.message : "Unknown error",

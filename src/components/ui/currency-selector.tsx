@@ -8,6 +8,7 @@ import {
     SelectValue,
 } from "./select";
 import { useTranslations } from "next-intl";
+import { SUPPORTED_CURRENCIES } from "@/lib/config";
 
 interface CurrencySelectorProps {
     value: string;
@@ -17,11 +18,6 @@ interface CurrencySelectorProps {
     disabled?: boolean;
     showFullLabel?: boolean;
 }
-
-const currencies = [
-    { value: "EUR", labelKey: "nav.currencies.EUR", symbol: "€" },
-    { value: "USD", labelKey: "nav.currencies.USD", symbol: "$" },
-];
 
 export function CurrencySelector({
     value,
@@ -34,7 +30,7 @@ export function CurrencySelector({
     const t = useTranslations();
 
     const selectedCurrency =
-        currencies.find((c) => c.value === value) || currencies[0];
+        SUPPORTED_CURRENCIES.find((c) => c.code === value) || SUPPORTED_CURRENCIES[0];
 
     return (
         <Select
@@ -56,10 +52,10 @@ export function CurrencySelector({
                 </SelectValue>
             </SelectTrigger>
             <SelectContent className="bg-stone-700 border-stone-600">
-                {currencies.map((curr) => (
+                {SUPPORTED_CURRENCIES.map((curr) => (
                     <SelectItem
-                        key={curr.value}
-                        value={curr.value}
+                        key={curr.code}
+                        value={curr.code}
                         className="text-stone-100 focus:bg-stone-600"
                     >
                         {t(curr.labelKey)}
