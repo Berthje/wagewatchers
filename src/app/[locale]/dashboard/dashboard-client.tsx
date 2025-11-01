@@ -1048,7 +1048,7 @@ export function DashboardClient({
                                                 <TableCell className="text-stone-300">
                                                     {entry.age !== null &&
                                                         entry.age !== undefined
-                                                        ? entry.age
+                                                        ? `${entry.age} ${t("table.years")}`
                                                         : "N/A"}
                                                 </TableCell>
                                                 <TableCell className="font-semibold text-stone-100">

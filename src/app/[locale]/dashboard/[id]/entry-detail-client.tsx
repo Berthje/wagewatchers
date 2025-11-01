@@ -249,7 +249,7 @@ export function EntryDetailClient({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InfoItem
                                 label={t("age")}
-                                value={entry.age?.toString()}
+                                value={entry.age ? `${entry.age} ${t("years")}` : undefined}
                             />
                             <InfoItem
                                 label={t("education")}
@@ -485,7 +485,7 @@ export function EntryDetailClient({
                             />
                             <InfoItem
                                 label={t("commuteDistance")}
-                                value={entry.commuteDistance}
+                                value={entry.commuteDistance ? `${entry.commuteDistance} km` : undefined}
                             />
                             <InfoItem
                                 label={t("commuteMethod")}
