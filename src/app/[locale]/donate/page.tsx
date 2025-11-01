@@ -329,9 +329,9 @@ export default function DonatePage() {
 
                     {/* Crypto Donations */}
                     {donationType === 'crypto' && (
-                        <div className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
                             {/* Ethereum */}
-                            <div className="col-span-2 group relative overflow-hidden rounded-xl border-2 border-blue-900/50 bg-gradient-to-br from-blue-950/30 to-indigo-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-600">
+                            <div className="md:col-span-2 group relative overflow-hidden rounded-xl border-2 border-blue-900/50 bg-gradient-to-br from-blue-950/30 to-indigo-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-600">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
