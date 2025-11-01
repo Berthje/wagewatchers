@@ -141,7 +141,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             ,
 
             // Commute
-            workCity: z.string().min(1, { message: t("validation.workCityRequired") }).max(200, { message: t("validation.workCityMax") })
+            workCity: z.string().min(1, { message: t("validation.workCityRequired") }).max(200, { message: t("validation.workCityMax") }).optional()
             ,
             commuteDistance: z
                 .union([

@@ -555,7 +555,7 @@ function AddEntryContent() {
                                 return t(config.labelKey);
                             })()}
                             {config.optional && (
-                                <span className="text-stone-400 text-xs font-normal ml-2">
+                                <span className="text-stone-400 text-xs">
                                     ({tCommon("optional")})
                                 </span>
                             )}

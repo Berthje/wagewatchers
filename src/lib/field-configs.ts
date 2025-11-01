@@ -308,6 +308,7 @@ export const createFieldConfigs = (
         placeholder: "e.g. Brussels",
         helpKey: "help.workCity",
         width: "half",
+        optional: true,
     },
     commuteDistance: {
         labelKey: "sections.commute.commuteDistance",
