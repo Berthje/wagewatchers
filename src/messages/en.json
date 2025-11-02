@@ -18,6 +18,19 @@
             "GBP": "British Pound (£)"
         }
     },
+    "ui": {
+        "commandPalette": "Command Palette",
+        "searchCommand": "Search for a command to run...",
+        "selectOption": "Select option...",
+        "selectCity": "Select city...",
+        "enter3Characters": "Please enter 3 or more characters",
+        "searchOptions": "Search options...",
+        "noOptionsFound": "No options found.",
+        "typeToSearch": "Type at least 2 characters to search...",
+        "remoteHome": "From home (Remote)",
+        "loadingCities": "Loading cities...",
+        "close": "Close"
+    },
     "placeholders": {
         "age": "e.g. 30",
         "education": "Select or enter education level",
@@ -78,7 +91,7 @@
                 "title": "Commute",
                 "description": "Your daily commute details",
                 "workCity": "Work City",
-                "commuteDistance": "Commute Distance",
+                "commuteDistance": "Commute Distance (km)",
                 "commuteMethod": "Commute Method",
                 "commuteCompensation": "Commute Compensation"
             },

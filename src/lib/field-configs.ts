@@ -313,8 +313,8 @@ export const createFieldConfigs = (
     },
     commuteDistance: {
         labelKey: "sections.commute.commuteDistance",
-        type: "text",
-        placeholder: "e.g. 15 km",
+        type: "number",
+        placeholder: "e.g. 15",
         helpKey: "help.commuteDistance",
         width: "half",
     },

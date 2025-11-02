@@ -18,6 +18,19 @@
             "GBP": "Livre Britannique (£)"
         }
     },
+    "ui": {
+        "commandPalette": "Palette de commandes",
+        "searchCommand": "Rechercher une commande à exécuter...",
+        "selectOption": "Sélectionner une option...",
+        "selectCity": "Sélectionner une ville...",
+        "enter3Characters": "Veuillez saisir 3 caractères ou plus",
+        "searchOptions": "Rechercher des options...",
+        "noOptionsFound": "Aucune option trouvée.",
+        "typeToSearch": "Tapez au moins 2 caractères pour rechercher...",
+        "remoteHome": "Télétravail (Remote)",
+        "loadingCities": "Chargement des villes...",
+        "close": "Fermer"
+    },
     "placeholders": {
         "age": "ex. 30",
         "education": "Sélectionner ou saisir le niveau d'éducation",
@@ -78,7 +91,7 @@
                 "title": "8. Trajet Domicile-Travail",
                 "description": "Détails de votre trajet quotidien",
                 "workCity": "Ville de Travail",
-                "commuteDistance": "Distance Domicile-Travail",
+                "commuteDistance": "Distance Domicile-Travail (km)",
                 "commuteMethod": "Méthode de Transport",
                 "commuteCompensation": "Compensation Trajet"
             },

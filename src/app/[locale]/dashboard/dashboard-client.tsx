@@ -38,8 +38,6 @@ import {
 import { FiltersModal } from "@/components/filters-modal";
 import { ActiveFiltersDisplay } from "@/components/active-filters-display";
 import {
-    translateCity,
-    translateLocation,
     formatNumber,
     formatDate,
 } from "@/lib/utils";
@@ -774,20 +772,14 @@ export function DashboardClient({
                                     availableCountries={countries.map(
                                         (country) => ({
                                             value: country as string,
-                                            label: translateLocation(
-                                                country as string,
-                                                locale
-                                            ),
+                                            label: country as string
                                         })
                                     )}
                                     selectedCities={selectedCities}
                                     onCitiesChange={setSelectedCities}
                                     availableCities={cities.map((city) => ({
                                         value: city as string,
-                                        label: translateCity(
-                                            city as string,
-                                            locale
-                                        ),
+                                        label: city as string,
                                     }))}
                                     selectedSectors={selectedSectors}
                                     onSectorsChange={setSelectedSectors}
@@ -829,16 +821,13 @@ export function DashboardClient({
                                 filters={[
                                     ...selectedCountries.map((country) => ({
                                         id: `country-${country}`,
-                                        label: translateLocation(
-                                            country,
-                                            locale
-                                        ),
+                                        label: country,
                                         value: country,
                                         category: "country" as const,
                                     })),
                                     ...selectedCities.map((city) => ({
                                         id: `city-${city}`,
-                                        label: translateCity(city, locale),
+                                        label: city,
                                         value: city,
                                         category: "city" as const,
                                     })),
@@ -1019,13 +1008,10 @@ export function DashboardClient({
                                                         className="border-stone-600 text-stone-300 w-fit"
                                                     >
                                                         {entry.country
-                                                            ? translateLocation(
-                                                                entry.country,
-                                                                locale
-                                                            )
+                                                            ? entry.country
                                                             : "N/A"}
                                                         {entry.workCity &&
-                                                            `, ${translateCity(entry.workCity, locale)}`}
+                                                            `, ${entry.workCity}`}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="font-medium text-stone-100 group-hover:text-orange-400 transition-colors">

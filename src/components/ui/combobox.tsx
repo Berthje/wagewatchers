@@ -1,14 +1,23 @@
 "use client";
 
 import * as React from "react";
-import { Input } from "@/components/ui/input";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { cn } from "@/lib/cn";
+import { Button } from "@/components/ui/button";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface ComboboxProps extends React.ComponentPropsWithoutRef<"div"> {
     options: { value: string; label: string }[];
@@ -16,6 +25,8 @@ interface ComboboxProps extends React.ComponentPropsWithoutRef<"div"> {
     onValueChange: (value: string) => void;
     placeholder?: string;
     allowCustom?: boolean;
+    onSearchChange?: (search: string) => void;
+    emptyMessage?: string;
     className?: string;
 }
 
@@ -23,77 +34,88 @@ export function Combobox({
     options,
     value,
     onValueChange,
-    placeholder = "Select option...",
+    placeholder,
     allowCustom = false,
+    onSearchChange,
+    emptyMessage,
     className,
     ...props
 }: Readonly<ComboboxProps>) {
-    const [mode, setMode] = React.useState<"select" | "custom">(
-        value && !options.some((o) => o.value === value) ? "custom" : "select"
-    );
+    const [open, setOpen] = React.useState(false);
+    const [inputValue, setInputValue] = React.useState("");
+    const t = useTranslations("ui");
 
-    // Check if current value is a custom value (not in options)
-    const isCustomValue = value && !options.some((o) => o.value === value);
+    const displayPlaceholder = placeholder || t("selectOption");
+
+    // Update input value when value changes
+    React.useEffect(() => {
+        if (value) {
+            const option = options.find((opt) => opt.value === value);
+            setInputValue(option ? option.label : value);
+        }
+    }, [value, options]);
+
+    const handleInputChange = (searchValue: string) => {
+        setInputValue(searchValue);
+        if (allowCustom) {
+            onValueChange(searchValue);
+        }
+        if (onSearchChange) {
+            onSearchChange(searchValue);
+        }
+    };
+
+    const handleSelect = (selectedValue: string) => {
+        const newValue = selectedValue === value ? "" : selectedValue;
+        onValueChange(newValue);
+        setOpen(false);
+    };
 
     return (
-        <div className="space-y-2">
-            <div className="flex gap-2">
-                <div className="flex-1">
-                    {mode === "select" ? (
-                        <Select value={value} onValueChange={onValueChange}>
-                            <SelectTrigger
-                                className={className}
-                                aria-invalid={props["aria-invalid"]}
-                            >
-                                <SelectValue placeholder={placeholder} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-stone-700 border-stone-600">
-                                {options.map((option) => (
-                                    <SelectItem
-                                        key={option.value}
-                                        value={option.value}
-                                        className="text-stone-100 focus:bg-stone-600"
-                                    >
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    ) : (
-                        <Input
-                            value={value || ""}
-                            onChange={(e) => onValueChange(e.target.value)}
-                            placeholder={placeholder}
-                            className={className}
-                            aria-invalid={props["aria-invalid"]}
-                        />
-                    )}
-                </div>
-                {allowCustom && (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setMode(mode === "select" ? "custom" : "select");
-                            if (mode === "custom") {
-                                onValueChange("");
-                            }
-                        }}
-                        className="px-2 cursor-pointer text-sm bg-stone-700 border-stone-600 rounded-md hover:bg-stone-600 transition-colors whitespace-nowrap"
-                        aria-label={
-                            mode === "select"
-                                ? "Switch to custom input"
-                                : "Switch to select"
-                        }
-                    >
-                        {mode === "select" ? "✏️" : "📋"}
-                    </button>
-                )}
-            </div>
-            {isCustomValue && mode === "select" && (
-                <p className="text-xs text-stone-400">
-                    Custom value: {value}
-                </p>
-            )}
-        </div>
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className={cn("w-full justify-between", className)}
+                    aria-invalid={props["aria-invalid"]}
+                >
+                    {inputValue || displayPlaceholder}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-(--radix-popover-trigger-width) p-0 bg-stone-700 border-stone-600">
+                <Command className="bg-stone-700">
+                    <CommandInput
+                        placeholder={t("searchOptions")}
+                        className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
+                        value={inputValue}
+                        onValueChange={handleInputChange}
+                    />
+                    <CommandList>
+                        <CommandEmpty>{emptyMessage || t("noOptionsFound")}</CommandEmpty>
+                        <CommandGroup>
+                            {options.map((option) => (
+                                <CommandItem
+                                    key={option.value}
+                                    value={option.label}
+                                    onSelect={() => handleSelect(option.value)}
+                                    className="text-stone-100 hover:bg-stone-600"
+                                >
+                                    <Check
+                                        className={cn(
+                                            "mr-2 h-4 w-4",
+                                            value === option.value ? "opacity-100" : "opacity-0"
+                                        )}
+                                    />
+                                    {option.label}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
     );
 }

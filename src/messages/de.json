@@ -18,6 +18,19 @@
             "GBP": "Britisches Pfund (£)"
         }
     },
+    "ui": {
+        "commandPalette": "Befehlspalette",
+        "searchCommand": "Nach einem auszuführenden Befehl suchen...",
+        "selectOption": "Option auswählen...",
+        "selectCity": "Stadt auswählen...",
+        "enter3Characters": "Bitte geben Sie 3 oder mehr Zeichen ein",
+        "searchOptions": "Optionen suchen...",
+        "noOptionsFound": "Keine Optionen gefunden.",
+        "typeToSearch": "Geben Sie mindestens 2 Zeichen ein, um zu suchen...",
+        "remoteHome": "Homeoffice (Remote)",
+        "loadingCities": "Städte laden...",
+        "close": "Schließen"
+    },
     "placeholders": {
         "age": "z.B. 30",
         "education": "Bildungsgrad auswählen oder eingeben",
@@ -154,7 +167,7 @@
                 "title": "Arbeitsweg",
                 "description": "Details Ihres täglichen Arbeitswegs",
                 "workCity": "Arbeitsstadt",
-                "commuteDistance": "Pendeldistanz",
+                "commuteDistance": "Pendeldistanz (km)",
                 "commuteMethod": "Pendelmethode",
                 "commuteCompensation": "Pendelkostenerstattung"
             },

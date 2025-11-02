@@ -18,6 +18,19 @@
             "GBP": "Britse Pond (£)"
         }
     },
+    "ui": {
+        "commandPalette": "Opdrachtpalet",
+        "searchCommand": "Zoek naar een opdracht om uit te voeren...",
+        "selectOption": "Selecteer optie...",
+        "selectCity": "Selecteer stad...",
+        "enter3Characters": "Voer 3 of meer tekens in",
+        "searchOptions": "Zoek opties...",
+        "noOptionsFound": "Geen opties gevonden.",
+        "typeToSearch": "Typ minimaal 2 tekens om te zoeken...",
+        "remoteHome": "Vanuit thuis (Remote)",
+        "loadingCities": "Steden laden...",
+        "close": "Sluiten"
+    },
     "placeholders": {
         "age": "bijv. 30",
         "education": "Selecteer of voer opleidingsniveau in",
@@ -78,7 +91,7 @@
                 "title": "8. Woon-Werk Verkeer",
                 "description": "Uw dagelijkse woon-werk verkeer details",
                 "workCity": "Werkstad",
-                "commuteDistance": "Woon-Werk Afstand",
+                "commuteDistance": "Woon-Werk Afstand (km)",
                 "commuteMethod": "Vervoersmethode",
                 "commuteCompensation": "Woon-Werk Vergoeding"
             },

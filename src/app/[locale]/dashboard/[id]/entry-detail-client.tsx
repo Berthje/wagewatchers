@@ -109,7 +109,7 @@ export function EntryDetailClient({
     }, [entry.id, entry.isManualEntry, entry.source]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
                 <Navbar
@@ -129,7 +129,7 @@ export function EntryDetailClient({
                 {/* Back Button */}
                 <Button
                     variant="ghost"
-                    className="mb-6 text-stone-300 hover:text-stone-100"
+                    className="mb-4 text-stone-300 hover:text-stone-100"
                     onClick={() => router.push(`/${locale}/dashboard`)}
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" />
@@ -138,7 +138,7 @@ export function EntryDetailClient({
 
                 {/* Title */}
                 <div className="mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-2">
+                    <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-3">
                         {entry.jobTitle || t("untitled")}
                     </h1>
                     <div className="flex flex-wrap gap-2">
@@ -148,7 +148,7 @@ export function EntryDetailClient({
                                 className="border-stone-600 text-stone-300"
                             >
                                 <MapPin className="mr-1 h-3 w-3" />
-                                {entry.country}
+                                {entry.workCity ? `${entry.country}, ${entry.workCity}` : entry.country}
                             </Badge>
                         )}
                         {entry.sector && (
