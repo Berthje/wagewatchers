@@ -39,29 +39,10 @@ export const SUPPORTED_CURRENCIES: Currency[] = [
 ];
 
 /**
- * Default currency for the application
- */
-export const DEFAULT_CURRENCY = "EUR";
-
-/**
- * Get currency by code
- */
-export const getCurrencyByCode = (code: string): Currency | undefined => {
-    return SUPPORTED_CURRENCIES.find(currency => currency.code === code);
-};
-
-/**
  * Get all supported currency codes
  */
 export const getSupportedCurrencyCodes = (): string[] => {
     return SUPPORTED_CURRENCIES.map(currency => currency.code);
-};
-
-/**
- * Check if a currency code is supported
- */
-export const isCurrencySupported = (code: string): boolean => {
-    return getSupportedCurrencyCodes().includes(code);
 };
 
 /**

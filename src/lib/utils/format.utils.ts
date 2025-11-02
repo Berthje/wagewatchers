@@ -28,20 +28,6 @@ export function formatNumber(
 }
 
 /**
- * Format currency with symbol
- */
-export function formatCurrency(
-    amount: number,
-    currency: string = "EUR",
-    locale: string = "en-US",
-): string {
-    return new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency,
-    }).format(amount);
-}
-
-/**
  * Get currency symbol
  */
 export function getCurrencySymbol(currency?: string | null): string {
