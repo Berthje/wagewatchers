@@ -31,9 +31,8 @@ export const createFieldConfigs = (
     },
     education: {
         labelKey: "sections.personal.education",
-        type: "combobox",
-        placeholder: "Select or enter education level",
-        allowCustom: true,
+        type: "select",
+        placeholder: "Select education level",
         options: [
             {
                 value: "highSchool",
@@ -75,6 +74,7 @@ export const createFieldConfigs = (
     civilStatus: {
         labelKey: "sections.personal.civilStatus",
         type: "select",
+        placeholder: "Select civil status",
         options: [
             { value: "single", label: t("formOptions.civilStatus.single") },
             { value: "cohabiting", label: t("formOptions.civilStatus.cohabiting") },
@@ -96,6 +96,7 @@ export const createFieldConfigs = (
     sector: {
         labelKey: "sections.employer.sector",
         type: "select",
+        placeholder: "Select sector",
         options: [
             { value: "IT", label: t("formOptions.sector.IT") },
             { value: "Finance", label: t("formOptions.sector.Finance") },
@@ -305,7 +306,7 @@ export const createFieldConfigs = (
     workCity: {
         labelKey: "sections.commute.workCity",
         type: "text",
-        placeholder: "e.g. Brussels",
+        placeholder: "Select the city your work at",
         helpKey: "help.workCity",
         width: "half",
         optional: true,
