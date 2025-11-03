@@ -103,7 +103,7 @@ export default function DonatePage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950">
+        <div className="min-h-screen bg-linear-to-b from-stone-950 via-stone-900 to-stone-950">
             <div className="container mx-auto px-4 py-8 max-w-4xl">
                 {/* Back Button */}
                 <Button
@@ -215,10 +215,10 @@ export default function DonatePage() {
                                 href="https://buymeacoffee.com/laytonberth"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group relative overflow-hidden rounded-xl border-2 border-orange-900/50 bg-gradient-to-br from-orange-950/30 to-yellow-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-orange-600"
+                                className="group relative overflow-hidden rounded-xl border-2 border-orange-900/50 bg-linear-to-br from-orange-950/30 to-yellow-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-orange-600"
                             >
                                 <div className="relative z-10 flex items-center gap-4">
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         <Coffee className="h-7 w-7 text-orange-400" />
                                     </div>
                                     <div className="flex-1 text-left">
@@ -231,7 +231,7 @@ export default function DonatePage() {
                                     </div>
                                     <ExternalLink className="h-5 w-5 text-stone-600 group-hover:text-orange-400 transition-colors" />
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-orange-400/0 via-orange-400/5 to-orange-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-orange-400/0 via-orange-400/5 to-orange-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </a>
 
                             {/* PayPal */}
@@ -239,10 +239,10 @@ export default function DonatePage() {
                                 href="https://paypal.me/berthje"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group relative overflow-hidden rounded-xl border-2 border-blue-900/50 bg-gradient-to-br from-blue-950/30 to-indigo-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-600"
+                                className="group relative overflow-hidden rounded-xl border-2 border-blue-900/50 bg-linear-to-br from-blue-950/30 to-indigo-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-600"
                             >
                                 <div className="relative z-10 flex items-center gap-4">
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         <svg
                                             className="h-7 w-7 text-blue-400"
                                             fill="currentColor"
@@ -262,7 +262,7 @@ export default function DonatePage() {
                                     </div>
                                     <ExternalLink className="h-5 w-5 text-stone-600 group-hover:text-blue-400 transition-colors" />
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/5 to-blue-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-blue-400/5 to-blue-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </a>
 
                             {/* Ko-fi */}
@@ -270,10 +270,10 @@ export default function DonatePage() {
                                 href="https://ko-fi.com/berthje"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group relative overflow-hidden rounded-xl border-2 border-red-900/50 bg-gradient-to-br from-red-950/30 to-pink-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-red-600"
+                                className="group relative overflow-hidden rounded-xl border-2 border-red-900/50 bg-linear-to-br from-red-950/30 to-pink-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-red-600"
                             >
                                 <div className="relative z-10 flex items-center gap-4">
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         <svg
                                             className="h-7 w-7 text-red-400"
                                             fill="currentColor"
@@ -292,7 +292,7 @@ export default function DonatePage() {
                                     </div>
                                     <ExternalLink className="h-5 w-5 text-stone-600 group-hover:text-red-400 transition-colors" />
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-red-400/0 via-red-400/5 to-red-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-red-400/0 via-red-400/5 to-red-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </a>
 
                             {/* GitHub Sponsors */}
@@ -300,10 +300,10 @@ export default function DonatePage() {
                                 href="https://github.com/sponsors/berthje"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group relative overflow-hidden rounded-xl border-2 border-purple-900/50 bg-gradient-to-br from-purple-950/30 to-violet-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-purple-600"
+                                className="group relative overflow-hidden rounded-xl border-2 border-purple-900/50 bg-linear-to-br from-purple-950/30 to-violet-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-purple-600"
                             >
                                 <div className="relative z-10 flex items-center gap-4">
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         <svg
                                             className="h-7 w-7 text-purple-400"
                                             fill="currentColor"
@@ -322,7 +322,7 @@ export default function DonatePage() {
                                     </div>
                                     <ExternalLink className="h-5 w-5 text-stone-600 group-hover:text-purple-400 transition-colors" />
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-purple-400/5 to-purple-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-purple-400/0 via-purple-400/5 to-purple-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </a>
                         </div>
                     )}
@@ -331,10 +331,10 @@ export default function DonatePage() {
                     {donationType === 'crypto' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
                             {/* Ethereum */}
-                            <div className="md:col-span-2 group relative overflow-hidden rounded-xl border-2 border-blue-900/50 bg-gradient-to-br from-blue-950/30 to-indigo-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-600">
+                            <div className="md:col-span-2 group relative overflow-hidden rounded-xl border-2 border-blue-900/50 bg-linear-to-br from-blue-950/30 to-indigo-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-600">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                        <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg
                                                 className="h-7 w-7 text-blue-400"
                                                 fill="currentColor"
@@ -372,14 +372,14 @@ export default function DonatePage() {
                                         )}
                                     </button>
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/5 to-blue-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-blue-400/5 to-blue-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </div>
 
                             {/* Bitcoin */}
-                            <div className="group relative overflow-hidden rounded-xl border-2 border-orange-900/50 bg-gradient-to-br from-orange-950/30 to-yellow-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-orange-600">
+                            <div className="group relative overflow-hidden rounded-xl border-2 border-orange-900/50 bg-linear-to-br from-orange-950/30 to-yellow-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-orange-600">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                        <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg
                                                 className="h-10 w-10 text-orange-400"
                                                 viewBox="0 0 64 64"
@@ -420,14 +420,14 @@ export default function DonatePage() {
                                         )}
                                     </button>
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-orange-400/0 via-orange-400/5 to-orange-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-orange-400/0 via-orange-400/5 to-orange-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </div>
 
                             {/* Solana */}
-                            <div className="group relative overflow-hidden rounded-xl border-2 border-purple-900/50 bg-gradient-to-br from-purple-950/30 to-violet-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-purple-600">
+                            <div className="group relative overflow-hidden rounded-xl border-2 border-purple-900/50 bg-linear-to-br from-purple-950/30 to-violet-950/30 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-purple-600">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                        <div className="shrink-0 w-14 h-14 rounded-full bg-stone-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg
                                                 className="h-8 w-8 text-purple-400"
                                                 version="1.1"
@@ -487,7 +487,7 @@ export default function DonatePage() {
                                         )}
                                     </button>
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-purple-400/5 to-purple-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-purple-400/0 via-purple-400/5 to-purple-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             </div>
                         </div>
                     )}

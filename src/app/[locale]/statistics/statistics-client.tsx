@@ -499,7 +499,7 @@ export default function StatisticsClient() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
                 <Navbar

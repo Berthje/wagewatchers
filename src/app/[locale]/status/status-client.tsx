@@ -283,7 +283,7 @@ export default function StatusClient() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <Navbar
                 locale={locale}

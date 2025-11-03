@@ -73,7 +73,7 @@ async function HomeContent({ locale }: Readonly<{ locale: string }>) {
     const navT = await getTranslations({ locale, namespace: "nav" });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900 relative overflow-hidden">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 relative overflow-hidden">
             <AnimatedWorldMap />
 
             {/* Header */}

@@ -472,22 +472,22 @@ export function DashboardClient({
     const getSortIcon = (field: SortField) => {
         if (sortField !== field) {
             return (
-                <ArrowUpDown className="ml-2 h-4 w-4 flex-shrink-0 opacity-50" />
+                <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             );
         }
         if (sortDirection === "asc") {
-            return <ArrowUp className="ml-2 h-4 w-4 flex-shrink-0" />;
+            return <ArrowUp className="ml-2 h-4 w-4 shrink-0" />;
         }
         if (sortDirection === "desc") {
-            return <ArrowDown className="ml-2 h-4 w-4 flex-shrink-0" />;
+            return <ArrowDown className="ml-2 h-4 w-4 shrink-0" />;
         }
         return (
-            <ArrowUpDown className="ml-2 h-4 w-4 flex-shrink-0 opacity-50" />
+            <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         );
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
                 <Navbar
@@ -893,17 +893,17 @@ export function DashboardClient({
                                 <TableHeader className="sticky top-0 bg-stone-800 z-10">
                                     <TableRow className="border-stone-700 bg-stone-800">
                                         <TableHead className="text-stone-300">
-                                            <div className="flex items-center h-[20px]">
+                                            <div className="flex items-center h-5">
                                                 {t("table.location")}
                                             </div>
                                         </TableHead>
                                         <TableHead className="text-stone-300">
-                                            <div className="flex items-center h-[20px]">
+                                            <div className="flex items-center h-5">
                                                 {t("table.jobTitle")}
                                             </div>
                                         </TableHead>
                                         <TableHead className="text-stone-300">
-                                            <div className="flex items-center h-[20px]">
+                                            <div className="flex items-center h-5">
                                                 {t("table.sector")}
                                             </div>
                                         </TableHead>
@@ -913,7 +913,7 @@ export function DashboardClient({
                                                 handleSort("experience")
                                             }
                                         >
-                                            <div className="flex items-center h-[20px] min-h-[20px] max-h-[20px] overflow-hidden">
+                                            <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
                                                 {t("table.experience")}
                                                 {getSortIcon("experience")}
                                             </div>
@@ -922,7 +922,7 @@ export function DashboardClient({
                                             className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
                                             onClick={() => handleSort("age")}
                                         >
-                                            <div className="flex items-center h-[20px] min-h-[20px] max-h-[20px] overflow-hidden">
+                                            <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
                                                 {t("table.age")}
                                                 {getSortIcon("age")}
                                             </div>
@@ -933,7 +933,7 @@ export function DashboardClient({
                                                 handleSort("grossSalary")
                                             }
                                         >
-                                            <div className="flex items-center h-[20px] min-h-[20px] max-h-[20px] overflow-hidden">
+                                            <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
                                                 {t("table.grossSalary")}
                                                 {getSortIcon("grossSalary")}
                                             </div>
@@ -944,7 +944,7 @@ export function DashboardClient({
                                                 handleSort("netSalary")
                                             }
                                         >
-                                            <div className="flex items-center h-[20px] min-h-[20px] max-h-[20px] overflow-hidden">
+                                            <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
                                                 {t("table.netSalary")}
                                                 {getSortIcon("netSalary")}
                                             </div>
@@ -955,13 +955,13 @@ export function DashboardClient({
                                                 handleSort("createdAt")
                                             }
                                         >
-                                            <div className="flex items-center h-[20px] min-h-[20px] max-h-[20px] overflow-hidden">
+                                            <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
                                                 {t("table.submittedOn")}
                                                 {getSortIcon("createdAt")}
                                             </div>
                                         </TableHead>
                                         <TableHead className="w-16 text-stone-300">
-                                            <div className="flex items-center justify-center h-[20px]">
+                                            <div className="flex items-center justify-center h-5">
                                                 {t("table.source")}
                                             </div>
                                         </TableHead>
@@ -1065,7 +1065,7 @@ export function DashboardClient({
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="text-center">
-                                                    <div className="h-[28px] w-[28px] flex items-center m-auto">
+                                                    <div className="h-7 w-7 flex items-center m-auto">
                                                         {entry.sourceUrl && (
                                                             <a
                                                                 href={

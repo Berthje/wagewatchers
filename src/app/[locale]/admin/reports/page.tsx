@@ -121,10 +121,10 @@ function DroppableColumn({
 function SortableReportCard({
     report,
     onSelect,
-}: {
+}: Readonly<{
     report: Report;
     onSelect: (report: Report) => void;
-}) {
+}>) {
     const {
         attributes,
         listeners,
@@ -155,8 +155,8 @@ function SortableReportCard({
             >
                 <CardHeader className="pb-2.5 pt-3 px-3.5 space-y-0">
                     <div className="flex items-center gap-2 mb-2 min-w-0">
-                        <GripVertical className="w-4 h-4 text-stone-600 flex-shrink-0" />
-                        <TypeIcon className="w-4 h-4 text-stone-400 flex-shrink-0" />
+                        <GripVertical className="w-4 h-4 text-stone-600 shrink-0" />
+                        <TypeIcon className="w-4 h-4 text-stone-400 shrink-0" />
                         <CardTitle className="text-sm font-semibold text-stone-100 truncate flex-1 min-w-0">
                             {report.title}
                         </CardTitle>
@@ -352,7 +352,7 @@ export default function AdminReportsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
                     <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
                     <p className="text-sm text-stone-400">
@@ -364,7 +364,7 @@ export default function AdminReportsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <header className="relative z-10 container mx-auto px-4 py-4 md:py-6">
                 <nav className="flex items-center justify-between">

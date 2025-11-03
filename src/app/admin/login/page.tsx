@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <header className="relative z-10 container mx-auto px-4 py-4 md:py-6">
                 <nav className="flex items-center justify-between">

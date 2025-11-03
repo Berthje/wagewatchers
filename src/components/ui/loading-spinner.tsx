@@ -32,7 +32,7 @@ export function LoadingSpinner({
 
     if (fullScreen) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
                 {content}
             </div>
         );
