@@ -9,7 +9,7 @@ export const priority = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const;
 // Tables
 export const salaryEntries = pgTable('SalaryEntry', {
     id: serial('id').primaryKey(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
     country: text('country'),
     subreddit: text('subreddit'),
     age: integer('age'),
@@ -51,9 +51,9 @@ export const salaryEntries = pgTable('SalaryEntry', {
     sourceUrl: text('sourceUrl'),
     extraNotes: text('extraNotes'),
     isManualEntry: boolean('isManualEntry').default(true).notNull(),
-    lastCommentsFetch: timestamp('lastCommentsFetch'),
+    lastCommentsFetch: timestamp('lastCommentsFetch', { withTimezone: true }),
     ownerToken: text('ownerToken'),
-    editableUntil: timestamp('editableUntil'),
+    editableUntil: timestamp('editableUntil', { withTimezone: true }),
 }, (table) => [
     index('ownerToken_idx').on(table.ownerToken),
 ]);
@@ -64,7 +64,7 @@ export const comments = pgTable('Comment', {
     body: text('body').notNull(),
     author: text('author'),
     score: integer('score').default(0),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
     depth: integer('depth').default(0).notNull(),
     parentId: integer('parentId'),
     salaryEntryId: integer('salaryEntryId').notNull(),
@@ -75,8 +75,8 @@ export const comments = pgTable('Comment', {
 
 export const reports = pgTable('Report', {
     id: serial('id').primaryKey(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
-    updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),
     title: text('title').notNull(),
     description: text('description').notNull(),
     type: text('type', { enum: reportType }).notNull(),
@@ -90,16 +90,16 @@ export const admins = pgTable('Admin', {
     id: serial('id').primaryKey(),
     email: text('email').unique().notNull(),
     password: text('password').notNull(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
-    updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const exchangeRates = pgTable('ExchangeRate', {
     id: serial('id').primaryKey(),
     currency: text('currency').unique().notNull(),
     rate: real('rate').notNull(),
-    updatedAt: timestamp('updatedAt').defaultNow().notNull(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [
     index('currency_idx').on(table.currency),
 ]);
@@ -108,8 +108,8 @@ export const cities = pgTable('City', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     country: text('country').notNull(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
-    updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [
     index('country_idx').on(table.country),
     index('name_country_idx').on(table.name, table.country),
