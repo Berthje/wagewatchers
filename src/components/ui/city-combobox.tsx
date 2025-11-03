@@ -68,10 +68,10 @@ export function CityCombobox({
                         value: city.name,
                         label: city.name,
                     }));
-                    
+
                     // Always add remoteHome option at the top
                     const citiesWithRemote = [remoteOption, ...formattedCities];
-                    
+
                     cacheRef.current.set(cacheKey, citiesWithRemote);
                     setCities(citiesWithRemote);
                 } else {
