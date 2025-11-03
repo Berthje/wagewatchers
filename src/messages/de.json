@@ -864,7 +864,16 @@
             "reddit": "Reddit",
             "portfolio": "Portfolio",
             "github": "GitHub"
-        }
+        },
+        "oneTimeSupport": "Einmalige Unterstützung",
+        "securePayment": "Sichere Zahlung",
+        "supportWithKofi": "Mit Ko-fi unterstützen",
+        "monthlySponsorship": "Monatliche Förderung",
+        "shareTitle": "WageWatchers - Europäische Gehaltstransparenz Plattform",
+        "shareText": "Schau dir WageWatchers an - Community-getriebene Gehaltstransparenz in europäischen Märkten!",
+        "footerCommunity": "🧡 Community-getriebene Gehaltstransparenz",
+        "footerMadeWith": "Gemacht mit ❤️ für die Community •",
+        "footerViewOnGithub": "Auf GitHub ansehen"
     },
     "entryDetail": {
         "backToDashboard": "Zurück",
