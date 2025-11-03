@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
@@ -8,6 +8,7 @@ import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { FileDown, FileSpreadsheet } from "lucide-react";
 import { FiltersModal } from "@/components/filters-modal";
+import { useFilters } from "@/hooks/use-filters";
 import {
     useSalaryDisplay,
     convertCurrency,
@@ -89,10 +90,31 @@ export default function StatisticsClient() {
     const { preferences } = useSalaryDisplay();
     const [allEntries, setAllEntries] = useState<SalaryEntry[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-    const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
-    const [minAge, setMinAge] = useState<number | null>(null);
-    const [maxAge, setMaxAge] = useState<number | null>(null);
+
+    // Use shared filters hook
+    const { filters, actions, filteredEntries, activeFilterCount, options } = useFilters(allEntries);
+
+    // Extract filter values for easier access
+    const {
+        selectedCountries,
+        selectedSectors,
+        selectedCities,
+        minAge,
+        maxAge,
+        minWorkExperience,
+        maxWorkExperience,
+    } = filters;
+
+    // Extract filter actions
+    const {
+        setSelectedCountries,
+        setSelectedSectors,
+        setSelectedCities,
+        setMinAge,
+        setMaxAge,
+        setMinWorkExperience,
+        setMaxWorkExperience,
+    } = actions;
     const [sectorData, setSectorData] = useState<SectorData[]>([]);
     const [countryData, setCountryData] = useState<CountryData[]>([]);
     const [experienceData, setExperienceData] = useState<ExperienceData[]>([]);
@@ -125,59 +147,6 @@ export default function StatisticsClient() {
                 setLoading(false);
             });
     }, []);
-
-    // Get unique countries for filter options
-    const countryOptions = useMemo(() => {
-        const uniqueCountries = Array.from(
-            new Set(allEntries.map((entry) => entry.country).filter(Boolean))
-        ).sort((a, b) => (a as string).localeCompare(b as string));
-        return uniqueCountries.map((country) => ({
-            value: country as string,
-            label: country as string,
-        }));
-    }, [allEntries]);
-
-    // Get unique sectors for filter options
-    const sectorOptions = useMemo(() => {
-        const uniqueSectors = Array.from(
-            new Set(allEntries.map((entry) => entry.sector).filter(Boolean))
-        ).sort((a, b) => (a as string).localeCompare(b as string));
-        return uniqueSectors.map((sector) => ({
-            value: sector as string,
-            label: sector as string,
-        }));
-    }, [allEntries]);
-
-    // Filter entries based on selected countries, sectors, and age
-    const filteredEntries = useMemo(() => {
-        let filtered = allEntries;
-
-        if (selectedCountries.length > 0) {
-            filtered = filtered.filter((entry) =>
-                selectedCountries.includes(entry.country || "")
-            );
-        }
-
-        if (selectedSectors.length > 0) {
-            filtered = filtered.filter((entry) =>
-                selectedSectors.includes(entry.sector || "")
-            );
-        }
-
-        // Age range filter
-        if (minAge !== null) {
-            filtered = filtered.filter((entry) =>
-                entry.age !== null && entry.age >= minAge
-            );
-        }
-        if (maxAge !== null) {
-            filtered = filtered.filter((entry) =>
-                entry.age !== null && entry.age <= maxAge
-            );
-        }
-
-        return filtered;
-    }, [allEntries, selectedCountries, selectedSectors, minAge, maxAge]);
 
     // Process data whenever filtered entries change
     useEffect(() => {
@@ -526,23 +495,22 @@ export default function StatisticsClient() {
                             <FiltersModal
                                 selectedCountries={selectedCountries}
                                 onCountriesChange={setSelectedCountries}
-                                availableCountries={countryOptions}
-                                selectedCities={[]}
-                                onCitiesChange={() => { }}
-                                availableCities={[]}
+                                availableCountries={options.countries}
+                                selectedCities={selectedCities}
+                                onCitiesChange={setSelectedCities}
+                                availableCities={options.cities}
                                 selectedSectors={selectedSectors}
                                 onSectorsChange={setSelectedSectors}
-                                availableSectors={sectorOptions}
+                                availableSectors={options.sectors}
                                 minAge={minAge}
                                 maxAge={maxAge}
                                 onMinAgeChange={setMinAge}
                                 onMaxAgeChange={setMaxAge}
-                                activeFilterCount={
-                                    selectedCountries.length +
-                                    selectedSectors.length +
-                                    (minAge !== null ? 1 : 0) +
-                                    (maxAge !== null ? 1 : 0)
-                                }
+                                minWorkExperience={minWorkExperience}
+                                maxWorkExperience={maxWorkExperience}
+                                onMinWorkExperienceChange={setMinWorkExperience}
+                                onMaxWorkExperienceChange={setMaxWorkExperience}
+                                activeFilterCount={activeFilterCount}
                             />
                             <Button
                                 onClick={handleExportToCSV}

@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { FiltersModal } from "@/components/filters-modal";
 import { ActiveFiltersDisplay } from "@/components/active-filters-display";
+import { useFilters } from "@/hooks/use-filters";
 import {
     formatNumber,
     formatDate,
@@ -64,38 +65,19 @@ export function DashboardClient({
     const { preferences } = useSalaryDisplay();
     const formatCityDisplay = createCityDisplayFormatter(tUi);
 
-    // Initialize state from URL search params
-    const [selectedCountries, setSelectedCountries] = useState<string[]>(() => {
-        const param = searchParams.get("countries");
-        return param ? param.split(",") : [];
-    });
-    const [selectedSectors, setSelectedSectors] = useState<string[]>(() => {
-        const param = searchParams.get("sectors");
-        return param ? param.split(",") : [];
-    });
-    const [selectedCities, setSelectedCities] = useState<string[]>(() => {
-        const param = searchParams.get("cities");
-        return param ? param.split(",") : [];
-    });
-    const [minAge, setMinAge] = useState<number | null>(() => {
-        const param = searchParams.get("minAge");
-        return param ? Number.parseInt(param, 10) : null;
-    });
-    const [maxAge, setMaxAge] = useState<number | null>(() => {
-        const param = searchParams.get("maxAge");
-        return param ? Number.parseInt(param, 10) : null;
-    });
-    const [minWorkExperience, setMinWorkExperience] = useState<number | null>(() => {
-        const param = searchParams.get("minWorkExperience");
-        return param ? Number.parseInt(param, 10) : null;
-    });
-    const [maxWorkExperience, setMaxWorkExperience] = useState<number | null>(() => {
-        const param = searchParams.get("maxWorkExperience");
-        return param ? Number.parseInt(param, 10) : null;
-    });
-    const [searchQuery, setSearchQuery] = useState<string>(() => {
-        return searchParams.get("search") || "";
-    });
+    // Initialize filters from URL search params
+    const initialFilters = {
+        selectedCountries: searchParams.get("countries")?.split(",") || [],
+        selectedSectors: searchParams.get("sectors")?.split(",") || [],
+        selectedCities: searchParams.get("cities")?.split(",") || [],
+        minAge: searchParams.get("minAge") ? Number.parseInt(searchParams.get("minAge")!, 10) : null,
+        maxAge: searchParams.get("maxAge") ? Number.parseInt(searchParams.get("maxAge")!, 10) : null,
+        minWorkExperience: searchParams.get("minWorkExperience") ? Number.parseInt(searchParams.get("minWorkExperience")!, 10) : null,
+        maxWorkExperience: searchParams.get("maxWorkExperience") ? Number.parseInt(searchParams.get("maxWorkExperience")!, 10) : null,
+        searchQuery: searchParams.get("search") || "",
+    };
+
+    // Debounced search state (separate from hook for URL sync)
     const [debouncedSearch, setDebouncedSearch] = useState<string>(() => {
         return searchParams.get("search") || "";
     });
@@ -126,6 +108,39 @@ export function DashboardClient({
     // Data fetching state
     const [entries, setEntries] = useState<SalaryEntry[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+
+    // Use shared filters hook
+    const { filters, actions, filteredEntries: filteredByFilters, activeFilterCount, options } = useFilters(entries, initialFilters);
+
+    // Extract filter values for easier access
+    const {
+        selectedCountries,
+        selectedSectors,
+        selectedCities,
+        minAge,
+        maxAge,
+        minWorkExperience,
+        maxWorkExperience,
+        searchQuery,
+    } = filters;
+
+    // Extract filter actions
+    const {
+        setSelectedCountries,
+        setSelectedSectors,
+        setSelectedCities,
+        setMinAge,
+        setMaxAge,
+        setMinWorkExperience,
+        setMaxWorkExperience,
+        setSearchQuery,
+        clearAllFilters,
+    } = actions;
+
+    // Sync debounced search to hook
+    useEffect(() => {
+        setSearchQuery(debouncedSearch);
+    }, [debouncedSearch, setSearchQuery]);
 
     // Fetch entries on mount
     useEffect(() => {
@@ -330,124 +345,14 @@ export function DashboardClient({
         }
     };
 
-    // Extract unique countries, sectors, and cities
-    const countries = useMemo(() => {
-        const uniqueCountries = Array.from(
-            new Set(entries.map((e) => e.country).filter(Boolean))
-        ).sort((a, b) => (a || "").localeCompare(b || ""));
-        return uniqueCountries;
-    }, [entries]);
-
-    const sectors = useMemo(() => {
-        const uniqueSectors = Array.from(
-            new Set(entries.map((e) => e.sector).filter(Boolean))
-        ).sort((a, b) => (a || "").localeCompare(b || ""));
-        return uniqueSectors;
-    }, [entries]);
-
-    // Filter cities based on selected countries
-    const cities = useMemo(() => {
-        // Always show all cities, regardless of country selection
-        // The filtering will handle the logic of which entries to show
-        const uniqueCities = Array.from(
-            new Set(entries.map((e) => e.workCity).filter(Boolean))
-        ).sort((a, b) => (a || "").localeCompare(b || ""));
-
-        return uniqueCities;
-    }, [entries]); // Only depend on entries, not selectedCountries
-    const filteredEntries = useMemo(() => {
-        return entries.filter((entry) => {
-            // Country filter (multi-select)
-            if (
-                selectedCountries.length > 0 &&
-                !selectedCountries.includes(entry.country || "")
-            ) {
-                return false;
-            }
-
-            // Sector filter (multi-select)
-            if (
-                selectedSectors.length > 0 &&
-                !selectedSectors.includes(entry.sector || "")
-            ) {
-                return false;
-            }
-
-            // City filter (multi-select)
-            if (
-                selectedCities.length > 0 &&
-                !selectedCities.includes(entry.workCity || "")
-            ) {
-                return false;
-            }
-
-            // Age range filter
-            const entryAge = typeof entry.age === 'string' ? Number.parseInt(entry.age, 10) : entry.age;
-            if (minAge !== null && entryAge !== null && !Number.isNaN(entryAge) && entryAge < minAge) {
-                return false;
-            }
-            if (maxAge !== null && entryAge !== null && !Number.isNaN(entryAge) && entryAge > maxAge) {
-                return false;
-            }
-
-            // Work experience range filter
-            const entryWorkExperience = typeof entry.workExperience === 'string' ? Number.parseInt(entry.workExperience, 10) : entry.workExperience;
-            if (minWorkExperience !== null && entryWorkExperience !== null && !Number.isNaN(entryWorkExperience) && entryWorkExperience < minWorkExperience) {
-                return false;
-            }
-            if (maxWorkExperience !== null && entryWorkExperience !== null && !Number.isNaN(entryWorkExperience) && entryWorkExperience > maxWorkExperience) {
-                return false;
-            }
-
-            // Comma-separated search filter
-            if (debouncedSearch) {
-                const searchTerms = debouncedSearch
-                    .toLowerCase()
-                    .split(",")
-                    .map((term) => term.trim())
-                    .filter(Boolean);
-                const searchableText = [
-                    entry.jobTitle,
-                    entry.country,
-                    entry.sector,
-                    entry.workCity,
-                    entry.jobDescription,
-                ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
-
-                // Match if ANY search term is found
-                const matchesSearch = searchTerms.some((term) =>
-                    searchableText.includes(term)
-                );
-
-                if (!matchesSearch) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-    }, [
-        entries,
-        selectedCountries,
-        selectedSectors,
-        selectedCities,
-        minAge,
-        maxAge,
-        minWorkExperience,
-        maxWorkExperience,
-        debouncedSearch,
-    ]);
-
+    // Extract filter options for backward compatibility
     // Apply sorting to filtered entries
     const sortedEntries = useMemo(() => {
         if (!sortField || !sortDirection) {
-            return filteredEntries;
+            return filteredByFilters;
         }
 
-        const sorted = [...filteredEntries].sort((a, b) => {
+        const sorted = [...filteredByFilters].sort((a, b) => {
             // Map sort fields to actual database fields
             let aValue: any;
             let bValue: any;
@@ -494,7 +399,7 @@ export function DashboardClient({
         });
 
         return sorted;
-    }, [filteredEntries, sortField, sortDirection]);
+    }, [filteredByFilters, sortField, sortDirection]);
 
     // Pagination logic
     const totalPages = Math.ceil(sortedEntries.length / rowsPerPage);
@@ -548,7 +453,7 @@ export function DashboardClient({
                             {t("title")}
                         </h1>
                         <p className="text-sm md:text-base text-stone-400">
-                            {t("subtitle", { count: filteredEntries.length })}
+                            {t("subtitle", { count: filteredByFilters.length })}
                         </p>
                     </div>
                     <Button
@@ -585,7 +490,7 @@ export function DashboardClient({
                             </CardHeader>
                             <CardContent>
                                 <div className="text-xl font-bold text-stone-100">
-                                    {formatNumber(filteredEntries.length)}
+                                    {formatNumber(filteredByFilters.length)}
                                 </div>
                             </CardContent>
                         </Card>
@@ -599,9 +504,9 @@ export function DashboardClient({
                                 <div
                                     className="text-xl font-bold text-stone-100 truncate"
                                     title={(() => {
-                                        if (filteredEntries.length === 0)
+                                        if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const sectorCounts = filteredEntries.reduce(
+                                        const sectorCounts = filteredByFilters.reduce(
                                             (acc, e) => {
                                                 const sector =
                                                     e.sector || "Unknown";
@@ -620,9 +525,9 @@ export function DashboardClient({
                                     })()}
                                 >
                                     {(() => {
-                                        if (filteredEntries.length === 0)
+                                        if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const sectorCounts = filteredEntries.reduce(
+                                        const sectorCounts = filteredByFilters.reduce(
                                             (acc, e) => {
                                                 const sector =
                                                     e.sector || "Unknown";
@@ -651,9 +556,9 @@ export function DashboardClient({
                             <CardContent>
                                 <div className="text-xl font-bold text-stone-100">
                                     {(() => {
-                                        if (filteredEntries.length === 0)
+                                        if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const salariesWithCurrency = filteredEntries
+                                        const salariesWithCurrency = filteredByFilters
                                             .map((e) => ({
                                                 salary: e.grossSalary,
                                                 currency: e.currency,
@@ -713,9 +618,9 @@ export function DashboardClient({
                             <CardContent>
                                 <div className="text-lg font-bold text-stone-100">
                                     {(() => {
-                                        if (filteredEntries.length === 0)
+                                        if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const salariesWithCurrency = filteredEntries
+                                        const salariesWithCurrency = filteredByFilters
                                             .map((e) => ({
                                                 salary: e.grossSalary,
                                                 currency: e.currency,
@@ -807,24 +712,13 @@ export function DashboardClient({
                                 <FiltersModal
                                     selectedCountries={selectedCountries}
                                     onCountriesChange={setSelectedCountries}
-                                    availableCountries={countries.map(
-                                        (country) => ({
-                                            value: country as string,
-                                            label: country as string
-                                        })
-                                    )}
+                                    availableCountries={options.countries}
                                     selectedCities={selectedCities}
                                     onCitiesChange={setSelectedCities}
-                                    availableCities={cities.map((city) => ({
-                                        value: city as string,
-                                        label: city as string,
-                                    }))}
+                                    availableCities={options.cities}
                                     selectedSectors={selectedSectors}
                                     onSectorsChange={setSelectedSectors}
-                                    availableSectors={sectors.map((sector) => ({
-                                        value: sector as string,
-                                        label: sector as string,
-                                    }))}
+                                    availableSectors={options.sectors}
                                     minAge={minAge}
                                     maxAge={maxAge}
                                     onMinAgeChange={setMinAge}
@@ -833,15 +727,7 @@ export function DashboardClient({
                                     maxWorkExperience={maxWorkExperience}
                                     onMinWorkExperienceChange={setMinWorkExperience}
                                     onMaxWorkExperienceChange={setMaxWorkExperience}
-                                    activeFilterCount={
-                                        selectedCountries.length +
-                                        selectedCities.length +
-                                        selectedSectors.length +
-                                        (minAge !== null ? 1 : 0) +
-                                        (maxAge !== null ? 1 : 0) +
-                                        (minWorkExperience !== null ? 1 : 0) +
-                                        (maxWorkExperience !== null ? 1 : 0)
-                                    }
+                                    activeFilterCount={activeFilterCount}
                                 />
 
                                 {/* Search Bar - Takes remaining space */}
@@ -1046,7 +932,7 @@ export function DashboardClient({
                                                 <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
                                             </TableRow>
                                         ))
-                                    ) : filteredEntries.length === 0 ? (
+                                    ) : filteredByFilters.length === 0 ? (
                                         <TableRow>
                                             <TableCell
                                                 colSpan={9}
@@ -1156,7 +1042,7 @@ export function DashboardClient({
                         </div>
 
                         {/* Pagination Controls */}
-                        {filteredEntries.length > 0 && (
+                        {filteredByFilters.length > 0 && (
                             <div className="mt-4 flex flex-col gap-4 border-t border-stone-700 pt-4">
                                 {/* Results info and rows per page */}
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -1165,10 +1051,10 @@ export function DashboardClient({
                                         {startIndex + 1} {t("pagination.to")}{" "}
                                         {Math.min(
                                             endIndex,
-                                            filteredEntries.length
+                                            filteredByFilters.length
                                         )}{" "}
                                         {t("pagination.of")}{" "}
-                                        {formatNumber(filteredEntries.length)}{" "}
+                                        {formatNumber(filteredByFilters.length)}{" "}
                                         {t("pagination.results")}
                                     </div>
 
