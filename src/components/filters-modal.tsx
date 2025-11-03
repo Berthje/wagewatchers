@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
+import { Slider } from "@/components/ui/slider";
 import { Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -101,7 +101,7 @@ export function FiltersModal({
                     )}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-stone-800 border-stone-700">
+            <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-stone-800 border-stone-700">
                 <DialogHeader className="sticky top-0 bg-stone-800 pb-4 border-b border-stone-700">
                     <div className="flex items-center justify-between">
                         <DialogTitle className="text-lg font-semibold text-stone-100">
@@ -120,13 +120,13 @@ export function FiltersModal({
                     </div>
                 </DialogHeader>
 
-                <div className="space-y-6 pt-4">
+                <div className="space-y-4">
                     {/* Location Section */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
                             {t("filters.locationSection")}
                         </h3>
-                        <div className="space-y-4 pl-0">
+                        <div className="grid grid-cols-2 gap-4 pl-0">
                             <div className="space-y-2">
                                 <label className="text-sm block font-medium text-stone-300">
                                     {t("filters.countries")}
@@ -194,41 +194,26 @@ export function FiltersModal({
                                 <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
                                     {t("filters.ageSection")}
                                 </h3>
-                                <div className="grid grid-cols-2 gap-4 pl-0">
-                                    <div className="space-y-2">
-                                        <label className="text-sm block font-medium text-stone-300">
-                                            {t("filters.minAge")}
+                                <div className="space-y-3 pl-0">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-medium text-stone-300">
+                                            {t("filters.ageRange")}
                                         </label>
-                                        <Input
-                                            type="number"
-                                            placeholder={t("filters.minAgePlaceholder")}
-                                            value={minAge ?? ""}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                onMinAgeChange(value ? Number.parseInt(value, 10) : null);
-                                            }}
-                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
-                                            min="18"
-                                            max="100"
-                                        />
+                                        <span className="text-sm text-stone-400">
+                                            {minAge ?? 18} - {maxAge ?? 100} {t("table.years")}
+                                        </span>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm block font-medium text-stone-300">
-                                            {t("filters.maxAge")}
-                                        </label>
-                                        <Input
-                                            type="number"
-                                            placeholder={t("filters.maxAgePlaceholder")}
-                                            value={maxAge ?? ""}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                onMaxAgeChange(value ? Number.parseInt(value, 10) : null);
-                                            }}
-                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
-                                            min="18"
-                                            max="100"
-                                        />
-                                    </div>
+                                    <Slider
+                                        value={[minAge ?? 18, maxAge ?? 100]}
+                                        onValueChange={(values) => {
+                                            onMinAgeChange(values[0] === 18 ? null : values[0]);
+                                            onMaxAgeChange(values[1] === 100 ? null : values[1]);
+                                        }}
+                                        min={18}
+                                        max={100}
+                                        step={1}
+                                        className="w-full"
+                                    />
                                 </div>
                             </div>
                         </>
@@ -244,41 +229,26 @@ export function FiltersModal({
                                 <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
                                     {t("filters.workExperienceSection")}
                                 </h3>
-                                <div className="grid grid-cols-2 gap-4 pl-0">
-                                    <div className="space-y-2">
-                                        <label className="text-sm block font-medium text-stone-300">
-                                            {t("filters.minWorkExperience")}
+                                <div className="space-y-3 pl-0">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-medium text-stone-300">
+                                            {t("filters.workExperienceRange")}
                                         </label>
-                                        <Input
-                                            type="number"
-                                            placeholder={t("filters.minWorkExperiencePlaceholder")}
-                                            value={minWorkExperience ?? ""}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                onMinWorkExperienceChange(value ? Number.parseInt(value, 10) : null);
-                                            }}
-                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
-                                            min="0"
-                                            max="50"
-                                        />
+                                        <span className="text-sm text-stone-400">
+                                            {minWorkExperience ?? 0} - {maxWorkExperience ?? 50} {t("table.years")}
+                                        </span>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm block font-medium text-stone-300">
-                                            {t("filters.maxWorkExperience")}
-                                        </label>
-                                        <Input
-                                            type="number"
-                                            placeholder={t("filters.maxWorkExperiencePlaceholder")}
-                                            value={maxWorkExperience ?? ""}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                onMaxWorkExperienceChange(value ? Number.parseInt(value, 10) : null);
-                                            }}
-                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
-                                            min="0"
-                                            max="50"
-                                        />
-                                    </div>
+                                    <Slider
+                                        value={[minWorkExperience ?? 0, maxWorkExperience ?? 50]}
+                                        onValueChange={(values) => {
+                                            onMinWorkExperienceChange(values[0] === 0 ? null : values[0]);
+                                            onMaxWorkExperienceChange(values[1] === 50 ? null : values[1]);
+                                        }}
+                                        min={0}
+                                        max={50}
+                                        step={1}
+                                        className="w-full"
+                                    />
                                 </div>
                             </div>
                         </>
