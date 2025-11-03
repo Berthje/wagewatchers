@@ -28,8 +28,10 @@
         "noOptionsFound": "Aucune option trouvée.",
         "typeToSearch": "Tapez au moins 2 caractères pour rechercher...",
         "remoteHome": "Télétravail (Remote)",
+        "clearSelection": "Effacer la sélection",
         "loadingCities": "Chargement des villes...",
-        "close": "Fermer"
+        "close": "Fermer",
+        "searchCities": "Rechercher des villes..."
     },
     "placeholders": {
         "age": "ex. 30",
@@ -417,6 +419,10 @@
             "unitedKingdom": "Royaume-Uni"
         },
         "submit": "Partager le Salaire",
+        "submitEntry": "Soumettre l'Entrée",
+        "updateEntry": "Mettre à Jour l'Entrée",
+        "submittingEntry": "Soumission...",
+        "updatingEntry": "Mise à jour...",
         "success": "Salaire partagé avec succès !",
         "successDetails": "Vous pouvez modifier cette entrée pendant 1 jour. Retrouvez-la dans 'Mes Entrées'.",
         "error": "Échec du partage du salaire",

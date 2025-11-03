@@ -28,8 +28,10 @@
         "noOptionsFound": "No options found.",
         "typeToSearch": "Type at least 2 characters to search...",
         "remoteHome": "From home (Remote)",
+        "clearSelection": "Clear selection",
         "loadingCities": "Loading cities...",
-        "close": "Close"
+        "close": "Close",
+        "searchCities": "Search cities..."
     },
     "placeholders": {
         "age": "e.g. 30",
@@ -461,6 +463,10 @@
             "unitedKingdom": "United Kingdom"
         },
         "submit": "Share Salary",
+        "submitEntry": "Submit Entry",
+        "updateEntry": "Update Entry",
+        "submittingEntry": "Submitting...",
+        "updatingEntry": "Updating...",
         "success": "Salary shared successfully!",
         "successDetails": "You can now edit this entry for 1 day. Find it in 'My Entries'.",
         "error": "Failed to share salary",

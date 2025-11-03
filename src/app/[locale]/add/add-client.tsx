@@ -26,7 +26,7 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Combobox } from "@/components/ui/combobox";
-import { SmartCityInput } from "@/components/ui/smart-city-input";
+import { CityCombobox } from "@/components/ui/city-combobox";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
@@ -47,11 +47,11 @@ import {
     verifyOwnerToken,
 } from "@/lib/entry-ownership";
 
-const getSubmitButtonText = (isSubmitting: boolean, isEditMode: boolean) => {
+const getSubmitButtonText = (isSubmitting: boolean, isEditMode: boolean, t: (key: string) => string) => {
     if (isSubmitting) {
-        return isEditMode ? "Updating..." : "Submitting...";
+        return isEditMode ? t("updatingEntry") : t("submittingEntry");
     }
-    return isEditMode ? "Update Entry" : "Submit Entry";
+    return isEditMode ? t("updateEntry") : t("submitEntry");
 };
 
 function AddEntryContent() {
@@ -365,14 +365,13 @@ function AddEntryContent() {
     };
 
     const getFieldElement = (config: any, field: any, fieldName?: string) => {
-        // Special handling for workCity field with smart city input
+        // Special handling for workCity field with city combobox
         if (fieldName === "workCity") {
             return (
-                <SmartCityInput
+                <CityCombobox
                     value={field.value?.toString() || ""}
                     onChange={field.onChange}
                     location={selectedCountry}
-                    locale={locale}
                     placeholder={config.placeholder}
                 />
             );
@@ -575,7 +574,7 @@ function AddEntryContent() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-stone-950 to-stone-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
             {/* Header */}
             <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
                 <Navbar
@@ -899,13 +898,13 @@ function AddEntryContent() {
                                             variant="outline"
                                             onClick={() => router.push(`/${locale}/dashboard`)}
                                         >
-                                            Cancel
+                                            {tCommon("cancel")}
                                         </Button>
                                         <Button
                                             type="submit"
                                             disabled={isSubmitting}
                                         >
-                                            {getSubmitButtonText(isSubmitting, isEditMode)}
+                                            {getSubmitButtonText(isSubmitting, isEditMode, t)}
                                         </Button>
                                     </div>
                                 </>

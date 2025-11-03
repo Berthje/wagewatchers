@@ -104,6 +104,17 @@ export const exchangeRates = pgTable('ExchangeRate', {
     index('currency_idx').on(table.currency),
 ]);
 
+export const cities = pgTable('City', {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    country: text('country').notNull(),
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+}, (table) => [
+    index('country_idx').on(table.country),
+    index('name_country_idx').on(table.name, table.country),
+]);
+
 // Relations
 export const salaryEntriesRelations = relations(salaryEntries, ({ many }) => ({
     comments: many(comments),
@@ -127,3 +138,4 @@ export type Comment = typeof comments.$inferSelect;
 export type Report = typeof reports.$inferSelect;
 export type Admin = typeof admins.$inferSelect;
 export type ExchangeRate = typeof exchangeRates.$inferSelect;
+export type City = typeof cities.$inferSelect;

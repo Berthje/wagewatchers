@@ -70,7 +70,7 @@ export function ExperienceGrowthChart({
                                 ></div>
                             ))}
                             {/* Area fill */}
-                            <div className="absolute bottom-8 left-4 right-4 h-32 bg-gradient-to-t from-stone-600/50 to-transparent rounded-t animate-pulse"></div>
+                            <div className="absolute bottom-8 left-4 right-4 h-32 bg-linear-to-t from-stone-600/50 to-transparent rounded-t animate-pulse"></div>
                             {/* Wavy line */}
                             <svg
                                 className="absolute bottom-8 left-4 right-4 h-32"

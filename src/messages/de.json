@@ -28,8 +28,10 @@
         "noOptionsFound": "Keine Optionen gefunden.",
         "typeToSearch": "Geben Sie mindestens 2 Zeichen ein, um zu suchen...",
         "remoteHome": "Homeoffice (Remote)",
+        "clearSelection": "Auswahl löschen",
         "loadingCities": "Städte laden...",
-        "close": "Schließen"
+        "close": "Schließen",
+        "searchCities": "Städte suchen..."
     },
     "placeholders": {
         "age": "z.B. 30",
@@ -417,6 +419,10 @@
             "unitedKingdom": "Vereinigtes Königreich"
         },
         "submit": "Gehalt Teilen",
+        "submitEntry": "Eintrag Einreichen",
+        "updateEntry": "Eintrag Aktualisieren",
+        "submittingEntry": "Wird eingereicht...",
+        "updatingEntry": "Wird aktualisiert...",
         "success": "Gehalt erfolgreich geteilt!",
         "successDetails": "Sie können diesen Eintrag 1 Tag lang bearbeiten. Finden Sie ihn unter 'Meine Einträge'.",
         "error": "Gehalt teilen fehlgeschlagen",

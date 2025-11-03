@@ -28,8 +28,10 @@
         "noOptionsFound": "Geen opties gevonden.",
         "typeToSearch": "Typ minimaal 2 tekens om te zoeken...",
         "remoteHome": "Vanuit thuis (Remote)",
+        "clearSelection": "Selectie wissen",
         "loadingCities": "Steden laden...",
-        "close": "Sluiten"
+        "close": "Sluiten",
+        "searchCities": "Zoek steden..."
     },
     "placeholders": {
         "age": "bijv. 30",
@@ -417,6 +419,10 @@
             "unitedKingdom": "Verenigd Koninkrijk"
         },
         "submit": "Salaris Delen",
+        "submitEntry": "Invoer Indienen",
+        "updateEntry": "Invoer Bijwerken",
+        "submittingEntry": "Indienen...",
+        "updatingEntry": "Bijwerken...",
         "success": "Salaris succesvol gedeeld!",
         "successDetails": "U kunt deze invoer 1 dag lang bewerken. Vind het in 'Mijn Invoer'.",
         "error": "Salaris delen mislukt",

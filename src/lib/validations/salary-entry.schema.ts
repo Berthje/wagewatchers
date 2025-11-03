@@ -141,7 +141,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             ,
 
             // Commute
-            workCity: z.string().min(1, { message: t("validation.workCityRequired") }).max(200, { message: t("validation.workCityMax") }).optional()
+            workCity: z.string().max(200, { message: t("validation.workCityMax") }).optional()
             ,
             commuteDistance: z.number().min(0, { message: t("validation.commuteDistanceRequired") }),
             commuteMethod: z.string().min(1, { message: t("validation.commuteMethodRequired") })
@@ -209,6 +209,22 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                 {
                     message: t("validation.seniorityVsExperience"),
                     path: ["seniority"],
+                }
+            )
+            .refine(
+                (data) => {
+                    // Work city is required when providing any commute details
+                    const hasCommuteDetails = data.commuteDistance !== undefined ||
+                        (data.commuteMethod && data.commuteMethod.trim() !== "") ||
+                        (data.commuteCompensation && data.commuteCompensation.trim() !== "");
+                    if (hasCommuteDetails) {
+                        return data.workCity && data.workCity.trim() !== "";
+                    }
+                    return true;
+                },
+                {
+                    message: t("validation.workCityRequiredForCommute"),
+                    path: ["workCity"],
                 }
             )
     );
