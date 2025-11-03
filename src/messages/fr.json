@@ -1003,5 +1003,11 @@
             "expired": "La fenêtre d'édition pour cette entrée a expiré (1 jour après la soumission).",
             "generic": "Échec du chargement de l'entrée. Veuillez réessayer."
         }
+    },
+    "pageNotFound": {
+        "title": "Oups ! Page Introuvable",
+        "description": "Il semble que cette page ait pris une réduction salariale et disparu. Mais ne vous inquiétez pas, vos données salariales sont en sécurité chez nous !",
+        "goHome": "Retour à la maison",
+        "tip": "💡 Conseil : Essayez de vérifier l'URL ou revenez explorer les données salariales"
     }
 }

@@ -1003,5 +1003,11 @@
             "expired": "Het bewerkingsvenster voor deze invoer is verlopen (1 dag na indiening).",
             "generic": "Laden van invoer mislukt. Probeer het opnieuw."
         }
+    },
+    "pageNotFound": {
+        "title": "Oeps! Pagina Niet Gevonden",
+        "description": "Het lijkt erop dat deze pagina een salarisverlaging heeft gekregen en verdwenen is. Maar maak je geen zorgen, je loon gegevens zijn veilig bij ons!",
+        "goHome": "Ga terug naar de homepagina",
+        "tip": "💡 Tip: Controleer de URL of ga terug om salarisgegevens te verkennen"
     }
 }

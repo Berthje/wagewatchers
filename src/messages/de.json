@@ -1003,5 +1003,11 @@
             "expired": "Das Bearbeitungsfenster für diesen Eintrag ist abgelaufen (1 Tag nach Einreichung).",
             "generic": "Fehler beim Laden des Eintrags. Bitte versuchen Sie es erneut."
         }
+    },
+    "pageNotFound": {
+        "title": "Hoppla! Seite nicht gefunden",
+        "description": "Es scheint, als hätte diese Seite eine Gehaltskürzung bekommen und ist verschwunden. Aber keine Sorge, Ihre Gehaltsdaten sind bei uns sicher!",
+        "goHome": "Zurück nach Hause",
+        "tip": "💡 Tipp: Versuchen Sie die URL zu überprüfen oder gehen Sie zurück, um Gehaltsdaten zu erkunden"
     }
 }
