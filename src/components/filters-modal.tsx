@@ -37,6 +37,12 @@ interface FiltersModalProps {
     onMinAgeChange?: (age: number | null) => void;
     onMaxAgeChange?: (age: number | null) => void;
 
+    // Work experience filters
+    minWorkExperience?: number | null;
+    maxWorkExperience?: number | null;
+    onMinWorkExperienceChange?: (experience: number | null) => void;
+    onMaxWorkExperienceChange?: (experience: number | null) => void;
+
     // Active filter count
     activeFilterCount: number;
 }
@@ -55,6 +61,10 @@ export function FiltersModal({
     maxAge,
     onMinAgeChange,
     onMaxAgeChange,
+    minWorkExperience,
+    maxWorkExperience,
+    onMinWorkExperienceChange,
+    onMaxWorkExperienceChange,
     activeFilterCount,
 }: Readonly<FiltersModalProps>) {
     const t = useTranslations("dashboard");
@@ -66,6 +76,8 @@ export function FiltersModal({
         onSectorsChange([]);
         onMinAgeChange?.(null);
         onMaxAgeChange?.(null);
+        onMinWorkExperienceChange?.(null);
+        onMaxWorkExperienceChange?.(null);
     };
 
     const hasActiveFilters = activeFilterCount > 0;
@@ -82,7 +94,7 @@ export function FiltersModal({
                     {hasActiveFilters && (
                         <Badge
                             variant="secondary"
-                            className="ml-2 px-1.5 py-0 h-5 min-w-[20px] text-xs font-semibold bg-stone-700 text-stone-100"
+                            className="ml-2 px-1.5 py-0 h-5 min-w-5 text-xs font-semibold bg-stone-700 text-stone-100"
                         >
                             {activeFilterCount}
                         </Badge>
@@ -215,6 +227,56 @@ export function FiltersModal({
                                             className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
                                             min="18"
                                             max="100"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Work Experience Section */}
+                    {minWorkExperience !== undefined && maxWorkExperience !== undefined && onMinWorkExperienceChange && onMaxWorkExperienceChange && (
+                        <>
+                            {/* Divider */}
+                            <div className="border-t border-stone-700" />
+
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                                    {t("filters.workExperienceSection")}
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4 pl-0">
+                                    <div className="space-y-2">
+                                        <label className="text-sm block font-medium text-stone-300">
+                                            {t("filters.minWorkExperience")}
+                                        </label>
+                                        <Input
+                                            type="number"
+                                            placeholder={t("filters.minWorkExperiencePlaceholder")}
+                                            value={minWorkExperience ?? ""}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                onMinWorkExperienceChange(value ? Number.parseInt(value, 10) : null);
+                                            }}
+                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
+                                            min="0"
+                                            max="50"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm block font-medium text-stone-300">
+                                            {t("filters.maxWorkExperience")}
+                                        </label>
+                                        <Input
+                                            type="number"
+                                            placeholder={t("filters.maxWorkExperiencePlaceholder")}
+                                            value={maxWorkExperience ?? ""}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                onMaxWorkExperienceChange(value ? Number.parseInt(value, 10) : null);
+                                            }}
+                                            className="bg-stone-700 border-stone-600 text-stone-100 placeholder-stone-400"
+                                            min="0"
+                                            max="50"
                                         />
                                     </div>
                                 </div>

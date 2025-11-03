@@ -85,6 +85,14 @@ export function DashboardClient({
         const param = searchParams.get("maxAge");
         return param ? Number.parseInt(param, 10) : null;
     });
+    const [minWorkExperience, setMinWorkExperience] = useState<number | null>(() => {
+        const param = searchParams.get("minWorkExperience");
+        return param ? Number.parseInt(param, 10) : null;
+    });
+    const [maxWorkExperience, setMaxWorkExperience] = useState<number | null>(() => {
+        const param = searchParams.get("maxWorkExperience");
+        return param ? Number.parseInt(param, 10) : null;
+    });
     const [searchQuery, setSearchQuery] = useState<string>(() => {
         return searchParams.get("search") || "";
     });
@@ -146,6 +154,8 @@ export function DashboardClient({
             cities?: string[];
             minAge?: number | null;
             maxAge?: number | null;
+            minWorkExperience?: number | null;
+            maxWorkExperience?: number | null;
             search?: string;
             page?: number;
             perPage?: number;
@@ -197,6 +207,16 @@ export function DashboardClient({
                     ? params.set("maxAge", updates.maxAge.toString())
                     : params.delete("maxAge");
             }
+            if (updates.minWorkExperience !== undefined) {
+                updates.minWorkExperience !== null
+                    ? params.set("minWorkExperience", updates.minWorkExperience.toString())
+                    : params.delete("minWorkExperience");
+            }
+            if (updates.maxWorkExperience !== undefined) {
+                updates.maxWorkExperience !== null
+                    ? params.set("maxWorkExperience", updates.maxWorkExperience.toString())
+                    : params.delete("maxWorkExperience");
+            }
             updateStringParam("search", updates.search);
             updateNumericParam("page", updates.page, 1);
             updateNumericParam("perPage", updates.perPage, 10);
@@ -222,6 +242,8 @@ export function DashboardClient({
             cities: selectedCities,
             minAge: minAge,
             maxAge: maxAge,
+            minWorkExperience: minWorkExperience,
+            maxWorkExperience: maxWorkExperience,
             search: debouncedSearch,
             page: currentPage,
             perPage: rowsPerPage,
@@ -234,6 +256,8 @@ export function DashboardClient({
         selectedCities,
         minAge,
         maxAge,
+        minWorkExperience,
+        maxWorkExperience,
         debouncedSearch,
         currentPage,
         rowsPerPage,
@@ -275,7 +299,7 @@ export function DashboardClient({
     // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCountries, selectedSectors, selectedCities, minAge, maxAge, debouncedSearch]);
+    }, [selectedCountries, selectedSectors, selectedCities, minAge, maxAge, minWorkExperience, maxWorkExperience, debouncedSearch]);
 
     // Mobile detection
     useEffect(() => {
@@ -366,6 +390,15 @@ export function DashboardClient({
                 return false;
             }
 
+            // Work experience range filter
+            const entryWorkExperience = typeof entry.workExperience === 'string' ? Number.parseInt(entry.workExperience, 10) : entry.workExperience;
+            if (minWorkExperience !== null && entryWorkExperience !== null && !Number.isNaN(entryWorkExperience) && entryWorkExperience < minWorkExperience) {
+                return false;
+            }
+            if (maxWorkExperience !== null && entryWorkExperience !== null && !Number.isNaN(entryWorkExperience) && entryWorkExperience > maxWorkExperience) {
+                return false;
+            }
+
             // Comma-separated search filter
             if (debouncedSearch) {
                 const searchTerms = debouncedSearch
@@ -403,6 +436,8 @@ export function DashboardClient({
         selectedCities,
         minAge,
         maxAge,
+        minWorkExperience,
+        maxWorkExperience,
         debouncedSearch,
     ]);
 
@@ -794,12 +829,18 @@ export function DashboardClient({
                                     maxAge={maxAge}
                                     onMinAgeChange={setMinAge}
                                     onMaxAgeChange={setMaxAge}
+                                    minWorkExperience={minWorkExperience}
+                                    maxWorkExperience={maxWorkExperience}
+                                    onMinWorkExperienceChange={setMinWorkExperience}
+                                    onMaxWorkExperienceChange={setMaxWorkExperience}
                                     activeFilterCount={
                                         selectedCountries.length +
                                         selectedCities.length +
                                         selectedSectors.length +
                                         (minAge !== null ? 1 : 0) +
-                                        (maxAge !== null ? 1 : 0)
+                                        (maxAge !== null ? 1 : 0) +
+                                        (minWorkExperience !== null ? 1 : 0) +
+                                        (maxWorkExperience !== null ? 1 : 0)
                                     }
                                 />
 
@@ -852,6 +893,18 @@ export function DashboardClient({
                                         value: maxAge.toString(),
                                         category: "age" as const,
                                     }] : []),
+                                    ...(minWorkExperience !== null ? [{
+                                        id: `min-work-experience-${minWorkExperience}`,
+                                        label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
+                                        value: minWorkExperience.toString(),
+                                        category: "workExperience" as const,
+                                    }] : []),
+                                    ...(maxWorkExperience !== null ? [{
+                                        id: `max-work-experience-${maxWorkExperience}`,
+                                        label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
+                                        value: maxWorkExperience.toString(),
+                                        category: "workExperience" as const,
+                                    }] : []),
                                 ]}
                                 onRemoveFilter={(value, category) => {
                                     if (category === "country") {
@@ -878,6 +931,12 @@ export function DashboardClient({
                                         } else if (maxAge !== null && maxAge.toString() === value) {
                                             setMaxAge(null);
                                         }
+                                    } else if (category === "workExperience") {
+                                        if (minWorkExperience !== null && minWorkExperience.toString() === value) {
+                                            setMinWorkExperience(null);
+                                        } else if (maxWorkExperience !== null && maxWorkExperience.toString() === value) {
+                                            setMaxWorkExperience(null);
+                                        }
                                     }
                                 }}
                                 onClearAll={() => {
@@ -886,6 +945,8 @@ export function DashboardClient({
                                     setSelectedSectors([]);
                                     setMinAge(null);
                                     setMaxAge(null);
+                                    setMinWorkExperience(null);
+                                    setMaxWorkExperience(null);
                                 }}
                             />
                         </div>
