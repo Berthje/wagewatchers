@@ -40,11 +40,11 @@ export function CityCombobox({
             return;
         }
 
-        // Always show remoteHome option, even without search
+        // Only show remoteHome option when cities are found
         const remoteOption = { value: "remoteHome", label: t("remoteHome") };
 
         if (debouncedSearch.length < 3) {
-            setCities([remoteOption]);
+            setCities([]);
             return;
         }
 
@@ -69,19 +69,21 @@ export function CityCombobox({
                         label: city.name,
                     }));
 
-                    // Always add remoteHome option at the top
-                    const citiesWithRemote = [remoteOption, ...formattedCities];
+                    // Only add remoteHome option if cities are found
+                    const citiesWithRemote = formattedCities.length > 0
+                        ? [remoteOption, ...formattedCities]
+                        : formattedCities;
 
                     cacheRef.current.set(cacheKey, citiesWithRemote);
                     setCities(citiesWithRemote);
                 } else {
-                    // Even if API fails, show remoteHome option
-                    setCities([remoteOption]);
+                    // Don't show remoteHome if API fails
+                    setCities([]);
                 }
             } catch (error) {
                 console.error("Error fetching cities:", error);
-                // Even if fetch fails, show remoteHome option
-                setCities([remoteOption]);
+                // Don't show remoteHome if fetch fails
+                setCities([]);
             } finally {
                 setIsLoading(false);
             }
