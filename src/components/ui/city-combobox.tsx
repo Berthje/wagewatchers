@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "use-debounce";
@@ -40,7 +39,6 @@ export function CityCombobox({
             return;
         }
 
-        // Only show remoteHome option when cities are found
         const remoteOption = { value: "remoteHome", label: t("remoteHome") };
 
         if (debouncedSearch.length < 3) {
@@ -50,7 +48,6 @@ export function CityCombobox({
 
         const cacheKey = `${location}-${debouncedSearch}`;
         const cachedCities = cacheRef.current.get(cacheKey);
-
         if (cachedCities) {
             setCities(cachedCities);
             return;
@@ -69,20 +66,21 @@ export function CityCombobox({
                         label: city.name,
                     }));
 
-                    // Only add remoteHome option if cities are found
-                    const citiesWithRemote = formattedCities.length > 0
+                    const remoteMatchesSearch = remoteOption.label
+                        .toLowerCase()
+                        .includes(debouncedSearch.toLowerCase());
+
+                    const citiesWithRemote = remoteMatchesSearch || formattedCities.length > 0
                         ? [remoteOption, ...formattedCities]
                         : formattedCities;
 
                     cacheRef.current.set(cacheKey, citiesWithRemote);
                     setCities(citiesWithRemote);
                 } else {
-                    // Don't show remoteHome if API fails
                     setCities([]);
                 }
             } catch (error) {
                 console.error("Error fetching cities:", error);
-                // Don't show remoteHome if fetch fails
                 setCities([]);
             } finally {
                 setIsLoading(false);
