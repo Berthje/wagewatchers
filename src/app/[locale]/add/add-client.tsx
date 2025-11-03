@@ -47,6 +47,12 @@ import {
     verifyOwnerToken,
 } from "@/lib/entry-ownership";
 
+// Utility function to clean commute distance by keeping only numbers and dashes
+const cleanCommuteDistance = (value: string): string => {
+    // Keep only numbers and dashes, remove all other characters
+    return value.replace(/[^0-9-]/g, '').trim();
+};
+
 const getSubmitButtonText = (isSubmitting: boolean, isEditMode: boolean, t: (key: string) => string) => {
     if (isSubmitting) {
         return isEditMode ? t("updatingEntry") : t("submittingEntry");
@@ -203,7 +209,7 @@ function AddEntryContent() {
                         otherInsurances: data.otherInsurances || undefined,
                         otherBenefits: data.otherBenefits || undefined,
                         workCity: data.workCity || undefined,
-                        commuteDistance: data.commuteDistance ? data.commuteDistance.toString() : undefined,
+                        commuteDistance: data.commuteDistance ? cleanCommuteDistance(data.commuteDistance.toString()) : undefined,
                         commuteMethod: data.commuteMethod || undefined,
                         commuteCompensation:
                             data.commuteCompensation || undefined,
@@ -239,7 +245,7 @@ function AddEntryContent() {
             const bodyData: any = {
                 ...data,
                 source: "Manual submission",
-                commuteDistance: data.commuteDistance ? data.commuteDistance.toString() : undefined
+                commuteDistance: data.commuteDistance ? cleanCommuteDistance(data.commuteDistance.toString()) : undefined
             };
             if (isEditMode && editEntryId) {
                 const tokens = localStorage.getItem(

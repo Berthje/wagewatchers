@@ -1,3 +1,4 @@
+import { formatCityDisplayForMetadata } from "@/lib/utils/format.utils";
 import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -27,7 +28,7 @@ export async function generateMetadata({
     const city = entry[0].workCity || "";
     const salary = entry[0].grossSalary || entry[0].netSalary;
 
-    const location = [city, country].filter(Boolean).join(", ");
+    const location = formatCityDisplayForMetadata(country, city, locale);
     const sectorText = sector ? ` in ${sector}` : "";
     const locationText = location ? ` - ${location}` : "";
     const title = `${jobTitle}${sectorText}${locationText} | WageWatchers`;

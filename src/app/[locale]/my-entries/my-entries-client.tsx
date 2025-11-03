@@ -43,6 +43,7 @@ import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
+import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import confetti from "canvas-confetti";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -54,7 +55,9 @@ function MyEntriesContent() {
     const searchParams = useSearchParams();
     const t = useTranslations("myEntries");
     const tNav = useTranslations("nav");
+    const tUi = useTranslations("ui");
     const { preferences } = useSalaryDisplay();
+    const formatCityDisplay = createCityDisplayFormatter(tUi);
 
     const navTranslations = {
         dashboard: tNav("dashboard"),
@@ -371,7 +374,7 @@ function MyEntriesContent() {
                                                         <div className="flex flex-col gap-1">
                                                             <Badge variant="outline">
                                                                 {entry.country
-                                                                    ? `${entry.country}${entry.workCity ? ", " + entry.workCity : ""}`
+                                                                    ? formatCityDisplay(entry.country, entry.workCity)
                                                                     : "-"}
                                                             </Badge>
                                                         </div>
@@ -493,7 +496,7 @@ function MyEntriesContent() {
                                     </p>
                                     <p className="text-stone-400">
                                         {entryToDelete.country
-                                            ? `${entryToDelete.country}${entryToDelete.workCity ? ", " + entryToDelete.workCity : ""}`
+                                            ? formatCityDisplay(entryToDelete.country, entryToDelete.workCity)
                                             : "-"}{" "}
                                         •{" "}
                                         {formatSalary(

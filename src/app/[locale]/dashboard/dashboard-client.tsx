@@ -41,6 +41,7 @@ import {
     formatNumber,
     formatDate,
 } from "@/lib/utils";
+import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
@@ -56,10 +57,12 @@ export function DashboardClient({
 }>) {
     const t = useTranslations("dashboard");
     const tNav = useTranslations("nav");
+    const tUi = useTranslations("ui");
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const { preferences } = useSalaryDisplay();
+    const formatCityDisplay = createCityDisplayFormatter(tUi);
 
     // Initialize state from URL search params
     const [selectedCountries, setSelectedCountries] = useState<string[]>(() => {
@@ -1008,10 +1011,8 @@ export function DashboardClient({
                                                         className="border-stone-600 text-stone-300 w-fit"
                                                     >
                                                         {entry.country
-                                                            ? entry.country
+                                                            ? formatCityDisplay(entry.country, entry.workCity)
                                                             : "N/A"}
-                                                        {entry.workCity &&
-                                                            `, ${entry.workCity}`}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="font-medium text-stone-100 group-hover:text-orange-400 transition-colors">

@@ -136,3 +136,45 @@ export function getFieldDisplayValue(
     // Fallback to the raw value if no matching option found
     return value;
 }
+
+/**
+ * Format city display with proper translation of special values like "remoteHome"
+ */
+export function formatCityDisplayForMetadata(country: string, workCity?: string | null, locale: string = 'en'): string {
+    if (!workCity) return country;
+
+    let cityLabel = workCity;
+
+    // Translate special values
+    if (workCity === "remoteHome") {
+        switch (locale) {
+            case 'nl':
+                cityLabel = "Vanuit thuis (Remote)";
+                break;
+            case 'fr':
+                cityLabel = "Télétravail (Remote)";
+                break;
+            case 'de':
+                cityLabel = "Homeoffice (Remote)";
+                break;
+            default: // 'en'
+                cityLabel = "From home (Remote)";
+                break;
+        }
+    }
+
+    return `${country}, ${cityLabel}`;
+}
+
+/**
+ * Create a city display formatter function for client-side use
+ * Returns a function that formats city display with proper translation of special values
+ */
+export function createCityDisplayFormatter(tUi: (key: string) => string) {
+    return (country: string, workCity?: string | null) => {
+        if (!workCity) return country;
+
+        const cityLabel = workCity === "remoteHome" ? tUi("remoteHome") : workCity;
+        return `${country}, ${cityLabel}`;
+    };
+}

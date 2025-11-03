@@ -11,7 +11,7 @@ import { Navbar } from "@/components/navbar";
 import { CommentSection } from "@/components/comment-thread";
 import { shouldDisplayField } from "@/lib/salary-config";
 import { createFieldConfigs } from "@/lib/field-configs";
-import { getFieldDisplayValue, getCurrencySymbol } from "@/lib/utils/format.utils";
+import { getFieldDisplayValue, getCurrencySymbol, createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
@@ -53,6 +53,9 @@ export function EntryDetailClient({
     const t = useTranslations("entryDetail");
     const tAdd = useTranslations("add");
     const tNav = useTranslations("nav");
+    const tUi = useTranslations("ui");
+    const formatCityDisplay = createCityDisplayFormatter(tUi);
+
     const { preferences } = useSalaryDisplay();
     const symbol = getCurrencySymbol(preferences.currency);
 
@@ -148,7 +151,7 @@ export function EntryDetailClient({
                                 className="border-stone-600 text-stone-300"
                             >
                                 <MapPin className="mr-1 h-3 w-3" />
-                                {entry.workCity ? `${entry.country}, ${entry.workCity}` : entry.country}
+                                {formatCityDisplay(entry.country, entry.workCity)}
                             </Badge>
                         )}
                         {entry.sector && (

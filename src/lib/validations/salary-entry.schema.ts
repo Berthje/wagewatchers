@@ -143,7 +143,15 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             // Commute
             workCity: z.string().max(200, { message: t("validation.workCityMax") }).optional()
             ,
-            commuteDistance: z.number().min(0, { message: t("validation.commuteDistanceRequired") }),
+            commuteDistance: z.string()
+                .min(1, { message: t("validation.commuteDistanceRequired") })
+                .max(50, { message: t("validation.commuteDistanceMax") })
+                .refine((val) => {
+                    // Allow single numbers or ranges like "10-30"
+                    const rangeRegex = /^\d+(\.\d+)?-\d+(\.\d+)?$/;
+                    const singleRegex = /^\d+(\.\d+)?$/;
+                    return rangeRegex.test(val) || singleRegex.test(val);
+                }, { message: t("validation.commuteDistanceFormat") }),
             commuteMethod: z.string().min(1, { message: t("validation.commuteMethodRequired") })
             ,
             commuteCompensation: noUrls("commute compensation")
