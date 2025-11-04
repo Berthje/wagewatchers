@@ -1,28 +1,24 @@
 #!/usr/bin/env tsx
 
-import { updateCitiesForCountries } from '../src/lib/city-fetcher';
+import 'dotenv/config';
+import { updateCitiesFromCSV } from '../src/lib/city-fetcher';
+import path from 'node:path';
 
 /**
- * Script to update city data from GeoNames API
-*/
+ * Script to update city data from CSV file
+ * CSV should have semicolon (;) delimiter and contain 'name' and 'country' columns
+ */
 
-const COUNTRIES = [
-    { code: 'BE', name: 'Belgium' },
-    { code: 'NL', name: 'Netherlands' },
-    { code: 'FR', name: 'France' },
-    { code: 'DE', name: 'Germany' },
-];
+// CSV file should be in public/data/cities.csv
+const csvPath = path.join(process.cwd(), 'public', 'data', 'cities.csv');
 
-async function main() {
-    console.log('Starting city data update...');
+console.log('Starting city data update from CSV...');
+console.log(`CSV file path: ${csvPath}`);
 
-    try {
-        await updateCitiesForCountries(COUNTRIES);
-        console.log('City data update completed successfully!');
-    } catch (error) {
-        console.error('Error updating city data:', error);
-        process.exit(1);
-    }
+try {
+    await updateCitiesFromCSV(csvPath);
+    console.log('City data update completed successfully!');
+} catch (error) {
+    console.error('Error updating city data:', error);
+    process.exit(1);
 }
-
-main();

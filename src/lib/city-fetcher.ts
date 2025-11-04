@@ -1,108 +1,96 @@
 import { db } from '@/lib/db';
 import { cities } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import fs from 'node:fs';
 
-interface GeoNamesCity {
+interface CityData {
     name: string;
-    countryName: string;
+    country: string;
 }
 
 /**
- * Fetches cities from GeoNames API for a given country
- * @param countryCode - ISO country code (e.g., 'BE' for Belgium)
- * @param lang - Language code (e.g., 'en' for English, or undefined for local)
+ * Parses the GeoNames CSV file and extracts city data
+ * @param csvPath - Path to the CSV file
  * @returns Array of city objects
  */
-async function fetchCitiesFromGeoNames(countryCode: string, lang?: string): Promise<GeoNamesCity[]> {
-    const username = process.env.GEONAMES_USERNAME;
-    if (!username) {
-        throw new Error('GEONAMES_USERNAME environment variable is required');
+function parseCitiesFromCSV(csvPath: string): CityData[] {
+    const fileContent = fs.readFileSync(csvPath, 'utf-8');
+    const lines = fileContent.split('\n');
+
+    // Remove header line
+    const header = lines[0].split(';').map(col => col.trim());
+    const dataLines = lines.slice(1);
+
+    // Find column indices
+    const nameIndex = header.findIndex(col => col.toLowerCase().includes('name'));
+    const countryIndex = header.findIndex(col => col.toLowerCase().includes('country'));
+
+    if (nameIndex === -1 || countryIndex === -1) {
+        throw new Error('CSV must contain "name" and "country" columns');
     }
 
-    const langParam = lang ? `&lang=${lang}` : '';
-    const maxRows = 1000;
-    let allCities: GeoNamesCity[] = [];
-    let startRow = 0;
+    console.log(`Found columns - name: ${header[nameIndex]}, country: ${header[countryIndex]}`);
 
-    while (true) {
-        const cities = await fetchCitiesPage(countryCode, langParam, maxRows, startRow);
-        if (cities.length === 0) {
-            break;
+    const citiesData: CityData[] = [];
+
+    for (const line of dataLines) {
+        if (!line.trim()) continue;
+
+        const columns = line.split(';').map(col => col.trim());
+        const name = columns[nameIndex];
+        const country = columns[countryIndex];
+
+        if (name && country) {
+            citiesData.push({ name, country });
         }
-
-        allCities = allCities.concat(cities);
-
-        if (cities.length < maxRows) {
-            break;
-        }
-
-        startRow += maxRows;
-
-        // Small delay to be respectful to the API
-        await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    return allCities;
+    console.log(`Parsed ${citiesData.length} cities from CSV`);
+    return citiesData;
 }
 
 /**
- * Fetches a single page of cities from GeoNames API
+ * Updates the cities table with data from CSV file
+ * Drops all existing cities, filters duplicates, and imports from CSV
+ * @param csvPath - Path to the CSV file
  */
-async function fetchCitiesPage(countryCode: string, langParam: string, maxRows: number, startRow: number): Promise<GeoNamesCity[]> {
-    const username = process.env.GEONAMES_USERNAME!;
-    const url = `http://api.geonames.org/searchJSON?country=${countryCode}&featureClass=P&username=${username}${langParam}&maxRows=${maxRows}&startRow=${startRow}`;
-
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`GeoNames API error: ${response.status}`);
-    }
-
-    const data: { geonames: GeoNamesCity[] } = await response.json();
-    return data.geonames || [];
-}
-
-/**
- * Updates the cities table with data from GeoNames API
- * @param countryCode - ISO country code
- * @param countryName - Full country name
- */
-export async function updateCitiesForCountry(countryCode: string, countryName: string) {
+export async function updateCitiesFromCSV(csvPath: string) {
     try {
-        const localCities = await fetchCitiesFromGeoNames(countryCode);
+        console.log('Reading cities from CSV...');
+        const allCities = parseCitiesFromCSV(csvPath);
 
-        const uniqueCities = localCities
+        console.log('Filtering out duplicates...');
+        const uniqueCities = allCities
             .filter(city => city.name && city.name.trim().length > 0)
             .filter((city, index, self) =>
-                index === self.findIndex(c => c.name.toLowerCase() === city.name.toLowerCase())
+                index === self.findIndex(c =>
+                    c.name.toLowerCase() === city.name.toLowerCase() &&
+                    c.country.toLowerCase() === city.country.toLowerCase()
+                )
             )
             .map(city => ({
                 name: city.name.trim(),
-                country: countryName,
+                country: city.country.trim(),
             }));
 
-        // Clear existing cities for this country
-        await db.delete(cities).where(eq(cities.country, countryName));
+        console.log(`After filtering: ${uniqueCities.length} unique cities`);
 
-        // Insert new cities
-        if (uniqueCities.length > 0) {
-            await db.insert(cities).values(uniqueCities);
+        // Drop all existing cities
+        console.log('Dropping all existing cities...');
+        await db.delete(cities);
+        console.log('All cities deleted');
+
+        // Insert new cities in batches (to avoid potential query size limits)
+        const batchSize = 1000;
+        for (let i = 0; i < uniqueCities.length; i += batchSize) {
+            const batch = uniqueCities.slice(i, i + batchSize);
+            await db.insert(cities).values(batch);
+            console.log(`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(uniqueCities.length / batchSize)} (${batch.length} cities)`);
         }
 
+        console.log(`Successfully imported ${uniqueCities.length} cities`);
+
     } catch (error) {
-        console.error(`Error updating cities for ${countryName}:`, error);
+        console.error('Error updating cities from CSV:', error);
         throw error;
-    }
-}
-
-/**
- * Updates cities for multiple countries
- * @param countries - Array of {code: string, name: string} objects
- */
-export async function updateCitiesForCountries(countries: { code: string; name: string }[]) {
-    for (const { code, name } of countries) {
-        await updateCitiesForCountry(code, name);
-
-        // Small delay to be respectful to the API
-        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
