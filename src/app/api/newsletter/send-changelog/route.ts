@@ -25,7 +25,7 @@ function getRecentChangelog(daysBack: number = 7) {
 /**
  * Generate HTML email template for changelog updates
  */
-function generateChangelogEmail(entries: typeof changelogEntries) {
+function generateChangelogEmail(entries: typeof changelogEntries, subscriberEmail: string) {
     if (entries.length === 0) {
         return null;
     }
@@ -87,7 +87,8 @@ function generateChangelogEmail(entries: typeof changelogEntries) {
             You're receiving this email because you subscribed to WageWatchers updates.
         </p>
         <p style="margin: 5px 0;">
-            <a href="https://wagewatchers.com/en" style="color: #10b981; text-decoration: none;">Visit Website</a>
+            <a href="https://wagewatchers.com/en" style="color: #10b981; text-decoration: none;">Visit Website</a> | 
+            <a href="https://wagewatchers.com/api/newsletter/unsubscribe?email=${encodeURIComponent(subscriberEmail)}" style="color: #6b7280; text-decoration: none;">Unsubscribe</a>
         </p>
     </div>
 </body>
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Generate email HTML
-        const emailHtml = generateChangelogEmail(recentEntries);
+        const emailHtml = generateChangelogEmail(recentEntries, 'placeholder@example.com');
         if (!emailHtml) {
             return NextResponse.json(
                 { error: 'Failed to generate email template' },
@@ -167,11 +168,19 @@ export async function POST(request: NextRequest) {
 
             const sendPromises = batch.map(async (subscriber) => {
                 try {
+                    // Generate personalized email for each subscriber
+                    const personalizedEmailHtml = generateChangelogEmail(recentEntries, subscriber.email);
+                    if (!personalizedEmailHtml) {
+                        results.failed++;
+                        results.errors.push(`Failed to generate email for ${subscriber.email}`);
+                        return;
+                    }
+
                     await resend.emails.send({
                         from: process.env.RESEND_FROM_EMAIL || 'WageWatchers <updates@wagewatchers.com>',
                         to: subscriber.email,
                         subject: `WageWatchers Weekly Update - ${recentEntries.length} New ${recentEntries.length === 1 ? 'Change' : 'Changes'}`,
-                        html: emailHtml,
+                        html: personalizedEmailHtml,
                     });
                     results.sent++;
                 } catch (error) {
