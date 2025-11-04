@@ -18,6 +18,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface SalaryRangeData {
     range: string;
@@ -118,21 +119,8 @@ export function SalaryDistributionChart({ data, loading = false }: SalaryDistrib
                             />
                             <YAxis stroke="#78716c" axisLine={false} tickCount={5} />
                             <Tooltip
-                                formatter={(value: any) => [
-                                    value,
-                                    t(
-                                        "charts.tooltips.entries"
-                                    ),
-                                ]}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{
-                                    color: "#f5f5f4",
-                                }}
+                                content={<CustomTooltip colors={COLORS.gradient.toReversed()} data={data} />}
+                                cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
                             />
                             <Bar
                                 dataKey="count"

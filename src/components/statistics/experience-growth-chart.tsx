@@ -21,6 +21,7 @@ import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface ExperienceData {
     experience: number;
@@ -152,14 +153,6 @@ export function ExperienceGrowthChart({
                                 dataKey="experience"
                                 stroke="#78716c"
                                 axisLine={false}
-                                label={{
-                                    value: t(
-                                        "charts.experienceGrowth.xAxisLabel"
-                                    ),
-                                    position: "insideBottom",
-                                    offset: -5,
-                                    fill: "#78716c",
-                                }}
                             />
                             <YAxis
                                 stroke="#78716c"
@@ -174,25 +167,8 @@ export function ExperienceGrowthChart({
                                 }
                             />
                             <Tooltip
-                                formatter={(value: any) => [
-                                    formatSalaryWithPreferences(
-                                        value,
-                                        "EUR",
-                                        false,
-                                        preferences.currency,
-                                        preferences.period
-                                    ),
-                                    t("charts.tooltips.avgSalary"),
-                                ]}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{
-                                    color: "#f5f5f4",
-                                }}
+                                content={<CustomTooltip chartType="experience" />}
+                                cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
                             />
                             <Area
                                 type="monotone"

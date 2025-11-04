@@ -2,7 +2,6 @@
     "nav": {
         "dashboard": "Dashboard",
         "statistics": "Statistics",
-        "analytics": "Analytics",
         "addEntry": "Share Salary",
         "feedback": "Feedback",
         "status": "Status",
@@ -91,12 +90,11 @@
         "subtitle": "Explore {count} salary entries from European job markets",
         "myEntries": "My Entries",
         "nav": {
-            "analytics": "Analytics",
             "addEntry": "Share Salary"
         },
         "stats": {
             "totalEntries": "Total Entries",
-            "avgGrossSalary": "Avg Gross Salary",
+            "medianGrossSalary": "Median Gross Salary",
             "avgNetSalary": "Avg Net Salary",
             "medianSalary": "Median Salary",
             "salaryRange": "Salary Range",
@@ -224,7 +222,8 @@
             "experienceGrowth": {
                 "title": "Salary Growth by Experience",
                 "description": "How salary increases with years of experience",
-                "xAxisLabel": "Years"
+                "xAxisLabel": "Years",
+                "yearsLabel": "years of experience"
             },
             "topCountries": {
                 "title": "Top Countries by Salary",
@@ -242,7 +241,8 @@
                 "title": "Experience vs Salary Scatter Plot",
                 "description": "Individual data points showing relationship between experience and salary",
                 "xAxisLabel": "Years of Experience",
-                "yAxisLabel": "Gross Salary (€)"
+                "yAxisLabel": "Gross Salary (€)",
+                "dataPointLabel": "Data Point"
             },
             "yearOverYear": {
                 "title": "Year-over-Year Salary Trends",
@@ -265,48 +265,9 @@
             "tooltips": {
                 "avgSalary": "Avg Salary (€/month)",
                 "medianSalary": "Median Salary (€/month)",
-                "entries": "Entries"
-            }
-        }
-    },
-    "analytics": {
-        "title": "Salary Analytics",
-        "subtitle": "Visual insights into salary trends and distributions",
-        "nav": {
-            "dashboard": "Dashboard",
-            "addEntry": "Share Salary"
-        },
-        "charts": {
-            "topSectors": {
-                "title": "Top 10 Sectors by Average Salary",
-                "description": "Highest paying sectors across all entries"
-            },
-            "experienceGrowth": {
-                "title": "Salary Growth by Experience",
-                "description": "How salary increases with years of experience",
-                "xAxisLabel": "Years"
-            },
-            "topCountries": {
-                "title": "Top Countries by Salary",
-                "description": "Average salaries in different countries"
-            },
-            "salaryDistribution": {
-                "title": "Salary Distribution",
-                "description": "Number of entries in each salary range"
-            },
-            "ageDemographics": {
-                "title": "Age Demographics",
-                "description": "Distribution of respondents by age group"
-            },
-            "scatterPlot": {
-                "title": "Experience vs Salary Scatter Plot",
-                "description": "Individual data points showing relationship between experience and salary",
-                "xAxisLabel": "Years of Experience",
-                "yAxisLabel": "Gross Salary (€)"
-            },
-            "tooltips": {
-                "avgSalary": "Avg Salary",
-                "entries": "Entries"
+                "entries": "Entries",
+                "experience": "Experience",
+                "salary": "Salary"
             }
         }
     },

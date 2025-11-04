@@ -22,6 +22,7 @@ import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface YearlyData {
     year: number;
@@ -169,42 +170,8 @@ export function YearOverYearChart({
                                 }
                             />
                             <Tooltip
-                                formatter={(value: any, name: string) => {
-                                    if (name === "avgSalary") {
-                                        return [
-                                            formatSalaryWithPreferences(
-                                                value,
-                                                "EUR",
-                                                false,
-                                                preferences.currency,
-                                                preferences.period
-                                            ),
-                                            t("charts.tooltips.avgSalary"),
-                                        ];
-                                    }
-                                    if (name === "medianSalary") {
-                                        return [
-                                            formatSalaryWithPreferences(
-                                                value,
-                                                "EUR",
-                                                false,
-                                                preferences.currency,
-                                                preferences.period
-                                            ),
-                                            t("charts.tooltips.medianSalary"),
-                                        ];
-                                    }
-                                    return [value, name];
-                                }}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{
-                                    color: "#f5f5f4",
-                                }}
+                                content={<CustomTooltip chartType="year" />}
+                                cursor={{ strokeDasharray: '5 5' }}
                             />
                             <Legend />
                             <Line

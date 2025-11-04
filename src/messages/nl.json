@@ -2,7 +2,6 @@
     "nav": {
         "dashboard": "Dashboard",
         "statistics": "Statistieken",
-        "analytics": "Analyse",
         "addEntry": "Salaris Delen",
         "feedback": "Feedback",
         "status": "Status",
@@ -91,12 +90,11 @@
         "subtitle": "Verken {count} salarisgegevens uit Europese arbeidsmarkten",
         "myEntries": "Mijn Invoer",
         "nav": {
-            "analytics": "Analyse",
             "addEntry": "Salaris Delen"
         },
         "stats": {
             "totalEntries": "Totaal Invoeren",
-            "avgGrossSalary": "Gem. Bruto Salaris (€/maand)",
+            "medianGrossSalary": "Mediaan Bruto Salaris (€/maand)",
             "avgNetSalary": "Gem. Netto Salaris (€/maand)",
             "medianSalary": "Mediaan Salaris",
             "salaryRange": "Salaris Bereik (€/maand)",
@@ -221,7 +219,8 @@
             "experienceGrowth": {
                 "title": "Salarisgroei per Ervaring",
                 "description": "Hoe het salaris stijgt met jaren ervaring",
-                "xAxisLabel": "Jaren"
+                "xAxisLabel": "Jaren",
+                "yearsLabel": "jaar ervaring"
             },
             "topCountries": {
                 "title": "Top Landen op Salaris",
@@ -239,7 +238,8 @@
                 "title": "Ervaring vs Salaris Spreidingsdiagram",
                 "description": "Individuele datapunten die de relatie tussen ervaring en salaris tonen",
                 "xAxisLabel": "Jaren Ervaring",
-                "yAxisLabel": "Brutosalaris (€)"
+                "yAxisLabel": "Brutosalaris (€)",
+                "dataPointLabel": "Data Punt"
             },
             "yearOverYear": {
                 "title": "Jaar-op-jaar Salaristrends",
@@ -262,7 +262,9 @@
             "tooltips": {
                 "avgSalary": "Gem. Salaris",
                 "medianSalary": "Mediaan Salaris",
-                "entries": "Inzendingen"
+                "entries": "Inzendingen",
+                "experience": "Ervaring",
+                "salary": "Salaris"
             }
         }
     },
@@ -619,47 +621,6 @@
         "validationSummary": {
             "title": "Corrigeer de volgende fouten:",
             "errorCount": "{count, plural, =1 {1 fout gevonden} other {# fouten gevonden}}"
-        }
-    },
-    "analytics": {
-        "title": "Salaris Analyse",
-        "subtitle": "Visuele inzichten in salaris trends en distributies",
-        "nav": {
-            "dashboard": "Dashboard",
-            "addEntry": "Salaris Delen"
-        },
-        "charts": {
-            "topSectors": {
-                "title": "Top 10 Sectoren op Gemiddeld Salaris",
-                "description": "Hoogst betaalde sectoren over alle inzendingen"
-            },
-            "experienceGrowth": {
-                "title": "Salaris Groei per Ervaring",
-                "description": "Hoe salaris stijgt met jaren ervaring",
-                "xAxisLabel": "Jaren"
-            },
-            "topCountries": {
-                "title": "Top Landen op Salaris",
-                "description": "Gemiddelde salarissen in verschillende landen"
-            },
-            "salaryDistribution": {
-                "title": "Salaris Verdeling",
-                "description": "Aantal inzendingen in elk salaris bereik"
-            },
-            "ageDemographics": {
-                "title": "Leeftijd Demografie",
-                "description": "Verdeling van respondenten per leeftijdsgroep"
-            },
-            "scatterPlot": {
-                "title": "Ervaring vs Salaris Spreidingsdiagram",
-                "description": "Individuele datapunten tonen relatie tussen ervaring en salaris",
-                "xAxisLabel": "Jaren ervaring",
-                "yAxisLabel": "Bruto salaris (€)"
-            },
-            "tooltips": {
-                "avgSalary": "Gem. Salaris",
-                "entries": "Inzendingen"
-            }
         }
     },
     "common": {

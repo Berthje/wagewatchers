@@ -4,6 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { median } from "d3-array";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -550,7 +551,7 @@ export function DashboardClient({
                         <Card className="bg-stone-800 border-stone-700">
                             <CardHeader>
                                 <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                                    {t("stats.avgGrossSalary")}
+                                    {t("stats.medianGrossSalary")}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -575,29 +576,26 @@ export function DashboardClient({
                                             );
                                         if (salariesWithCurrency.length === 0)
                                             return "N/A";
-                                        const sum = salariesWithCurrency.reduce(
-                                            (acc, s) => {
-                                                // Convert each salary to the display currency and period
-                                                const converted = convertCurrency(
-                                                    s.salary,
-                                                    s.currency,
-                                                    preferences.currency
-                                                );
-                                                // Convert period if needed (assuming source is monthly)
-                                                const periodConverted = convertPeriod(
-                                                    converted,
-                                                    "monthly",
-                                                    preferences.period
-                                                );
-                                                return acc + periodConverted;
-                                            },
-                                            0
-                                        );
-                                        const avg = Math.round(
-                                            sum / salariesWithCurrency.length
-                                        );
+
+                                        // Convert all salaries to the display currency and period
+                                        const convertedSalaries = salariesWithCurrency.map(s => {
+                                            const converted = convertCurrency(
+                                                s.salary,
+                                                s.currency,
+                                                preferences.currency
+                                            );
+                                            return convertPeriod(
+                                                converted,
+                                                "monthly",
+                                                preferences.period
+                                            );
+                                        });
+
+                                        // Calculate median using d3-array
+                                        const medianValue = median(convertedSalaries) ?? 0;
+
                                         return formatSalaryWithPreferences(
-                                            avg,
+                                            Math.round(medianValue),
                                             preferences.currency,
                                             preferences.period === "annual",
                                             preferences.currency,

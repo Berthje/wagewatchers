@@ -15,6 +15,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface AgeData {
     ageGroup: string;
@@ -125,38 +126,7 @@ export function AgeDemographicsChart({ data, loading = false }: AgeDemographicsC
                                 ))}
                             </Pie>
                             <Tooltip
-                                formatter={(
-                                    value: any,
-                                    name: any,
-                                    props: any
-                                ) => {
-                                    const total =
-                                        data.reduce(
-                                            (sum, d) =>
-                                                sum + d.count,
-                                            0
-                                        );
-                                    const percentage = (
-                                        (props.payload.count /
-                                            total) *
-                                        100
-                                    ).toFixed(1);
-                                    return [
-                                        `${value} (${percentage}%)`,
-                                        t(
-                                            "charts.tooltips.entries"
-                                        ),
-                                    ];
-                                }}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{
-                                    color: "#f5f5f4",
-                                }}
+                                content={<CustomTooltip chartType="age-demographics" total={data.reduce((sum, d) => sum + d.count, 0)} colors={COLORS.gradient} data={data} />}
                             />
                         </PieChart>
                     </ResponsiveContainer>

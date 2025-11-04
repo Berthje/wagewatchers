@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { FileDown, FileSpreadsheet } from "lucide-react";
 import { FiltersModal } from "@/components/filters-modal";
 import { useFilters } from "@/hooks/use-filters";
+import { mean, median } from "d3-array";
 import {
     useSalaryDisplay,
     convertCurrency,
@@ -31,18 +32,21 @@ interface SectorData {
     count: number;
     avgGross: number;
     totalGross: number;
+    salaries: number[]; // Add salaries array for d3-array calculations
 }
 
 interface CountryData {
     country: string;
     avgSalary: number;
     count: number;
+    salaries: number[]; // Add salaries array for d3-array calculations
 }
 
 interface ExperienceData {
     experience: number;
     avgSalary: number;
     count: number;
+    salaries: number[]; // Add salaries array for d3-array calculations
 }
 
 interface SalaryRangeData {
@@ -162,6 +166,7 @@ export default function StatisticsClient() {
                         count: 0,
                         avgGross: 0,
                         totalGross: 0,
+                        salaries: [],
                     };
                 acc[sector].count++;
                 // Convert salary to EUR and preferred period before aggregating
@@ -176,9 +181,9 @@ export default function StatisticsClient() {
                     "monthly",
                     preferences.period
                 );
+                acc[sector].salaries.push(salaryInEur);
                 acc[sector].totalGross += salaryInEur;
-                acc[sector].avgGross =
-                    acc[sector].totalGross / acc[sector].count;
+                acc[sector].avgGross = mean(acc[sector].salaries) ?? 0;
                 return acc;
             },
             {}
@@ -197,6 +202,7 @@ export default function StatisticsClient() {
                         country,
                         avgSalary: 0,
                         count: 0,
+                        salaries: [],
                     };
                 acc[country].count++;
                 // Convert salary to EUR and preferred period before aggregating
@@ -211,10 +217,8 @@ export default function StatisticsClient() {
                     "monthly",
                     preferences.period
                 );
-                acc[country].avgSalary =
-                    (acc[country].avgSalary * (acc[country].count - 1) +
-                        salaryInEur) /
-                    acc[country].count;
+                acc[country].salaries.push(salaryInEur);
+                acc[country].avgSalary = mean(acc[country].salaries) ?? 0;
                 return acc;
             },
             {}
@@ -233,6 +237,7 @@ export default function StatisticsClient() {
                     experience: exp,
                     avgSalary: 0,
                     count: 0,
+                    salaries: [],
                 };
             }
             expAgg[exp].count++;
@@ -248,10 +253,8 @@ export default function StatisticsClient() {
                 "monthly",
                 preferences.period
             );
-            expAgg[exp].avgSalary =
-                (expAgg[exp].avgSalary * (expAgg[exp].count - 1) +
-                    salaryInEur) /
-                expAgg[exp].count;
+            expAgg[exp].salaries.push(salaryInEur);
+            expAgg[exp].avgSalary = mean(expAgg[exp].salaries) ?? 0;
         }
         setExperienceData(
             Object.values(expAgg).sort((a, b) => a.experience - b.experience)
@@ -354,17 +357,13 @@ export default function StatisticsClient() {
 
         const yearlyStats = Object.entries(yearAgg)
             .map(([year, data]) => {
-                const sortedSalaries = [...data.salaries].sort((a, b) => a - b);
-                const median =
-                    sortedSalaries[Math.floor(sortedSalaries.length / 2)] || 0;
-                const avg =
-                    data.salaries.reduce((sum, sal) => sum + sal, 0) /
-                    data.count;
+                const avgSalary = mean(data.salaries) ?? 0;
+                const medianSalary = median(data.salaries) ?? 0;
                 return {
                     year: Number.parseInt(year),
-                    avgSalary: avg,
+                    avgSalary,
                     count: data.count,
-                    medianSalary: median,
+                    medianSalary,
                 };
             })
             .sort((a, b) => a.year - b.year);
@@ -437,8 +436,7 @@ export default function StatisticsClient() {
             .map(([location, data]) => {
                 const [city] = location.split(", ");
                 const count = data.salaries.length;
-                const avgSalary =
-                    data.salaries.reduce((sum, s) => sum + s, 0) / count;
+                const avgSalary = mean(data.salaries) ?? 0;
                 return {
                     city,
                     country: data.country,

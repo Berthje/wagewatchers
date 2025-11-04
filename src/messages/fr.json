@@ -2,7 +2,6 @@
     "nav": {
         "dashboard": "Tableau de Bord",
         "statistics": "Statistiques",
-        "analytics": "Analyses",
         "addEntry": "Partager le Salaire",
         "feedback": "Commentaire",
         "status": "Statut",
@@ -91,12 +90,11 @@
         "subtitle": "Explorez {count} entrées salariales des marchés européens",
         "myEntries": "Mes Entrées",
         "nav": {
-            "analytics": "Analyses",
             "addEntry": "Partager le Salaire"
         },
         "stats": {
             "totalEntries": "Total des Entrées",
-            "avgGrossSalary": "Salaire Brut Moyen (€/mois)",
+            "medianGrossSalary": "Salaire Brut Médian (€/mois)",
             "avgNetSalary": "Salaire Net Moyen (€/mois)",
             "medianSalary": "Salaire Médian",
             "salaryRange": "Échelle Salariale (€/mois)",
@@ -221,7 +219,8 @@
             "experienceGrowth": {
                 "title": "Croissance Salariale par Expérience",
                 "description": "Comment le salaire augmente avec les années d'expérience",
-                "xAxisLabel": "Années"
+                "xAxisLabel": "Années",
+                "yearsLabel": "années d'expérience"
             },
             "topCountries": {
                 "title": "Top Pays par Salaire",
@@ -239,7 +238,8 @@
                 "title": "Diagramme de Dispersion Expérience vs Salaire",
                 "description": "Points de données individuels montrant la relation entre l'expérience et le salaire",
                 "xAxisLabel": "Années d'Expérience",
-                "yAxisLabel": "Salaire Brut (€)"
+                "yAxisLabel": "Salaire Brut (€)",
+                "dataPointLabel": "Point de Données"
             },
             "yearOverYear": {
                 "title": "Tendances Salariales Annuelles",
@@ -262,7 +262,9 @@
             "tooltips": {
                 "avgSalary": "Salaire Moyen",
                 "medianSalary": "Salaire Médian",
-                "entries": "Entrées"
+                "entries": "Entrées",
+                "experience": "Expérience",
+                "salary": "Salaire"
             }
         }
     },
@@ -619,47 +621,6 @@
         "validationSummary": {
             "title": "Veuillez corriger les erreurs suivantes :",
             "errorCount": "{count, plural, =1 {1 erreur trouvée} other {# erreurs trouvées}}"
-        }
-    },
-    "analytics": {
-        "title": "Analyses Salariales",
-        "subtitle": "Insights visuels sur les tendances et distributions salariales",
-        "nav": {
-            "dashboard": "Tableau de Bord",
-            "addEntry": "Partager le Salaire"
-        },
-        "charts": {
-            "topSectors": {
-                "title": "Top 10 des Secteurs par Salaire Moyen",
-                "description": "Secteurs les mieux rémunérés parmi toutes les entrées"
-            },
-            "experienceGrowth": {
-                "title": "Croissance Salariale par Expérience",
-                "description": "Comment le salaire augmente avec les années d'expérience",
-                "xAxisLabel": "Années"
-            },
-            "topCountries": {
-                "title": "Top Pays par Salaire",
-                "description": "Salaires moyens dans différents pays"
-            },
-            "salaryDistribution": {
-                "title": "Distribution des Salaires",
-                "description": "Nombre d'entrées dans chaque fourchette salariale"
-            },
-            "ageDemographics": {
-                "title": "Démographie par Âge",
-                "description": "Répartition des répondants par tranche d'âge"
-            },
-            "scatterPlot": {
-                "title": "Nuage de Points Expérience vs Salaire",
-                "description": "Points de données individuels montrant la relation entre l'expérience et le salaire",
-                "xAxisLabel": "Années d'expérience",
-                "yAxisLabel": "Salaire Brut (€)"
-            },
-            "tooltips": {
-                "avgSalary": "Salaire Moyen",
-                "entries": "Entrées"
-            }
         }
     },
     "common": {

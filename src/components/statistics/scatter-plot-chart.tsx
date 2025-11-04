@@ -21,6 +21,7 @@ import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface ScatterData {
     id: number;
@@ -147,12 +148,6 @@ export function ScatterPlotChart({
                                 dataKey="experience"
                                 name="experience"
                                 stroke="#78716c"
-                                label={{
-                                    value: t("charts.scatterPlot.xAxisLabel"),
-                                    position: "insideBottom",
-                                    offset: -15,
-                                    fill: "#78716c",
-                                }}
                                 axisLine={false}
                             />
                             <YAxis
@@ -172,32 +167,8 @@ export function ScatterPlotChart({
                                 }
                             />
                             <Tooltip
+                                content={<CustomTooltip chartType="scatter" />}
                                 cursor={{ strokeDasharray: "3 3" }}
-                                formatter={(value: any, name: string) => {
-                                    if (name === "experience") {
-                                        return [`${value} years`, "Experience"];
-                                    }
-                                    if (name === "salary") {
-                                        return [
-                                            formatSalaryWithPreferences(
-                                                value,
-                                                "EUR",
-                                                false,
-                                                preferences.currency,
-                                                preferences.period
-                                            ),
-                                            "Salary",
-                                        ];
-                                    }
-                                    return [value, name];
-                                }}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{ color: "#f5f5f4" }}
                             />
                             <Scatter
                                 name="entries"

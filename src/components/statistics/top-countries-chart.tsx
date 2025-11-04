@@ -22,6 +22,7 @@ import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface CountryData {
     country: string;
@@ -168,25 +169,8 @@ export function TopCountriesChart({
                                 }
                             />
                             <Tooltip
-                                formatter={(value: any) => [
-                                    formatSalaryWithPreferences(
-                                        value,
-                                        "EUR",
-                                        false,
-                                        preferences.currency,
-                                        preferences.period
-                                    ),
-                                    t("charts.tooltips.avgSalary"),
-                                ]}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{
-                                    color: "#f5f5f4",
-                                }}
+                                content={<CustomTooltip chartType="country" />}
+                                cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
                             />
                             <Bar
                                 dataKey="avgSalary"

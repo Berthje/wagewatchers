@@ -2,7 +2,6 @@
     "nav": {
         "dashboard": "Dashboard",
         "statistics": "Statistiken",
-        "analytics": "Analysen",
         "addEntry": "Gehalt Teilen",
         "feedback": "Feedback",
         "status": "Status",
@@ -64,7 +63,8 @@
             "experienceGrowth": {
                 "title": "Gehaltswachstum nach Erfahrung",
                 "description": "Wie das Gehalt mit Jahren der Erfahrung steigt",
-                "xAxisLabel": "Jahre"
+                "xAxisLabel": "Jahre",
+                "yearsLabel": "Jahre Erfahrung"
             },
             "topCountries": {
                 "title": "Top Länder nach Gehalt",
@@ -82,7 +82,7 @@
                 "title": "Erfahrung vs Gehalt Streudiagramm",
                 "description": "Einzelne Datenpunkte zeigen die Beziehung zwischen Erfahrung und Gehalt",
                 "xAxisLabel": "Jahre Erfahrung",
-                "yAxisLabel": "Bruttogehalt (€)"
+                "dataPointLabel": "Datenpunkt"
             },
             "yearOverYear": {
                 "title": "Jährliche Gehaltstrends",
@@ -105,7 +105,9 @@
             "tooltips": {
                 "avgSalary": "Durchschnittsgehalt",
                 "medianSalary": "Mediangehalt",
-                "entries": "Einträge"
+                "entries": "Einträge",
+                "experience": "Erfahrung",
+                "salary": "Gehalt"
             }
         }
     },
@@ -167,12 +169,11 @@
         "subtitle": "Erkunden Sie {count} Gehaltseinträge aus europäischen Arbeitsmärkten",
         "myEntries": "Meine Einträge",
         "nav": {
-            "analytics": "Analysen",
             "addEntry": "Gehalt Teilen"
         },
         "stats": {
             "totalEntries": "Gesamt Einträge",
-            "avgGrossSalary": "Durchschn. Bruttogehalt (€/Monat)",
+            "medianGrossSalary": "Median Bruttogehalt (€/Monat)",
             "avgNetSalary": "Durchschn. Nettogehalt (€/Monat)",
             "medianSalary": "Median Gehalt",
             "salaryRange": "Gehaltsspanne (€/Monat)",
@@ -619,47 +620,6 @@
         "validationSummary": {
             "title": "Bitte korrigieren Sie die folgenden Fehler:",
             "errorCount": "{count, plural, =1 {1 Fehler gefunden} other {# Fehler gefunden}}"
-        }
-    },
-    "analytics": {
-        "title": "Gehaltsanalysen",
-        "subtitle": "Visuelle Einblicke in Gehaltstrends und Verteilungen",
-        "nav": {
-            "dashboard": "Dashboard",
-            "addEntry": "Gehalt Teilen"
-        },
-        "charts": {
-            "topSectors": {
-                "title": "Top 10 Branchen nach Durchschnittsgehalt",
-                "description": "Bestbezahlte Branchen über alle Einträge hinweg"
-            },
-            "experienceGrowth": {
-                "title": "Gehaltswachstum nach Erfahrung",
-                "description": "Wie das Gehalt mit Berufsjahren steigt",
-                "xAxisLabel": "Jahre"
-            },
-            "topCountries": {
-                "title": "Top-Länder nach Gehalt",
-                "description": "Durchschnittsgehälter in verschiedenen Ländern"
-            },
-            "salaryDistribution": {
-                "title": "Gehaltsverteilung",
-                "description": "Anzahl der Einträge in jeder Gehaltsspanne"
-            },
-            "ageDemographics": {
-                "title": "Altersdemographie",
-                "description": "Verteilung der Befragten nach Altersgruppe"
-            },
-            "scatterPlot": {
-                "title": "Erfahrung vs Gehalt Streudiagramm",
-                "description": "Einzelne Datenpunkte zeigen die Beziehung zwischen Erfahrung und Gehalt",
-                "xAxisLabel": "Jahre Erfahrung",
-                "yAxisLabel": "Bruttogehalt (€)"
-            },
-            "tooltips": {
-                "avgSalary": "Durchschn. Gehalt",
-                "entries": "Einträge"
-            }
         }
     },
     "common": {

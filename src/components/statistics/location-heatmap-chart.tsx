@@ -22,6 +22,7 @@ import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
+import { CustomTooltip } from "./custom-tooltip";
 
 interface LocationHeatmapData {
     city: string;
@@ -160,21 +161,8 @@ export function LocationHeatmapChart({
                                 width={110}
                             />
                             <Tooltip
-                                formatter={(value: any, name: string) => {
-                                    if (name === "avgSalary") {
-                                        return [
-                                            formatSalaryWithPreferences(
-                                                value,
-                                                "EUR",
-                                                false,
-                                                preferences.currency,
-                                                preferences.period
-                                            ),
-                                            t("charts.tooltips.avgSalary"),
-                                        ];
-                                    }
-                                    return [value, name];
-                                }}
+                                content={<CustomTooltip chartType="location" colors={COLORS.gradient} data={data} />}
+                                cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
                                 labelFormatter={(label: string) => {
                                     const location = data.find(
                                         (l) => l.city === label
@@ -182,15 +170,6 @@ export function LocationHeatmapChart({
                                     return location
                                         ? `${location.city} (${location.count} entries)`
                                         : label;
-                                }}
-                                contentStyle={{
-                                    backgroundColor: "#292524",
-                                    border: "1px solid #44403c",
-                                    borderRadius: "8px",
-                                }}
-                                itemStyle={{ color: "#f5f5f4" }}
-                                labelStyle={{
-                                    color: "#f5f5f4",
                                 }}
                             />
                             <Bar dataKey="avgSalary" radius={[0, 8, 8, 0]}>
