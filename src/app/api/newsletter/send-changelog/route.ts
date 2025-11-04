@@ -97,6 +97,16 @@ function generateChangelogEmail(entries: typeof changelogEntries, subscriberEmai
 }
 
 /**
+ * GET /api/newsletter/send-changelog
+ * Sends weekly changelog updates to all active subscribers (for Vercel cron jobs)
+ * Protected by CRON_SECRET environment variable
+ */
+export async function GET(request: NextRequest) {
+    // Vercel cron jobs make GET requests, so we handle them the same as POST
+    return POST(request);
+}
+
+/**
  * POST /api/newsletter/send-changelog
  * Sends weekly changelog updates to all active subscribers
  * Protected by CRON_SECRET environment variable
