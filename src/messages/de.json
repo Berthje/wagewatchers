@@ -392,6 +392,7 @@
             "netherlands": "Niederlande",
             "unitedKingdom": "Vereinigtes Königreich"
         },
+        "honestyConfirmation": "Ich bestätige, dass die bereitgestellten Informationen genau und ehrlich sind",
         "submit": "Gehalt Teilen",
         "submitEntry": "Eintrag Einreichen",
         "updateEntry": "Eintrag Aktualisieren",
@@ -612,7 +613,8 @@
             "workCityRequiredForCommute": "Arbeitsstadt ist erforderlich, wenn Sie Pendeldetails angeben",
             "netSalaryVsGross": "Nettogehalt sollte Bruttogehalt nicht überschreiten",
             "contentContainsBadWords": "Inhalt enthält unangemessene Sprache",
-            "contentContainsUrls": "URLs sind in diesem Feld nicht erlaubt"
+            "contentContainsUrls": "URLs sind in diesem Feld nicht erlaubt",
+            "honestyRequired": "Sie müssen bestätigen, dass die bereitgestellten Informationen genau und ehrlich sind"
         },
         "validationSummary": {
             "title": "Bitte korrigieren Sie die folgenden Fehler:",

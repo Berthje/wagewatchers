@@ -436,6 +436,7 @@
             "netherlands": "Netherlands",
             "unitedKingdom": "United Kingdom"
         },
+        "honestyConfirmation": "I confirm that the information provided is accurate and honest",
         "submit": "Share Salary",
         "submitEntry": "Submit Entry",
         "updateEntry": "Update Entry",
@@ -656,7 +657,8 @@
             "workCityRequiredForCommute": "Work city is required when providing commute details",
             "netSalaryVsGross": "Net salary should not exceed gross salary",
             "contentContainsBadWords": "Content contains inappropriate language",
-            "contentContainsUrls": "URLs are not allowed in this field"
+            "contentContainsUrls": "URLs are not allowed in this field",
+            "honestyRequired": "You must confirm that the information provided is accurate and honest"
         },
         "validationSummary": {
             "title": "Please fix the following errors:",

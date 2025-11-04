@@ -392,6 +392,7 @@
             "netherlands": "Nederland",
             "unitedKingdom": "Verenigd Koninkrijk"
         },
+        "honestyConfirmation": "Ik bevestig dat de verstrekte informatie accuraat en eerlijk is",
         "submit": "Salaris Delen",
         "submitEntry": "Invoer Indienen",
         "updateEntry": "Invoer Bijwerken",
@@ -612,7 +613,8 @@
             "workCityRequiredForCommute": "Werkstad is verplicht wanneer je woon-werkdetails opgeeft",
             "netSalaryVsGross": "Nettosalaris mag niet hoger zijn dan brutosalaris",
             "contentContainsBadWords": "Inhoud bevat ongepaste taal",
-            "contentContainsUrls": "URLs zijn niet toegestaan in dit veld"
+            "contentContainsUrls": "URLs zijn niet toegestaan in dit veld",
+            "honestyRequired": "Je moet bevestigen dat de verstrekte informatie accuraat en eerlijk is"
         },
         "validationSummary": {
             "title": "Corrigeer de volgende fouten:",

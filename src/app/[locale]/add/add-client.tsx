@@ -28,6 +28,7 @@ import {
 import { Combobox } from "@/components/ui/combobox";
 import { CityCombobox } from "@/components/ui/city-combobox";
 import { CurrencySelector } from "@/components/ui/currency-selector";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
 import { getAllCountries, getFormConfigForCountry } from "@/lib/salary-config";
@@ -897,6 +898,29 @@ function AddEntryContent() {
                                             </CardContent>
                                         </Card>
                                     ))}
+
+                                    {/* Honesty Confirmation */}
+                                    <Card className="bg-stone-800 border-stone-700">
+                                        <CardContent>
+                                            <FormField
+                                                control={form.control}
+                                                name="honestyConfirmation"
+                                                render={({ field }) => (
+                                                    <FormItem className="flex space-x-2">
+                                                        <FormControl>
+                                                            <Checkbox
+                                                                checked={field.value}
+                                                                onCheckedChange={field.onChange}
+                                                            />
+                                                        </FormControl>
+                                                        <FormLabel className="text-stone-300">
+                                                            {t("honestyConfirmation")}
+                                                        </FormLabel>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </CardContent>
+                                    </Card>
 
                                     <div className="flex justify-end space-x-4">
                                         <Button

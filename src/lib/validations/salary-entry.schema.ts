@@ -178,6 +178,11 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             extraNotes: noUrls("extra notes")
                 .max(5000, { message: t("validation.extraNotesMax") })
                 .optional(),
+
+            // Validation
+            honestyConfirmation: z.boolean().refine((val) => val === true, {
+                message: t("validation.honestyRequired"),
+            }),
         })
             .refine(
                 (data) => {
