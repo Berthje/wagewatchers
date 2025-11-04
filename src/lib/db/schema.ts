@@ -114,6 +114,15 @@ export const cities = pgTable('City', {
     index('name_country_idx').on(table.name, table.country),
 ]);
 
+export const newsletterSubscribers = pgTable('NewsletterSubscriber', {
+    id: serial('id').primaryKey(),
+    email: text('email').unique().notNull(),
+    subscribedAt: timestamp('subscribedAt', { withTimezone: true }).defaultNow().notNull(),
+    isActive: boolean('isActive').default(true).notNull(),
+}, (table) => [
+    index('email_idx').on(table.email),
+]);
+
 // Relations
 export const salaryEntriesRelations = relations(salaryEntries, ({ many }) => ({
     comments: many(comments),
@@ -138,3 +147,4 @@ export type Report = typeof reports.$inferSelect;
 export type Admin = typeof admins.$inferSelect;
 export type ExchangeRate = typeof exchangeRates.$inferSelect;
 export type City = typeof cities.$inferSelect;
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;

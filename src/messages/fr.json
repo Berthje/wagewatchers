@@ -6,6 +6,7 @@
         "feedback": "Commentaire",
         "status": "Statut",
         "donate": "Faire un Don",
+        "changelog": "Journal des Modifications",
         "displaySettings": "Paramètres d'Affichage",
         "currency": "Devise",
         "period": "Période",
@@ -700,6 +701,7 @@
         },
         "success": "Merci pour votre commentaire ! Nous avons reçu votre rapport.",
         "error": "Échec de la soumission du commentaire. Veuillez réessayer.",
+        "networkError": "Erreur réseau. Veuillez réessayer.",
         "rateLimit": {
             "title": "Limite de Soumission Atteinte",
             "message": "Vous avez atteint la limite quotidienne de 5 soumissions de commentaires. Cela nous aide à prévenir le spam et à garantir des commentaires de qualité.",
@@ -966,5 +968,22 @@
         "description": "Il semble que cette page ait pris une réduction salariale et disparu. Mais ne vous inquiétez pas, vos données salariales sont en sécurité chez nous !",
         "goHome": "Retour à la maison",
         "tip": "💡 Conseil : Essayez de vérifier l'URL ou revenez explorer les données salariales"
+    },
+    "changelog": {
+        "title": "Journal des Modifications",
+        "description": "Restez informé des dernières fonctionnalités et améliorations apportées à WageWatchers.",
+        "backToHome": "Retour à l'Accueil",
+        "stayUpdated": "Restez Informé",
+        "newsletterPrompt": "Abonnez-vous à notre newsletter pour recevoir des mises à jour hebdomadaires sur les nouvelles fonctionnalités et améliorations.",
+        "version": "Version",
+        "bullet": "•",
+        "newsletter": {
+            "placeholder": "Entrez votre email",
+            "subscribe": "S'abonner",
+            "subscribing": "Abonnement en cours...",
+            "success": "Abonnement à la newsletter réussi !",
+            "error": "Échec de l'abonnement",
+            "networkError": "Erreur réseau. Veuillez réessayer."
+        }
     }
 }

@@ -30,6 +30,7 @@ export default function EditEntryClient() {
         status: tNav("status"),
         donate: tNav("donate"),
         addEntry: tNav("addEntry"),
+        changelog: tNav("changelog"),
     };
 
     const [entry, setEntry] = useState<SalaryEntry | null>(null);

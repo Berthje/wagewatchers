@@ -183,11 +183,11 @@ export default function FeedbackClient() {
             } else {
                 const errorData = await response.json();
                 setSubmitStatus("error");
-                setErrorMessage(errorData.error || "Failed to submit feedback");
+                setErrorMessage(errorData.error || t("error"));
             }
         } catch {
             setSubmitStatus("error");
-            setErrorMessage("Network error. Please try again.");
+            setErrorMessage(t("networkError"));
         } finally {
             setIsSubmitting(false);
         }
@@ -205,6 +205,7 @@ export default function FeedbackClient() {
                     status: tNav("status"),
                     donate: tNav("donate"),
                     addEntry: tNav("addEntry"),
+                    changelog: tNav("changelog"),
                 }}
             />
 

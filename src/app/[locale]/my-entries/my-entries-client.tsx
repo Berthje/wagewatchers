@@ -66,6 +66,7 @@ function MyEntriesContent() {
         status: tNav("status"),
         donate: tNav("donate"),
         addEntry: tNav("addEntry"),
+        changelog: tNav("changelog"),
     };
 
     const [entries, setEntries] = useState<SalaryEntry[]>([]);

@@ -124,6 +124,7 @@ export function EntryDetailClient({
                         status: tNav("status"),
                         donate: tNav("donate"),
                         addEntry: tNav("addEntry"),
+                        changelog: tNav("changelog"),
                     }}
                 />
             </div>

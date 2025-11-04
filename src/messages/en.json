@@ -6,6 +6,7 @@
         "feedback": "Feedback",
         "status": "Status",
         "donate": "Donate",
+        "changelog": "Changelog",
         "displaySettings": "Display Settings",
         "currency": "Currency",
         "period": "Period",
@@ -703,6 +704,7 @@
         },
         "success": "Thank you for your feedback! We've received your report.",
         "error": "Failed to submit feedback. Please try again.",
+        "networkError": "Network error. Please try again.",
         "rateLimit": {
             "title": "Submission Limit Reached",
             "message": "You've reached the daily limit of 5 feedback submissions. This helps us prevent spam and ensure quality feedback.",
@@ -969,5 +971,22 @@
         "description": "Looks like this page took a salary cut and disappeared. But don't worry, your wage data is safe with us!",
         "goHome": "Go back home",
         "tip": "💡 Tip: Try checking the URL or go back to explore salary data"
+    },
+    "changelog": {
+        "title": "Changelog",
+        "description": "Stay updated with the latest features and improvements to WageWatchers.",
+        "backToHome": "Back to Home",
+        "stayUpdated": "Stay Updated",
+        "newsletterPrompt": "Subscribe to our newsletter to get weekly updates about new features and improvements.",
+        "version": "Version",
+        "bullet": "•",
+        "newsletter": {
+            "placeholder": "Enter your email",
+            "subscribe": "Subscribe",
+            "subscribing": "Subscribing...",
+            "success": "Successfully subscribed to newsletter!",
+            "error": "Failed to subscribe",
+            "networkError": "Network error. Please try again."
+        }
     }
 }

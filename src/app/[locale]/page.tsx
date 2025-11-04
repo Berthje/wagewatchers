@@ -86,6 +86,7 @@ async function HomeContent({ locale }: Readonly<{ locale: string }>) {
                     status: navT("status"),
                     donate: navT("donate"),
                     addEntry: navT("addEntry"),
+                    changelog: navT("changelog"),
                 }}
             />
 

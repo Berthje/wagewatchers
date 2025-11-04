@@ -136,6 +136,7 @@ export default function AllReportsPage() {
                     status: tNav("status"),
                     donate: tNav("donate"),
                     addEntry: tNav("addEntry"),
+                    changelog: tNav("changelog"),
                 }}
             />
 

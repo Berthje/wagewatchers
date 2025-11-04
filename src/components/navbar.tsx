@@ -25,6 +25,7 @@ interface NavbarProps {
         status: string;
         donate: string;
         addEntry: string;
+        changelog: string;
     };
 }
 
@@ -53,6 +54,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
             : []),
         { href: `/${locale}/feedback`, label: translations.feedback },
         { href: `/${locale}/status`, label: translations.status },
+        { href: `/${locale}/changelog`, label: translations.changelog },
         { href: `/${locale}/donate`, label: translations.donate },
     ];
 

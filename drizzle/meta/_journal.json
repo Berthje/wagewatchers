@@ -29,6 +29,13 @@
       "when": 1762274370711,
       "tag": "0003_charming_red_wolf",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762275443545,
+      "tag": "0004_sleepy_living_tribunal",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,10 @@
         {
             "path": "/api/jobs/fetch-exchange-rates",
             "schedule": "0 0 * * *"
+        },
+        {
+            "path": "/api/newsletter/send-changelog",
+            "schedule": "0 9 * * 1"
         }
     ]
 }

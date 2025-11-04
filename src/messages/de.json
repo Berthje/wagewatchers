@@ -6,6 +6,7 @@
         "feedback": "Feedback",
         "status": "Status",
         "donate": "Spenden",
+        "changelog": "Änderungsprotokoll",
         "displaySettings": "Anzeigeeinstellungen",
         "currency": "Währung",
         "period": "Zeitraum",
@@ -699,6 +700,7 @@
         },
         "success": "Vielen Dank für Ihr Feedback! Wir haben Ihren Bericht erhalten.",
         "error": "Feedback einreichen fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
         "rateLimit": {
             "title": "Einreichungslimit Erreicht",
             "message": "Sie haben das Tageslimit von 5 Feedback-Einreichungen erreicht. Dies hilft uns, Spam zu verhindern und qualitativ hochwertiges Feedback sicherzustellen.",
@@ -965,5 +967,22 @@
         "description": "Es scheint, als hätte diese Seite eine Gehaltskürzung bekommen und ist verschwunden. Aber keine Sorge, Ihre Gehaltsdaten sind bei uns sicher!",
         "goHome": "Zurück nach Hause",
         "tip": "💡 Tipp: Versuchen Sie die URL zu überprüfen oder gehen Sie zurück, um Gehaltsdaten zu erkunden"
+    },
+    "changelog": {
+        "title": "Änderungsprotokoll",
+        "description": "Bleiben Sie über die neuesten Funktionen und Verbesserungen bei WageWatchers auf dem Laufenden.",
+        "backToHome": "Zurück zur Startseite",
+        "stayUpdated": "Auf dem Laufenden bleiben",
+        "newsletterPrompt": "Abonnieren Sie unseren Newsletter, um wöchentliche Updates zu neuen Funktionen und Verbesserungen zu erhalten.",
+        "version": "Version",
+        "bullet": "•",
+        "newsletter": {
+            "placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+            "subscribe": "Abonnieren",
+            "subscribing": "Wird abonniert...",
+            "success": "Erfolgreich für Newsletter angemeldet!",
+            "error": "Abonnement fehlgeschlagen",
+            "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
+        }
     }
 }

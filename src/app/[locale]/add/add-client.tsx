@@ -331,7 +331,7 @@ function AddEntryContent() {
                 // Handle rate limit errors with retry timing
                 if (res.status === 429 && errorData.retryAfter) {
                     setRetryAfter(new Date(errorData.retryAfter));
-                    setError(errorData.message || "Rate limit exceeded. Please try again later.");
+                    setError(errorData.message || t("rateLimitExceeded"));
                 } else {
                     setRetryAfter(null);
                     setError(errorData.details || errorData.error || t("error"));
@@ -591,6 +591,7 @@ function AddEntryContent() {
                         status: tNav("status"),
                         donate: tNav("donate"),
                         addEntry: tNav("addEntry"),
+                        changelog: tNav("changelog"),
                     }}
                 />
             </div>

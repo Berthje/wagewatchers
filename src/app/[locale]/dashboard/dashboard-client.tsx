@@ -443,6 +443,7 @@ export function DashboardClient({
                         status: tNav("status"),
                         donate: tNav("donate"),
                         addEntry: tNav("addEntry"),
+                        changelog: tNav("changelog"),
                     }}
                 />
             </div>
