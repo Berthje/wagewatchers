@@ -8,7 +8,7 @@ interface CityData {
 }
 
 /**
- * Parses the GeoNames CSV file and extracts city data
+ * Parses the https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000 CSV file and extracts city data
  * @param csvPath - Path to the CSV file
  * @returns Array of city objects
  */
