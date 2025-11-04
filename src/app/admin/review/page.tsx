@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface SalaryEntry {
@@ -128,6 +129,13 @@ export default function ReviewPage() {
     return (
         <div className="container mx-auto p-6">
             <div className="mb-6">
+                <Link
+                    href="/admin"
+                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Admin Dashboard
+                </Link>
                 <h1 className="text-3xl font-bold mb-2">Entry Review Queue</h1>
                 <p className="text-muted-foreground">
                     Review flagged entries and approve or reject them based on anomaly detection analysis.

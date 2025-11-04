@@ -28,6 +28,7 @@ import {
     GripVertical,
     Search,
     Loader2,
+    ArrowLeft,
 } from "lucide-react";
 import {
     DndContext,
@@ -400,6 +401,13 @@ export default function AdminReportsPage() {
 
             <div className="container mx-auto p-6">
                 <div className="mb-6">
+                    <Link
+                        href="/admin"
+                        className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-200 transition-colors mb-4"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to Admin Dashboard
+                    </Link>
                     <h1 className="text-3xl font-bold mb-4 text-stone-100">
                         Bug & Feature Reports
                     </h1>
