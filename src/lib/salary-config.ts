@@ -1,6 +1,4 @@
-import { SubredditConfig } from "@/types/config";
-
-export const SUBREDDIT_CONFIGS: Record<string, SubredditConfig> = {
+export const SUBREDDIT_CONFIGS: Record<string, any> = {
     "BESalary": {
         country: "Belgium",
         currency: "EUR",
@@ -13,7 +11,7 @@ export const SUBREDDIT_CONFIGS: Record<string, SubredditConfig> = {
             "6. SALARY",
             "7. BENEFITS",
             "8. COMMUTE",
-            "10. WORK-LIFE BALANCE",
+            "9. WORK-LIFE BALANCE",
         ],
         fieldMappings: {
             age: /Age:\s*(\d+)/,

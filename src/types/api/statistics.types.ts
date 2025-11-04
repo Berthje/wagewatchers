@@ -48,16 +48,6 @@ export interface YearlyData {
     count: number;
 }
 
-export interface IndustryInsight {
-    sector: string;
-    averageSalary: number;
-    medianSalary: number;
-    minSalary: number;
-    maxSalary: number;
-    count: number;
-    topJobTitles: { title: string; count: number }[];
-}
-
 export interface LocationHeatmapData {
     city: string;
     country: string;

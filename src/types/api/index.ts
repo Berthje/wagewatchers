@@ -4,14 +4,6 @@
  */
 
 export type {
-    SortField,
-    SortDirection,
-    DashboardFilters,
-    DashboardPagination,
-    DashboardSort,
-} from './dashboard.types';
-
-export type {
     SectorData,
     CountryData,
     ExperienceData,
@@ -19,6 +11,5 @@ export type {
     AgeData,
     ScatterData,
     YearlyData,
-    IndustryInsight,
     LocationHeatmapData,
 } from './statistics.types';
