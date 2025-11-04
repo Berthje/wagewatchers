@@ -293,7 +293,7 @@
         },
         "sections": {
             "location": {
-                "title": "1. Informations de Localisation",
+                "title": "Informations de Localisation",
                 "description": "Informations sur le pays",
                 "country": "Pays",
                 "subreddit": "Subreddit",
@@ -301,7 +301,7 @@
                 "selectSubreddit": "Sélectionner le subreddit"
             },
             "personal": {
-                "title": "2. Informations Personnelles",
+                "title": "Informations Personnelles",
                 "description": "Détails personnels de base",
                 "age": "Âge",
                 "education": "Éducation",
@@ -310,28 +310,28 @@
                 "dependents": "Personnes à Charge"
             },
             "employer": {
-                "title": "3. Profil de l'Employeur",
+                "title": "Profil de l'Employeur",
                 "description": "Informations sur votre employeur",
                 "sector": "Secteur",
                 "employeeCount": "Nombre d'Employés",
                 "multinational": "Multinational"
             },
             "job": {
-                "title": "4. Profil du Poste",
+                "title": "Profil du Poste",
                 "description": "Détails sur votre rôle et responsabilités",
                 "jobTitle": "Titre du Poste",
                 "jobDescription": "Description du Poste",
                 "seniority": "Séniorité"
             },
             "salary": {
-                "title": "7. Salaire",
+                "title": "Salaire",
                 "description": "Détails de votre compensation",
                 "grossSalary": "Salaire Brut ({symbol}/mois)",
                 "netSalary": "Salaire Net ({symbol}/mois)",
                 "netCompensation": "Compensation Nette ({symbol}/mois)"
             },
             "benefits": {
-                "title": "9. Avantages",
+                "title": "Avantages",
                 "description": "Compensation et avantages supplémentaires",
                 "thirteenthMonth": "13ème Mois",
                 "mealVouchers": "Chèques Repas ({symbol}/jour)",
@@ -342,7 +342,7 @@
                 "otherBenefitsPlaceholder": "ex. Voiture de société, budget formation, etc."
             },
             "workLife": {
-                "title": "11. Équilibre Vie-Travail",
+                "title": "Équilibre Vie-Travail",
                 "description": "Votre expérience d'équilibre vie-travail",
                 "teleworkDays": "Jours de Télétravail par Semaine",
                 "dayOffEase": "Facilité de Prendre un Jour de Congé",
@@ -350,7 +350,7 @@
                 "reports": "Rapports"
             },
             "workingHours": {
-                "title": "5. Heures de Travail",
+                "title": "Heures de Travail",
                 "description": "Votre horaire et heures de travail",
                 "officialHours": "Heures Officielles par Semaine",
                 "averageHours": "Heures Moyennes par Semaine",
@@ -358,12 +358,12 @@
                 "onCall": "Astreinte"
             },
             "vacation": {
-                "title": "6. Vacances",
+                "title": "Vacances",
                 "description": "Informations sur les vacances et congés",
                 "vacationDays": "Jours de Vacances par An"
             },
             "commute": {
-                "title": "10. Trajet Domicile-Travail",
+                "title": "Trajet Domicile-Travail",
                 "description": "Détails de votre trajet quotidien",
                 "workCity": "Ville de Travail",
                 "commuteDistance": "Distance Domicile-Travail (aller simple)",
@@ -371,7 +371,7 @@
                 "commuteCompensation": "Compensation Trajet"
             },
             "notes": {
-                "title": "12. Notes Supplémentaires",
+                "title": "Notes Supplémentaires",
                 "description": "Notes optionnelles pour cette entrée",
                 "extraNotes": "Notes Supplémentaires"
             }
