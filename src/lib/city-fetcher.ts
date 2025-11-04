@@ -8,7 +8,8 @@ interface CityData {
 }
 
 /**
- * Parses the https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000 CSV file and extracts city data
+ * Parses the GeoNames CSV file and extracts city data
+ * CSV format: Geoname ID;Name;ASCII Name;Alternate Names;...;Country name EN;...
  * @param csvPath - Path to the CSV file
  * @returns Array of city objects
  */
@@ -20,24 +21,24 @@ function parseCitiesFromCSV(csvPath: string): CityData[] {
     const header = lines[0].split(';').map(col => col.trim());
     const dataLines = lines.slice(1);
 
-    // Find column indices
-    const nameIndex = header.findIndex(col => col.toLowerCase().includes('name'));
-    const countryIndex = header.findIndex(col => col.toLowerCase().includes('country'));
+    // Find column indices by exact header names
+    const nameIndex = header.indexOf('Name');
+    const countryIndex = header.indexOf('Country name EN');
 
     if (nameIndex === -1 || countryIndex === -1) {
-        throw new Error('CSV must contain "name" and "country" columns');
+        throw new Error(`CSV must contain "Name" and "Country name EN" columns. Found headers: ${header.join(', ')}`);
     }
 
-    console.log(`Found columns - name: ${header[nameIndex]}, country: ${header[countryIndex]}`);
+    console.log(`Found columns - Name at index ${nameIndex}, Country name EN at index ${countryIndex}`);
 
     const citiesData: CityData[] = [];
 
     for (const line of dataLines) {
         if (!line.trim()) continue;
 
-        const columns = line.split(';').map(col => col.trim());
-        const name = columns[nameIndex];
-        const country = columns[countryIndex];
+        const columns = line.split(';');
+        const name = columns[nameIndex]?.trim();
+        const country = columns[countryIndex]?.trim();
 
         if (name && country) {
             citiesData.push({ name, country });
