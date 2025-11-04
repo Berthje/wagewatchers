@@ -247,12 +247,6 @@ export const createFieldConfigs = (
         helpKey: "help.netCompensation",
         width: "third",
     },
-    mobility: {
-        labelKey: "sections.mobility.mobility",
-        type: "text",
-        placeholder: t("placeholders.mobility"),
-        helpKey: "help.mobility",
-    },
     thirteenthMonth: {
         labelKey: "sections.benefits.thirteenthMonth",
         type: "select",
@@ -410,7 +404,6 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
         "grossSalary",
         "netSalary",
         "netCompensation",
-        "mobility",
         "thirteenthMonth",
         "mealVouchers",
         "ecoCheques",

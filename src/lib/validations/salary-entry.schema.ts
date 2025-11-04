@@ -115,9 +115,6 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                     z.string(),
                 ]),
 
-            // Mobility
-            mobility: z.string().min(1, { message: t("validation.mobilityRequired") }),
-
             // Benefits
             thirteenthMonth: z.string().min(1, { message: t("validation.thirteenthMonthRequired") }),
             mealVouchers: z

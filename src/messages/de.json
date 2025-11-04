@@ -361,11 +361,6 @@
                 "description": "Urlaubs- und Freizeitinformationen",
                 "vacationDays": "Urlaubstage pro Jahr"
             },
-            "mobility": {
-                "title": "Mobilität",
-                "description": "Berufliche Mobilitätsanforderungen",
-                "mobility": "Mobilität"
-            },
             "commute": {
                 "title": "Arbeitsweg",
                 "description": "Details Ihres täglichen Arbeitswegs",
@@ -425,7 +420,6 @@
             "grossSalary": "z.B. 5000",
             "netSalary": "z.B. 3500",
             "netCompensation": "z.B. 150",
-            "mobility": "z.B. Homeoffice möglich",
             "thirteenthMonth": "13. Monatsgehalt Option auswählen",
             "mealVouchers": "z.B. 8/Tag",
             "ecoCheques": "z.B. 250/Jahr",
@@ -461,7 +455,6 @@
             "grossSalary": "Monatliches Bruttogehalt vor Steuern und Abzügen",
             "netSalary": "Monatliches Nettogehalt nach Steuern",
             "netCompensation": "Gesamte monatliche Vergütung einschließlich aller Leistungen",
-            "mobility": "Anforderungen für Geschäftsreisen oder Umzug",
             "thirteenthMonth": "Jahresendbonus oder 13. Monat",
             "mealVouchers": "Täglicher Wert der Essensgutscheine",
             "ecoCheques": "Jährlicher Wert der Öko-Gutscheine",
@@ -577,8 +570,7 @@
             "employeeCountRequired": "Mitarbeiterzahl ist erforderlich",
             "jobTitleRequired": "Berufsbezeichnung ist erforderlich",
             "currencyRequired": "Währung ist erforderlich",
-            "mobilityRequired": "Mobilität ist erforderlich",
-            "thirteenthMonthRequired": "13. Monat ist erforderlich",
+            "thirteenthMonthRequired": "13. Monatsgehalt ist erforderlich",
             "groupInsuranceRequired": "Gruppenversicherung ist erforderlich",
             "workCityRequired": "Arbeitsstadt ist erforderlich",
             "commuteDistanceRequired": "Pendelstrecke ist erforderlich",
@@ -872,9 +864,8 @@
         "teleworkDays": "Homeoffice-Tage",
         "daysPerWeek": "Tage/Woche",
         "shiftDescription": "Schichtbeschreibung",
-        "onCall": "Bereitschaft",
+        "onCall": "Rufbereitschaft",
         "benefits": "Vorteile & Vergütung",
-        "mobility": "Mobilität",
         "thirteenthMonth": "13. Monatsgehalt",
         "mealVouchers": "Essensgutscheine ({symbol}/Tag)",
         "ecoCheques": "Öko-Schecks ({symbol}/Jahr)",

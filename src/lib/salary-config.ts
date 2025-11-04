@@ -11,9 +11,8 @@ export const SUBREDDIT_CONFIGS: Record<string, SubredditConfig> = {
             "4. WORKING HOURS",
             "5. VACATION",
             "6. SALARY",
-            "7. MOBILITY",
-            "8. BENEFITS",
-            "9. COMMUTE",
+            "7. BENEFITS",
+            "8. COMMUTE",
             "10. WORK-LIFE BALANCE",
         ],
         fieldMappings: {
@@ -36,7 +35,6 @@ export const SUBREDDIT_CONFIGS: Record<string, SubredditConfig> = {
             grossSalary: /Gross salary per month:\s*([\d.,]+)/,
             netSalary: /Net salary per month:\s*([\d.,]+)/,
             netCompensation: /Net compensation per month:\s*([\d.,]+)/,
-            mobility: /Mobility:\s*(.+?)(?=\n|$)/,
             thirteenthMonth: /13th month:\s*(.+?)(?=\n|$)/,
             mealVouchers: /Meal vouchers per month:\s*([\d.,]+)/,
             ecoCheques: /Eco-cheques per year:\s*([\d.,]+)/,
@@ -111,11 +109,6 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
                 title: "Salary",
                 description: "Your compensation details",
                 fields: ["grossSalary", "netSalary", "netCompensation"],
-            },
-            {
-                title: "Mobility",
-                description: "Job mobility requirements",
-                fields: ["mobility"],
             },
             {
                 title: "Benefits",

@@ -362,11 +362,6 @@
                 "description": "Informations sur les vacances et congés",
                 "vacationDays": "Jours de Vacances par An"
             },
-            "mobility": {
-                "title": "8. Mobilité",
-                "description": "Exigences de mobilité professionnelle",
-                "mobility": "Mobilité"
-            },
             "commute": {
                 "title": "10. Trajet Domicile-Travail",
                 "description": "Détails de votre trajet quotidien",
@@ -426,7 +421,6 @@
             "grossSalary": "ex. 5000",
             "netSalary": "ex. 3500",
             "netCompensation": "ex. 150",
-            "mobility": "ex. Télétravail possible",
             "thirteenthMonth": "Sélectionner l'option 13ème mois",
             "mealVouchers": "ex. 8/jour",
             "ecoCheques": "ex. 250/an",
@@ -462,7 +456,6 @@
             "grossSalary": "Salaire brut mensuel avant impôts et déductions",
             "netSalary": "Salaire net mensuel après impôts",
             "netCompensation": "Compensation mensuelle totale incluant tous les avantages",
-            "mobility": "Exigences pour les déplacements professionnels ou déménagement",
             "thirteenthMonth": "Prime de fin d'année ou 13ème mois",
             "mealVouchers": "Valeur quotidienne des chèques repas",
             "ecoCheques": "Valeur annuelle des éco-chèques",
@@ -578,7 +571,6 @@
             "employeeCountRequired": "Le nombre d'employés est requis",
             "jobTitleRequired": "Le titre du poste est requis",
             "currencyRequired": "La devise est requise",
-            "mobilityRequired": "La mobilité est requise",
             "thirteenthMonthRequired": "Le 13e mois est requis",
             "groupInsuranceRequired": "L'assurance groupe est requise",
             "workCityRequired": "La ville de travail est requise",
@@ -872,10 +864,9 @@
         "days": "jours",
         "teleworkDays": "Jours de Télétravail",
         "daysPerWeek": "jours/semaine",
-        "shiftDescription": "Description des Équipes",
+        "shiftDescription": "Description des Horaires",
         "onCall": "Astreinte",
-        "benefits": "Avantages & Rémunération",
-        "mobility": "Mobilité",
+        "benefits": "Avantages & Compensation",
         "thirteenthMonth": "13e Mois",
         "mealVouchers": "Tickets Restaurant ({symbol}/jour)",
         "ecoCheques": "Éco-Chèques ({symbol}/an)",

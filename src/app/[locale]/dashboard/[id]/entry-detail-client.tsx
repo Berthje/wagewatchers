@@ -398,12 +398,6 @@ export function EntryDetailClient({
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {shouldShow("mobility") && (
-                                <InfoItem
-                                    label={t("mobility")}
-                                    value={entry.mobility}
-                                />
-                            )}
                             {shouldShow("thirteenthMonth") && (
                                 <InfoItem
                                     label={t("thirteenthMonth")}

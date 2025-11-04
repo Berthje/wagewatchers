@@ -32,7 +32,6 @@ export const salaryEntries = pgTable('SalaryEntry', {
     grossSalary: real('grossSalary'),
     netSalary: real('netSalary'),
     netCompensation: real('netCompensation'),
-    mobility: text('mobility'),
     thirteenthMonth: text('thirteenthMonth'),
     mealVouchers: real('mealVouchers'),
     ecoCheques: real('ecoCheques'),

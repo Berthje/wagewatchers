@@ -365,11 +365,6 @@
                 "description": "Vacation and time off information",
                 "vacationDays": "Vacation Days per Year"
             },
-            "mobility": {
-                "title": "Mobility",
-                "description": "Job mobility requirements",
-                "mobility": "Mobility"
-            },
             "commute": {
                 "title": "Commute",
                 "description": "Your daily commute details",
@@ -429,7 +424,6 @@
             "grossSalary": "e.g. 5000",
             "netSalary": "e.g. 3500",
             "netCompensation": "e.g. 150",
-            "mobility": "e.g. Home office possible",
             "thirteenthMonth": "Select 13th month option",
             "mealVouchers": "e.g. 8/day",
             "ecoCheques": "e.g. 250/year",
@@ -465,7 +459,6 @@
             "grossSalary": "Monthly gross salary before taxes and deductions",
             "netSalary": "Monthly take-home pay after taxes",
             "netCompensation": "Total monthly compensation including all benefits",
-            "mobility": "Requirements for business travel or relocation",
             "thirteenthMonth": "End-of-year bonus or 13th month payment",
             "mealVouchers": "Daily value of meal vouchers or lunch allowances",
             "ecoCheques": "Annual value of eco-cheques or gift vouchers",
@@ -581,7 +574,6 @@
             "employeeCountRequired": "Employee count is required",
             "jobTitleRequired": "Job title is required",
             "currencyRequired": "Currency is required",
-            "mobilityRequired": "Mobility is required",
             "thirteenthMonthRequired": "13th month is required",
             "groupInsuranceRequired": "Group insurance is required",
             "workCityRequired": "Work city is required",
@@ -878,7 +870,6 @@
         "shiftDescription": "Shift Description",
         "onCall": "On-Call",
         "benefits": "Benefits & Compensation",
-        "mobility": "Mobility",
         "thirteenthMonth": "13th Month",
         "mealVouchers": "Meal Vouchers ({symbol}/day)",
         "ecoCheques": "Eco Cheques ({symbol}/year)",

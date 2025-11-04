@@ -362,11 +362,6 @@
                 "description": "Vakantie en vrije tijd informatie",
                 "vacationDays": "Vakantiedagen per Jaar"
             },
-            "mobility": {
-                "title": "8. Mobiliteit",
-                "description": "Werk mobiliteitsvereisten",
-                "mobility": "Mobiliteit"
-            },
             "commute": {
                 "title": "10. Woon-Werk Verkeer",
                 "description": "Uw dagelijkse woon-werk verkeer details",
@@ -426,7 +421,6 @@
             "grossSalary": "bijv. 5000",
             "netSalary": "bijv. 3500",
             "netCompensation": "bijv. 150",
-            "mobility": "bijv. Thuiswerken mogelijk",
             "thirteenthMonth": "Selecteer 13e maand optie",
             "mealVouchers": "bijv. 8/dag",
             "ecoCheques": "bijv. 250/jaar",
@@ -459,10 +453,9 @@
             "shiftDescription": "Beschrijving van uw werkschema (bijv. 9-17, ploegendienst)",
             "onCall": "Frequentie van bereikbaarheidsdiensten",
             "vacationDays": "Totaal aantal betaalde vakantiedagen per jaar",
-            "grossSalary": "Maandelijks brutosalaris voor belastingen",
+            "grossSalary": "Maandelijks brutosalaris vóór belastingen",
             "netSalary": "Maandelijks nettosalaris na belastingen",
-            "netCompensation": "Totale maandelijkse compensatie inclusief alle voordelen",
-            "mobility": "Vereisten voor zakenreizen of verhuizing",
+            "netCompensation": "Totale maandelijkse vergoeding inclusief alle voordelen",
             "thirteenthMonth": "Eindejaarsbonus of 13de maand",
             "mealVouchers": "Dagelijkse waarde van maaltijdcheques",
             "ecoCheques": "Jaarlijkse waarde van ecocheques",
@@ -578,7 +571,6 @@
             "employeeCountRequired": "Aantal werknemers is verplicht",
             "jobTitleRequired": "Functietitel is verplicht",
             "currencyRequired": "Valuta is verplicht",
-            "mobilityRequired": "Mobiliteit is verplicht",
             "thirteenthMonthRequired": "13e maand is verplicht",
             "groupInsuranceRequired": "Groepsverzekering is verplicht",
             "workCityRequired": "Werkstad is verplicht",
@@ -875,7 +867,6 @@
         "shiftDescription": "Ploegendienst Beschrijving",
         "onCall": "Bereikbaar",
         "benefits": "Voordelen & Compensatie",
-        "mobility": "Mobiliteit",
         "thirteenthMonth": "13e Maand",
         "mealVouchers": "Maaltijdcheques ({symbol}/dag)",
         "ecoCheques": "Ecocheques ({symbol}/jaar)",
