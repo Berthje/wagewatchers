@@ -36,6 +36,13 @@
       "when": 1762275443545,
       "tag": "0004_sleepy_living_tribunal",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1762296962009,
+      "tag": "0005_freezing_ghost_rider",
+      "breakpoints": true
     }
   ]
 }

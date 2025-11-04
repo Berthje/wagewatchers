@@ -889,7 +889,19 @@
         "viewSource": "Voir la Source Originale",
         "sourceDescription": "Source",
         "extraNotes": "Notes Supplémentaires",
-        "additionalNotes": "Notes Supplémentaires"
+        "additionalNotes": "Notes Supplémentaires",
+        "reviewStatus": {
+            "approved": "Approuvé",
+            "pendingReview": "En Attente de Révision",
+            "needsReview": "Nécessite une Révision",
+            "rejected": "Rejeté",
+            "tooltip": {
+                "approved": "Cette entrée a été vérifiée et approuvée",
+                "pendingReview": "Cette entrée est en attente de révision",
+                "needsReview": "Cette entrée a été signalée et nécessite une révision",
+                "rejected": "Cette entrée a été rejetée et cachée de la vue publique"
+            }
+        }
     },
     "comments": {
         "title": "Commentaires",
@@ -916,11 +928,13 @@
             "jobTitle": "Titre du Poste",
             "salary": "Salaire Brut",
             "submitted": "Soumis",
+            "status": "Statut",
             "editStatus": "Statut d'Édition",
             "actions": "Actions",
             "noTitle": "Aucun titre fourni",
             "editableFor": "{hours}h restantes",
-            "readonly": "Lecture seule"
+            "readonly": "Lecture seule",
+            "pending": "En Attente"
         },
         "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette entrée ? Cette action ne peut pas être annulée.",
         "deleteError": "Échec de la suppression de l'entrée",
@@ -984,6 +998,51 @@
             "success": "Abonnement à la newsletter réussi !",
             "error": "Échec de l'abonnement",
             "networkError": "Erreur réseau. Veuillez réessayer."
+        }
+    },
+    "adminReview": {
+        "title": "File d'Attente de Révision",
+        "description": "Examinez les entrées signalées et approuvez-les ou rejetez-les en fonction de l'analyse de détection d'anomalies.",
+        "loading": "Chargement...",
+        "noEntries": "Aucune entrée en attente de révision. Excellent travail !",
+        "stats": {
+            "total": "Total des Entrées",
+            "approved": "Approuvé",
+            "pending": "En Attente",
+            "needsReview": "Nécessite Révision",
+            "rejected": "Rejeté"
+        },
+        "entry": {
+            "untitledPosition": "Position Sans Titre",
+            "submitted": "Soumis",
+            "grossSalary": "Salaire Brut",
+            "country": "Pays",
+            "sector": "Secteur",
+            "experience": "Expérience",
+            "years": "{count} ans",
+            "na": "N/A"
+        },
+        "anomaly": {
+            "title": "Raison de Détection d'Anomalie",
+            "highRisk": "Risque Élevé ({score})",
+            "mediumRisk": "Risque Moyen ({score})",
+            "lowRisk": "Risque Faible ({score})"
+        },
+        "actions": {
+            "approve": "Approuver",
+            "reject": "Rejeter",
+            "processing": "Traitement..."
+        },
+        "status": {
+            "APPROVED": "Approuvé",
+            "PENDING": "En Attente",
+            "NEEDS_REVIEW": "Nécessite Révision",
+            "REJECTED": "Rejeté"
+        },
+        "errors": {
+            "loadFailed": "Échec du chargement des entrées. Veuillez actualiser la page.",
+            "actionFailed": "Impossible de {action} l'entrée. Veuillez réessayer.",
+            "unauthorized": "Non autorisé. Veuillez vous connecter."
         }
     }
 }

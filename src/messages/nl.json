@@ -889,7 +889,19 @@
         "viewSource": "Bekijk Originele Bron",
         "sourceDescription": "Bron",
         "extraNotes": "Extra Notities",
-        "additionalNotes": "Extra Notities"
+        "additionalNotes": "Extra Notities",
+        "reviewStatus": {
+            "approved": "Goedgekeurd",
+            "pendingReview": "In Afwachting van Beoordeling",
+            "needsReview": "Beoordeling Nodig",
+            "rejected": "Afgewezen",
+            "tooltip": {
+                "approved": "Deze invoer is geverifieerd en goedgekeurd",
+                "pendingReview": "Deze invoer wacht op beoordeling",
+                "needsReview": "Deze invoer is gemarkeerd en vereist beoordeling",
+                "rejected": "Deze invoer is afgewezen en verborgen voor publiek"
+            }
+        }
     },
     "comments": {
         "title": "Reacties",
@@ -916,11 +928,13 @@
             "jobTitle": "Functietitel",
             "salary": "Brutosalaris",
             "submitted": "Ingediend",
+            "status": "Status",
             "editStatus": "Bewerkingsstatus",
             "actions": "Acties",
             "noTitle": "Geen titel opgegeven",
             "editableFor": "{hours}u over",
-            "readonly": "Alleen-lezen"
+            "readonly": "Alleen-lezen",
+            "pending": "In Afwachting"
         },
         "deleteConfirm": "Weet u zeker dat u deze invoer wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
         "deleteError": "Verwijderen van invoer mislukt",
@@ -984,6 +998,51 @@
             "success": "Succesvol geabonneerd op nieuwsbrief!",
             "error": "Abonneren mislukt",
             "networkError": "Netwerkfout. Probeer het opnieuw."
+        }
+    },
+    "adminReview": {
+        "title": "Goedkeuringswachtrij",
+        "description": "Beoordeel gemarkeerde vermeldingen en keur ze goed of wijs ze af op basis van anomalie detectie analyse.",
+        "loading": "Laden...",
+        "noEntries": "Geen vermeldingen wachten op goedkeuring. Goed gedaan!",
+        "stats": {
+            "total": "Totaal Vermeldingen",
+            "approved": "Goedgekeurd",
+            "pending": "In Behandeling",
+            "needsReview": "Beoordeling Vereist",
+            "rejected": "Afgewezen"
+        },
+        "entry": {
+            "untitledPosition": "Naamloze Positie",
+            "submitted": "Ingediend",
+            "grossSalary": "Bruto Salaris",
+            "country": "Land",
+            "sector": "Sector",
+            "experience": "Ervaring",
+            "years": "{count} jaar",
+            "na": "N.v.t."
+        },
+        "anomaly": {
+            "title": "Reden Anomalie Detectie",
+            "highRisk": "Hoog Risico ({score})",
+            "mediumRisk": "Gemiddeld Risico ({score})",
+            "lowRisk": "Laag Risico ({score})"
+        },
+        "actions": {
+            "approve": "Goedkeuren",
+            "reject": "Afwijzen",
+            "processing": "Verwerken..."
+        },
+        "status": {
+            "APPROVED": "Goedgekeurd",
+            "PENDING": "In Behandeling",
+            "NEEDS_REVIEW": "Beoordeling Vereist",
+            "REJECTED": "Afgewezen"
+        },
+        "errors": {
+            "loadFailed": "Laden van vermeldingen mislukt. Ververs de pagina.",
+            "actionFailed": "Kon vermelding niet {action}. Probeer opnieuw.",
+            "unauthorized": "Niet geautoriseerd. Log in."
         }
     }
 }

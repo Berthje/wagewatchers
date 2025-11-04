@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { DashboardClient } from "./dashboard-client";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
@@ -16,7 +16,7 @@ export async function generateMetadata({
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: "dashboard" });
 
-    const entryCount = await db.select({ count: count() }).from(salaryEntries);
+    const entryCount = await db.select({ count: count() }).from(salaryEntries).where(eq(salaryEntries.reviewStatus, 'APPROVED'));
 
     const title = t("title");
     const description = t("subtitle", { count: entryCount[0].count });

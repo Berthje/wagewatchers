@@ -7,6 +7,7 @@ import {
     getEditableUntilDate,
 } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
+import { detectAnomaly } from "@/lib/anomaly-detector";
 
 export const dynamic = 'force-dynamic';
 
@@ -28,8 +29,8 @@ export async function GET(request: NextRequest) {
             return NextResponse.json(entries);
         }
 
-        // Otherwise return all entries (default behavior)
-        const entries = await db.select().from(salaryEntries).orderBy(desc(salaryEntries.createdAt));
+        // Otherwise return only approved entries (default behavior)
+        const entries = await db.select().from(salaryEntries).where(eq(salaryEntries.reviewStatus, 'APPROVED')).orderBy(desc(salaryEntries.createdAt));
         return NextResponse.json(entries);
     } catch (error) {
         console.error(error);
@@ -80,11 +81,19 @@ export async function POST(request: NextRequest) {
             editableUntil,
         }).returning();
 
+        // Run anomaly detection on the new entry
+        const anomalyResult = await detectAnomaly(entry[0]);
+
         // Generate token with the actual entry ID
         const ownerToken = generateOwnerToken(entry[0].id);
 
-        // Update with the proper token
-        const updatedEntry = await db.update(salaryEntries).set({ ownerToken }).where(eq(salaryEntries.id, entry[0].id)).returning();
+        // Update with the proper token and anomaly detection results
+        const updatedEntry = await db.update(salaryEntries).set({
+            ownerToken,
+            reviewStatus: anomalyResult.reviewStatus,
+            anomalyScore: anomalyResult.anomalyScore,
+            anomalyReason: anomalyResult.reason,
+        }).where(eq(salaryEntries.id, entry[0].id)).returning();
 
         // Return entry with the owner token (client will store it)
         return NextResponse.json({

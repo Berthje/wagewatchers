@@ -11,7 +11,15 @@
         "create-admin": "tsx scripts/create-admin.ts",
         "update-cities": "tsx scripts/update-cities.ts",
         "studio": "npx drizzle-kit studio",
-        "studio-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit studio"
+        "studio-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit studio",
+        "db:generate": "drizzle-kit generate",
+        "db:push": "drizzle-kit push",
+        "db:migrate": "drizzle-kit migrate",
+        "db:introspect": "drizzle-kit introspect",
+        "db:generate-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit generate",
+        "db:push-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit push",
+        "db:migrate-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit migrate",
+        "db:introspect-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit introspect"
     },
     "dependencies": {
         "@dnd-kit/core": "^6.3.1",
@@ -27,6 +35,7 @@
         "@radix-ui/react-select": "^2.2.6",
         "@radix-ui/react-slider": "^1.3.6",
         "@radix-ui/react-slot": "^1.2.3",
+        "@radix-ui/react-tooltip": "^1.2.8",
         "@react-email/render": "^1.3.2",
         "@tiptap/extension-placeholder": "^3.6.5",
         "@tiptap/react": "^3.6.5",

@@ -1,14 +1,130 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    ClipboardCheck,
+    LayoutDashboard,
+    ArrowRight,
+    ShieldCheck
+} from "lucide-react";
+import Link from "next/link";
 
-export default function AdminRedirectPage() {
+interface DashboardCard {
+    title: string;
+    description: string;
+    href: string;
+    icon: React.ReactNode;
+    gradient: string;
+    stats?: string;
+}
+
+export default function AdminDashboardPage() {
     const router = useRouter();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        router.push("/admin/login");
+        const checkAuth = () => {
+            const authenticated = localStorage.getItem("adminAuthenticated") === "true";
+            if (!authenticated) {
+                router.push("/admin/login");
+            } else {
+                setIsAuthenticated(true);
+            }
+            setIsLoading(false);
+        };
+        checkAuth();
     }, [router]);
 
-    return null;
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return null;
+    }
+
+    const dashboardCards: DashboardCard[] = [
+        {
+            title: "Review Entries",
+            description: "Approve or reject salary entries flagged for review",
+            href: "/admin/review",
+            icon: <ClipboardCheck className="h-6 w-6" />,
+            gradient: "from-blue-500 to-cyan-500",
+            stats: "Pending entries"
+        },
+        {
+            title: "Reports & Feedback",
+            description: "Manage bug reports, feature requests, and user feedback",
+            href: "/admin/reports",
+            icon: <LayoutDashboard className="h-6 w-6" />,
+            gradient: "from-purple-500 to-pink-500",
+            stats: "Kanban board"
+        }
+    ];
+
+    return (
+        <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-950 to-slate-900">
+            <div className="container mx-auto px-4 py-12">
+                {/* Header */}
+                <div className="mb-12">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 rounded-xl">
+                            <ShieldCheck className="h-8 w-8 text-primary" />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-bold text-white bg-clip-text">
+                                Admin Dashboard
+                            </h1>
+                            <p className="text-muted-foreground mt-1">
+                                Manage and monitor WageWatchers platform
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dashboard Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {dashboardCards.map((card, index) => (
+                        <Link key={index} href={card.href} className="group">
+                            <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] border-2 hover:border-primary/50 h-full">
+                                {/* Gradient Background */}
+                                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+
+                                <CardHeader className="relative">
+                                    <div className="flex items-start justify-between">
+                                        <div className={`p-3 rounded-lg bg-gradient-to-br ${card.gradient} text-white mb-4`}>
+                                            {card.icon}
+                                        </div>
+                                        <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                                    </div>
+                                    <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors">
+                                        {card.title}
+                                    </CardTitle>
+                                    <CardDescription className="text-base">
+                                        {card.description}
+                                    </CardDescription>
+                                </CardHeader>
+
+                                <CardContent className="relative">
+                                    {card.stats && (
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${card.gradient}`}></div>
+                                            <span>{card.stats}</span>
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 }

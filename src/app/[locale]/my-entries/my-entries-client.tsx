@@ -47,6 +47,12 @@ import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import confetti from "canvas-confetti";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function MyEntriesContent() {
     const params = useParams();
@@ -56,6 +62,7 @@ function MyEntriesContent() {
     const t = useTranslations("myEntries");
     const tNav = useTranslations("nav");
     const tUi = useTranslations("ui");
+    const tEntryDetail = useTranslations("entryDetail");
     const { preferences } = useSalaryDisplay();
     const formatCityDisplay = createCityDisplayFormatter(tUi);
 
@@ -241,6 +248,57 @@ function MyEntriesContent() {
         return { editable: false, hoursLeft: 0 };
     };
 
+    const getReviewStatusBadge = (reviewStatus: string | null) => {
+        if (!reviewStatus) {
+            return (
+                <Badge variant="outline">
+                    {t("table.pending")}
+                </Badge>
+            );
+        }
+
+        const statusConfig = {
+            APPROVED: {
+                variant: "default" as const,
+                text: tEntryDetail("reviewStatus.approved"),
+                tooltip: tEntryDetail("reviewStatus.tooltip.approved"),
+            },
+            PENDING: {
+                variant: "secondary" as const,
+                text: tEntryDetail("reviewStatus.pendingReview"),
+                tooltip: tEntryDetail("reviewStatus.tooltip.pendingReview"),
+            },
+            NEEDS_REVIEW: {
+                variant: "destructive" as const,
+                text: tEntryDetail("reviewStatus.needsReview"),
+                tooltip: tEntryDetail("reviewStatus.tooltip.needsReview"),
+            },
+            REJECTED: {
+                variant: "destructive" as const,
+                text: tEntryDetail("reviewStatus.rejected"),
+                tooltip: tEntryDetail("reviewStatus.tooltip.rejected"),
+            },
+        };
+
+        const config = statusConfig[reviewStatus as keyof typeof statusConfig];
+        if (!config) return null;
+
+        return (
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Badge variant={config.variant} className="cursor-help">
+                            {config.text}
+                        </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{config.tooltip}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        );
+    };
+
     return (
         <div className="min-h-screen bg-stone-900">
             <Navbar locale={locale} translations={navTranslations} />
@@ -358,6 +416,9 @@ function MyEntriesContent() {
                                                 {t("table.submitted")}
                                             </TableHead>
                                             <TableHead>
+                                                {t("table.status")}
+                                            </TableHead>
+                                            <TableHead>
                                                 {t("table.editStatus")}
                                             </TableHead>
                                             <TableHead className="text-right">
@@ -394,6 +455,9 @@ function MyEntriesContent() {
                                                         {formatDate(
                                                             entry.createdAt
                                                         )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {getReviewStatusBadge(entry.reviewStatus)}
                                                     </TableCell>
                                                     <TableCell>
                                                         {editStatus.editable ? (

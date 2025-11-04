@@ -892,7 +892,19 @@
         "viewSource": "View Original Source",
         "sourceDescription": "Source",
         "extraNotes": "Additional Notes",
-        "additionalNotes": "Additional Notes"
+        "additionalNotes": "Additional Notes",
+        "reviewStatus": {
+            "approved": "Approved",
+            "pendingReview": "Pending Review",
+            "needsReview": "Needs Review",
+            "rejected": "Rejected",
+            "tooltip": {
+                "approved": "This entry has been verified and approved",
+                "pendingReview": "This entry is awaiting review",
+                "needsReview": "This entry has been flagged and needs review",
+                "rejected": "This entry was rejected and hidden from public view"
+            }
+        }
     },
     "comments": {
         "title": "Comments",
@@ -919,11 +931,13 @@
             "jobTitle": "Job Title",
             "salary": "Gross Salary",
             "submitted": "Submitted",
+            "status": "Status",
             "editStatus": "Edit Status",
             "actions": "Actions",
             "noTitle": "No title provided",
             "editableFor": "{hours}h left",
-            "readonly": "Read-only"
+            "readonly": "Read-only",
+            "pending": "Pending"
         },
         "deleteConfirm": "Are you sure you want to delete this entry? This action cannot be undone.",
         "deleteError": "Failed to delete entry",
@@ -987,6 +1001,51 @@
             "success": "Successfully subscribed to newsletter!",
             "error": "Failed to subscribe",
             "networkError": "Network error. Please try again."
+        }
+    },
+    "adminReview": {
+        "title": "Entry Review Queue",
+        "description": "Review flagged entries and approve or reject them based on anomaly detection analysis.",
+        "loading": "Loading...",
+        "noEntries": "No entries pending review. Great job!",
+        "stats": {
+            "total": "Total Entries",
+            "approved": "Approved",
+            "pending": "Pending",
+            "needsReview": "Needs Review",
+            "rejected": "Rejected"
+        },
+        "entry": {
+            "untitledPosition": "Untitled Position",
+            "submitted": "Submitted",
+            "grossSalary": "Gross Salary",
+            "country": "Country",
+            "sector": "Sector",
+            "experience": "Experience",
+            "years": "{count} years",
+            "na": "N/A"
+        },
+        "anomaly": {
+            "title": "Anomaly Detection Reason",
+            "highRisk": "High Risk ({score})",
+            "mediumRisk": "Medium Risk ({score})",
+            "lowRisk": "Low Risk ({score})"
+        },
+        "actions": {
+            "approve": "Approve",
+            "reject": "Reject",
+            "processing": "Processing..."
+        },
+        "status": {
+            "APPROVED": "Approved",
+            "PENDING": "Pending",
+            "NEEDS_REVIEW": "Needs Review",
+            "REJECTED": "Rejected"
+        },
+        "errors": {
+            "loadFailed": "Failed to load entries. Please refresh the page.",
+            "actionFailed": "Failed to {action} entry. Please try again.",
+            "unauthorized": "Unauthorized. Please log in."
         }
     }
 }

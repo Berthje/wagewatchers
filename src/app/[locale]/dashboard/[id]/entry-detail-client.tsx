@@ -9,6 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/navbar";
 import { CommentSection } from "@/components/comment-thread";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { shouldDisplayField } from "@/lib/salary-config";
 import { createFieldConfigs } from "@/lib/field-configs";
 import { getFieldDisplayValue, getCurrencySymbol, createCityDisplayFormatter } from "@/lib/utils/format.utils";
@@ -28,6 +34,7 @@ import {
     TrendingUp,
     Gift,
     FileText,
+    ShieldCheck,
 } from "lucide-react";
 
 interface Comment {
@@ -85,6 +92,53 @@ export function EntryDetailClient({
 
     // Get field configurations for display labels
     const fieldConfigs = createFieldConfigs(tAdd);
+
+    // Helper to get review status badge props
+    const getReviewStatusBadge = () => {
+        if (!entry.reviewStatus) return null;
+
+        const statusMap = {
+            APPROVED: {
+                variant: "default" as const,
+                text: t("reviewStatus.approved"),
+                tooltip: t("reviewStatus.tooltip.approved"),
+            },
+            PENDING: {
+                variant: "secondary" as const,
+                text: t("reviewStatus.pendingReview"),
+                tooltip: t("reviewStatus.tooltip.pendingReview"),
+            },
+            NEEDS_REVIEW: {
+                variant: "destructive" as const,
+                text: t("reviewStatus.needsReview"),
+                tooltip: t("reviewStatus.tooltip.needsReview"),
+            },
+            REJECTED: {
+                variant: "destructive" as const,
+                text: t("reviewStatus.rejected"),
+                tooltip: t("reviewStatus.tooltip.rejected"),
+            },
+        };
+
+        const status = statusMap[entry.reviewStatus as keyof typeof statusMap];
+        if (!status) return null;
+
+        return (
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Badge variant={status.variant} className="cursor-help">
+                            <ShieldCheck className="mr-1 h-3 w-3" />
+                            {status.text}
+                        </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{status.tooltip}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        );
+    };
 
     // Fetch comments if entry has a source (external scrape)
     useEffect(() => {
@@ -171,6 +225,7 @@ export function EntryDetailClient({
                             <Calendar className="mr-1 h-3 w-3" />
                             {formatDate(entry.createdAt)}
                         </Badge>
+                        {getReviewStatusBadge()}
                     </div>
                 </div>
 

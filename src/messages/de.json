@@ -888,7 +888,19 @@
         "viewSource": "Original-Quelle Ansehen",
         "sourceDescription": "Quelle",
         "extraNotes": "Zusätzliche Notizen",
-        "additionalNotes": "Zusätzliche Notizen"
+        "additionalNotes": "Zusätzliche Notizen",
+        "reviewStatus": {
+            "approved": "Genehmigt",
+            "pendingReview": "Überprüfung Ausstehend",
+            "needsReview": "Überprüfung Erforderlich",
+            "rejected": "Abgelehnt",
+            "tooltip": {
+                "approved": "Dieser Eintrag wurde überprüft und genehmigt",
+                "pendingReview": "Dieser Eintrag wartet auf Überprüfung",
+                "needsReview": "Dieser Eintrag wurde markiert und benötigt eine Überprüfung",
+                "rejected": "Dieser Eintrag wurde abgelehnt und ist in der öffentlichen Ansicht verborgen"
+            }
+        }
     },
     "comments": {
         "title": "Kommentare",
@@ -915,11 +927,13 @@
             "jobTitle": "Berufsbezeichnung",
             "salary": "Bruttogehalt",
             "submitted": "Eingereicht",
+            "status": "Status",
             "editStatus": "Bearbeitungsstatus",
             "actions": "Aktionen",
             "noTitle": "Kein Titel angegeben",
             "editableFor": "{hours}h übrig",
-            "readonly": "Nur lesbar"
+            "readonly": "Nur lesbar",
+            "pending": "Ausstehend"
         },
         "deleteConfirm": "Sind Sie sicher, dass Sie diesen Eintrag löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
         "deleteError": "Fehler beim Löschen des Eintrags",
@@ -983,6 +997,51 @@
             "success": "Erfolgreich für Newsletter angemeldet!",
             "error": "Abonnement fehlgeschlagen",
             "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
+        }
+    },
+    "adminReview": {
+        "title": "Prüfungswarteschlange",
+        "description": "Überprüfen Sie markierte Einträge und genehmigen oder lehnen Sie sie basierend auf der Anomalie-Erkennungsanalyse ab.",
+        "loading": "Wird geladen...",
+        "noEntries": "Keine Einträge zur Überprüfung ausstehend. Großartige Arbeit!",
+        "stats": {
+            "total": "Einträge Gesamt",
+            "approved": "Genehmigt",
+            "pending": "Ausstehend",
+            "needsReview": "Überprüfung Erforderlich",
+            "rejected": "Abgelehnt"
+        },
+        "entry": {
+            "untitledPosition": "Unbenannte Position",
+            "submitted": "Eingereicht",
+            "grossSalary": "Bruttogehalt",
+            "country": "Land",
+            "sector": "Branche",
+            "experience": "Erfahrung",
+            "years": "{count} Jahre",
+            "na": "N/A"
+        },
+        "anomaly": {
+            "title": "Grund für Anomalie-Erkennung",
+            "highRisk": "Hohes Risiko ({score})",
+            "mediumRisk": "Mittleres Risiko ({score})",
+            "lowRisk": "Niedriges Risiko ({score})"
+        },
+        "actions": {
+            "approve": "Genehmigen",
+            "reject": "Ablehnen",
+            "processing": "Wird verarbeitet..."
+        },
+        "status": {
+            "APPROVED": "Genehmigt",
+            "PENDING": "Ausstehend",
+            "NEEDS_REVIEW": "Überprüfung Erforderlich",
+            "REJECTED": "Abgelehnt"
+        },
+        "errors": {
+            "loadFailed": "Laden der Einträge fehlgeschlagen. Bitte Seite aktualisieren.",
+            "actionFailed": "Konnte Eintrag nicht {action}. Bitte erneut versuchen.",
+            "unauthorized": "Nicht autorisiert. Bitte anmelden."
         }
     }
 }

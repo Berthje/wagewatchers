@@ -5,6 +5,7 @@ import { relations } from 'drizzle-orm';
 export const reportType = ['BUG', 'FEATURE', 'IMPROVEMENT'] as const;
 export const reportStatus = ['TODO', 'IN_PROGRESS', 'DONE', 'CANCELLED'] as const;
 export const priority = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const;
+export const reviewStatus = ['APPROVED', 'PENDING', 'REJECTED', 'NEEDS_REVIEW'] as const;
 
 // Tables
 export const salaryEntries = pgTable('SalaryEntry', {
@@ -53,8 +54,15 @@ export const salaryEntries = pgTable('SalaryEntry', {
     lastCommentsFetch: timestamp('lastCommentsFetch', { withTimezone: true }),
     ownerToken: text('ownerToken'),
     editableUntil: timestamp('editableUntil', { withTimezone: true }),
+    // Anomaly detection fields
+    reviewStatus: text('reviewStatus', { enum: reviewStatus }).default('APPROVED').notNull(),
+    anomalyScore: real('anomalyScore'),
+    anomalyReason: text('anomalyReason'),
+    reviewedBy: integer('reviewedBy'),
+    reviewedAt: timestamp('reviewedAt', { withTimezone: true }),
 }, (table) => [
     index('ownerToken_idx').on(table.ownerToken),
+    index('reviewStatus_idx').on(table.reviewStatus),
 ]);
 
 export const comments = pgTable('Comment', {
