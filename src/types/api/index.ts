@@ -13,3 +13,7 @@ export type {
     YearlyData,
     LocationHeatmapData,
 } from './statistics.types';
+
+// Sorting types for dashboard
+export type SortField = "experience" | "grossSalary" | "netSalary" | "age" | "createdAt";
+export type SortDirection = "asc" | "desc" | null;
