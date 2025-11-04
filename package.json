@@ -8,12 +8,10 @@
         "build": "next build --turbopack",
         "start": "next start",
         "lint": "eslint",
-        "db:generate": "drizzle-kit generate",
-        "db:migrate": "drizzle-kit migrate",
         "create-admin": "tsx scripts/create-admin.ts",
         "update-cities": "tsx scripts/update-cities.ts",
-        "test:exchange-rates": "tsx scripts/test-exchange-rates.ts",
-        "test:newsletter": "tsx scripts/test-changelog-newsletter.ts"
+        "studio": "npx drizzle-kit studio",
+        "studio-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit studio"
     },
     "dependencies": {
         "@dnd-kit/core": "^6.3.1",
@@ -73,6 +71,7 @@
         "@types/node": "^20",
         "@types/react": "^19.2.2",
         "@types/react-dom": "^19.2.2",
+        "cross-env": "^10.1.0",
         "drizzle-kit": "^0.31.6",
         "eslint": "^9",
         "eslint-config-next": "15.5.4",
