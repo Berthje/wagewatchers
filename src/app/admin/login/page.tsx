@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
                 },
                 body: JSON.stringify({
                     email: email.trim(),
-                    password: password.trim()
+                    password: password.trim(),
                 }),
             });
 
@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
             if (response.ok) {
                 // Set a simple session flag for client-side checks
                 localStorage.setItem("adminAuthenticated", "true");
-                router.push("/admin/reports");
+                router.push("/admin");
             } else {
                 setError(data.error || "Login failed");
             }
@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
                             className="text-stone-300 hover:text-stone-100 text-sm md:text-base"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2" />
-                            Go Back
+                            Homepage
                         </Button>
                     </Link>
                 </nav>
@@ -112,11 +112,11 @@ export default function AdminLoginPage() {
 
                 <Card className="border-stone-800 bg-stone-900/60 backdrop-blur-sm">
                     <CardHeader>
-                        <CardTitle className="text-stone-100">
+                        <CardTitle className="text-stone-100 text-lg">
                             Login
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="mt-4">
                         <form onSubmit={handleLogin} className="space-y-4">
                             <div className="space-y-2">
                                 <Label

@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {
     ClipboardCheck,
     LayoutDashboard,
     ArrowRight,
-    ShieldCheck
+    ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -27,7 +32,8 @@ export default function AdminDashboardPage() {
 
     useEffect(() => {
         const checkAuth = () => {
-            const authenticated = localStorage.getItem("adminAuthenticated") === "true";
+            const authenticated =
+                localStorage.getItem("adminAuthenticated") === "true";
             if (!authenticated) {
                 router.push("/admin/login");
             } else {
@@ -57,26 +63,25 @@ export default function AdminDashboardPage() {
             href: "/admin/review",
             icon: <ClipboardCheck className="h-6 w-6" />,
             gradient: "from-blue-500 to-cyan-500",
-            stats: "Pending entries"
         },
         {
             title: "Reports & Feedback",
-            description: "Manage bug reports, feature requests, and user feedback",
+            description:
+                "Manage bug reports, feature requests, and user feedback",
             href: "/admin/reports",
             icon: <LayoutDashboard className="h-6 w-6" />,
             gradient: "from-purple-500 to-pink-500",
-            stats: "Kanban board"
-        }
+        },
     ];
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-950 to-slate-900">
+        <div className="min-h-screen bg-linear-to-br from-stone-950 via-stone-950 to-stone-900">
             <div className="container mx-auto px-4 py-12">
                 {/* Header */}
                 <div className="mb-12">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 rounded-xl">
-                            <ShieldCheck className="h-8 w-8 text-primary" />
+                            <ShieldCheck className="h-8 w-8 md:w-12 md:h-12 text-primary" />
                         </div>
                         <div>
                             <h1 className="text-4xl font-bold text-white bg-clip-text">
@@ -95,11 +100,15 @@ export default function AdminDashboardPage() {
                         <Link key={index} href={card.href} className="group">
                             <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] border-2 hover:border-primary/50 h-full">
                                 {/* Gradient Background */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                                <div
+                                    className={`absolute inset-0 bg-linear-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                                ></div>
 
                                 <CardHeader className="relative">
                                     <div className="flex items-start justify-between">
-                                        <div className={`p-3 rounded-lg bg-gradient-to-br ${card.gradient} text-white mb-4`}>
+                                        <div
+                                            className={`p-3 rounded-lg bg-linear-to-br ${card.gradient} text-white mb-4`}
+                                        >
                                             {card.icon}
                                         </div>
                                         <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
@@ -111,15 +120,6 @@ export default function AdminDashboardPage() {
                                         {card.description}
                                     </CardDescription>
                                 </CardHeader>
-
-                                <CardContent className="relative">
-                                    {card.stats && (
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${card.gradient}`}></div>
-                                            <span>{card.stats}</span>
-                                        </div>
-                                    )}
-                                </CardContent>
                             </Card>
                         </Link>
                     ))}
