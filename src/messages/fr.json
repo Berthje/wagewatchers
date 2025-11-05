@@ -239,7 +239,6 @@
                 "title": "Diagramme de Dispersion Expérience vs Salaire",
                 "description": "Points de données individuels montrant la relation entre l'expérience et le salaire",
                 "xAxisLabel": "Années d'Expérience",
-                "yAxisLabel": "Salaire Brut (€)",
                 "dataPointLabel": "Point de Données"
             },
             "yearOverYear": {

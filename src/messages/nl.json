@@ -239,7 +239,6 @@
                 "title": "Ervaring vs Salaris Spreidingsdiagram",
                 "description": "Individuele datapunten die de relatie tussen ervaring en salaris tonen",
                 "xAxisLabel": "Jaren Ervaring",
-                "yAxisLabel": "Brutosalaris (€)",
                 "dataPointLabel": "Data Punt"
             },
             "yearOverYear": {

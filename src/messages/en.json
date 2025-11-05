@@ -102,9 +102,7 @@
             "avgAge": "Avg Age",
             "sectors": "Sectors",
             "topSector": "Top Sector",
-            "entries": "entries",
-            "perMonth": "/month",
-            "perYear": "/year"
+            "entries": "entries"
         },
         "filters": {
             "title": "Filters",
@@ -115,7 +113,6 @@
             "city": "City",
             "minSalary": "Min Salary",
             "maxSalary": "Max Salary",
-            "noLimit": "No limit",
             "seniority": "Seniority",
             "allCountries": "All countries",
             "allLocations": "All locations",
@@ -242,7 +239,6 @@
                 "title": "Experience vs Salary Scatter Plot",
                 "description": "Individual data points showing relationship between experience and salary",
                 "xAxisLabel": "Years of Experience",
-                "yAxisLabel": "Gross Salary (€)",
                 "dataPointLabel": "Data Point"
             },
             "yearOverYear": {
