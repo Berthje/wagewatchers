@@ -135,7 +135,6 @@ export function DashboardClient({
         setMinWorkExperience,
         setMaxWorkExperience,
         setSearchQuery,
-        clearAllFilters,
     } = actions;
 
     // Sync debounced search to hook

@@ -976,12 +976,6 @@
             "generic": "Failed to load entry. Please try again."
         }
     },
-    "pageNotFound": {
-        "title": "Whoops! Page Not Found",
-        "description": "Looks like this page took a salary cut and disappeared. But don't worry, your wage data is safe with us!",
-        "goHome": "Go back home",
-        "tip": "💡 Tip: Try checking the URL or go back to explore salary data"
-    },
     "changelog": {
         "title": "Changelog",
         "description": "Stay updated with the latest features and improvements to WageWatchers.",
