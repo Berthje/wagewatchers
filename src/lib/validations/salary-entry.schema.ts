@@ -221,22 +221,6 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
                     path: ["seniority"],
                 }
             )
-            .refine(
-                (data) => {
-                    // Work city is required when providing any commute details
-                    const hasCommuteDetails = data.commuteDistance !== undefined ||
-                        (data.commuteMethod && data.commuteMethod.trim() !== "") ||
-                        (data.commuteCompensation && data.commuteCompensation.trim() !== "");
-                    if (hasCommuteDetails) {
-                        return data.workCity && data.workCity.trim() !== "";
-                    }
-                    return true;
-                },
-                {
-                    message: t("validation.workCityRequiredForCommute"),
-                    path: ["workCity"],
-                }
-            )
     );
 };
 
