@@ -1,6 +1,6 @@
 /**
  * Task:
- * Read my git log & Add a new changelog entry (or entries) for recently added features, updates, or improvements that are **visible or relevant to end users**.
+ * Read my entire git log & Add a new changelog entry (or entries) for recently added features, updates, or improvements that are **visible or relevant to end users**.
  *
  * Rules:
  * - Only include **changes that affect the user experience**, not internal or admin/developer-only updates.
