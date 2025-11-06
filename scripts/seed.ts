@@ -147,6 +147,7 @@ async function seed() {
                 reports: 2,
                 isManualEntry: true,
                 reviewStatus: "APPROVED" as const,
+                source: "Manual submission",
             },
             {
                 country: "Belgium",
@@ -187,6 +188,7 @@ async function seed() {
                 reports: 5,
                 isManualEntry: true,
                 reviewStatus: "APPROVED" as const,
+                source: "Manual submission",
             },
             // Belgium - Other sectors
             {
@@ -228,6 +230,7 @@ async function seed() {
                 reports: 3,
                 isManualEntry: true,
                 reviewStatus: "APPROVED" as const,
+                source: "Manual submission",
             },
             {
                 country: "Belgium",
@@ -268,6 +271,7 @@ async function seed() {
                 reports: 0,
                 isManualEntry: true,
                 reviewStatus: "APPROVED" as const,
+                source: "Manual submission",
             },
             // Entry with anomaly (for testing anomaly detection)
             {
@@ -306,10 +310,11 @@ async function seed() {
                 dayOffEase: "Easy",
                 stressLevel: "Low",
                 reports: 0,
-                isManualEntry: true,
+                isManualEntry: false,
                 reviewStatus: "NEEDS_REVIEW" as const,
                 anomalyScore: 0.95,
                 anomalyReason: "Salary significantly higher than expected for experience level",
+                source: "Reddit",
             },
         ];
 
