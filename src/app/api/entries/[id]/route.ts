@@ -4,6 +4,7 @@ import { salaryEntries } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
+import { detectAnomaly } from "@/lib/anomaly-detector";
 
 export const dynamic = "force-dynamic";
 
@@ -97,10 +98,20 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     delete updateData.id;
     delete updateData.createdAt;
 
-    // Update the entry
+    // Run anomaly detection on the updated entry data
+    // Merge existing entry data with updates to get complete picture for analysis
+    const entryForAnalysis = { ...existingEntry[0], ...updateData };
+    const anomalyResult = await detectAnomaly(entryForAnalysis);
+
+    // Update the entry with anomaly detection results
     const updatedEntry = await db
       .update(salaryEntries)
-      .set(updateData)
+      .set({
+        ...updateData,
+        reviewStatus: anomalyResult.reviewStatus,
+        anomalyScore: anomalyResult.anomalyScore,
+        anomalyReason: anomalyResult.reason,
+      })
       .where(eq(salaryEntries.id, id))
       .returning();
 
