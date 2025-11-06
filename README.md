@@ -1,6 +1,8 @@
 # WageWatchers
 
-A community-driven salary transparency platform for European markets. Compare salaries, benefits, and work conditions with data from anonymous salary discussions.
+A community-driven salary transparency platform for European markets. Compare
+salaries, benefits, and work conditions with data from anonymous salary
+discussions.
 
 **Author:** Layton Berth (Berthje)
 
@@ -8,7 +10,8 @@ A community-driven salary transparency platform for European markets. Compare sa
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/Mac/Linux)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+  (Windows/Mac/Linux)
 - [Node.js 18+](https://nodejs.org/)
 - [pnpm](https://pnpm.io/) or npm
 
@@ -28,6 +31,7 @@ docker-compose up -d
 This will start **PostgreSQL** on `localhost:5433`
 
 Verify container is running:
+
 ```bash
 docker-compose ps
 ```
@@ -38,7 +42,8 @@ docker-compose ps
 cp .env.example .env
 ```
 
-Edit `.env` and update any values (the defaults work for local Docker development).
+Edit `.env` and update any values (the defaults work for local Docker
+development).
 
 ### 4. Install Dependencies
 
@@ -61,14 +66,17 @@ npm run db:seed:dev
 ```
 
 This populates the database with:
+
 - 10 sample salary entries (Belgium, Netherlands, France, Germany)
 - Threaded comments
 - Bug/feature reports
 - Admin user (email: `admin@wagewatchers.dev`, password: `admin123`)
-- **Real cities from CSV** (`public/data/cities.csv`) - falls back to minimal set if CSV not found
+- **Real cities from CSV** (`public/data/cities.csv`) - falls back to minimal
+  set if CSV not found
 - Exchange rates and newsletter subscribers
 
-⚠️ **Note**: The seed script only runs in development mode to prevent accidental data loss in production.
+⚠️ **Note**: The seed script only runs in development mode to prevent accidental
+data loss in production.
 
 ### 7. Create Custom Admin User (Optional)
 
@@ -91,21 +99,25 @@ Visit [http://localhost:3000](http://localhost:3000) 🎉
 ## 🐳 Docker Commands
 
 ### Stop containers
+
 ```bash
 docker-compose down
 ```
 
 ### Stop containers and remove volumes (⚠️ deletes all data)
+
 ```bash
 docker-compose down -v
 ```
 
 ### View logs
+
 ```bash
 docker-compose logs -f postgres
 ```
 
 ### Access PostgreSQL shell
+
 ```bash
 docker exec -it wagewatchers-postgres psql -U postgres -d wagewatchers
 ```
@@ -124,7 +136,8 @@ Opens at [http://localhost:4983](http://localhost:4983)
 
 ### Development Database Commands
 
-All development commands use the local Docker PostgreSQL instance (`localhost:5433`):
+All development commands use the local Docker PostgreSQL instance
+(`localhost:5433`):
 
 ```bash
 # Generate migrations after schema changes
@@ -220,13 +233,15 @@ See `.env.example` for all available configuration options:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
 Built with:
+
 - [Next.js 15](https://nextjs.org/)
 - [Drizzle ORM](https://orm.drizzle.team/)
 - [shadcn/ui](https://ui.shadcn.com/)

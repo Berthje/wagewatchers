@@ -10,21 +10,21 @@ export const locales = ["en", "nl", "fr", "de"] as const;
 export type Locale = (typeof locales)[number];
 
 const messages = {
-    en,
-    nl,
-    fr,
-    de,
+  en,
+  nl,
+  fr,
+  de,
 };
 
 export default getRequestConfig(async ({ locale }) => {
-    // Validate that the incoming `locale` parameter is valid
-    const validatedLocale = locale || "en";
-    if (!locales.includes(validatedLocale as any)) {
-        notFound();
-    }
+  // Validate that the incoming `locale` parameter is valid
+  const validatedLocale = locale || "en";
+  if (!locales.includes(validatedLocale as any)) {
+    notFound();
+  }
 
-    return {
-        locale: validatedLocale,
-        messages: messages[validatedLocale as keyof typeof messages],
-    };
+  return {
+    locale: validatedLocale,
+    messages: messages[validatedLocale as keyof typeof messages],
+  };
 });

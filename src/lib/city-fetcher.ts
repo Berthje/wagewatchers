@@ -1,10 +1,10 @@
-import { db } from '@/lib/db';
-import { cities } from '@/lib/db/schema';
-import fs from 'node:fs';
+import { db } from "@/lib/db";
+import { cities } from "@/lib/db/schema";
+import fs from "node:fs";
 
 interface CityData {
-    name: string;
-    country: string;
+  name: string;
+  country: string;
 }
 
 /**
@@ -14,39 +14,43 @@ interface CityData {
  * @returns Array of city objects
  */
 function parseCitiesFromCSV(csvPath: string): CityData[] {
-    const fileContent = fs.readFileSync(csvPath, 'utf-8');
-    const lines = fileContent.split('\n');
+  const fileContent = fs.readFileSync(csvPath, "utf-8");
+  const lines = fileContent.split("\n");
 
-    // Remove header line
-    const header = lines[0].split(';').map(col => col.trim());
-    const dataLines = lines.slice(1);
+  // Remove header line
+  const header = lines[0].split(";").map((col) => col.trim());
+  const dataLines = lines.slice(1);
 
-    // Find column indices by exact header names
-    const nameIndex = header.indexOf('Name');
-    const countryIndex = header.indexOf('Country name EN');
+  // Find column indices by exact header names
+  const nameIndex = header.indexOf("Name");
+  const countryIndex = header.indexOf("Country name EN");
 
-    if (nameIndex === -1 || countryIndex === -1) {
-        throw new Error(`CSV must contain "Name" and "Country name EN" columns. Found headers: ${header.join(', ')}`);
+  if (nameIndex === -1 || countryIndex === -1) {
+    throw new Error(
+      `CSV must contain "Name" and "Country name EN" columns. Found headers: ${header.join(", ")}`
+    );
+  }
+
+  console.log(
+    `Found columns - Name at index ${nameIndex}, Country name EN at index ${countryIndex}`
+  );
+
+  const citiesData: CityData[] = [];
+
+  for (const line of dataLines) {
+    if (!line.trim()) continue;
+
+    const columns = line.split(";");
+    const name = columns[nameIndex]?.trim();
+    const country = columns[countryIndex]?.trim();
+
+    if (name && country) {
+      citiesData.push({ name, country });
     }
+  }
 
-    console.log(`Found columns - Name at index ${nameIndex}, Country name EN at index ${countryIndex}`);
-
-    const citiesData: CityData[] = [];
-
-    for (const line of dataLines) {
-        if (!line.trim()) continue;
-
-        const columns = line.split(';');
-        const name = columns[nameIndex]?.trim();
-        const country = columns[countryIndex]?.trim();
-
-        if (name && country) {
-            citiesData.push({ name, country });
-        }
-    }
-
-    console.log(`Parsed ${citiesData.length} cities from CSV`);
-    return citiesData;
+  console.log(`Parsed ${citiesData.length} cities from CSV`);
+  return citiesData;
 }
 
 /**
@@ -55,43 +59,47 @@ function parseCitiesFromCSV(csvPath: string): CityData[] {
  * @param csvPath - Path to the CSV file
  */
 export async function updateCitiesFromCSV(csvPath: string) {
-    try {
-        console.log('Reading cities from CSV...');
-        const allCities = parseCitiesFromCSV(csvPath);
+  try {
+    console.log("Reading cities from CSV...");
+    const allCities = parseCitiesFromCSV(csvPath);
 
-        console.log('Filtering out duplicates...');
-        const uniqueCities = allCities
-            .filter(city => city.name && city.name.trim().length > 0)
-            .filter((city, index, self) =>
-                index === self.findIndex(c =>
-                    c.name.toLowerCase() === city.name.toLowerCase() &&
-                    c.country.toLowerCase() === city.country.toLowerCase()
-                )
-            )
-            .map(city => ({
-                name: city.name.trim(),
-                country: city.country.trim(),
-            }));
+    console.log("Filtering out duplicates...");
+    const uniqueCities = allCities
+      .filter((city) => city.name && city.name.trim().length > 0)
+      .filter(
+        (city, index, self) =>
+          index ===
+          self.findIndex(
+            (c) =>
+              c.name.toLowerCase() === city.name.toLowerCase() &&
+              c.country.toLowerCase() === city.country.toLowerCase()
+          )
+      )
+      .map((city) => ({
+        name: city.name.trim(),
+        country: city.country.trim(),
+      }));
 
-        console.log(`After filtering: ${uniqueCities.length} unique cities`);
+    console.log(`After filtering: ${uniqueCities.length} unique cities`);
 
-        // Drop all existing cities
-        console.log('Dropping all existing cities...');
-        await db.delete(cities);
-        console.log('All cities deleted');
+    // Drop all existing cities
+    console.log("Dropping all existing cities...");
+    await db.delete(cities);
+    console.log("All cities deleted");
 
-        // Insert new cities in batches (to avoid potential query size limits)
-        const batchSize = 1000;
-        for (let i = 0; i < uniqueCities.length; i += batchSize) {
-            const batch = uniqueCities.slice(i, i + batchSize);
-            await db.insert(cities).values(batch);
-            console.log(`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(uniqueCities.length / batchSize)} (${batch.length} cities)`);
-        }
-
-        console.log(`Successfully imported ${uniqueCities.length} cities`);
-
-    } catch (error) {
-        console.error('Error updating cities from CSV:', error);
-        throw error;
+    // Insert new cities in batches (to avoid potential query size limits)
+    const batchSize = 1000;
+    for (let i = 0; i < uniqueCities.length; i += batchSize) {
+      const batch = uniqueCities.slice(i, i + batchSize);
+      await db.insert(cities).values(batch);
+      console.log(
+        `Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(uniqueCities.length / batchSize)} (${batch.length} cities)`
+      );
     }
+
+    console.log(`Successfully imported ${uniqueCities.length} cities`);
+  } catch (error) {
+    console.error("Error updating cities from CSV:", error);
+    throw error;
+  }
 }

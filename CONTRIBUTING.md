@@ -6,7 +6,8 @@ Thank you for your interest in contributing to WageWatchers! 🎉
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (recommended)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+  (recommended)
 - [Node.js 18+](https://nodejs.org/)
 - Git
 
@@ -22,11 +23,13 @@ Thank you for your interest in contributing to WageWatchers! 🎉
 2. **Run the setup script**
 
    **Windows (PowerShell):**
+
    ```powershell
    .\setup.ps1
    ```
 
    **Mac/Linux:**
+
    ```bash
    chmod +x setup.sh
    ./setup.sh
@@ -54,7 +57,8 @@ Thank you for your interest in contributing to WageWatchers! 🎉
 
 ### Manual Setup
 
-If you prefer not to use the script, see [docs/DOCKER_SETUP.md](docs/DOCKER_SETUP.md) for step-by-step instructions.
+If you prefer not to use the script, see
+[docs/DOCKER_SETUP.md](docs/DOCKER_SETUP.md) for step-by-step instructions.
 
 ---
 
@@ -87,6 +91,7 @@ If you prefer not to use the script, see [docs/DOCKER_SETUP.md](docs/DOCKER_SETU
 4. **Check database changes**
 
    If you modified the schema:
+
    ```bash
    npm run db:generate  # Generate migration
    npm run db:push      # Apply changes
@@ -163,20 +168,22 @@ WageWatchers supports `en`, `nl`, `fr`, and `de`.
 3. Use in components:
 
    **Server Component:**
-   ```tsx
-   import { getTranslations } from 'next-intl/server';
 
-   const t = await getTranslations('Dashboard');
-   return <h1>{t('title')}</h1>;
+   ```tsx
+   import { getTranslations } from "next-intl/server";
+
+   const t = await getTranslations("Dashboard");
+   return <h1>{t("title")}</h1>;
    ```
 
    **Client Component:**
-   ```tsx
-   'use client';
-   import { useTranslations } from 'next-intl';
 
-   const t = useTranslations('Dashboard');
-   return <h1>{t('title')}</h1>;
+   ```tsx
+   "use client";
+   import { useTranslations } from "next-intl";
+
+   const t = useTranslations("Dashboard");
+   return <h1>{t("title")}</h1>;
    ```
 
 ---
@@ -190,10 +197,10 @@ Using Drizzle ORM:
 Edit `drizzle/schema.ts`:
 
 ```typescript
-export const salaryEntries = pgTable('salary_entries', {
-  id: serial('id').primaryKey(),
+export const salaryEntries = pgTable("salary_entries", {
+  id: serial("id").primaryKey(),
   // Add your new field
-  newField: varchar('new_field', { length: 255 }),
+  newField: varchar("new_field", { length: 255 }),
 });
 ```
 
@@ -299,21 +306,26 @@ Before submitting a PR:
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 How was this tested?
 
 ## Screenshots
+
 (if applicable)
 
 ## Checklist
+
 - [ ] Linted and formatted
 - [ ] Translations updated
 - [ ] Database migrations included
@@ -332,13 +344,15 @@ How was this tested?
 
 ## 📜 License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the
+MIT License.
 
 ---
 
 ## 🙏 Thank You!
 
 Every contribution matters, whether it's:
+
 - 🐛 Bug reports
 - 💡 Feature ideas
 - 📝 Documentation

@@ -1,7 +1,7 @@
-import { NextRequest } from 'next/server';
-import { db } from '@/lib/db';
-import { newsletterSubscribers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { NextRequest } from "next/server";
+import { db } from "@/lib/db";
+import { newsletterSubscribers } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * GET /api/newsletter/unsubscribe
@@ -9,13 +9,13 @@ import { eq } from 'drizzle-orm';
  * Shows a confirmation page and processes the unsubscribe
  */
 export async function GET(request: NextRequest) {
-    try {
-        const { searchParams } = new URL(request.url);
-        const email = searchParams.get('email');
+  try {
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get("email");
 
-        if (!email) {
-            return new Response(
-                `
+    if (!email) {
+      return new Response(
+        `
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,23 +41,23 @@ export async function GET(request: NextRequest) {
 </body>
 </html>
                 `,
-                {
-                    status: 400,
-                    headers: { 'Content-Type': 'text/html' },
-                }
-            );
+        {
+          status: 400,
+          headers: { "Content-Type": "text/html" },
         }
+      );
+    }
 
-        // Check if the email exists in our database
-        const existingSubscriber = await db
-            .select()
-            .from(newsletterSubscribers)
-            .where(eq(newsletterSubscribers.email, email))
-            .limit(1);
+    // Check if the email exists in our database
+    const existingSubscriber = await db
+      .select()
+      .from(newsletterSubscribers)
+      .where(eq(newsletterSubscribers.email, email))
+      .limit(1);
 
-        if (existingSubscriber.length === 0) {
-            return new Response(
-                `
+    if (existingSubscriber.length === 0) {
+      return new Response(
+        `
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,19 +83,19 @@ export async function GET(request: NextRequest) {
 </body>
 </html>
                 `,
-                {
-                    status: 200,
-                    headers: { 'Content-Type': 'text/html' },
-                }
-            );
+        {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
         }
+      );
+    }
 
-        const subscriber = existingSubscriber[0];
+    const subscriber = existingSubscriber[0];
 
-        // If already inactive, show already unsubscribed message
-        if (!subscriber.isActive) {
-            return new Response(
-                `
+    // If already inactive, show already unsubscribed message
+    if (!subscriber.isActive) {
+      return new Response(
+        `
 <!DOCTYPE html>
 <html>
 <head>
@@ -121,25 +121,25 @@ export async function GET(request: NextRequest) {
 </body>
 </html>
                 `,
-                {
-                    status: 200,
-                    headers: { 'Content-Type': 'text/html' },
-                }
-            );
+        {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
         }
+      );
+    }
 
-        // Check if this is a confirmation request
-        const confirm = searchParams.get('confirm');
+    // Check if this is a confirmation request
+    const confirm = searchParams.get("confirm");
 
-        if (confirm === 'yes') {
-            // Process the unsubscribe
-            await db
-                .update(newsletterSubscribers)
-                .set({ isActive: false })
-                .where(eq(newsletterSubscribers.email, email));
+    if (confirm === "yes") {
+      // Process the unsubscribe
+      await db
+        .update(newsletterSubscribers)
+        .set({ isActive: false })
+        .where(eq(newsletterSubscribers.email, email));
 
-            return new Response(
-                `
+      return new Response(
+        `
 <!DOCTYPE html>
 <html>
 <head>
@@ -168,16 +168,16 @@ export async function GET(request: NextRequest) {
 </body>
 </html>
                 `,
-                {
-                    status: 200,
-                    headers: { 'Content-Type': 'text/html' },
-                }
-            );
+        {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
         }
+      );
+    }
 
-        // Show confirmation page
-        return new Response(
-            `
+    // Show confirmation page
+    return new Response(
+      `
 <!DOCTYPE html>
 <html>
 <head>
@@ -212,16 +212,15 @@ export async function GET(request: NextRequest) {
 </body>
 </html>
             `,
-            {
-                status: 200,
-                headers: { 'Content-Type': 'text/html' },
-            }
-        );
-
-    } catch (error) {
-        console.error('Unsubscribe error:', error);
-        return new Response(
-            `
+      {
+        status: 200,
+        headers: { "Content-Type": "text/html" },
+      }
+    );
+  } catch (error) {
+    console.error("Unsubscribe error:", error);
+    return new Response(
+      `
 <!DOCTYPE html>
 <html>
 <head>
@@ -250,10 +249,10 @@ export async function GET(request: NextRequest) {
 </body>
 </html>
             `,
-            {
-                status: 500,
-                headers: { 'Content-Type': 'text/html' },
-            }
-        );
-    }
+      {
+        status: 500,
+        headers: { "Content-Type": "text/html" },
+      }
+    );
+  }
 }

@@ -4,55 +4,59 @@
  */
 
 export interface SectorData {
-    sector: string;
-    averageSalary: number;
-    count: number;
+  sector: string;
+  count: number;
+  avgGross: number;
+  totalGross: number;
+  salaries: number[];
 }
 
 export interface CountryData {
-    country: string;
-    averageSalary: number;
-    count: number;
+  country: string;
+  avgSalary: number;
+  count: number;
+  salaries: number[];
 }
 
 export interface ExperienceData {
-    experience: string;
-    averageSalary: number;
-    count: number;
+  experience: number;
+  avgSalary: number;
+  count: number;
+  salaries: number[];
 }
 
 export interface SalaryRangeData {
-    range: string;
-    count: number;
+  range: string;
+  count: number;
 }
 
 export interface AgeData {
-    ageGroup: string;
-    averageSalary: number;
-    count: number;
+  ageGroup: string;
+  count: number;
+  [key: string]: string | number;
 }
 
 export interface ScatterData {
-    experience: number;
-    salary: number;
-    sector: string;
-    country: string;
-    age: number;
-    jobTitle?: string;
+  id: number;
+  experience: number;
+  salary: number;
+  age: number;
+  sector: string;
+  country: string;
 }
 
 export interface YearlyData {
-    year: number;
-    month: string;
-    averageSalary: number;
-    count: number;
+  year: number;
+  avgSalary: number;
+  count: number;
+  medianSalary: number;
 }
 
 export interface LocationHeatmapData {
-    city: string;
-    country: string;
-    averageSalary: number;
-    count: number;
-    latitude?: number;
-    longitude?: number;
+  city: string;
+  country: string;
+  avgSalary: number;
+  count: number;
+  lat?: number;
+  lng?: number;
 }

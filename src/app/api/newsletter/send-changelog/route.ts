@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { newsletterSubscribers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { Resend } from 'resend';
-import { changelogEntries } from '@/lib/changelog-data';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { newsletterSubscribers } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { Resend } from "resend";
+import { changelogEntries } from "@/lib/changelog-data";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -12,41 +12,41 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  * @param daysBack - Number of days to look back (default: 7)
  */
 function getRecentChangelog(daysBack: number = 7) {
-    const now = new Date();
-    const cutoffDate = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const cutoffDate = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
 
-    return changelogEntries.filter((entry) => {
-        // Parse the date string (assuming format like "2024-01-15" or "January 15, 2024")
-        const entryDate = new Date(entry.date);
-        return entryDate >= cutoffDate && entryDate <= now;
-    });
+  return changelogEntries.filter((entry) => {
+    // Parse the date string (assuming format like "2024-01-15" or "January 15, 2024")
+    const entryDate = new Date(entry.date);
+    return entryDate >= cutoffDate && entryDate <= now;
+  });
 }
 
 /**
  * Generate HTML email template for changelog updates
  */
 function generateChangelogEmail(entries: typeof changelogEntries, subscriberEmail: string) {
-    if (entries.length === 0) {
-        return null;
-    }
+  if (entries.length === 0) {
+    return null;
+  }
 
-    const changesHtml = entries
-        .map(
-            (entry) => `
+  const changesHtml = entries
+    .map(
+      (entry) => `
         <div style="margin-bottom: 30px; padding: 20px; background-color: #f9fafb; border-radius: 8px; border-left: 4px solid #10b981;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h2 style="margin: 0; color: #111827; font-size: 24px;">Version ${entry.version}</h2>
                 <span style="color: #6b7280; font-size: 14px;">${entry.date}</span>
             </div>
             <ul style="margin: 0; padding-left: 20px; color: #374151;">
-                ${entry.changes.map((change) => `<li style="margin-bottom: 8px;">${change}</li>`).join('')}
+                ${entry.changes.map((change) => `<li style="margin-bottom: 8px;">${change}</li>`).join("")}
             </ul>
         </div>
     `
-        )
-        .join('');
+    )
+    .join("");
 
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -102,8 +102,8 @@ function generateChangelogEmail(entries: typeof changelogEntries, subscriberEmai
  * Protected by CRON_SECRET environment variable
  */
 export async function GET(request: NextRequest) {
-    // Vercel cron jobs make GET requests, so we handle them the same as POST
-    return POST(request);
+  // Vercel cron jobs make GET requests, so we handle them the same as POST
+  return POST(request);
 }
 
 /**
@@ -112,118 +112,112 @@ export async function GET(request: NextRequest) {
  * Protected by CRON_SECRET environment variable
  */
 export async function POST(request: NextRequest) {
-    try {
-        // Verify cron secret for security
-        const authHeader = request.headers.get('authorization');
-        if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        // Check if Resend is configured
-        if (!process.env.RESEND_API_KEY) {
-            return NextResponse.json(
-                { error: 'Email service not configured' },
-                { status: 500 }
-            );
-        }
-
-        // Get recent changelog entries (past 7 days)
-        const recentEntries = getRecentChangelog(7);
-
-        if (recentEntries.length === 0) {
-            return NextResponse.json(
-                {
-                    message: 'No recent changelog entries to send',
-                    entriesFound: 0
-                },
-                { status: 200 }
-            );
-        }
-
-        // Get all active newsletter subscribers
-        const subscribers = await db
-            .select()
-            .from(newsletterSubscribers)
-            .where(eq(newsletterSubscribers.isActive, true));
-
-        if (subscribers.length === 0) {
-            return NextResponse.json(
-                {
-                    message: 'No active subscribers found',
-                    entriesFound: recentEntries.length
-                },
-                { status: 200 }
-            );
-        }
-
-        // Generate email HTML
-        const emailHtml = generateChangelogEmail(recentEntries, 'placeholder@example.com');
-        if (!emailHtml) {
-            return NextResponse.json(
-                { error: 'Failed to generate email template' },
-                { status: 500 }
-            );
-        }
-
-        // Send emails in batches to avoid rate limits
-        const batchSize = 50;
-        const results = {
-            sent: 0,
-            failed: 0,
-            errors: [] as string[],
-        };
-
-        for (let i = 0; i < subscribers.length; i += batchSize) {
-            const batch = subscribers.slice(i, i + batchSize);
-
-            const sendPromises = batch.map(async (subscriber) => {
-                try {
-                    // Generate personalized email for each subscriber
-                    const personalizedEmailHtml = generateChangelogEmail(recentEntries, subscriber.email);
-                    if (!personalizedEmailHtml) {
-                        results.failed++;
-                        results.errors.push(`Failed to generate email for ${subscriber.email}`);
-                        return;
-                    }
-
-                    await resend.emails.send({
-                        from: process.env.RESEND_FROM_EMAIL || 'WageWatchers <updates@wagewatchers.com>',
-                        to: subscriber.email,
-                        subject: `WageWatchers Weekly Update - ${recentEntries.length} New ${recentEntries.length === 1 ? 'Change' : 'Changes'}`,
-                        html: personalizedEmailHtml,
-                    });
-                    results.sent++;
-                } catch (error) {
-                    results.failed++;
-                    results.errors.push(`Failed to send to ${subscriber.email}: ${error}`);
-                    console.error(`Failed to send email to ${subscriber.email}:`, error);
-                }
-            });
-
-            await Promise.all(sendPromises);
-
-            // Add a small delay between batches to avoid overwhelming the email service
-            if (i + batchSize < subscribers.length) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-        }
-
-        return NextResponse.json({
-            message: 'Newsletter sent successfully',
-            details: {
-                entriesFound: recentEntries.length,
-                versions: recentEntries.map(e => e.version),
-                totalSubscribers: subscribers.length,
-                sent: results.sent,
-                failed: results.failed,
-                errors: results.errors.length > 0 ? results.errors : undefined,
-            },
-        });
-    } catch (error) {
-        console.error('Newsletter sending error:', error);
-        return NextResponse.json(
-            { error: 'Internal server error', details: String(error) },
-            { status: 500 }
-        );
+  try {
+    // Verify cron secret for security
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Check if Resend is configured
+    if (!process.env.RESEND_API_KEY) {
+      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+    }
+
+    // Get recent changelog entries (past 7 days)
+    const recentEntries = getRecentChangelog(7);
+
+    if (recentEntries.length === 0) {
+      return NextResponse.json(
+        {
+          message: "No recent changelog entries to send",
+          entriesFound: 0,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Get all active newsletter subscribers
+    const subscribers = await db
+      .select()
+      .from(newsletterSubscribers)
+      .where(eq(newsletterSubscribers.isActive, true));
+
+    if (subscribers.length === 0) {
+      return NextResponse.json(
+        {
+          message: "No active subscribers found",
+          entriesFound: recentEntries.length,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Generate email HTML
+    const emailHtml = generateChangelogEmail(recentEntries, "placeholder@example.com");
+    if (!emailHtml) {
+      return NextResponse.json({ error: "Failed to generate email template" }, { status: 500 });
+    }
+
+    // Send emails in batches to avoid rate limits
+    const batchSize = 50;
+    const results = {
+      sent: 0,
+      failed: 0,
+      errors: [] as string[],
+    };
+
+    for (let i = 0; i < subscribers.length; i += batchSize) {
+      const batch = subscribers.slice(i, i + batchSize);
+
+      const sendPromises = batch.map(async (subscriber) => {
+        try {
+          // Generate personalized email for each subscriber
+          const personalizedEmailHtml = generateChangelogEmail(recentEntries, subscriber.email);
+          if (!personalizedEmailHtml) {
+            results.failed++;
+            results.errors.push(`Failed to generate email for ${subscriber.email}`);
+            return;
+          }
+
+          await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL || "WageWatchers <updates@wagewatchers.com>",
+            to: subscriber.email,
+            subject: `WageWatchers Weekly Update - ${recentEntries.length} New ${recentEntries.length === 1 ? "Change" : "Changes"}`,
+            html: personalizedEmailHtml,
+          });
+          results.sent++;
+        } catch (error) {
+          results.failed++;
+          results.errors.push(`Failed to send to ${subscriber.email}: ${error}`);
+          console.error(`Failed to send email to ${subscriber.email}:`, error);
+        }
+      });
+
+      await Promise.all(sendPromises);
+
+      // Add a small delay between batches to avoid overwhelming the email service
+      if (i + batchSize < subscribers.length) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
+
+    return NextResponse.json({
+      message: "Newsletter sent successfully",
+      details: {
+        entriesFound: recentEntries.length,
+        versions: recentEntries.map((e) => e.version),
+        totalSubscribers: subscribers.length,
+        sent: results.sent,
+        failed: results.failed,
+        errors: results.errors.length > 0 ? results.errors : undefined,
+      },
+    });
+  } catch (error) {
+    console.error("Newsletter sending error:", error);
+    return NextResponse.json(
+      { error: "Internal server error", details: String(error) },
+      { status: 500 }
+    );
+  }
 }

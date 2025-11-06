@@ -1,1057 +1,1057 @@
 {
+  "nav": {
+    "dashboard": "Tableau de Bord",
+    "statistics": "Statistiques",
+    "addEntry": "Partager Salaire",
+    "feedback": "Commentaires",
+    "status": "Statut",
+    "donate": "Faire un Don",
+    "changelog": "Journal des Modifications",
+    "displaySettings": "Paramètres d'Affichage",
+    "currency": "Devise",
+    "period": "Période",
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "currencies": {
+      "EUR": "Euro (€)",
+      "USD": "Dollar Américain ($)",
+      "GBP": "Livre Sterling (£)"
+    }
+  },
+  "ui": {
+    "commandPalette": "Palette de Commandes",
+    "searchCommand": "Rechercher une commande à exécuter...",
+    "selectOption": "Sélectionner une option...",
+    "selectCity": "Sélectionner une ville...",
+    "enter3Characters": "Veuillez entrer 3 caractères ou plus",
+    "searchOptions": "Rechercher des options...",
+    "noOptionsFound": "Aucune option trouvée.",
+    "typeToSearch": "Tapez au moins 2 caractères pour rechercher...",
+    "remoteHome": "Depuis la maison (Télétravail)",
+    "clearSelection": "Effacer la sélection",
+    "loadingCities": "Chargement des villes...",
+    "close": "Fermer",
+    "searchCities": "Rechercher des villes...",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "unknownFieldType": "Type de champ inconnu"
+  },
+  "home": {
+    "title": {
+      "workLife": {
+        "title": "Équilibre Vie Pro-Vie Perso",
+        "description": "Évaluation de l'équilibre vie professionnelle-vie personnelle",
+        "teleworkDays": "Jours de Télétravail par Semaine",
+        "dayOffEase": "Facilité de Prendre un Jour de Congé",
+        "stressLevel": "Niveau de Stress",
+        "reports": "Responsable du Personnel"
+      },
+      "workingHours": {
+        "title": "Heures de Travail",
+        "description": "Votre horaire et vos heures de travail",
+        "officialHours": "Heures Officielles par Semaine",
+        "averageHours": "Heures Moyennes par Semaine",
+        "shiftDescription": "Description des Quarts/Horaires",
+        "onCall": "Astreinte"
+      },
+      "vacation": {
+        "title": "Vacances",
+        "description": "Informations sur les vacances et les congés",
+        "vacationDays": "Jours de Congé par An"
+      },
+      "commute": {
+        "title": "Trajet Domicile-Travail",
+        "description": "Détails de votre trajet quotidien",
+        "workCity": "Ville de Travail",
+        "commuteDistance": "Distance du Trajet (km)",
+        "commuteMethod": "Méthode de Transport",
+        "commuteCompensation": "Indemnisation du Trajet"
+      },
+      "salary": "Salaire",
+      "transparency": "Transparence"
+    },
+    "subtitle": "Comprenez la rémunération du marché à travers les marchés européens. Comparez les salaires, les avantages et les conditions de travail avec les données issues de discussions communautaires sur les salaires.",
+    "exploreData": "Explorer les Salaires",
+    "shareSalary": "Partager Salaire",
+    "features": {
+      "multiCountry": {
+        "title": "Prise en Charge Multi-Pays",
+        "description": "Données salariales des communautés belges avec des aperçus de rémunération localisés."
+      },
+      "privacy": {
+        "title": "Axé sur la Confidentialité",
+        "description": "Partage de salaire anonyme avec une protection complète des données. Transparence communautaire."
+      },
+      "analysis": {
+        "title": "Analyse Complète",
+        "description": "Ventilations détaillées des ensembles de rémunération, des avantages, des heures de travail et de l'équilibre vie pro-vie perso."
+      }
+    },
+    "footer": "🧡 Transparence salariale communautaire"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord des Salaires",
+    "subtitle": "Explorez {count} entrées de salaire provenant des marchés de l'emploi européens",
+    "myEntries": "Mes Entrées",
     "nav": {
-        "dashboard": "Tableau de Bord",
-        "statistics": "Statistiques",
-        "addEntry": "Partager Salaire",
-        "feedback": "Commentaires",
-        "status": "Statut",
-        "donate": "Faire un Don",
-        "changelog": "Journal des Modifications",
-        "displaySettings": "Paramètres d'Affichage",
-        "currency": "Devise",
-        "period": "Période",
-        "monthly": "Mensuel",
-        "annual": "Annuel",
-        "currencies": {
-            "EUR": "Euro (€)",
-            "USD": "Dollar Américain ($)",
-            "GBP": "Livre Sterling (£)"
-        }
+      "addEntry": "Partager Salaire"
     },
-    "ui": {
-        "commandPalette": "Palette de Commandes",
-        "searchCommand": "Rechercher une commande à exécuter...",
-        "selectOption": "Sélectionner une option...",
-        "selectCity": "Sélectionner une ville...",
-        "enter3Characters": "Veuillez entrer 3 caractères ou plus",
-        "searchOptions": "Rechercher des options...",
-        "noOptionsFound": "Aucune option trouvée.",
-        "typeToSearch": "Tapez au moins 2 caractères pour rechercher...",
-        "remoteHome": "Depuis la maison (Télétravail)",
-        "clearSelection": "Effacer la sélection",
-        "loadingCities": "Chargement des villes...",
-        "close": "Fermer",
-        "searchCities": "Rechercher des villes...",
-        "loading": "Chargement...",
-        "error": "Erreur",
-        "unknownFieldType": "Type de champ inconnu"
+    "stats": {
+      "totalEntries": "Total des Entrées",
+      "medianGrossSalary": "Salaire Brut Médian",
+      "avgNetSalary": "Salaire Net Moyen",
+      "medianSalary": "Salaire Médian",
+      "salaryRange": "Échelle Salariale",
+      "avgAge": "Âge Moyen",
+      "sectors": "Secteurs",
+      "topSector": "Meilleur Secteur",
+      "entries": "entrées"
     },
-    "home": {
-        "title": {
-            "workLife": {
-                "title": "Équilibre Vie Pro-Vie Perso",
-                "description": "Évaluation de l'équilibre vie professionnelle-vie personnelle",
-                "teleworkDays": "Jours de Télétravail par Semaine",
-                "dayOffEase": "Facilité de Prendre un Jour de Congé",
-                "stressLevel": "Niveau de Stress",
-                "reports": "Responsable du Personnel"
-            },
-            "workingHours": {
-                "title": "Heures de Travail",
-                "description": "Votre horaire et vos heures de travail",
-                "officialHours": "Heures Officielles par Semaine",
-                "averageHours": "Heures Moyennes par Semaine",
-                "shiftDescription": "Description des Quarts/Horaires",
-                "onCall": "Astreinte"
-            },
-            "vacation": {
-                "title": "Vacances",
-                "description": "Informations sur les vacances et les congés",
-                "vacationDays": "Jours de Congé par An"
-            },
-            "commute": {
-                "title": "Trajet Domicile-Travail",
-                "description": "Détails de votre trajet quotidien",
-                "workCity": "Ville de Travail",
-                "commuteDistance": "Distance du Trajet (km)",
-                "commuteMethod": "Méthode de Transport",
-                "commuteCompensation": "Indemnisation du Trajet"
-            },
-            "salary": "Salaire",
-            "transparency": "Transparence"
-        },
-        "subtitle": "Comprenez la rémunération du marché à travers les marchés européens. Comparez les salaires, les avantages et les conditions de travail avec les données issues de discussions communautaires sur les salaires.",
-        "exploreData": "Explorer les Salaires",
-        "shareSalary": "Partager Salaire",
-        "features": {
-            "multiCountry": {
-                "title": "Prise en Charge Multi-Pays",
-                "description": "Données salariales des communautés belges avec des aperçus de rémunération localisés."
-            },
-            "privacy": {
-                "title": "Axé sur la Confidentialité",
-                "description": "Partage de salaire anonyme avec une protection complète des données. Transparence communautaire."
-            },
-            "analysis": {
-                "title": "Analyse Complète",
-                "description": "Ventilations détaillées des ensembles de rémunération, des avantages, des heures de travail et de l'équilibre vie pro-vie perso."
-            }
-        },
-        "footer": "🧡 Transparence salariale communautaire"
+    "filters": {
+      "title": "Filtres",
+      "description": "Filtrer les données salariales selon divers critères",
+      "country": "Pays",
+      "location": "Localisation",
+      "sector": "Secteur",
+      "city": "Ville",
+      "minSalary": "Salaire Min",
+      "maxSalary": "Salaire Max",
+      "seniority": "Ancienneté",
+      "allCountries": "Tous les pays",
+      "allLocations": "Toutes les localisations",
+      "allCities": "Toutes les villes",
+      "allSectors": "Tous les secteurs",
+      "allLevels": "Tous les niveaux",
+      "junior": "Junior (0-2 ans)",
+      "mid": "Intermédiaire (3-5 ans)",
+      "senior": "Senior (6+ ans)",
+      "search": "Rechercher",
+      "searchPlaceholder": "Rechercher par plusieurs mots-clés séparés par des virgules (ex: développeur, ingénieur, manager)...",
+      "activeFilters": "Filtres Actifs",
+      "activeFiltersLabel": "Filtres Actifs",
+      "activeFilter": "filtre actif",
+      "noActiveFilters": "Aucun filtre actif",
+      "clearAll": "Tout effacer",
+      "apply": "Terminé",
+      "filters": "Filtres",
+      "locationSection": "Localisation",
+      "workSection": "Détails du Travail",
+      "ageSection": "Âge",
+      "ageRange": "Tranche d'Âge",
+      "minAge": "Âge Min",
+      "maxAge": "Âge Max",
+      "minAgePlaceholder": "ex. 18",
+      "maxAgePlaceholder": "ex. 65",
+      "workExperienceSection": "Expérience Professionnelle",
+      "workExperienceRange": "Plage d'Expérience de Travail",
+      "minWorkExperience": "Expérience Min (années)",
+      "maxWorkExperience": "Expérience Max (années)",
+      "minWorkExperiencePlaceholder": "ex. 0",
+      "maxWorkExperiencePlaceholder": "ex. 10",
+      "selectedCountries": "pays sélectionnés",
+      "selectedLocations": "localisations sélectionnées",
+      "selectedCities": "villes sélectionnées",
+      "selectedSectors": "secteurs sélectionnés",
+      "countries": "Pays",
+      "locations": "Localisations",
+      "cities": "Villes",
+      "sectors": "Secteurs",
+      "countriesSelected": "pays sélectionnés",
+      "locationsSelected": "localisations sélectionnées",
+      "citiesSelected": "villes sélectionnées",
+      "sectorsSelected": "secteurs sélectionnés"
     },
-    "dashboard": {
-        "title": "Tableau de Bord des Salaires",
-        "subtitle": "Explorez {count} entrées de salaire provenant des marchés de l'emploi européens",
-        "myEntries": "Mes Entrées",
-        "nav": {
-            "addEntry": "Partager Salaire"
-        },
-        "stats": {
-            "totalEntries": "Total des Entrées",
-            "medianGrossSalary": "Salaire Brut Médian",
-            "avgNetSalary": "Salaire Net Moyen",
-            "medianSalary": "Salaire Médian",
-            "salaryRange": "Échelle Salariale",
-            "avgAge": "Âge Moyen",
-            "sectors": "Secteurs",
-            "topSector": "Meilleur Secteur",
-            "entries": "entrées"
-        },
-        "filters": {
-            "title": "Filtres",
-            "description": "Filtrer les données salariales selon divers critères",
-            "country": "Pays",
-            "location": "Localisation",
-            "sector": "Secteur",
-            "city": "Ville",
-            "minSalary": "Salaire Min",
-            "maxSalary": "Salaire Max",
-            "seniority": "Ancienneté",
-            "allCountries": "Tous les pays",
-            "allLocations": "Toutes les localisations",
-            "allCities": "Toutes les villes",
-            "allSectors": "Tous les secteurs",
-            "allLevels": "Tous les niveaux",
-            "junior": "Junior (0-2 ans)",
-            "mid": "Intermédiaire (3-5 ans)",
-            "senior": "Senior (6+ ans)",
-            "search": "Rechercher",
-            "searchPlaceholder": "Rechercher par plusieurs mots-clés séparés par des virgules (ex: développeur, ingénieur, manager)...",
-            "activeFilters": "Filtres Actifs",
-            "activeFiltersLabel": "Filtres Actifs",
-            "activeFilter": "filtre actif",
-            "noActiveFilters": "Aucun filtre actif",
-            "clearAll": "Tout effacer",
-            "apply": "Terminé",
-            "filters": "Filtres",
-            "locationSection": "Localisation",
-            "workSection": "Détails du Travail",
-            "ageSection": "Âge",
-            "ageRange": "Tranche d'Âge",
-            "minAge": "Âge Min",
-            "maxAge": "Âge Max",
-            "minAgePlaceholder": "ex. 18",
-            "maxAgePlaceholder": "ex. 65",
-            "workExperienceSection": "Expérience Professionnelle",
-            "workExperienceRange": "Plage d'Expérience de Travail",
-            "minWorkExperience": "Expérience Min (années)",
-            "maxWorkExperience": "Expérience Max (années)",
-            "minWorkExperiencePlaceholder": "ex. 0",
-            "maxWorkExperiencePlaceholder": "ex. 10",
-            "selectedCountries": "pays sélectionnés",
-            "selectedLocations": "localisations sélectionnées",
-            "selectedCities": "villes sélectionnées",
-            "selectedSectors": "secteurs sélectionnés",
-            "countries": "Pays",
-            "locations": "Localisations",
-            "cities": "Villes",
-            "sectors": "Secteurs",
-            "countriesSelected": "pays sélectionnés",
-            "locationsSelected": "localisations sélectionnées",
-            "citiesSelected": "villes sélectionnées",
-            "sectorsSelected": "secteurs sélectionnés"
-        },
-        "table": {
-            "title": "Entrées de Salaire",
-            "description": "Vue détaillée de toutes les données salariales",
-            "country": "Pays",
-            "location": "Localisation",
-            "age": "Âge",
-            "sector": "Secteur",
-            "jobTitle": "Titre du Poste",
-            "experience": "Expérience",
-            "seniority": "Ancienneté",
-            "grossSalary": "Salaire Brut",
-            "netSalary": "Salaire Net",
-            "submittedOn": "Soumis le",
-            "years": "ans",
-            "noResults": "Aucune entrée trouvée correspondant à vos filtres",
-            "source": "Source",
-            "viewSource": "Voir la source",
-            "clickToViewDetails": "Cliquez sur n'importe quelle ligne pour voir tous les détails",
-            "viewDetails": "Voir les détails"
-        },
-        "pagination": {
-            "showing": "Affichage de",
-            "to": "à",
-            "of": "sur",
-            "results": "résultats",
-            "previous": "Précédent",
-            "next": "Suivant",
-            "page": "Page",
-            "rowsPerPage": "Lignes par page"
-        }
+    "table": {
+      "title": "Entrées de Salaire",
+      "description": "Vue détaillée de toutes les données salariales",
+      "country": "Pays",
+      "location": "Localisation",
+      "age": "Âge",
+      "sector": "Secteur",
+      "jobTitle": "Titre du Poste",
+      "experience": "Expérience",
+      "seniority": "Ancienneté",
+      "grossSalary": "Salaire Brut",
+      "netSalary": "Salaire Net",
+      "submittedOn": "Soumis le",
+      "years": "ans",
+      "noResults": "Aucune entrée trouvée correspondant à vos filtres",
+      "source": "Source",
+      "viewSource": "Voir la source",
+      "clickToViewDetails": "Cliquez sur n'importe quelle ligne pour voir tous les détails",
+      "viewDetails": "Voir les détails"
     },
-    "statistics": {
-        "title": "Statistiques Salariales",
-        "subtitle": "Aperçus visuels des tendances et distributions salariales",
-        "filters": {
-            "title": "Filtres",
-            "countries": "Pays",
-            "allCountries": "Tous les pays",
-            "selectCountries": "Sélectionner des pays...",
-            "countriesSelected": "pays sélectionnés",
-            "sectors": "Secteurs",
-            "allSectors": "Tous les secteurs",
-            "selectSectors": "Sélectionner des secteurs...",
-            "sectorsSelected": "secteurs sélectionnés",
-            "clearFilters": "Effacer les Filtres"
-        },
-        "export": {
-            "csv": "Exporter en CSV",
-            "pdf": "Exporter en PDF"
-        },
-        "nav": {
-            "dashboard": "Tableau de Bord",
-            "addEntry": "Partager Salaire"
-        },
-        "charts": {
-            "topSectors": {
-                "title": "Top 10 des Secteurs par Salaire Moyen",
-                "description": "Secteurs les mieux rémunérés sur toutes les entrées"
-            },
-            "experienceGrowth": {
-                "title": "Croissance du Salaire par Expérience",
-                "description": "Comment le salaire augmente avec les années d'expérience",
-                "xAxisLabel": "Années",
-                "yearsLabel": "années d'expérience"
-            },
-            "topCountries": {
-                "title": "Meilleurs Pays par Salaire",
-                "description": "Salaires moyens dans différents pays"
-            },
-            "salaryDistribution": {
-                "title": "Distribution des Salaires",
-                "description": "Nombre d'entrées dans chaque fourchette salariale"
-            },
-            "ageDemographics": {
-                "title": "Démographie par Âge",
-                "description": "Distribution des répondants par groupe d'âge"
-            },
-            "scatterPlot": {
-                "title": "Nuage de Points Expérience vs Salaire",
-                "description": "Points de données individuels montrant la relation entre l'expérience et le salaire",
-                "xAxisLabel": "Années d'Expérience",
-                "dataPointLabel": "Point de Donnée"
-            },
-            "yearOverYear": {
-                "title": "Tendances Salariales Année après Année",
-                "description": "Comparer les salaires moyens et médians sur différentes années"
-            },
-            "industryInsights": {
-                "title": "Aperçus Salariaux Spécifiques à l'Industrie",
-                "description": "Ventilation détaillée des statistiques salariales par secteur",
-                "sector": "Secteur",
-                "entries": "Entrées",
-                "avg": "Moyenne",
-                "median": "Médiane",
-                "range": "Échelle",
-                "percentile": "25e-75e Percentile"
-            },
-            "locationHeatmap": {
-                "title": "Salaire par Localisation",
-                "description": "Salaires moyens dans différentes villes (min. 3 entrées par localisation)"
-            },
-            "tooltips": {
-                "avgSalary": "Salaire Moyen (€/mois)",
-                "medianSalary": "Salaire Médian (€/mois)",
-                "entries": "Entrées",
-                "experience": "Expérience",
-                "salary": "Salaire"
-            }
-        }
+    "pagination": {
+      "showing": "Affichage de",
+      "to": "à",
+      "of": "sur",
+      "results": "résultats",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page",
+      "rowsPerPage": "Lignes par page"
+    }
+  },
+  "statistics": {
+    "title": "Statistiques Salariales",
+    "subtitle": "Aperçus visuels des tendances et distributions salariales",
+    "filters": {
+      "title": "Filtres",
+      "countries": "Pays",
+      "allCountries": "Tous les pays",
+      "selectCountries": "Sélectionner des pays...",
+      "countriesSelected": "pays sélectionnés",
+      "sectors": "Secteurs",
+      "allSectors": "Tous les secteurs",
+      "selectSectors": "Sélectionner des secteurs...",
+      "sectorsSelected": "secteurs sélectionnés",
+      "clearFilters": "Effacer les Filtres"
     },
-    "add": {
-        "title": "Partagez Votre Salaire",
-        "subtitle": "Partagez vos informations salariales de manière anonyme pour aider à construire la transparence",
-        "editTitle": "Modifier l'Entrée de Salaire",
-        "editSubtitle": "Mettez à jour vos informations salariales ci-dessous",
-        "goBack": "Retourner",
-        "loadingEntry": "Chargement de l'entrée...",
-        "fieldExplanations": "Explications des Champs",
-        "example": "Exemple",
-        "fields": {
-            "country": {
-                "label": "Pays",
-                "placeholder": "Sélectionner un pays"
-            },
-            "currency": {
-                "label": "Devise",
-                "placeholder": "Sélectionner une devise"
-            },
-            "subreddit": {
-                "label": "Sous-Reddit",
-                "placeholder": "Sélectionner un sous-reddit"
-            }
-        },
-        "sections": {
-            "location": {
-                "title": "Information de Localisation",
-                "description": "Information sur le pays",
-                "country": "Pays",
-                "subreddit": "Sous-Reddit",
-                "selectCountry": "Sélectionner un pays",
-                "selectSubreddit": "Sélectionner un sous-reddit"
-            },
-            "personal": {
-                "title": "Information Personnelle",
-                "description": "Détails personnels de base",
-                "age": "Âge",
-                "education": "Éducation",
-                "workExperience": "Expérience Professionnelle",
-                "civilStatus": "État Civil",
-                "dependents": "Personnes à Charge"
-            },
-            "employer": {
-                "title": "Profil de l'Employeur",
-                "description": "Information sur votre employeur",
-                "sector": "Secteur",
-                "employeeCount": "Nombre d'Employés",
-                "multinational": "Multinationale"
-            },
-            "job": {
-                "title": "Profil du Poste",
-                "description": "Détails sur votre rôle et vos responsabilités",
-                "jobTitle": "Titre du Poste",
-                "jobDescription": "Description du Poste",
-                "seniority": "Ancienneté"
-            },
-            "salary": {
-                "title": "Salaire",
-                "description": "Détails de votre rémunération",
-                "grossSalary": "Salaire Brut ({symbol}/mois)",
-                "netSalary": "Salaire Net ({symbol}/mois)",
-                "netCompensation": "Rémunération Nette ({symbol}/mois)"
-            },
-            "benefits": {
-                "title": "Avantages",
-                "description": "Rémunération et avantages supplémentaires",
-                "thirteenthMonth": "13ème Mois",
-                "mealVouchers": "Titres-Repas ({symbol}/jour)",
-                "ecoCheques": "Éco-Chèques ({symbol}/an)",
-                "groupInsurance": "Assurance Groupe",
-                "otherInsurances": "Autres Assurances",
-                "otherBenefits": "Autres Avantages",
-                "otherBenefitsPlaceholder": "ex. Voiture de société, budget de formation, etc."
-            },
-            "workLife": {
-                "title": "Équilibre Vie Pro-Vie Perso",
-                "description": "Votre expérience d'équilibre vie professionnelle-vie personnelle",
-                "teleworkDays": "Jours de Télétravail par Semaine",
-                "dayOffEase": "Facilité de Prendre un Jour de Congé",
-                "stressLevel": "Niveau de Stress",
-                "reports": "Rapports"
-            },
-            "workingHours": {
-                "title": "Heures de Travail",
-                "description": "Votre horaire et vos heures de travail",
-                "officialHours": "Heures Officielles par Semaine",
-                "averageHours": "Heures Moyennes par Semaine",
-                "shiftDescription": "Description des Quarts/Horaires",
-                "onCall": "Astreinte"
-            },
-            "vacation": {
-                "title": "Vacances",
-                "description": "Informations sur les vacances et les congés",
-                "vacationDays": "Jours de Congé par An"
-            },
-            "commute": {
-                "title": "Trajet Domicile-Travail",
-                "description": "Détails de votre trajet quotidien",
-                "workCity": "Ville de Travail",
-                "commuteDistance": "Distance du Trajet (aller simple)",
-                "commuteMethod": "Méthode de Transport",
-                "commuteCompensation": "Indemnisation du Trajet"
-            },
-            "notes": {
-                "title": "Notes Additionnelles",
-                "description": "Notes facultatives pour cette entrée",
-                "extraNotes": "Notes Additionnelles"
-            }
-        },
-        "options": {
-            "yes": "Oui",
-            "no": "Non",
-            "partial": "Partiel",
-            "full": "Complet",
-            "none": "Aucun",
-            "selectOption": "Sélectionner option"
-        },
-        "countries": {
-            "belgium": "Belgique",
-            "netherlands": "Pays-Bas",
-            "unitedKingdom": "Royaume-Uni"
-        },
-        "honestyConfirmation": "Je confirme que les informations fournies sont exactes et honnêtes",
-        "submit": "Partager Salaire",
-        "submitEntry": "Soumettre l'Entrée",
-        "updateEntry": "Mettre à Jour l'Entrée",
-        "submittingEntry": "Soumission...",
-        "updatingEntry": "Mise à jour...",
-        "success": "Salaire partagé avec succès!",
-        "successDetails": "Vous pouvez maintenant modifier cette entrée pendant 1 jour. Retrouvez-la dans 'Mes Entrées'.",
-        "error": "Échec du partage de salaire",
-        "errorGeneric": "Une erreur est survenue lors de la soumission",
-        "errorLoadingEntry": "Erreur lors du Chargement de l'Entrée",
-        "rateLimitExceeded": "Limite de taux dépassée",
-        "rateLimitRetry": "Vous pouvez réessayer dans {time}",
-        "placeholders": {
-            "age": "ex. 30",
-            "education": "Sélectionner ou entrer le niveau d'éducation",
-            "workExperience": "ex. 5",
-            "civilStatus": "Sélectionner l'état civil",
-            "dependents": "ex. 2",
-            "sector": "Sélectionner un secteur",
-            "employeeCount": "Sélectionner la fourchette du nombre d'employés",
-            "jobTitle": "ex. Ingénieur Logiciel",
-            "seniority": "ex. 3",
-            "jobDescription": "Décrivez vos principales responsabilités",
-            "officialHours": "ex. 40",
-            "averageHours": "ex. 45",
-            "shiftDescription": "ex. Heures de bureau standard",
-            "onCall": "ex. Occasionnellement",
-            "vacationDays": "ex. 25",
-            "grossSalary": "ex. 5000",
-            "netSalary": "ex. 3500",
-            "netCompensation": "ex. 150",
-            "thirteenthMonth": "Sélectionner l'option 13ème mois",
-            "mealVouchers": "ex. 8/jour",
-            "ecoCheques": "ex. 250/an",
-            "groupInsurance": "ex. Oui, complète",
-            "otherInsurances": "ex. Assurance maladie",
-            "workCity": "ex. Bruxelles",
-            "commuteDistance": "ex. 15 ou 10-30 km",
-            "commuteMethod": "ex. Voiture, Transport public",
-            "commuteCompensation": "ex. Allocation carburant",
-            "teleworkDays": "ex. 2",
-            "dayOffEase": "Sélectionner la facilité à prendre un jour de congé",
-            "stressLevel": "Sélectionner le niveau de stress",
-            "reports": "ex. 5",
-            "extraNotes": "Ajouter des notes additionnelles sur cette entrée de salaire..."
-        },
-        "help": {
-            "age": "Votre âge actuel en années",
-            "education": "Votre plus haut niveau d'éducation complété",
-            "workExperience": "Total des années d'expérience professionnelle",
-            "civilStatus": "Votre état civil actuel",
-            "dependents": "Nombre de personnes financièrement à votre charge",
-            "sector": "L'industrie ou le secteur dans lequel votre entreprise opère",
-            "employeeCount": "Nombre approximatif d'employés dans votre entreprise",
-            "multinational": "Si votre entreprise opère dans plusieurs pays",
-            "jobTitle": "Votre titre de poste ou nom de position officiel",
-            "jobDescription": "Brève description de vos principales responsabilités",
-            "seniority": "Années dans votre rôle actuel ou des postes similaires",
-            "officialHours": "Heures de travail contractuelles par semaine",
-            "averageHours": "Moyenne réelle des heures travaillées par semaine",
-            "shiftDescription": "Description de votre horaire de travail (ex. 9h-17h, quarts)",
-            "onCall": "Fréquence des astreintes ou des exigences de disponibilité",
-            "vacationDays": "Total des jours de congé payés par an",
-            "grossSalary": "Salaire brut mensuel avant impôts et déductions",
-            "netSalary": "Salaire net mensuel après impôts",
-            "netCompensation": "Rémunération mensuelle totale incluant tous les avantages",
-            "thirteenthMonth": "Prime de fin d'année ou paiement du 13ème mois",
-            "mealVouchers": "Valeur quotidienne des titres-repas ou des allocations déjeuner",
-            "ecoCheques": "Valeur annuelle des éco-chèques ou des chèques-cadeaux",
-            "groupInsurance": "Détails de l'assurance maladie ou de groupe fournie par l'entreprise",
-            "otherInsurances": "Toute couverture d'assurance supplémentaire fournie",
-            "otherBenefits": "Autres avantages comme voiture de société, formation, abonnement à une salle de sport, etc.",
-            "workCity": "Ville où se situe votre lieu de travail principal",
-            "commuteDistance": "Distance de la maison au travail (aller simple, pas aller-retour). Vous pouvez entrer un seul nombre ou une fourchette (ex. 15 ou 10-30)",
-            "commuteMethod": "Comment vous vous rendez au travail (voiture, transports publics, etc.)",
-            "commuteCompensation": "Tout remboursement pour les frais de trajet",
-            "teleworkDays": "Nombre de jours par semaine où vous travaillez à domicile",
-            "dayOffEase": "La facilité à prendre un congé imprévu",
-            "stressLevel": "Votre niveau de stress général lié au travail",
-            "reports": "Nombre de personnes qui vous rapportent directement",
-            "extraNotes": "Notes ou contexte additionnel sur cette entrée de salaire"
-        },
-        "formOptions": {
-            "education": {
-                "highSchool": "Diplôme d'Études Secondaires",
-                "associate": "Diplôme d'Associé (Bac+2/3)",
-                "bachelor": "Licence/Baccalauréat (Bac+3)",
-                "master": "Maîtrise/Master (Bac+5)",
-                "phd": "Doctorat / PhD",
-                "professional": "Diplôme Professionnel (ex. médecin, avocat)",
-                "vocational": "Formation Professionnelle",
-                "someCollege": "Études Supérieures Partielles"
-            },
-            "employeeCount": {
-                "range1": "1-10",
-                "range2": "11-50",
-                "range3": "51-200",
-                "range4": "201-500",
-                "range5": "501-1000",
-                "range6": "1000+"
-            },
-            "thirteenthMonth": {
-                "full": "Complet",
-                "partial": "Partiel",
-                "none": "Aucun"
-            },
-            "civilStatus": {
-                "single": "Célibataire",
-                "cohabiting": "Cohabitant/Partenaire",
-                "civilUnion": "Union Civile/Partenariat Enregistré",
-                "married": "Marié(e)",
-                "divorced": "Divorcé(e)",
-                "widowed": "Veuf/Veuve"
-            },
-            "sector": {
-                "IT": "IT",
-                "Finance": "Finance",
-                "Healthcare": "Santé",
-                "Pharmaceutical": "Pharmaceutique",
-                "Education": "Éducation",
-                "Manufacturing": "Fabrication",
-                "Energy": "Énergie",
-                "Consulting": "Conseil",
-                "Retail": "Commerce de Détail",
-                "FMCG": "Biens de Consommation Courante (FMCG)",
-                "Public Sector": "Secteur Public",
-                "Public Affairs": "Affaires Publiques",
-                "Transportation": "Transport",
-                "Construction": "Construction",
-                "Telecommunications": "Télécommunications",
-                "Media": "Médias",
-                "Hospitality": "Hôtellerie",
-                "Legal": "Juridique",
-                "Research": "Recherche",
-                "Nonprofit": "Organisation à But Non Lucratif",
-                "Agriculture": "Agriculture",
-                "Automotive": "Automobile",
-                "Aerospace": "Aérospatiale",
-                "RealEstate": "Immobilier",
-                "Entertainment": "Divertissement",
-                "Biotech": "Biotechnologie",
-                "Other": "Autre"
-            },
-            "combobox": {
-                "custom": "Personnalisé",
-                "select": "Sélectionner"
-            },
-            "stressLevel": {
-                "veryLow": "Très Faible",
-                "low": "Faible",
-                "moderate": "Modéré",
-                "high": "Élevé",
-                "veryHigh": "Très Élevé",
-                "situational": "Dépend de la situation",
-                "none": "Aucun"
-            },
-            "dayOffEase": {
-                "veryEasy": "Très Facile",
-                "easy": "Facile",
-                "moderate": "Modéré",
-                "hard": "Difficile",
-                "veryHard": "Très Difficile",
-                "situational": "Dépend de la situation",
-                "impossible": "Presque Impossible"
-            }
-        },
-        "validation": {
-            "numberExpected": "Nombre attendu",
-            "integerExpected": "Nombre entier attendu",
-            "stringExpected": "Texte attendu",
-            "countryRequired": "Le pays est requis",
-            "ageMin": "L'âge doit être d'au moins 18 ans",
-            "ageMax": "L'âge ne peut pas dépasser 100 ans",
-            "workExperienceMax": "L'expérience de travail ne peut pas dépasser 82 ans",
-            "dependentsMax": "Le nombre de personnes à charge ne peut pas dépasser 20",
-            "educationRequired": "L'éducation est requise",
-            "civilStatusRequired": "L'état civil est requis",
-            "sectorRequired": "Le secteur est requis",
-            "employeeCountRequired": "Le nombre d'employés est requis",
-            "jobTitleRequired": "Le titre du poste est requis",
-            "currencyRequired": "La devise est requise",
-            "thirteenthMonthRequired": "Le 13ème mois est requis",
-            "groupInsuranceRequired": "L'assurance groupe est requise",
-            "workCityRequired": "La ville de travail est requise",
-            "commuteDistanceRequired": "La distance du trajet est requise",
-            "commuteMethodRequired": "La méthode de transport est requise",
-            "commuteCompensationRequired": "L'indemnisation du trajet est requise",
-            "dayOffEaseRequired": "La facilité à prendre un jour de congé est requise",
-            "stressLevelRequired": "Le niveau de stress est requis",
-            "jobTitleMax": "Le titre du poste ne peut pas dépasser 200 caractères",
-            "jobDescriptionMax": "La description du poste ne peut pas dépasser 5000 caractères",
-            "seniorityMax": "L'ancienneté ne peut pas dépasser 50 ans",
-            "hoursMin": "Les heures doivent être d'au moins 1",
-            "hoursMax": "Les heures ne peuvent pas dépasser 80 par semaine",
-            "shiftDescriptionMax": "La description des quarts ne peut pas dépasser 1000 caractères",
-            "vacationDaysMax": "Les jours de congé ne peuvent pas dépasser 365 par an",
-            "teleworkMax": "Les jours de télétravail ne peuvent pas dépasser 7 par semaine",
-            "grossSalaryPositive": "Le salaire brut doit être positif",
-            "salaryMax": "Le salaire ne peut pas dépasser 1 000 000 €",
-            "mealVouchersMax": "Les titres-repas ne peuvent pas dépasser 12 € par jour",
-            "ecoChequesMax": "Les éco-chèques ne peuvent pas dépasser 10 000 € par an",
-            "otherInsurancesMax": "La description des autres assurances ne peut pas dépasser 2000 caractères",
-            "otherBenefitsMax": "La description des autres avantages ne peut pas dépasser 2000 caractères",
-            "workCityMax": "La ville de travail ne peut pas dépasser 200 caractères",
-            "commuteDistanceMax": "La distance du trajet ne peut pas dépasser 500 caractères",
-            "commuteDistanceFormat": "La distance du trajet doit être un nombre ou une fourchette (ex. 15 ou 10-30)",
-            "commuteCompensationMax": "L'indemnisation du trajet ne peut pas dépasser 1000 caractères",
-            "reportsMax": "Le nombre de rapports ne peut pas dépasser 1000",
-            "urlInvalid": "Veuillez entrer une URL valide",
-            "urlDomainInvalid": "Veuillez utiliser une URL provenant d'un site web lié à l'emploi (Reddit, LinkedIn, Indeed, etc.)",
-            "extraNotesMax": "Les notes additionnelles ne peuvent pas dépasser 5000 caractères",
-            "atLeastOneSalary": "Au moins un champ de salaire (brut, net ou rémunération nette) est requis",
-            "workExperienceVsAge": "L'expérience de travail ne peut pas dépasser les années depuis que vous avez eu 18 ans",
-            "seniorityVsExperience": "L'ancienneté dans le rôle actuel ne peut pas dépasser l'expérience de travail totale",
-            "averageHoursVsOfficial": "Les heures moyennes ne devraient pas dépasser les heures officielles de plus de 20 heures",
-            "workCityRequiredForCommute": "La ville de travail est requise lors de la fourniture des détails du trajet",
-            "netSalaryVsGross": "Le salaire net ne devrait pas dépasser le salaire brut",
-            "contentContainsBadWords": "Le contenu contient un langage inapproprié",
-            "contentContainsUrls": "Les URL ne sont pas autorisées dans ce champ",
-            "honestyRequired": "Vous devez confirmer que les informations fournies sont exactes et honnêtes"
-        },
-        "validationSummary": {
-            "title": "Veuillez corriger les erreurs suivantes:",
-            "errorCount": "{count, plural, =1 {1 erreur trouvée} other {# erreurs trouvées}}"
-        }
+    "export": {
+      "csv": "Exporter en CSV",
+      "pdf": "Exporter en PDF"
     },
-    "common": {
-        "loading": "Chargement...",
-        "error": "Erreur",
-        "cancel": "Annuler",
-        "confirm": "Confirmer",
-        "search": "Rechercher",
-        "filter": "Filtrer",
-        "sort": "Trier",
-        "export": "Exporter",
-        "optional": "facultatif",
-        "success": "Succès",
-        "failed": "Échec",
-        "retry": "Réessayer",
-        "close": "Fermer",
-        "save": "Enregistrer",
-        "delete": "Supprimer",
-        "edit": "Modifier",
-        "back": "Retour",
-        "next": "Suivant",
-        "previous": "Précédent",
-        "yes": "Oui",
-        "no": "Non"
+    "nav": {
+      "dashboard": "Tableau de Bord",
+      "addEntry": "Partager Salaire"
     },
-    "language": {
-        "english": "Anglais",
-        "dutch": "Néerlandais",
-        "french": "Français",
-        "german": "Allemand",
-        "toggle": "Basculer la langue"
+    "charts": {
+      "topSectors": {
+        "title": "Top 10 des Secteurs par Salaire Moyen",
+        "description": "Secteurs les mieux rémunérés sur toutes les entrées"
+      },
+      "experienceGrowth": {
+        "title": "Croissance du Salaire par Expérience",
+        "description": "Comment le salaire augmente avec les années d'expérience",
+        "xAxisLabel": "Années",
+        "yearsLabel": "années d'expérience"
+      },
+      "topCountries": {
+        "title": "Meilleurs Pays par Salaire",
+        "description": "Salaires moyens dans différents pays"
+      },
+      "salaryDistribution": {
+        "title": "Distribution des Salaires",
+        "description": "Nombre d'entrées dans chaque fourchette salariale"
+      },
+      "ageDemographics": {
+        "title": "Démographie par Âge",
+        "description": "Distribution des répondants par groupe d'âge"
+      },
+      "scatterPlot": {
+        "title": "Nuage de Points Expérience vs Salaire",
+        "description": "Points de données individuels montrant la relation entre l'expérience et le salaire",
+        "xAxisLabel": "Années d'Expérience",
+        "dataPointLabel": "Point de Donnée"
+      },
+      "yearOverYear": {
+        "title": "Tendances Salariales Année après Année",
+        "description": "Comparer les salaires moyens et médians sur différentes années"
+      },
+      "industryInsights": {
+        "title": "Aperçus Salariaux Spécifiques à l'Industrie",
+        "description": "Ventilation détaillée des statistiques salariales par secteur",
+        "sector": "Secteur",
+        "entries": "Entrées",
+        "avg": "Moyenne",
+        "median": "Médiane",
+        "range": "Échelle",
+        "percentile": "25e-75e Percentile"
+      },
+      "locationHeatmap": {
+        "title": "Salaire par Localisation",
+        "description": "Salaires moyens dans différentes villes (min. 3 entrées par localisation)"
+      },
+      "tooltips": {
+        "avgSalary": "Salaire Moyen (€/mois)",
+        "medianSalary": "Salaire Médian (€/mois)",
+        "entries": "Entrées",
+        "experience": "Expérience",
+        "salary": "Salaire"
+      }
+    }
+  },
+  "add": {
+    "title": "Partagez Votre Salaire",
+    "subtitle": "Partagez vos informations salariales de manière anonyme pour aider à construire la transparence",
+    "editTitle": "Modifier l'Entrée de Salaire",
+    "editSubtitle": "Mettez à jour vos informations salariales ci-dessous",
+    "goBack": "Retourner",
+    "loadingEntry": "Chargement de l'entrée...",
+    "fieldExplanations": "Explications des Champs",
+    "example": "Exemple",
+    "fields": {
+      "country": {
+        "label": "Pays",
+        "placeholder": "Sélectionner un pays"
+      },
+      "currency": {
+        "label": "Devise",
+        "placeholder": "Sélectionner une devise"
+      },
+      "subreddit": {
+        "label": "Sous-Reddit",
+        "placeholder": "Sélectionner un sous-reddit"
+      }
     },
-    "feedback": {
-        "meta": {
-            "title": "Soumettre un Commentaire - WageWatchers",
-            "description": "Aidez à améliorer la plateforme de transparence salariale en signalant des bugs, en demandant des fonctionnalités ou en suggérant des améliorations."
-        },
-        "title": "Soumettre un Commentaire",
-        "subtitle": "Aidez-nous à améliorer la plateforme de transparence salariale en signalant des bugs, en demandant des fonctionnalités ou en suggérant des améliorations.",
-        "nav": {
-            "goBack": "Retourner"
-        },
-        "form": {
-            "title": "Titre",
-            "titlePlaceholder": "Bref résumé de votre commentaire",
-            "description": "Description",
-            "descriptionPlaceholder": "Description détaillée de votre commentaire",
-            "type": "Type",
-            "priority": "Priorité",
-            "email": "Email (Facultatif)",
-            "emailPlaceholder": "votre.email@exemple.com",
-            "emailHint": "Fournissez votre email si vous souhaitez que nous donnions suite à votre commentaire.",
-            "emailInvalid": "Email non valide fourni",
-            "submit": "Soumettre le Commentaire",
-            "submitting": "Soumission..."
-        },
-        "types": {
-            "bug": {
-                "label": "Rapport de Bug",
-                "description": "Signaler un problème ou une erreur"
-            },
-            "feature": {
-                "label": "Fonctionnalité",
-                "description": "Suggérer une nouvelle fonctionnalité pour l'application"
-            },
-            "improvement": {
-                "label": "Amélioration",
-                "description": "Suggérer une amélioration"
-            }
-        },
-        "priorities": {
-            "low": {
-                "label": "Faible",
-                "description": "Agréable à avoir, pas d'urgence"
-            },
-            "medium": {
-                "label": "Moyenne",
-                "description": "Devrait être traité à terme"
-            },
-            "high": {
-                "label": "Élevée",
-                "description": "Important pour l'expérience utilisateur"
-            },
-            "critical": {
-                "label": "Critique",
-                "description": "Romp la fonctionnalité ou la sécurité"
-            }
-        },
-        "validation": {
-            "titleRequired": "Le titre est requis",
-            "titleTooLong": "Titre trop long",
-            "descriptionRequired": "La description est requise",
-            "descriptionTooLong": "Description trop longue",
-            "contentContainsBadWords": "Le contenu contient un langage inapproprié",
-            "contentContainsUrls": "Les URL ne sont pas autorisées dans les commentaires"
-        },
-        "success": "Merci pour votre commentaire! Nous avons reçu votre rapport.",
-        "error": "Échec de la soumission du commentaire. Veuillez réessayer.",
-        "networkError": "Erreur réseau. Veuillez réessayer.",
-        "rateLimit": {
-            "title": "Limite de Soumission Atteinte",
-            "message": "Vous avez atteint la limite quotidienne de 5 soumissions de commentaires. Cela nous aide à prévenir le spam et à garantir la qualité des commentaires.",
-            "resetInfo": "Vous pouvez soumettre à nouveau après {resetTime}.",
-            "remaining": "Il vous reste {count} {count, plural, one {soumission} other {soumissions}} aujourd'hui."
-        },
-        "trackingId": {
-            "title": "Votre ID de Suivi",
-            "instruction": "Enregistrez cet ID pour suivre le statut de votre rapport à tout moment."
-        },
-        "emailSent": "Nous avons envoyé un email de confirmation à {email} avec votre ID de suivi et les détails du rapport.",
-        "noEmail": "Utilisez votre ID de suivi pour vérifier le statut de votre rapport sur la page Statut."
-    },
-    "status": {
-        "title": "Vérifier le Statut du Rapport",
-        "subtitle": "Suivez le statut de vos rapports de bug ou demandes de fonctionnalités soumises.",
-        "loading": "Chargement de vos rapports...",
-        "nav": {
-            "home": "Accueil",
-            "feedback": "Commentaires",
-            "addEntry": "Partager Salaire"
-        },
-        "search": {
-            "searchTitle": "Rechercher Vos Rapports",
-            "searchAnother": "Rechercher un Autre Rapport",
-            "label": "ID de Suivi ou Email",
-            "placeholder": "XXXX-XXXX",
-            "placeholderEmail": "votre@email.com",
-            "hint": "Entrez les 8 caractères après TRK- ou votre adresse email",
-            "button": "Rechercher les Rapports",
-            "searching": "Recherche...",
-            "instruction": "Entrez votre ID de suivi ou votre adresse email pour voir le statut de votre commentaire.",
-            "invalidFormat": "Format non valide. L'ID de suivi doit comporter 8 caractères (XXXX-XXXX) ou être un email valide.",
-            "searchType": {
-                "trackingId": "ID de Suivi",
-                "email": "Adresse Email"
-            }
-        },
-        "results": {
-            "title": "Vos Rapports",
-            "recentTitle": "Rapports Récents",
-            "savedTitle": "Mes Rapports Enregistrés",
-            "recentSavedTitle": "Mes Rapports Récents",
-            "total": "total",
-            "allReportsTitle": "Tous Vos Rapports",
-            "allReportsSubtitle": "Aperçu complet de tous vos rapports soumis et de leur statut actuel.",
-            "showingAll": "Affichage de tous les {count} rapports",
-            "backToStatus": "Retour au Statut",
-            "submittedOn": "Soumis le",
-            "trackingId": "ID de Suivi:",
-            "lastUpdated": "Dernière mise à jour:",
-            "noReportsTitle": "Aucun rapport trouvé",
-            "noReportsMessage": "Nous n'avons trouvé aucun rapport correspondant à cet identifiant. Veuillez vérifier votre ID de suivi ou votre adresse email.",
-            "viewAll": "Voir Tout",
-            "showRecent": "Afficher Récents"
-        },
-        "statuses": {
-            "TODO": "À Faire",
-            "IN_PROGRESS": "En Cours",
-            "DONE": "Terminé",
-            "CANCELLED": "Annulé"
-        },
-        "noResults": "Aucun rapport trouvé avec cet identifiant",
-        "errors": {
-            "empty": "Veuillez entrer un ID de rapporteur ou un email",
-            "network": "Échec de la recherche de rapports. Veuillez réessayer."
-        }
-    },
-    "donate": {
-        "goBack": "Retourner",
-        "title": "Offrez-moi un Café",
-        "subtitle": "Aidez à maintenir WageWatchers en fonctionnement!",
-        "description": "WageWatchers est gratuit et communautaire, mais maintenir l'infrastructure coûte de l'argent. L'hébergement de serveur, les coûts de base de données et le temps de développement s'additionnent. Si vous trouvez cette plateforme utile, envisagez de la soutenir avec un petit don!",
-        "whyDonate": "Pourquoi Faire un Don?",
-        "benefits": {
-            "hosting": {
-                "title": "Hébergement de Serveur",
-                "description": "Gardez la plateforme rapide et disponible 24/7"
-            },
-            "database": {
-                "title": "Coûts de Base de Données",
-                "description": "Stockez et traitez des milliers d'entrées de salaire"
-            },
-            "development": {
-                "title": "Développement",
-                "description": "Ajouter de nouvelles fonctionnalités et améliorations"
-            },
-            "free": {
-                "title": "Gardez-le Gratuit",
-                "description": "Pas de murs de paiement, pas de fonctionnalités premium, jamais"
-            }
-        },
-        "amount": "Choisissez un montant",
-        "monthly": "Mensuel",
-        "oneTime": "Ponctuel",
-        "custom": "Personnalisé",
-        "donate": "Faire un Don via PayPal",
-        "donateOptions": "Choisissez Votre Méthode de Don",
-        "buyMeCoffee": "Offrez-moi un Café",
-        "paypal": "PayPal",
-        "kofi": "Ko-fi",
-        "github": "Parrainage GitHub",
-        "crypto": "Cryptomonnaie",
-        "copyAddress": "Copier l'Adresse",
-        "addressCopied": "Adresse copiée!",
-        "bitcoin": "Bitcoin (BTC)",
-        "ethereum": "Ethereum (ETH)",
-        "ethereumNote": "Supporte plusieurs jetons ERC-20 (USDC, LRC, LINK, UNI, etc.)",
-        "usdc": "USD Coin (USDC)",
-        "solana": "Solana (SOL)",
-        "traditional": "Traditionnel",
-        "otherWays": "Autres Façons de Soutenir",
-        "share": "Partager avec des amis",
-        "contribute": "Contribuer des données salariales",
-        "feedback": "Donner des commentaires",
-        "thankYou": "Merci pour votre soutien! 🎉",
-        "thankYouMessage": "Chaque contribution, grande ou petite, aide à maintenir cette plateforme en vie et gratuite pour tous.",
-        "connect": "Connecter avec moi",
-        "socials": {
-            "reddit": "Reddit",
-            "portfolio": "Portfolio",
-            "github": "GitHub"
-        },
-        "oneTimeSupport": "Soutien ponctuel",
-        "securePayment": "Paiement sécurisé",
-        "supportWithKofi": "Soutenir avec Ko-fi",
-        "monthlySponsorship": "Parrainage mensuel",
-        "shareTitle": "WageWatchers - Plateforme Européenne de Transparence Salariale",
-        "shareText": "Découvrez WageWatchers - Transparence salariale communautaire sur les marchés européens!",
-        "footerCommunity": "🧡 Transparence salariale communautaire",
-        "footerMadeWith": "Fait avec ❤️ pour la communauté •",
-        "footerViewOnGithub": "Voir sur GitHub"
-    },
-    "entryDetail": {
-        "backToDashboard": "Retour au Tableau de Bord",
-        "untitled": "Poste Sans Titre",
-        "submittedOn": "Soumis le",
-        "grossSalary": "Salaire Brut",
-        "netSalary": "Salaire Net",
-        "netCompensation": "Rémunération Nette",
-        "personalInfo": "Information Personnelle",
+    "sections": {
+      "location": {
+        "title": "Information de Localisation",
+        "description": "Information sur le pays",
+        "country": "Pays",
+        "subreddit": "Sous-Reddit",
+        "selectCountry": "Sélectionner un pays",
+        "selectSubreddit": "Sélectionner un sous-reddit"
+      },
+      "personal": {
+        "title": "Information Personnelle",
+        "description": "Détails personnels de base",
         "age": "Âge",
         "education": "Éducation",
         "workExperience": "Expérience Professionnelle",
         "civilStatus": "État Civil",
-        "dependents": "Personnes à Charge",
-        "years": "ans",
-        "jobInfo": "Information sur le Poste",
-        "jobTitle": "Titre du Poste",
+        "dependents": "Personnes à Charge"
+      },
+      "employer": {
+        "title": "Profil de l'Employeur",
+        "description": "Information sur votre employeur",
         "sector": "Secteur",
-        "seniority": "Ancienneté",
         "employeeCount": "Nombre d'Employés",
-        "multinational": "Multinationale",
+        "multinational": "Multinationale"
+      },
+      "job": {
+        "title": "Profil du Poste",
+        "description": "Détails sur votre rôle et vos responsabilités",
+        "jobTitle": "Titre du Poste",
         "jobDescription": "Description du Poste",
-        "yes": "Oui",
-        "no": "Non",
-        "workSchedule": "Horaire de Travail",
-        "officialHours": "Heures Officielles",
-        "averageHours": "Heures Moyennes",
-        "hoursPerWeek": "heures/semaine",
-        "vacationDays": "Jours de Congé",
-        "days": "jours",
-        "teleworkDays": "Jours de Télétravail",
-        "daysPerWeek": "jours/semaine",
-        "shiftDescription": "Description des Quarts/Horaires",
-        "onCall": "Astreinte",
-        "benefits": "Avantages & Rémunération",
+        "seniority": "Ancienneté"
+      },
+      "salary": {
+        "title": "Salaire",
+        "description": "Détails de votre rémunération",
+        "grossSalary": "Salaire Brut ({symbol}/mois)",
+        "netSalary": "Salaire Net ({symbol}/mois)",
+        "netCompensation": "Rémunération Nette ({symbol}/mois)"
+      },
+      "benefits": {
+        "title": "Avantages",
+        "description": "Rémunération et avantages supplémentaires",
         "thirteenthMonth": "13ème Mois",
         "mealVouchers": "Titres-Repas ({symbol}/jour)",
         "ecoCheques": "Éco-Chèques ({symbol}/an)",
         "groupInsurance": "Assurance Groupe",
         "otherInsurances": "Autres Assurances",
         "otherBenefits": "Autres Avantages",
-        "locationCommute": "Localisation & Trajet",
+        "otherBenefitsPlaceholder": "ex. Voiture de société, budget de formation, etc."
+      },
+      "workLife": {
+        "title": "Équilibre Vie Pro-Vie Perso",
+        "description": "Votre expérience d'équilibre vie professionnelle-vie personnelle",
+        "teleworkDays": "Jours de Télétravail par Semaine",
+        "dayOffEase": "Facilité de Prendre un Jour de Congé",
+        "stressLevel": "Niveau de Stress",
+        "reports": "Rapports"
+      },
+      "workingHours": {
+        "title": "Heures de Travail",
+        "description": "Votre horaire et vos heures de travail",
+        "officialHours": "Heures Officielles par Semaine",
+        "averageHours": "Heures Moyennes par Semaine",
+        "shiftDescription": "Description des Quarts/Horaires",
+        "onCall": "Astreinte"
+      },
+      "vacation": {
+        "title": "Vacances",
+        "description": "Informations sur les vacances et les congés",
+        "vacationDays": "Jours de Congé par An"
+      },
+      "commute": {
+        "title": "Trajet Domicile-Travail",
+        "description": "Détails de votre trajet quotidien",
         "workCity": "Ville de Travail",
         "commuteDistance": "Distance du Trajet (aller simple)",
         "commuteMethod": "Méthode de Transport",
-        "commuteCompensation": "Indemnisation du Trajet",
-        "workEnvironment": "Environnement de Travail",
-        "dayOffEase": "Facilité à Prendre un Congé",
-        "stressLevel": "Niveau de Stress",
-        "reports": "Responsable du Personnel",
-        "sourceLink": "Source",
-        "viewRedditPost": "Voir la Publication Reddit",
-        "viewSource": "Voir la Source Originale",
-        "sourceDescription": "Source",
-        "extraNotes": "Notes Additionnelles",
-        "additionalNotes": "Notes Additionnelles",
-        "reviewStatus": {
-            "approved": "Approuvé",
-            "pendingReview": "En Attente de Révision",
-            "needsReview": "Nécessite Révision",
-            "rejected": "Rejeté",
-            "tooltip": {
-                "approved": "Cette entrée a été vérifiée et approuvée",
-                "pendingReview": "Cette entrée est en attente de révision",
-                "needsReview": "Cette entrée a été signalée et nécessite une révision",
-                "rejected": "Cette entrée a été rejetée et masquée de la vue publique"
-            }
-        }
+        "commuteCompensation": "Indemnisation du Trajet"
+      },
+      "notes": {
+        "title": "Notes Additionnelles",
+        "description": "Notes facultatives pour cette entrée",
+        "extraNotes": "Notes Additionnelles"
+      }
     },
-    "comments": {
-        "title": "Commentaires",
-        "loading": "Chargement des commentaires...",
-        "noComments": "Aucun commentaire disponible",
-        "reply": "répondre",
-        "replies": "réponses",
-        "collapsed": "réduit",
-        "ago": "il y a",
-        "justNow": "à l'instant"
+    "options": {
+      "yes": "Oui",
+      "no": "Non",
+      "partial": "Partiel",
+      "full": "Complet",
+      "none": "Aucun",
+      "selectOption": "Sélectionner option"
     },
-    "myEntries": {
-        "title": "Mes Entrées de Salaire",
-        "description": "Visualisez et gérez vos entrées de salaire soumises",
-        "howItWorks": "Comment ça marche?",
-        "loading": "Chargement de vos entrées...",
-        "noEntries": "Aucune entrée trouvée",
-        "noEntriesDescription": "Vous n'avez soumis aucune entrée de salaire pour le moment. Vos entrées apparaîtront ici pour une gestion facile.",
-        "addFirst": "Partagez Votre Premier Salaire",
-        "yourEntries": "Vos Entrées ({count})",
-        "table": {
-            "location": "Localisation",
-            "country": "Pays",
-            "jobTitle": "Titre du Poste",
-            "salary": "Salaire Brut",
-            "submitted": "Soumis",
-            "status": "Statut",
-            "editStatus": "Statut de Modification",
-            "actions": "Actions",
-            "noTitle": "Aucun titre fourni",
-            "editableFor": "Reste {hours}h",
-            "readonly": "Lecture seule",
-            "pending": "En attente"
-        },
-        "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette entrée? Cette action est irréversible.",
-        "deleteError": "Échec de la suppression de l'entrée",
-        "infoTitle": "ℹ️ Comment ça marche?",
-        "info1": "Vos entrées sont stockées anonymement dans votre navigateur à l'aide de jetons sécurisés",
-        "info2": "Vous pouvez modifier ou supprimer les entrées pendant 1 jour après la soumission",
-        "info3": "Après la fenêtre de modification, les entrées deviennent en lecture seule mais restent visibles",
-        "info4": "L'effacement des données du navigateur supprimera votre accès pour gérer ces entrées",
-        "deleteDialog": {
-            "title": "Supprimer l'Entrée de Salaire",
-            "deletingEntry": "Vous êtes sur le point de supprimer:",
-            "canEdit": "Vous pouvez modifier cette entrée au lieu de la supprimer",
-            "permanent": "Cette action ne peut pas être annulée",
-            "helpsOthers": "Votre entrée aide les autres à comprendre une rémunération équitable",
-            "typeToConfirm": "Tapez SUPPRIMER pour confirmer",
-            "confirmPlaceholder": "Tapez SUPPRIMER ici",
-            "confirmHint": "Tapez le mot SUPPRIMER (en majuscules) pour activer le bouton de suppression",
-            "cancel": "Annuler",
-            "confirmDelete": "Oui, Supprimer l'Entrée",
-            "deleting": "Suppression..."
-        }
+    "countries": {
+      "belgium": "Belgique",
+      "netherlands": "Pays-Bas",
+      "unitedKingdom": "Royaume-Uni"
     },
-    "edit": {
-        "meta": {
-            "title": "Modifier l'Entrée de Salaire - WageWatchers",
-            "description": "Modifiez anonymement votre entrée de salaire soumise. Mettez à jour les informations salariales, les avantages et les conditions de travail."
-        },
-        "title": "Modifier l'Entrée de Salaire",
-        "loading": "Chargement de l'entrée...",
-        "redirecting": "Redirection vers le formulaire de modification...",
-        "errorTitle": "Impossible de Modifier l'Entrée",
-        "goBack": "Retourner",
-        "goToMyEntries": "Aller à Mes Entrées",
-        "goToDashboard": "Aller au Tableau de Bord",
-        "errors": {
-            "noToken": "Vous n'avez pas la permission de modifier cette entrée. Elle a peut-être été soumise depuis un autre navigateur.",
-            "notFound": "Entrée non trouvée. Elle a peut-être été supprimée.",
-            "notOwner": "Vous n'avez pas la permission de modifier cette entrée.",
-            "expired": "La fenêtre de modification pour cette entrée a expiré (1 jour après la soumission).",
-            "generic": "Échec du chargement de l'entrée. Veuillez réessayer."
-        }
+    "honestyConfirmation": "Je confirme que les informations fournies sont exactes et honnêtes",
+    "submit": "Partager Salaire",
+    "submitEntry": "Soumettre l'Entrée",
+    "updateEntry": "Mettre à Jour l'Entrée",
+    "submittingEntry": "Soumission...",
+    "updatingEntry": "Mise à jour...",
+    "success": "Salaire partagé avec succès!",
+    "successDetails": "Vous pouvez maintenant modifier cette entrée pendant 1 jour. Retrouvez-la dans 'Mes Entrées'.",
+    "error": "Échec du partage de salaire",
+    "errorGeneric": "Une erreur est survenue lors de la soumission",
+    "errorLoadingEntry": "Erreur lors du Chargement de l'Entrée",
+    "rateLimitExceeded": "Limite de taux dépassée",
+    "rateLimitRetry": "Vous pouvez réessayer dans {time}",
+    "placeholders": {
+      "age": "ex. 30",
+      "education": "Sélectionner ou entrer le niveau d'éducation",
+      "workExperience": "ex. 5",
+      "civilStatus": "Sélectionner l'état civil",
+      "dependents": "ex. 2",
+      "sector": "Sélectionner un secteur",
+      "employeeCount": "Sélectionner la fourchette du nombre d'employés",
+      "jobTitle": "ex. Ingénieur Logiciel",
+      "seniority": "ex. 3",
+      "jobDescription": "Décrivez vos principales responsabilités",
+      "officialHours": "ex. 40",
+      "averageHours": "ex. 45",
+      "shiftDescription": "ex. Heures de bureau standard",
+      "onCall": "ex. Occasionnellement",
+      "vacationDays": "ex. 25",
+      "grossSalary": "ex. 5000",
+      "netSalary": "ex. 3500",
+      "netCompensation": "ex. 150",
+      "thirteenthMonth": "Sélectionner l'option 13ème mois",
+      "mealVouchers": "ex. 8/jour",
+      "ecoCheques": "ex. 250/an",
+      "groupInsurance": "ex. Oui, complète",
+      "otherInsurances": "ex. Assurance maladie",
+      "workCity": "ex. Bruxelles",
+      "commuteDistance": "ex. 15 ou 10-30 km",
+      "commuteMethod": "ex. Voiture, Transport public",
+      "commuteCompensation": "ex. Allocation carburant",
+      "teleworkDays": "ex. 2",
+      "dayOffEase": "Sélectionner la facilité à prendre un jour de congé",
+      "stressLevel": "Sélectionner le niveau de stress",
+      "reports": "ex. 5",
+      "extraNotes": "Ajouter des notes additionnelles sur cette entrée de salaire..."
     },
-    "changelog": {
-        "title": "Journal des Modifications",
-        "description": "Restez à jour avec les dernières fonctionnalités et améliorations de WageWatchers.",
-        "backToHome": "Retour à l'Accueil",
-        "stayUpdated": "Restez Informé",
-        "newsletterPrompt": "Abonnez-vous à notre newsletter pour recevoir des mises à jour hebdomadaires sur les nouvelles fonctionnalités et améliorations.",
-        "version": "Version",
-        "bullet": "•",
-        "newsletter": {
-            "placeholder": "Entrez votre email",
-            "subscribe": "S'abonner",
-            "subscribing": "Abonnement...",
-            "success": "Abonnement réussi à la newsletter!",
-            "error": "Échec de l'abonnement",
-            "networkError": "Erreur réseau. Veuillez réessayer."
-        }
+    "help": {
+      "age": "Votre âge actuel en années",
+      "education": "Votre plus haut niveau d'éducation complété",
+      "workExperience": "Total des années d'expérience professionnelle",
+      "civilStatus": "Votre état civil actuel",
+      "dependents": "Nombre de personnes financièrement à votre charge",
+      "sector": "L'industrie ou le secteur dans lequel votre entreprise opère",
+      "employeeCount": "Nombre approximatif d'employés dans votre entreprise",
+      "multinational": "Si votre entreprise opère dans plusieurs pays",
+      "jobTitle": "Votre titre de poste ou nom de position officiel",
+      "jobDescription": "Brève description de vos principales responsabilités",
+      "seniority": "Années dans votre rôle actuel ou des postes similaires",
+      "officialHours": "Heures de travail contractuelles par semaine",
+      "averageHours": "Moyenne réelle des heures travaillées par semaine",
+      "shiftDescription": "Description de votre horaire de travail (ex. 9h-17h, quarts)",
+      "onCall": "Fréquence des astreintes ou des exigences de disponibilité",
+      "vacationDays": "Total des jours de congé payés par an",
+      "grossSalary": "Salaire brut mensuel avant impôts et déductions",
+      "netSalary": "Salaire net mensuel après impôts",
+      "netCompensation": "Rémunération mensuelle totale incluant tous les avantages",
+      "thirteenthMonth": "Prime de fin d'année ou paiement du 13ème mois",
+      "mealVouchers": "Valeur quotidienne des titres-repas ou des allocations déjeuner",
+      "ecoCheques": "Valeur annuelle des éco-chèques ou des chèques-cadeaux",
+      "groupInsurance": "Détails de l'assurance maladie ou de groupe fournie par l'entreprise",
+      "otherInsurances": "Toute couverture d'assurance supplémentaire fournie",
+      "otherBenefits": "Autres avantages comme voiture de société, formation, abonnement à une salle de sport, etc.",
+      "workCity": "Ville où se situe votre lieu de travail principal",
+      "commuteDistance": "Distance de la maison au travail (aller simple, pas aller-retour). Vous pouvez entrer un seul nombre ou une fourchette (ex. 15 ou 10-30)",
+      "commuteMethod": "Comment vous vous rendez au travail (voiture, transports publics, etc.)",
+      "commuteCompensation": "Tout remboursement pour les frais de trajet",
+      "teleworkDays": "Nombre de jours par semaine où vous travaillez à domicile",
+      "dayOffEase": "La facilité à prendre un congé imprévu",
+      "stressLevel": "Votre niveau de stress général lié au travail",
+      "reports": "Nombre de personnes qui vous rapportent directement",
+      "extraNotes": "Notes ou contexte additionnel sur cette entrée de salaire"
     },
-    "adminReview": {
-        "title": "File d'Attente de Révision des Entrées",
-        "description": "Examinez les entrées signalées et approuvez-les ou rejetez-les sur base de l'analyse de détection d'anomalies.",
-        "backToAdmin": "Retour au Tableau de Bord Admin",
-        "loading": "Chargement...",
-        "noEntries": "Aucune entrée en attente de révision. Bon travail!",
-        "stats": {
-            "total": "Total des Entrées",
-            "approved": "Approuvé",
-            "pending": "En attente",
-            "needsReview": "Nécessite Révision",
-            "rejected": "Rejeté"
-        },
-        "entry": {
-            "untitledPosition": "Poste Sans Titre",
-            "submitted": "Soumis",
-            "grossSalary": "Salaire Brut",
-            "country": "Pays",
-            "sector": "Secteur",
-            "experience": "Expérience",
-            "years": "{count} ans",
-            "na": "N/A"
-        },
-        "anomaly": {
-            "title": "Raison de la Détection d'Anomalie",
-            "highRisk": "Risque Élevé ({score})",
-            "mediumRisk": "Risque Moyen ({score})",
-            "lowRisk": "Risque Faible ({score})"
-        },
-        "actions": {
-            "approve": "Approuver",
-            "reject": "Rejeter",
-            "processing": "Traitement..."
-        },
-        "status": {
-            "APPROVED": "Approuvé",
-            "PENDING": "En attente",
-            "NEEDS_REVIEW": "Nécessite Révision",
-            "REJECTED": "Rejeté"
-        },
-        "errors": {
-            "loadFailed": "Échec du chargement des entrées. Veuillez rafraîchir la page.",
-            "actionFailed": "Échec de {action} l'entrée. Veuillez réessayer.",
-            "unauthorized": "Non autorisé. Veuillez vous connecter."
-        }
+    "formOptions": {
+      "education": {
+        "highSchool": "Diplôme d'Études Secondaires",
+        "associate": "Diplôme d'Associé (Bac+2/3)",
+        "bachelor": "Licence/Baccalauréat (Bac+3)",
+        "master": "Maîtrise/Master (Bac+5)",
+        "phd": "Doctorat / PhD",
+        "professional": "Diplôme Professionnel (ex. médecin, avocat)",
+        "vocational": "Formation Professionnelle",
+        "someCollege": "Études Supérieures Partielles"
+      },
+      "employeeCount": {
+        "range1": "1-10",
+        "range2": "11-50",
+        "range3": "51-200",
+        "range4": "201-500",
+        "range5": "501-1000",
+        "range6": "1000+"
+      },
+      "thirteenthMonth": {
+        "full": "Complet",
+        "partial": "Partiel",
+        "none": "Aucun"
+      },
+      "civilStatus": {
+        "single": "Célibataire",
+        "cohabiting": "Cohabitant/Partenaire",
+        "civilUnion": "Union Civile/Partenariat Enregistré",
+        "married": "Marié(e)",
+        "divorced": "Divorcé(e)",
+        "widowed": "Veuf/Veuve"
+      },
+      "sector": {
+        "IT": "IT",
+        "Finance": "Finance",
+        "Healthcare": "Santé",
+        "Pharmaceutical": "Pharmaceutique",
+        "Education": "Éducation",
+        "Manufacturing": "Fabrication",
+        "Energy": "Énergie",
+        "Consulting": "Conseil",
+        "Retail": "Commerce de Détail",
+        "FMCG": "Biens de Consommation Courante (FMCG)",
+        "Public Sector": "Secteur Public",
+        "Public Affairs": "Affaires Publiques",
+        "Transportation": "Transport",
+        "Construction": "Construction",
+        "Telecommunications": "Télécommunications",
+        "Media": "Médias",
+        "Hospitality": "Hôtellerie",
+        "Legal": "Juridique",
+        "Research": "Recherche",
+        "Nonprofit": "Organisation à But Non Lucratif",
+        "Agriculture": "Agriculture",
+        "Automotive": "Automobile",
+        "Aerospace": "Aérospatiale",
+        "RealEstate": "Immobilier",
+        "Entertainment": "Divertissement",
+        "Biotech": "Biotechnologie",
+        "Other": "Autre"
+      },
+      "combobox": {
+        "custom": "Personnalisé",
+        "select": "Sélectionner"
+      },
+      "stressLevel": {
+        "veryLow": "Très Faible",
+        "low": "Faible",
+        "moderate": "Modéré",
+        "high": "Élevé",
+        "veryHigh": "Très Élevé",
+        "situational": "Dépend de la situation",
+        "none": "Aucun"
+      },
+      "dayOffEase": {
+        "veryEasy": "Très Facile",
+        "easy": "Facile",
+        "moderate": "Modéré",
+        "hard": "Difficile",
+        "veryHard": "Très Difficile",
+        "situational": "Dépend de la situation",
+        "impossible": "Presque Impossible"
+      }
+    },
+    "validation": {
+      "numberExpected": "Nombre attendu",
+      "integerExpected": "Nombre entier attendu",
+      "stringExpected": "Texte attendu",
+      "countryRequired": "Le pays est requis",
+      "ageMin": "L'âge doit être d'au moins 18 ans",
+      "ageMax": "L'âge ne peut pas dépasser 100 ans",
+      "workExperienceMax": "L'expérience de travail ne peut pas dépasser 82 ans",
+      "dependentsMax": "Le nombre de personnes à charge ne peut pas dépasser 20",
+      "educationRequired": "L'éducation est requise",
+      "civilStatusRequired": "L'état civil est requis",
+      "sectorRequired": "Le secteur est requis",
+      "employeeCountRequired": "Le nombre d'employés est requis",
+      "jobTitleRequired": "Le titre du poste est requis",
+      "currencyRequired": "La devise est requise",
+      "thirteenthMonthRequired": "Le 13ème mois est requis",
+      "groupInsuranceRequired": "L'assurance groupe est requise",
+      "workCityRequired": "La ville de travail est requise",
+      "commuteDistanceRequired": "La distance du trajet est requise",
+      "commuteMethodRequired": "La méthode de transport est requise",
+      "commuteCompensationRequired": "L'indemnisation du trajet est requise",
+      "dayOffEaseRequired": "La facilité à prendre un jour de congé est requise",
+      "stressLevelRequired": "Le niveau de stress est requis",
+      "jobTitleMax": "Le titre du poste ne peut pas dépasser 200 caractères",
+      "jobDescriptionMax": "La description du poste ne peut pas dépasser 5000 caractères",
+      "seniorityMax": "L'ancienneté ne peut pas dépasser 50 ans",
+      "hoursMin": "Les heures doivent être d'au moins 1",
+      "hoursMax": "Les heures ne peuvent pas dépasser 80 par semaine",
+      "shiftDescriptionMax": "La description des quarts ne peut pas dépasser 1000 caractères",
+      "vacationDaysMax": "Les jours de congé ne peuvent pas dépasser 365 par an",
+      "teleworkMax": "Les jours de télétravail ne peuvent pas dépasser 7 par semaine",
+      "grossSalaryPositive": "Le salaire brut doit être positif",
+      "salaryMax": "Le salaire ne peut pas dépasser 1 000 000 €",
+      "mealVouchersMax": "Les titres-repas ne peuvent pas dépasser 12 € par jour",
+      "ecoChequesMax": "Les éco-chèques ne peuvent pas dépasser 10 000 € par an",
+      "otherInsurancesMax": "La description des autres assurances ne peut pas dépasser 2000 caractères",
+      "otherBenefitsMax": "La description des autres avantages ne peut pas dépasser 2000 caractères",
+      "workCityMax": "La ville de travail ne peut pas dépasser 200 caractères",
+      "commuteDistanceMax": "La distance du trajet ne peut pas dépasser 500 caractères",
+      "commuteDistanceFormat": "La distance du trajet doit être un nombre ou une fourchette (ex. 15 ou 10-30)",
+      "commuteCompensationMax": "L'indemnisation du trajet ne peut pas dépasser 1000 caractères",
+      "reportsMax": "Le nombre de rapports ne peut pas dépasser 1000",
+      "urlInvalid": "Veuillez entrer une URL valide",
+      "urlDomainInvalid": "Veuillez utiliser une URL provenant d'un site web lié à l'emploi (Reddit, LinkedIn, Indeed, etc.)",
+      "extraNotesMax": "Les notes additionnelles ne peuvent pas dépasser 5000 caractères",
+      "atLeastOneSalary": "Au moins un champ de salaire (brut, net ou rémunération nette) est requis",
+      "workExperienceVsAge": "L'expérience de travail ne peut pas dépasser les années depuis que vous avez eu 18 ans",
+      "seniorityVsExperience": "L'ancienneté dans le rôle actuel ne peut pas dépasser l'expérience de travail totale",
+      "averageHoursVsOfficial": "Les heures moyennes ne devraient pas dépasser les heures officielles de plus de 20 heures",
+      "workCityRequiredForCommute": "La ville de travail est requise lors de la fourniture des détails du trajet",
+      "netSalaryVsGross": "Le salaire net ne devrait pas dépasser le salaire brut",
+      "contentContainsBadWords": "Le contenu contient un langage inapproprié",
+      "contentContainsUrls": "Les URL ne sont pas autorisées dans ce champ",
+      "honestyRequired": "Vous devez confirmer que les informations fournies sont exactes et honnêtes"
+    },
+    "validationSummary": {
+      "title": "Veuillez corriger les erreurs suivantes:",
+      "errorCount": "{count, plural, =1 {1 erreur trouvée} other {# erreurs trouvées}}"
     }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "export": "Exporter",
+    "optional": "facultatif",
+    "success": "Succès",
+    "failed": "Échec",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "language": {
+    "english": "Anglais",
+    "dutch": "Néerlandais",
+    "french": "Français",
+    "german": "Allemand",
+    "toggle": "Basculer la langue"
+  },
+  "feedback": {
+    "meta": {
+      "title": "Soumettre un Commentaire - WageWatchers",
+      "description": "Aidez à améliorer la plateforme de transparence salariale en signalant des bugs, en demandant des fonctionnalités ou en suggérant des améliorations."
+    },
+    "title": "Soumettre un Commentaire",
+    "subtitle": "Aidez-nous à améliorer la plateforme de transparence salariale en signalant des bugs, en demandant des fonctionnalités ou en suggérant des améliorations.",
+    "nav": {
+      "goBack": "Retourner"
+    },
+    "form": {
+      "title": "Titre",
+      "titlePlaceholder": "Bref résumé de votre commentaire",
+      "description": "Description",
+      "descriptionPlaceholder": "Description détaillée de votre commentaire",
+      "type": "Type",
+      "priority": "Priorité",
+      "email": "Email (Facultatif)",
+      "emailPlaceholder": "votre.email@exemple.com",
+      "emailHint": "Fournissez votre email si vous souhaitez que nous donnions suite à votre commentaire.",
+      "emailInvalid": "Email non valide fourni",
+      "submit": "Soumettre le Commentaire",
+      "submitting": "Soumission..."
+    },
+    "types": {
+      "bug": {
+        "label": "Rapport de Bug",
+        "description": "Signaler un problème ou une erreur"
+      },
+      "feature": {
+        "label": "Fonctionnalité",
+        "description": "Suggérer une nouvelle fonctionnalité pour l'application"
+      },
+      "improvement": {
+        "label": "Amélioration",
+        "description": "Suggérer une amélioration"
+      }
+    },
+    "priorities": {
+      "low": {
+        "label": "Faible",
+        "description": "Agréable à avoir, pas d'urgence"
+      },
+      "medium": {
+        "label": "Moyenne",
+        "description": "Devrait être traité à terme"
+      },
+      "high": {
+        "label": "Élevée",
+        "description": "Important pour l'expérience utilisateur"
+      },
+      "critical": {
+        "label": "Critique",
+        "description": "Romp la fonctionnalité ou la sécurité"
+      }
+    },
+    "validation": {
+      "titleRequired": "Le titre est requis",
+      "titleTooLong": "Titre trop long",
+      "descriptionRequired": "La description est requise",
+      "descriptionTooLong": "Description trop longue",
+      "contentContainsBadWords": "Le contenu contient un langage inapproprié",
+      "contentContainsUrls": "Les URL ne sont pas autorisées dans les commentaires"
+    },
+    "success": "Merci pour votre commentaire! Nous avons reçu votre rapport.",
+    "error": "Échec de la soumission du commentaire. Veuillez réessayer.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "rateLimit": {
+      "title": "Limite de Soumission Atteinte",
+      "message": "Vous avez atteint la limite quotidienne de 5 soumissions de commentaires. Cela nous aide à prévenir le spam et à garantir la qualité des commentaires.",
+      "resetInfo": "Vous pouvez soumettre à nouveau après {resetTime}.",
+      "remaining": "Il vous reste {count} {count, plural, one {soumission} other {soumissions}} aujourd'hui."
+    },
+    "trackingId": {
+      "title": "Votre ID de Suivi",
+      "instruction": "Enregistrez cet ID pour suivre le statut de votre rapport à tout moment."
+    },
+    "emailSent": "Nous avons envoyé un email de confirmation à {email} avec votre ID de suivi et les détails du rapport.",
+    "noEmail": "Utilisez votre ID de suivi pour vérifier le statut de votre rapport sur la page Statut."
+  },
+  "status": {
+    "title": "Vérifier le Statut du Rapport",
+    "subtitle": "Suivez le statut de vos rapports de bug ou demandes de fonctionnalités soumises.",
+    "loading": "Chargement de vos rapports...",
+    "nav": {
+      "home": "Accueil",
+      "feedback": "Commentaires",
+      "addEntry": "Partager Salaire"
+    },
+    "search": {
+      "searchTitle": "Rechercher Vos Rapports",
+      "searchAnother": "Rechercher un Autre Rapport",
+      "label": "ID de Suivi ou Email",
+      "placeholder": "XXXX-XXXX",
+      "placeholderEmail": "votre@email.com",
+      "hint": "Entrez les 8 caractères après TRK- ou votre adresse email",
+      "button": "Rechercher les Rapports",
+      "searching": "Recherche...",
+      "instruction": "Entrez votre ID de suivi ou votre adresse email pour voir le statut de votre commentaire.",
+      "invalidFormat": "Format non valide. L'ID de suivi doit comporter 8 caractères (XXXX-XXXX) ou être un email valide.",
+      "searchType": {
+        "trackingId": "ID de Suivi",
+        "email": "Adresse Email"
+      }
+    },
+    "results": {
+      "title": "Vos Rapports",
+      "recentTitle": "Rapports Récents",
+      "savedTitle": "Mes Rapports Enregistrés",
+      "recentSavedTitle": "Mes Rapports Récents",
+      "total": "total",
+      "allReportsTitle": "Tous Vos Rapports",
+      "allReportsSubtitle": "Aperçu complet de tous vos rapports soumis et de leur statut actuel.",
+      "showingAll": "Affichage de tous les {count} rapports",
+      "backToStatus": "Retour au Statut",
+      "submittedOn": "Soumis le",
+      "trackingId": "ID de Suivi:",
+      "lastUpdated": "Dernière mise à jour:",
+      "noReportsTitle": "Aucun rapport trouvé",
+      "noReportsMessage": "Nous n'avons trouvé aucun rapport correspondant à cet identifiant. Veuillez vérifier votre ID de suivi ou votre adresse email.",
+      "viewAll": "Voir Tout",
+      "showRecent": "Afficher Récents"
+    },
+    "statuses": {
+      "TODO": "À Faire",
+      "IN_PROGRESS": "En Cours",
+      "DONE": "Terminé",
+      "CANCELLED": "Annulé"
+    },
+    "noResults": "Aucun rapport trouvé avec cet identifiant",
+    "errors": {
+      "empty": "Veuillez entrer un ID de rapporteur ou un email",
+      "network": "Échec de la recherche de rapports. Veuillez réessayer."
+    }
+  },
+  "donate": {
+    "goBack": "Retourner",
+    "title": "Offrez-moi un Café",
+    "subtitle": "Aidez à maintenir WageWatchers en fonctionnement!",
+    "description": "WageWatchers est gratuit et communautaire, mais maintenir l'infrastructure coûte de l'argent. L'hébergement de serveur, les coûts de base de données et le temps de développement s'additionnent. Si vous trouvez cette plateforme utile, envisagez de la soutenir avec un petit don!",
+    "whyDonate": "Pourquoi Faire un Don?",
+    "benefits": {
+      "hosting": {
+        "title": "Hébergement de Serveur",
+        "description": "Gardez la plateforme rapide et disponible 24/7"
+      },
+      "database": {
+        "title": "Coûts de Base de Données",
+        "description": "Stockez et traitez des milliers d'entrées de salaire"
+      },
+      "development": {
+        "title": "Développement",
+        "description": "Ajouter de nouvelles fonctionnalités et améliorations"
+      },
+      "free": {
+        "title": "Gardez-le Gratuit",
+        "description": "Pas de murs de paiement, pas de fonctionnalités premium, jamais"
+      }
+    },
+    "amount": "Choisissez un montant",
+    "monthly": "Mensuel",
+    "oneTime": "Ponctuel",
+    "custom": "Personnalisé",
+    "donate": "Faire un Don via PayPal",
+    "donateOptions": "Choisissez Votre Méthode de Don",
+    "buyMeCoffee": "Offrez-moi un Café",
+    "paypal": "PayPal",
+    "kofi": "Ko-fi",
+    "github": "Parrainage GitHub",
+    "crypto": "Cryptomonnaie",
+    "copyAddress": "Copier l'Adresse",
+    "addressCopied": "Adresse copiée!",
+    "bitcoin": "Bitcoin (BTC)",
+    "ethereum": "Ethereum (ETH)",
+    "ethereumNote": "Supporte plusieurs jetons ERC-20 (USDC, LRC, LINK, UNI, etc.)",
+    "usdc": "USD Coin (USDC)",
+    "solana": "Solana (SOL)",
+    "traditional": "Traditionnel",
+    "otherWays": "Autres Façons de Soutenir",
+    "share": "Partager avec des amis",
+    "contribute": "Contribuer des données salariales",
+    "feedback": "Donner des commentaires",
+    "thankYou": "Merci pour votre soutien! 🎉",
+    "thankYouMessage": "Chaque contribution, grande ou petite, aide à maintenir cette plateforme en vie et gratuite pour tous.",
+    "connect": "Connecter avec moi",
+    "socials": {
+      "reddit": "Reddit",
+      "portfolio": "Portfolio",
+      "github": "GitHub"
+    },
+    "oneTimeSupport": "Soutien ponctuel",
+    "securePayment": "Paiement sécurisé",
+    "supportWithKofi": "Soutenir avec Ko-fi",
+    "monthlySponsorship": "Parrainage mensuel",
+    "shareTitle": "WageWatchers - Plateforme Européenne de Transparence Salariale",
+    "shareText": "Découvrez WageWatchers - Transparence salariale communautaire sur les marchés européens!",
+    "footerCommunity": "🧡 Transparence salariale communautaire",
+    "footerMadeWith": "Fait avec ❤️ pour la communauté •",
+    "footerViewOnGithub": "Voir sur GitHub"
+  },
+  "entryDetail": {
+    "backToDashboard": "Retour au Tableau de Bord",
+    "untitled": "Poste Sans Titre",
+    "submittedOn": "Soumis le",
+    "grossSalary": "Salaire Brut",
+    "netSalary": "Salaire Net",
+    "netCompensation": "Rémunération Nette",
+    "personalInfo": "Information Personnelle",
+    "age": "Âge",
+    "education": "Éducation",
+    "workExperience": "Expérience Professionnelle",
+    "civilStatus": "État Civil",
+    "dependents": "Personnes à Charge",
+    "years": "ans",
+    "jobInfo": "Information sur le Poste",
+    "jobTitle": "Titre du Poste",
+    "sector": "Secteur",
+    "seniority": "Ancienneté",
+    "employeeCount": "Nombre d'Employés",
+    "multinational": "Multinationale",
+    "jobDescription": "Description du Poste",
+    "yes": "Oui",
+    "no": "Non",
+    "workSchedule": "Horaire de Travail",
+    "officialHours": "Heures Officielles",
+    "averageHours": "Heures Moyennes",
+    "hoursPerWeek": "heures/semaine",
+    "vacationDays": "Jours de Congé",
+    "days": "jours",
+    "teleworkDays": "Jours de Télétravail",
+    "daysPerWeek": "jours/semaine",
+    "shiftDescription": "Description des Quarts/Horaires",
+    "onCall": "Astreinte",
+    "benefits": "Avantages & Rémunération",
+    "thirteenthMonth": "13ème Mois",
+    "mealVouchers": "Titres-Repas ({symbol}/jour)",
+    "ecoCheques": "Éco-Chèques ({symbol}/an)",
+    "groupInsurance": "Assurance Groupe",
+    "otherInsurances": "Autres Assurances",
+    "otherBenefits": "Autres Avantages",
+    "locationCommute": "Localisation & Trajet",
+    "workCity": "Ville de Travail",
+    "commuteDistance": "Distance du Trajet (aller simple)",
+    "commuteMethod": "Méthode de Transport",
+    "commuteCompensation": "Indemnisation du Trajet",
+    "workEnvironment": "Environnement de Travail",
+    "dayOffEase": "Facilité à Prendre un Congé",
+    "stressLevel": "Niveau de Stress",
+    "reports": "Responsable du Personnel",
+    "sourceLink": "Source",
+    "viewRedditPost": "Voir la Publication Reddit",
+    "viewSource": "Voir la Source Originale",
+    "sourceDescription": "Source",
+    "extraNotes": "Notes Additionnelles",
+    "additionalNotes": "Notes Additionnelles",
+    "reviewStatus": {
+      "approved": "Approuvé",
+      "pendingReview": "En Attente de Révision",
+      "needsReview": "Nécessite Révision",
+      "rejected": "Rejeté",
+      "tooltip": {
+        "approved": "Cette entrée a été vérifiée et approuvée",
+        "pendingReview": "Cette entrée est en attente de révision",
+        "needsReview": "Cette entrée a été signalée et nécessite une révision",
+        "rejected": "Cette entrée a été rejetée et masquée de la vue publique"
+      }
+    }
+  },
+  "comments": {
+    "title": "Commentaires",
+    "loading": "Chargement des commentaires...",
+    "noComments": "Aucun commentaire disponible",
+    "reply": "répondre",
+    "replies": "réponses",
+    "collapsed": "réduit",
+    "ago": "il y a",
+    "justNow": "à l'instant"
+  },
+  "myEntries": {
+    "title": "Mes Entrées de Salaire",
+    "description": "Visualisez et gérez vos entrées de salaire soumises",
+    "howItWorks": "Comment ça marche?",
+    "loading": "Chargement de vos entrées...",
+    "noEntries": "Aucune entrée trouvée",
+    "noEntriesDescription": "Vous n'avez soumis aucune entrée de salaire pour le moment. Vos entrées apparaîtront ici pour une gestion facile.",
+    "addFirst": "Partagez Votre Premier Salaire",
+    "yourEntries": "Vos Entrées ({count})",
+    "table": {
+      "location": "Localisation",
+      "country": "Pays",
+      "jobTitle": "Titre du Poste",
+      "salary": "Salaire Brut",
+      "submitted": "Soumis",
+      "status": "Statut",
+      "editStatus": "Statut de Modification",
+      "actions": "Actions",
+      "noTitle": "Aucun titre fourni",
+      "editableFor": "Reste {hours}h",
+      "readonly": "Lecture seule",
+      "pending": "En attente"
+    },
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette entrée? Cette action est irréversible.",
+    "deleteError": "Échec de la suppression de l'entrée",
+    "infoTitle": "ℹ️ Comment ça marche?",
+    "info1": "Vos entrées sont stockées anonymement dans votre navigateur à l'aide de jetons sécurisés",
+    "info2": "Vous pouvez modifier ou supprimer les entrées pendant 1 jour après la soumission",
+    "info3": "Après la fenêtre de modification, les entrées deviennent en lecture seule mais restent visibles",
+    "info4": "L'effacement des données du navigateur supprimera votre accès pour gérer ces entrées",
+    "deleteDialog": {
+      "title": "Supprimer l'Entrée de Salaire",
+      "deletingEntry": "Vous êtes sur le point de supprimer:",
+      "canEdit": "Vous pouvez modifier cette entrée au lieu de la supprimer",
+      "permanent": "Cette action ne peut pas être annulée",
+      "helpsOthers": "Votre entrée aide les autres à comprendre une rémunération équitable",
+      "typeToConfirm": "Tapez SUPPRIMER pour confirmer",
+      "confirmPlaceholder": "Tapez SUPPRIMER ici",
+      "confirmHint": "Tapez le mot SUPPRIMER (en majuscules) pour activer le bouton de suppression",
+      "cancel": "Annuler",
+      "confirmDelete": "Oui, Supprimer l'Entrée",
+      "deleting": "Suppression..."
+    }
+  },
+  "edit": {
+    "meta": {
+      "title": "Modifier l'Entrée de Salaire - WageWatchers",
+      "description": "Modifiez anonymement votre entrée de salaire soumise. Mettez à jour les informations salariales, les avantages et les conditions de travail."
+    },
+    "title": "Modifier l'Entrée de Salaire",
+    "loading": "Chargement de l'entrée...",
+    "redirecting": "Redirection vers le formulaire de modification...",
+    "errorTitle": "Impossible de Modifier l'Entrée",
+    "goBack": "Retourner",
+    "goToMyEntries": "Aller à Mes Entrées",
+    "goToDashboard": "Aller au Tableau de Bord",
+    "errors": {
+      "noToken": "Vous n'avez pas la permission de modifier cette entrée. Elle a peut-être été soumise depuis un autre navigateur.",
+      "notFound": "Entrée non trouvée. Elle a peut-être été supprimée.",
+      "notOwner": "Vous n'avez pas la permission de modifier cette entrée.",
+      "expired": "La fenêtre de modification pour cette entrée a expiré (1 jour après la soumission).",
+      "generic": "Échec du chargement de l'entrée. Veuillez réessayer."
+    }
+  },
+  "changelog": {
+    "title": "Journal des Modifications",
+    "description": "Restez à jour avec les dernières fonctionnalités et améliorations de WageWatchers.",
+    "backToHome": "Retour à l'Accueil",
+    "stayUpdated": "Restez Informé",
+    "newsletterPrompt": "Abonnez-vous à notre newsletter pour recevoir des mises à jour hebdomadaires sur les nouvelles fonctionnalités et améliorations.",
+    "version": "Version",
+    "bullet": "•",
+    "newsletter": {
+      "placeholder": "Entrez votre email",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement...",
+      "success": "Abonnement réussi à la newsletter!",
+      "error": "Échec de l'abonnement",
+      "networkError": "Erreur réseau. Veuillez réessayer."
+    }
+  },
+  "adminReview": {
+    "title": "File d'Attente de Révision des Entrées",
+    "description": "Examinez les entrées signalées et approuvez-les ou rejetez-les sur base de l'analyse de détection d'anomalies.",
+    "backToAdmin": "Retour au Tableau de Bord Admin",
+    "loading": "Chargement...",
+    "noEntries": "Aucune entrée en attente de révision. Bon travail!",
+    "stats": {
+      "total": "Total des Entrées",
+      "approved": "Approuvé",
+      "pending": "En attente",
+      "needsReview": "Nécessite Révision",
+      "rejected": "Rejeté"
+    },
+    "entry": {
+      "untitledPosition": "Poste Sans Titre",
+      "submitted": "Soumis",
+      "grossSalary": "Salaire Brut",
+      "country": "Pays",
+      "sector": "Secteur",
+      "experience": "Expérience",
+      "years": "{count} ans",
+      "na": "N/A"
+    },
+    "anomaly": {
+      "title": "Raison de la Détection d'Anomalie",
+      "highRisk": "Risque Élevé ({score})",
+      "mediumRisk": "Risque Moyen ({score})",
+      "lowRisk": "Risque Faible ({score})"
+    },
+    "actions": {
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "processing": "Traitement..."
+    },
+    "status": {
+      "APPROVED": "Approuvé",
+      "PENDING": "En attente",
+      "NEEDS_REVIEW": "Nécessite Révision",
+      "REJECTED": "Rejeté"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des entrées. Veuillez rafraîchir la page.",
+      "actionFailed": "Échec de {action} l'entrée. Veuillez réessayer.",
+      "unauthorized": "Non autorisé. Veuillez vous connecter."
+    }
+  }
 }

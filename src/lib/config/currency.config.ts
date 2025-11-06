@@ -4,10 +4,10 @@
  */
 
 export interface Currency {
-    code: string;
-    name: string;
-    symbol: string;
-    labelKey: string;
+  code: string;
+  name: string;
+  symbol: string;
+  labelKey: string;
 }
 
 /**
@@ -18,31 +18,31 @@ export interface Currency {
  * - Defined in translation files
  */
 export const SUPPORTED_CURRENCIES: Currency[] = [
-    {
-        code: "EUR",
-        name: "Euro",
-        symbol: "€",
-        labelKey: "nav.currencies.EUR",
-    },
-    {
-        code: "USD",
-        name: "US Dollar",
-        symbol: "$",
-        labelKey: "nav.currencies.USD",
-    },
-    {
-        code: "GBP",
-        name: "British Pound",
-        symbol: "£",
-        labelKey: "nav.currencies.GBP",
-    },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€",
+    labelKey: "nav.currencies.EUR",
+  },
+  {
+    code: "USD",
+    name: "US Dollar",
+    symbol: "$",
+    labelKey: "nav.currencies.USD",
+  },
+  {
+    code: "GBP",
+    name: "British Pound",
+    symbol: "£",
+    labelKey: "nav.currencies.GBP",
+  },
 ];
 
 /**
  * Get all supported currency codes
  */
 export const getSupportedCurrencyCodes = (): string[] => {
-    return SUPPORTED_CURRENCIES.map(currency => currency.code);
+  return SUPPORTED_CURRENCIES.map((currency) => currency.code);
 };
 
 /**
@@ -50,7 +50,7 @@ export const getSupportedCurrencyCodes = (): string[] => {
  * These should match the currencies defined above
  */
 export const FALLBACK_EXCHANGE_RATES: Record<string, number> = {
-    EUR: 1,
-    USD: 1.09,
-    GBP: 0.86,
+  EUR: 1,
+  USD: 1.09,
+  GBP: 0.86,
 };

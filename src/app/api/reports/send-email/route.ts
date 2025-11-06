@@ -6,120 +6,104 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface Report {
-    id: number;
-    trackingId: string;
-    title: string;
-    description: string;
-    type: string;
-    priority: string;
-    status: string;
-    email?: string;
-    createdAt: string;
+  id: number;
+  trackingId: string;
+  title: string;
+  description: string;
+  type: string;
+  priority: string;
+  status: string;
+  email?: string;
+  createdAt: string;
 }
 
 export async function POST(request: NextRequest) {
-    try {
-        const { report, emailType = "confirmation" } = await request.json() as {
-            report: Report;
-            emailType?: "confirmation" | "status_update";
-        };
+  try {
+    const { report, emailType = "confirmation" } = (await request.json()) as {
+      report: Report;
+      emailType?: "confirmation" | "status_update";
+    };
 
-        if (!report.email) {
-            return NextResponse.json(
-                { error: "No email address provided" },
-                { status: 400 },
-            );
-        }
-
-        let emailSubject: string;
-        let emailBody: string;
-
-        if (emailType === "status_update") {
-            emailSubject = `WageWatchers Report Update - ${report.trackingId}`;
-            emailBody = generateStatusUpdateEmailHTML(
-                report,
-                request.nextUrl.origin,
-            );
-        } else {
-            emailSubject =
-                `WageWatchers Report Confirmation - ${report.trackingId}`;
-            emailBody = generateEmailHTML(report, request.nextUrl.origin);
-        }
-
-        // Check if Resend is configured
-        if (!process.env.RESEND_API_KEY) {
-            // Fall back to console logging in development
-            console.log("=== RESEND_API_KEY NOT CONFIGURED ===");
-            console.log("To enable email sending:");
-            console.log("1. Sign up at https://resend.com");
-            console.log("2. Get your API key from https://resend.com/api-keys");
-            console.log("3. Add RESEND_API_KEY to your .env.local file");
-            console.log(
-                "4. Configure your domain at https://resend.com/domains",
-            );
-            console.log("\n=== EMAIL WOULD BE SENT ===");
-            console.log("To:", report.email);
-            console.log("Subject:", emailSubject);
-            console.log("===========================\n");
-
-            return NextResponse.json({
-                success: true,
-                message: "Email logging (Resend not configured)",
-            });
-        }
-
-        // Send email using Resend
-        const data = await resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL ||
-                "WageWatchers <onboarding@resend.dev>",
-            to: report.email,
-            subject: emailSubject,
-            html: emailBody,
-        });
-
-        console.log("Email sent successfully:", data);
-
-        return NextResponse.json({
-            success: true,
-            message: "Email sent successfully",
-            data: data.data,
-        });
-    } catch (error) {
-        console.error("Error sending email:", error);
-        return NextResponse.json(
-            { error: "Failed to send email" },
-            { status: 500 },
-        );
+    if (!report.email) {
+      return NextResponse.json({ error: "No email address provided" }, { status: 400 });
     }
+
+    let emailSubject: string;
+    let emailBody: string;
+
+    if (emailType === "status_update") {
+      emailSubject = `WageWatchers Report Update - ${report.trackingId}`;
+      emailBody = generateStatusUpdateEmailHTML(report, request.nextUrl.origin);
+    } else {
+      emailSubject = `WageWatchers Report Confirmation - ${report.trackingId}`;
+      emailBody = generateEmailHTML(report, request.nextUrl.origin);
+    }
+
+    // Check if Resend is configured
+    if (!process.env.RESEND_API_KEY) {
+      // Fall back to console logging in development
+      console.log("=== RESEND_API_KEY NOT CONFIGURED ===");
+      console.log("To enable email sending:");
+      console.log("1. Sign up at https://resend.com");
+      console.log("2. Get your API key from https://resend.com/api-keys");
+      console.log("3. Add RESEND_API_KEY to your .env.local file");
+      console.log("4. Configure your domain at https://resend.com/domains");
+      console.log("\n=== EMAIL WOULD BE SENT ===");
+      console.log("To:", report.email);
+      console.log("Subject:", emailSubject);
+      console.log("===========================\n");
+
+      return NextResponse.json({
+        success: true,
+        message: "Email logging (Resend not configured)",
+      });
+    }
+
+    // Send email using Resend
+    const data = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "WageWatchers <onboarding@resend.dev>",
+      to: report.email,
+      subject: emailSubject,
+      html: emailBody,
+    });
+
+    console.log("Email sent successfully:", data);
+
+    return NextResponse.json({
+      success: true,
+      message: "Email sent successfully",
+      data: data.data,
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+  }
 }
 
-function generateStatusUpdateEmailHTML(
-    report: Report,
-    baseUrl: string,
-): string {
-    const statusUrl = `${baseUrl}/en/status?trackingId=${report.trackingId}`;
+function generateStatusUpdateEmailHTML(report: Report, baseUrl: string): string {
+  const statusUrl = `${baseUrl}/en/status?trackingId=${report.trackingId}`;
 
-    const typeLabels: Record<string, string> = {
-        BUG: "Bug Report",
-        FEATURE: "Feature Request",
-        IMPROVEMENT: "Improvement Suggestion",
-    };
+  const typeLabels: Record<string, string> = {
+    BUG: "Bug Report",
+    FEATURE: "Feature Request",
+    IMPROVEMENT: "Improvement Suggestion",
+  };
 
-    const priorityLabels: Record<string, string> = {
-        LOW: "Low",
-        MEDIUM: "Medium",
-        HIGH: "High",
-        CRITICAL: "Critical",
-    };
+  const priorityLabels: Record<string, string> = {
+    LOW: "Low",
+    MEDIUM: "Medium",
+    HIGH: "High",
+    CRITICAL: "Critical",
+  };
 
-    const statusLabels: Record<string, string> = {
-        TODO: "To Do",
-        IN_PROGRESS: "In Progress",
-        DONE: "Completed",
-        CANCELLED: "Cancelled",
-    };
+  const statusLabels: Record<string, string> = {
+    TODO: "To Do",
+    IN_PROGRESS: "In Progress",
+    DONE: "Completed",
+    CANCELLED: "Cancelled",
+  };
 
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -217,9 +201,11 @@ function generateStatusUpdateEmailHTML(
 
         <div class="status-update">
             <p style="margin: 0 0 8px 0;"><strong>Great news!</strong></p>
-            <p style="margin: 0;">Your ${typeLabels[report.type] || report.type
-        } has been marked as <strong>${statusLabels[report.status] || report.status
-        }</strong>.</p>
+            <p style="margin: 0;">Your ${
+              typeLabels[report.type] || report.type
+            } has been marked as <strong>${
+              statusLabels[report.status] || report.status
+            }</strong>.</p>
         </div>
 
         <div class="tracking-id">
@@ -230,16 +216,17 @@ function generateStatusUpdateEmailHTML(
         <div class="report-details">
             <h3 style="margin-top: 0; color: #1c1917;">Report Details</h3>
             <div class="detail-row">
-                <span class="detail-label">Type:</span> ${typeLabels[report.type] || report.type
-        }
+                <span class="detail-label">Type:</span> ${typeLabels[report.type] || report.type}
             </div>
             <div class="detail-row">
-                <span class="detail-label">Priority:</span> ${priorityLabels[report.priority] || report.priority
-        }
+                <span class="detail-label">Priority:</span> ${
+                  priorityLabels[report.priority] || report.priority
+                }
             </div>
             <div class="detail-row">
-                <span class="detail-label">Status:</span> ${statusLabels[report.status] || report.status
-        }
+                <span class="detail-label">Status:</span> ${
+                  statusLabels[report.status] || report.status
+                }
             </div>
             <div class="detail-row">
                 <span class="detail-label">Title:</span> ${report.title}
@@ -249,11 +236,12 @@ function generateStatusUpdateEmailHTML(
                 ${report.description.replace(/\n/g, "<br>")}
             </div>
             <div class="detail-row">
-                <span class="detail-label">Submitted:</span> ${new Date(report.createdAt).toLocaleString("en-US", {
-            dateStyle: "long",
-            timeStyle: "short",
-        })
-        }
+                <span class="detail-label">Submitted:</span> ${new Date(
+                  report.createdAt
+                ).toLocaleString("en-US", {
+                  dateStyle: "long",
+                  timeStyle: "short",
+                })}
             </div>
         </div>
 
@@ -274,22 +262,22 @@ function generateStatusUpdateEmailHTML(
 }
 
 function generateEmailHTML(report: Report, baseUrl: string): string {
-    const statusUrl = `${baseUrl}/en/status?trackingId=${report.trackingId}`;
+  const statusUrl = `${baseUrl}/en/status?trackingId=${report.trackingId}`;
 
-    const typeLabels: Record<string, string> = {
-        BUG: "Bug Report",
-        FEATURE: "Feature Request",
-        IMPROVEMENT: "Improvement Suggestion",
-    };
+  const typeLabels: Record<string, string> = {
+    BUG: "Bug Report",
+    FEATURE: "Feature Request",
+    IMPROVEMENT: "Improvement Suggestion",
+  };
 
-    const priorityLabels: Record<string, string> = {
-        LOW: "Low",
-        MEDIUM: "Medium",
-        HIGH: "High",
-        CRITICAL: "Critical",
-    };
+  const priorityLabels: Record<string, string> = {
+    LOW: "Low",
+    MEDIUM: "Medium",
+    HIGH: "High",
+    CRITICAL: "Critical",
+  };
 
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -374,7 +362,8 @@ function generateEmailHTML(report: Report, baseUrl: string): string {
 
         <h1 style="color: #1c1917; margin-top: 0;">Thank You for Your Feedback!</h1>
 
-        <p>We've received your ${typeLabels[report.type] || report.type
+        <p>We've received your ${
+          typeLabels[report.type] || report.type
         } and appreciate you taking the time to help us improve WageWatchers.</p>
 
         <div class="tracking-id">
@@ -386,12 +375,12 @@ function generateEmailHTML(report: Report, baseUrl: string): string {
         <div class="report-details">
             <h3 style="margin-top: 0; color: #1c1917;">Report Details</h3>
             <div class="detail-row">
-                <span class="detail-label">Type:</span> ${typeLabels[report.type] || report.type
-        }
+                <span class="detail-label">Type:</span> ${typeLabels[report.type] || report.type}
             </div>
             <div class="detail-row">
-                <span class="detail-label">Priority:</span> ${priorityLabels[report.priority] || report.priority
-        }
+                <span class="detail-label">Priority:</span> ${
+                  priorityLabels[report.priority] || report.priority
+                }
             </div>
             <div class="detail-row">
                 <span class="detail-label">Title:</span> ${report.title}
@@ -401,11 +390,12 @@ function generateEmailHTML(report: Report, baseUrl: string): string {
                 ${report.description.replace(/\n/g, "<br>")}
             </div>
             <div class="detail-row">
-                <span class="detail-label">Submitted:</span> ${new Date(report.createdAt).toLocaleString("en-US", {
-            dateStyle: "long",
-            timeStyle: "short",
-        })
-        }
+                <span class="detail-label">Submitted:</span> ${new Date(
+                  report.createdAt
+                ).toLocaleString("en-US", {
+                  dateStyle: "long",
+                  timeStyle: "short",
+                })}
             </div>
         </div>
 

@@ -3,4 +3,4 @@
  * Centralized export for all domain models
  */
 
-export * from './comment.types';
+export * from "./comment.types";
