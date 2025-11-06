@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const ids = searchParams.get("ids");
 
-        // If specific IDs are requested (for "My Entries" feature)
         if (ids) {
             const entryIds = ids.split(",").map(Number).filter((id) =>
                 !Number.isNaN(id)
@@ -25,8 +24,41 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json([]);
             }
 
-            const entries = await db.select().from(salaryEntries).where(inArray(salaryEntries.id, entryIds)).orderBy(desc(salaryEntries.createdAt));
-            return NextResponse.json(entries);
+            const tokensParam = searchParams.get("tokens");
+            if (!tokensParam) {
+                return NextResponse.json(
+                    { error: "Tokens required for entry verification" },
+                    { status: 401 }
+                );
+            }
+
+            const tokenMap = new Map<number, string>();
+            try {
+                const pairs = tokensParam.split(",");
+                for (const pair of pairs) {
+                    const [id, token] = pair.split(":");
+                    if (id && token) {
+                        tokenMap.set(Number(id), token);
+                    }
+                }
+            } catch (e) {
+                console.error("Token parsing error:", e);
+                return NextResponse.json(
+                    { error: "Invalid tokens format" },
+                    { status: 400 }
+                );
+            }
+
+            const entries = await db.select().from(salaryEntries)
+                .where(inArray(salaryEntries.id, entryIds))
+                .orderBy(desc(salaryEntries.createdAt));
+
+            const validatedEntries = entries.filter((entry) => {
+                const providedToken = tokenMap.get(entry.id);
+                return providedToken && providedToken === entry.ownerToken;
+            });
+
+            return NextResponse.json(validatedEntries);
         }
 
         // Otherwise return only approved entries (default behavior)

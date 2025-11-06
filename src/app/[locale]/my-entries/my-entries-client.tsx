@@ -148,7 +148,24 @@ function MyEntriesContent() {
                 return;
             }
 
-            const res = await fetch(`/api/entries?ids=${entryIds.join(",")}`);
+            // Build tokens parameter: "id1:token1,id2:token2,..."
+            const tokensParam = entryIds
+                .map((id) => {
+                    const token = getEntryToken(id);
+                    return token ? `${id}:${token}` : null;
+                })
+                .filter(Boolean)
+                .join(",");
+
+            if (!tokensParam) {
+                setEntries([]);
+                setIsLoading(false);
+                return;
+            }
+
+            const res = await fetch(
+                `/api/entries?ids=${entryIds.join(",")}&tokens=${encodeURIComponent(tokensParam)}`
+            );
             if (res.ok) {
                 const data = await res.json();
                 setEntries(data);
