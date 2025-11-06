@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, AlertTriangle, Eye } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Eye, User, Briefcase, MapPin, TrendingUp, Clock } from "lucide-react";
 import { AdminAuthGuard } from "@/components/admin-auth-guard";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminEntryDetailModal } from "@/components/admin-entry-detail-modal";
@@ -163,7 +163,7 @@ export default function ReviewPage() {
                 <div className="container mx-auto px-4 py-6">
                     <AdminHeader />
 
-                    <div className="mt-6">
+                    <div className="mt-6 mb-8">
                         <h1 className="text-3xl font-bold mb-2 text-stone-100">Entry Review Queue</h1>
                         <p className="text-stone-400">
                             Review flagged entries and approve or reject them based on anomaly detection analysis.
@@ -172,59 +172,59 @@ export default function ReviewPage() {
 
             {/* Statistics Cards */}
             {stats && (
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                    <Card className="bg-stone-800/50 border-stone-700">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-medium text-stone-400 uppercase tracking-wider">
                                 Total Entries
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total}</div>
+                            <div className="text-3xl font-bold text-stone-100">{stats.total}</div>
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-green-600">
+                    <Card className="bg-green-500/10 border-green-500/20">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-medium text-green-400 uppercase tracking-wider">
                                 Approved
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+                            <div className="text-3xl font-bold text-green-500">{stats.approved}</div>
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-yellow-600">
+                    <Card className="bg-yellow-500/10 border-yellow-500/20">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-medium text-yellow-400 uppercase tracking-wider">
                                 Pending
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+                            <div className="text-3xl font-bold text-yellow-500">{stats.pending}</div>
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-orange-600">
+                    <Card className="bg-orange-500/10 border-orange-500/20">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-medium text-orange-400 uppercase tracking-wider">
                                 Needs Review
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-orange-600">{stats.needsReview}</div>
+                            <div className="text-3xl font-bold text-orange-500">{stats.needsReview}</div>
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-red-600">
+                    <Card className="bg-red-500/10 border-red-500/20">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-xs font-medium text-red-400 uppercase tracking-wider">
                                 Rejected
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+                            <div className="text-3xl font-bold text-red-500">{stats.rejected}</div>
                         </CardContent>
                     </Card>
                 </div>
@@ -232,97 +232,145 @@ export default function ReviewPage() {
 
             {/* Entries List */}
             {entries.length === 0 ? (
-                <Card>
+                <Card className="bg-stone-800/50 border-stone-700">
                     <CardContent className="pt-6">
-                        <div className="text-center text-muted-foreground">
-                            <CheckCircle className="mx-auto h-12 w-12 mb-2" />
-                            <p>No entries pending review. Great job!</p>
+                        <div className="text-center py-8">
+                            <div className="mx-auto w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
+                                <CheckCircle className="h-8 w-8 text-green-500" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-stone-100 mb-2">All Clear!</h3>
+                            <p className="text-stone-400">No entries pending review. Great job!</p>
                         </div>
                     </CardContent>
                 </Card>
             ) : (
                 <div className="space-y-4">
                     {entries.map((entry) => (
-                        <Card key={entry.id}>
-                            <CardHeader>
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <CardTitle className="text-xl mb-2">
-                                            {entry.jobTitle || "Untitled Position"}
-                                        </CardTitle>
-                                        <CardDescription className="flex flex-col gap-1">
-                                            <span>Submitted: {new Date(entry.createdAt).toLocaleDateString()} at {new Date(entry.createdAt).toLocaleTimeString()}</span>
-                                        </CardDescription>
-                                    </div>
-                                    <div className="flex flex-col gap-2 items-end">
-                                        {getAnomalyBadge(entry.anomalyScore)}
-                                        <Badge variant={entry.reviewStatus === "NEEDS_REVIEW" ? "destructive" : "secondary"}>
-                                            {entry.reviewStatus}
-                                        </Badge>
+                        <Card key={entry.id} className="bg-stone-800/50 border-stone-700 hover:border-stone-600 transition-colors">
+                            <CardHeader className="pb-4">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                            <CardTitle className="text-xl text-stone-100">
+                                                {entry.jobTitle || "Untitled Position"}
+                                            </CardTitle>
+                                            <Badge
+                                                variant={entry.reviewStatus === "NEEDS_REVIEW" ? "destructive" : "secondary"}
+                                                className="shrink-0"
+                                            >
+                                                {entry.reviewStatus.replace("_", " ")}
+                                            </Badge>
+                                            {getAnomalyBadge(entry.anomalyScore)}
+                                        </div>
+                                        <div className="flex items-center gap-4 text-sm text-stone-400 flex-wrap">
+                                            <span className="flex items-center gap-1">
+                                                <Clock className="h-3.5 w-3.5" />
+                                                {new Date(entry.createdAt).toLocaleDateString()} at {new Date(entry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                            {entry.country && (
+                                                <span className="flex items-center gap-1">
+                                                    <MapPin className="h-3.5 w-3.5" />
+                                                    {entry.country}
+                                                </span>
+                                            )}
+                                            {entry.sector && (
+                                                <span className="flex items-center gap-1">
+                                                    <Briefcase className="h-3.5 w-3.5" />
+                                                    {entry.sector}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Gross Salary</p>
-                                        <p className="font-semibold text-lg">
+                            <CardContent className="pt-0 space-y-4">
+                                {/* Key Metrics */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-stone-900/50 rounded-lg border border-stone-700/50">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <TrendingUp className="h-4 w-4 text-green-500" />
+                                            <span className="text-xs font-medium text-stone-400">Gross Salary</span>
+                                        </div>
+                                        <p className="text-lg font-bold text-stone-100">
                                             {formatCurrency(entry.grossSalary, entry.currency)}
                                         </p>
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Country</p>
-                                        <p className="font-semibold">{entry.country || "N/A"}</p>
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <MapPin className="h-4 w-4 text-blue-500" />
+                                            <span className="text-xs font-medium text-stone-400">Location</span>
+                                        </div>
+                                        <p className="text-lg font-semibold text-stone-100 truncate">
+                                            {entry.country || "N/A"}
+                                        </p>
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Sector</p>
-                                        <p className="font-semibold">{entry.sector || "N/A"}</p>
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <Briefcase className="h-4 w-4 text-purple-500" />
+                                            <span className="text-xs font-medium text-stone-400">Sector</span>
+                                        </div>
+                                        <p className="text-lg font-semibold text-stone-100 truncate">
+                                            {entry.sector || "N/A"}
+                                        </p>
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Experience</p>
-                                        <p className="font-semibold">
-                                            {entry.workExperience === null ? "N/A" : `${entry.workExperience} years`}
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <User className="h-4 w-4 text-orange-500" />
+                                            <span className="text-xs font-medium text-stone-400">Experience</span>
+                                        </div>
+                                        <p className="text-lg font-semibold text-stone-100">
+                                            {entry.workExperience === null ? "N/A" : `${entry.workExperience} yrs`}
                                         </p>
                                     </div>
                                 </div>
 
+                                {/* Anomaly Reason - Only if present */}
                                 {entry.anomalyReason && (
-                                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
-                                        <div className="flex gap-2">
-                                            <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
-                                            <div>
-                                                <p className="font-semibold text-yellow-900 text-sm mb-1">
-                                                    Anomaly Detection Reason
+                                    <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                                        <div className="flex gap-3">
+                                            <div className="shrink-0">
+                                                <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                                                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-semibold text-yellow-200 text-sm mb-1">
+                                                    Anomaly Detection Alert
                                                 </p>
-                                                <p className="text-sm text-yellow-800">{entry.anomalyReason}</p>
+                                                <p className="text-sm text-yellow-100/80 leading-relaxed">
+                                                    {entry.anomalyReason}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="flex gap-2 justify-end">
+                                {/* Action Buttons */}
+                                <div className="flex gap-2 justify-end pt-2">
                                     <Button
                                         variant="outline"
                                         onClick={() => handleViewDetails(entry.id)}
+                                        className="border-stone-600 hover:border-stone-500 hover:bg-stone-800"
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
-                                        View Details
+                                        View Full Details
                                     </Button>
                                     <Button
                                         variant="destructive"
                                         onClick={() => handleAction(entry.id, "reject")}
                                         disabled={processingId === entry.id}
+                                        className="bg-red-500/20 hover:bg-red-500/30 border-red-500/30 text-red-200 hover:text-red-100"
                                     >
                                         <XCircle className="mr-2 h-4 w-4" />
-                                        Reject
+                                        {processingId === entry.id ? "Processing..." : "Reject"}
                                     </Button>
                                     <Button
-                                        variant="default"
                                         onClick={() => handleAction(entry.id, "approve")}
                                         disabled={processingId === entry.id}
+                                        className="bg-green-500/20 hover:bg-green-500/30 border-green-500/30 text-green-200 hover:text-green-100"
                                     >
                                         <CheckCircle className="mr-2 h-4 w-4" />
-                                        Approve
+                                        {processingId === entry.id ? "Processing..." : "Approve"}
                                     </Button>
                                 </div>
                             </CardContent>
