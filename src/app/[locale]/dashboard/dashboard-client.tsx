@@ -39,11 +39,15 @@ import {
 import { FiltersModal } from "@/components/filters-modal";
 import { ActiveFiltersDisplay } from "@/components/active-filters-display";
 import { useFilters } from "@/hooks/use-filters";
+import { formatNumber, formatDate } from "@/lib/utils";
 import {
-    formatNumber,
-    formatDate,
+    sortEntries,
+    toggleSortDirection,
+    paginateItems,
+    calculateTotalPages,
 } from "@/lib/utils";
 import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
+import { fetchAllEntries } from "@/lib/services/entry.service";
 import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
@@ -71,10 +75,18 @@ export function DashboardClient({
         selectedCountries: searchParams.get("countries")?.split(",") || [],
         selectedSectors: searchParams.get("sectors")?.split(",") || [],
         selectedCities: searchParams.get("cities")?.split(",") || [],
-        minAge: searchParams.get("minAge") ? Number.parseInt(searchParams.get("minAge")!, 10) : null,
-        maxAge: searchParams.get("maxAge") ? Number.parseInt(searchParams.get("maxAge")!, 10) : null,
-        minWorkExperience: searchParams.get("minWorkExperience") ? Number.parseInt(searchParams.get("minWorkExperience")!, 10) : null,
-        maxWorkExperience: searchParams.get("maxWorkExperience") ? Number.parseInt(searchParams.get("maxWorkExperience")!, 10) : null,
+        minAge: searchParams.get("minAge")
+            ? Number.parseInt(searchParams.get("minAge")!, 10)
+            : null,
+        maxAge: searchParams.get("maxAge")
+            ? Number.parseInt(searchParams.get("maxAge")!, 10)
+            : null,
+        minWorkExperience: searchParams.get("minWorkExperience")
+            ? Number.parseInt(searchParams.get("minWorkExperience")!, 10)
+            : null,
+        maxWorkExperience: searchParams.get("maxWorkExperience")
+            ? Number.parseInt(searchParams.get("maxWorkExperience")!, 10)
+            : null,
         searchQuery: searchParams.get("search") || "",
     };
 
@@ -111,7 +123,13 @@ export function DashboardClient({
     const [loading, setLoading] = useState<boolean>(true);
 
     // Use shared filters hook
-    const { filters, actions, filteredEntries: filteredByFilters, activeFilterCount, options } = useFilters(entries, initialFilters);
+    const {
+        filters,
+        actions,
+        filteredEntries: filteredByFilters,
+        activeFilterCount,
+        options,
+    } = useFilters(entries, initialFilters);
 
     // Extract filter values for easier access
     const {
@@ -146,11 +164,8 @@ export function DashboardClient({
     useEffect(() => {
         const fetchEntries = async () => {
             try {
-                const response = await fetch("/api/entries");
-                if (response.ok) {
-                    const data = await response.json();
-                    setEntries(data);
-                }
+                const data = await fetchAllEntries();
+                setEntries(data);
             } catch (error) {
                 console.error("Failed to fetch entries:", error);
             } finally {
@@ -224,12 +239,18 @@ export function DashboardClient({
             }
             if (updates.minWorkExperience !== undefined) {
                 updates.minWorkExperience !== null
-                    ? params.set("minWorkExperience", updates.minWorkExperience.toString())
+                    ? params.set(
+                          "minWorkExperience",
+                          updates.minWorkExperience.toString()
+                      )
                     : params.delete("minWorkExperience");
             }
             if (updates.maxWorkExperience !== undefined) {
                 updates.maxWorkExperience !== null
-                    ? params.set("maxWorkExperience", updates.maxWorkExperience.toString())
+                    ? params.set(
+                          "maxWorkExperience",
+                          updates.maxWorkExperience.toString()
+                      )
                     : params.delete("maxWorkExperience");
             }
             updateStringParam("search", updates.search);
@@ -314,7 +335,16 @@ export function DashboardClient({
     // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCountries, selectedSectors, selectedCities, minAge, maxAge, minWorkExperience, maxWorkExperience, debouncedSearch]);
+    }, [
+        selectedCountries,
+        selectedSectors,
+        selectedCities,
+        minAge,
+        maxAge,
+        minWorkExperience,
+        maxWorkExperience,
+        debouncedSearch,
+    ]);
 
     // Mobile detection
     useEffect(() => {
@@ -325,87 +355,32 @@ export function DashboardClient({
         checkIsMobile();
         globalThis.window.addEventListener("resize", checkIsMobile);
 
-        return () => globalThis.window.removeEventListener("resize", checkIsMobile);
+        return () =>
+            globalThis.window.removeEventListener("resize", checkIsMobile);
     }, []);
 
     // Handle column sorting
     const handleSort = (field: SortField) => {
-        if (sortField === field) {
-            // Toggle direction: asc -> desc -> null
-            if (sortDirection === "asc") {
-                setSortDirection("desc");
-            } else if (sortDirection === "desc") {
-                setSortDirection(null);
-                setSortField(null);
-            }
-        } else {
-            // New field, start with ascending
-            setSortField(field);
-            setSortDirection("asc");
-        }
+        const { field: newField, direction: newDirection } =
+            toggleSortDirection(sortField, sortDirection, field);
+        setSortField(newField);
+        setSortDirection(newDirection);
     };
 
-    // Extract filter options for backward compatibility
     // Apply sorting to filtered entries
     const sortedEntries = useMemo(() => {
-        if (!sortField || !sortDirection) {
-            return filteredByFilters;
-        }
-
-        const sorted = [...filteredByFilters].sort((a, b) => {
-            // Map sort fields to actual database fields
-            let aValue: any;
-            let bValue: any;
-
-            switch (sortField) {
-                case "experience":
-                    aValue = a.workExperience;
-                    bValue = b.workExperience;
-                    break;
-                case "grossSalary":
-                    aValue = a.grossSalary;
-                    bValue = b.grossSalary;
-                    break;
-                case "netSalary":
-                    aValue = a.netSalary;
-                    bValue = b.netSalary;
-                    break;
-                case "age":
-                    aValue = a.age;
-                    bValue = b.age;
-                    break;
-                case "createdAt":
-                    aValue = new Date(a.createdAt).getTime();
-                    bValue = new Date(b.createdAt).getTime();
-                    break;
-                default:
-                    return 0;
-            }
-
-            // Handle null/undefined values
-            aValue ??= "";
-            bValue ??= "";
-
-            // Compare based on type
-            if (typeof aValue === "number" && typeof bValue === "number") {
-                return sortDirection === "asc"
-                    ? aValue - bValue
-                    : bValue - aValue;
-            } else {
-                // String comparison
-                const comparison = String(aValue).localeCompare(String(bValue));
-                return sortDirection === "asc" ? comparison : -comparison;
-            }
-        });
-
-        return sorted;
+        return sortEntries(filteredByFilters, sortField, sortDirection);
     }, [filteredByFilters, sortField, sortDirection]);
 
     // Pagination logic
-    const totalPages = Math.ceil(sortedEntries.length / rowsPerPage);
+    const totalPages = calculateTotalPages(sortedEntries.length, rowsPerPage);
+    const paginatedEntries = paginateItems(
+        sortedEntries,
+        currentPage,
+        rowsPerPage
+    );
     const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const paginatedEntries = sortedEntries.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + rowsPerPage, sortedEntries.length);
 
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
@@ -414,9 +389,7 @@ export function DashboardClient({
     // Render sort icon helper
     const getSortIcon = (field: SortField) => {
         if (sortField !== field) {
-            return (
-                <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            );
+            return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
         }
         if (sortDirection === "asc") {
             return <ArrowUp className="ml-2 h-4 w-4 shrink-0" />;
@@ -424,9 +397,7 @@ export function DashboardClient({
         if (sortDirection === "desc") {
             return <ArrowDown className="ml-2 h-4 w-4 shrink-0" />;
         }
-        return (
-            <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        );
+        return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
     };
 
     return (
@@ -471,7 +442,10 @@ export function DashboardClient({
                 {loading ? (
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
                         {Array.from({ length: 4 }).map((_, i) => (
-                            <Card key={`skeleton-${i}`} className="bg-stone-800 border-stone-700">
+                            <Card
+                                key={`skeleton-${i}`}
+                                className="bg-stone-800 border-stone-700"
+                            >
                                 <CardHeader>
                                     <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
                                 </CardHeader>
@@ -507,16 +481,17 @@ export function DashboardClient({
                                     title={(() => {
                                         if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const sectorCounts = filteredByFilters.reduce(
-                                            (acc, e) => {
-                                                const sector =
-                                                    e.sector || "Unknown";
-                                                acc[sector] =
-                                                    (acc[sector] || 0) + 1;
-                                                return acc;
-                                            },
-                                            {} as Record<string, number>
-                                        );
+                                        const sectorCounts =
+                                            filteredByFilters.reduce(
+                                                (acc, e) => {
+                                                    const sector =
+                                                        e.sector || "Unknown";
+                                                    acc[sector] =
+                                                        (acc[sector] || 0) + 1;
+                                                    return acc;
+                                                },
+                                                {} as Record<string, number>
+                                            );
                                         const topSector = Object.entries(
                                             sectorCounts
                                         ).sort((a, b) => b[1] - a[1])[0];
@@ -528,16 +503,17 @@ export function DashboardClient({
                                     {(() => {
                                         if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const sectorCounts = filteredByFilters.reduce(
-                                            (acc, e) => {
-                                                const sector =
-                                                    e.sector || "Unknown";
-                                                acc[sector] =
-                                                    (acc[sector] || 0) + 1;
-                                                return acc;
-                                            },
-                                            {} as Record<string, number>
-                                        );
+                                        const sectorCounts =
+                                            filteredByFilters.reduce(
+                                                (acc, e) => {
+                                                    const sector =
+                                                        e.sector || "Unknown";
+                                                    acc[sector] =
+                                                        (acc[sector] || 0) + 1;
+                                                    return acc;
+                                                },
+                                                {} as Record<string, number>
+                                            );
                                         const topSector = Object.entries(
                                             sectorCounts
                                         ).sort((a, b) => b[1] - a[1])[0];
@@ -559,40 +535,44 @@ export function DashboardClient({
                                     {(() => {
                                         if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const salariesWithCurrency = filteredByFilters
-                                            .map((e) => ({
-                                                salary: e.grossSalary,
-                                                currency: e.currency,
-                                            }))
-                                            .filter(
-                                                (
-                                                    s
-                                                ): s is {
-                                                    salary: number;
-                                                    currency: string | null;
-                                                } =>
-                                                    s.salary !== null &&
-                                                    s.salary !== undefined
-                                            );
+                                        const salariesWithCurrency =
+                                            filteredByFilters
+                                                .map((e) => ({
+                                                    salary: e.grossSalary,
+                                                    currency: e.currency,
+                                                }))
+                                                .filter(
+                                                    (
+                                                        s
+                                                    ): s is {
+                                                        salary: number;
+                                                        currency: string | null;
+                                                    } =>
+                                                        s.salary !== null &&
+                                                        s.salary !== undefined
+                                                );
                                         if (salariesWithCurrency.length === 0)
                                             return "N/A";
 
                                         // Convert all salaries to the display currency and period
-                                        const convertedSalaries = salariesWithCurrency.map(s => {
-                                            const converted = convertCurrency(
-                                                s.salary,
-                                                s.currency,
-                                                preferences.currency
-                                            );
-                                            return convertPeriod(
-                                                converted,
-                                                "monthly",
-                                                preferences.period
-                                            );
-                                        });
+                                        const convertedSalaries =
+                                            salariesWithCurrency.map((s) => {
+                                                const converted =
+                                                    convertCurrency(
+                                                        s.salary,
+                                                        s.currency,
+                                                        preferences.currency
+                                                    );
+                                                return convertPeriod(
+                                                    converted,
+                                                    "monthly",
+                                                    preferences.period
+                                                );
+                                            });
 
                                         // Calculate median using d3-array
-                                        const medianValue = median(convertedSalaries) ?? 0;
+                                        const medianValue =
+                                            median(convertedSalaries) ?? 0;
 
                                         return formatSalaryWithPreferences(
                                             Math.round(medianValue),
@@ -618,21 +598,22 @@ export function DashboardClient({
                                     {(() => {
                                         if (filteredByFilters.length === 0)
                                             return "N/A";
-                                        const salariesWithCurrency = filteredByFilters
-                                            .map((e) => ({
-                                                salary: e.grossSalary,
-                                                currency: e.currency,
-                                            }))
-                                            .filter(
-                                                (
-                                                    s
-                                                ): s is {
-                                                    salary: number;
-                                                    currency: string | null;
-                                                } =>
-                                                    s.salary !== null &&
-                                                    s.salary !== undefined
-                                            );
+                                        const salariesWithCurrency =
+                                            filteredByFilters
+                                                .map((e) => ({
+                                                    salary: e.grossSalary,
+                                                    currency: e.currency,
+                                                }))
+                                                .filter(
+                                                    (
+                                                        s
+                                                    ): s is {
+                                                        salary: number;
+                                                        currency: string | null;
+                                                    } =>
+                                                        s.salary !== null &&
+                                                        s.salary !== undefined
+                                                );
                                         if (salariesWithCurrency.length === 0)
                                             return "N/A";
 
@@ -640,11 +621,12 @@ export function DashboardClient({
                                         const convertedSalaries =
                                             salariesWithCurrency
                                                 .map((s) => {
-                                                    const currencyConverted = convertCurrency(
-                                                        s.salary,
-                                                        s.currency,
-                                                        preferences.currency
-                                                    );
+                                                    const currencyConverted =
+                                                        convertCurrency(
+                                                            s.salary,
+                                                            s.currency,
+                                                            preferences.currency
+                                                        );
                                                     // Convert period (assuming source is monthly)
                                                     return convertPeriod(
                                                         currencyConverted,
@@ -652,13 +634,19 @@ export function DashboardClient({
                                                         preferences.period
                                                     );
                                                 })
-                                                .filter((n) => !Number.isNaN(n));
+                                                .filter(
+                                                    (n) => !Number.isNaN(n)
+                                                );
 
                                         if (convertedSalaries.length === 0)
                                             return "N/A";
 
-                                        const min = Math.min(...convertedSalaries);
-                                        const max = Math.max(...convertedSalaries);
+                                        const min = Math.min(
+                                            ...convertedSalaries
+                                        );
+                                        const max = Math.max(
+                                            ...convertedSalaries
+                                        );
 
                                         const minFormatted =
                                             formatSalaryWithPreferences(
@@ -723,8 +711,12 @@ export function DashboardClient({
                                     onMaxAgeChange={setMaxAge}
                                     minWorkExperience={minWorkExperience}
                                     maxWorkExperience={maxWorkExperience}
-                                    onMinWorkExperienceChange={setMinWorkExperience}
-                                    onMaxWorkExperienceChange={setMaxWorkExperience}
+                                    onMinWorkExperienceChange={
+                                        setMinWorkExperience
+                                    }
+                                    onMaxWorkExperienceChange={
+                                        setMaxWorkExperience
+                                    }
                                     activeFilterCount={activeFilterCount}
                                 />
 
@@ -765,30 +757,48 @@ export function DashboardClient({
                                         value: sector,
                                         category: "sector" as const,
                                     })),
-                                    ...(minAge !== null ? [{
-                                        id: `min-age-${minAge}`,
-                                        label: `${t("filters.minAge")}: ${minAge}`,
-                                        value: minAge.toString(),
-                                        category: "age" as const,
-                                    }] : []),
-                                    ...(maxAge !== null ? [{
-                                        id: `max-age-${maxAge}`,
-                                        label: `${t("filters.maxAge")}: ${maxAge}`,
-                                        value: maxAge.toString(),
-                                        category: "age" as const,
-                                    }] : []),
-                                    ...(minWorkExperience !== null ? [{
-                                        id: `min-work-experience-${minWorkExperience}`,
-                                        label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
-                                        value: minWorkExperience.toString(),
-                                        category: "workExperience" as const,
-                                    }] : []),
-                                    ...(maxWorkExperience !== null ? [{
-                                        id: `max-work-experience-${maxWorkExperience}`,
-                                        label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
-                                        value: maxWorkExperience.toString(),
-                                        category: "workExperience" as const,
-                                    }] : []),
+                                    ...(minAge !== null
+                                        ? [
+                                              {
+                                                  id: `min-age-${minAge}`,
+                                                  label: `${t("filters.minAge")}: ${minAge}`,
+                                                  value: minAge.toString(),
+                                                  category: "age" as const,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(maxAge !== null
+                                        ? [
+                                              {
+                                                  id: `max-age-${maxAge}`,
+                                                  label: `${t("filters.maxAge")}: ${maxAge}`,
+                                                  value: maxAge.toString(),
+                                                  category: "age" as const,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(minWorkExperience !== null
+                                        ? [
+                                              {
+                                                  id: `min-work-experience-${minWorkExperience}`,
+                                                  label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
+                                                  value: minWorkExperience.toString(),
+                                                  category:
+                                                      "workExperience" as const,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(maxWorkExperience !== null
+                                        ? [
+                                              {
+                                                  id: `max-work-experience-${maxWorkExperience}`,
+                                                  label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
+                                                  value: maxWorkExperience.toString(),
+                                                  category:
+                                                      "workExperience" as const,
+                                              },
+                                          ]
+                                        : []),
                                 ]}
                                 onRemoveFilter={(value, category) => {
                                     if (category === "country") {
@@ -810,15 +820,29 @@ export function DashboardClient({
                                             )
                                         );
                                     } else if (category === "age") {
-                                        if (minAge !== null && minAge.toString() === value) {
+                                        if (
+                                            minAge !== null &&
+                                            minAge.toString() === value
+                                        ) {
                                             setMinAge(null);
-                                        } else if (maxAge !== null && maxAge.toString() === value) {
+                                        } else if (
+                                            maxAge !== null &&
+                                            maxAge.toString() === value
+                                        ) {
                                             setMaxAge(null);
                                         }
                                     } else if (category === "workExperience") {
-                                        if (minWorkExperience !== null && minWorkExperience.toString() === value) {
+                                        if (
+                                            minWorkExperience !== null &&
+                                            minWorkExperience.toString() ===
+                                                value
+                                        ) {
                                             setMinWorkExperience(null);
-                                        } else if (maxWorkExperience !== null && maxWorkExperience.toString() === value) {
+                                        } else if (
+                                            maxWorkExperience !== null &&
+                                            maxWorkExperience.toString() ===
+                                                value
+                                        ) {
                                             setMaxWorkExperience(null);
                                         }
                                     }
@@ -917,19 +941,41 @@ export function DashboardClient({
                                 </TableHeader>
                                 <TableBody>
                                     {loading ? (
-                                        Array.from({ length: rowsPerPage }).map((_, i) => (
-                                            <TableRow key={`skeleton-row-${i}`}>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                                <TableCell><div className="h-4 bg-stone-700 rounded animate-pulse"></div></TableCell>
-                                            </TableRow>
-                                        ))
+                                        Array.from({ length: rowsPerPage }).map(
+                                            (_, i) => (
+                                                <TableRow
+                                                    key={`skeleton-row-${i}`}
+                                                >
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        )
                                     ) : filteredByFilters.length === 0 ? (
                                         <TableRow>
                                             <TableCell
@@ -956,7 +1002,10 @@ export function DashboardClient({
                                                         className="border-stone-600 text-stone-300 w-fit"
                                                     >
                                                         {entry.country
-                                                            ? formatCityDisplay(entry.country, entry.workCity)
+                                                            ? formatCityDisplay(
+                                                                  entry.country,
+                                                                  entry.workCity
+                                                              )
                                                             : "N/A"}
                                                     </Badge>
                                                 </TableCell>
@@ -972,14 +1021,14 @@ export function DashboardClient({
                                                 <TableCell className="text-stone-300">
                                                     {entry.workExperience !==
                                                         null &&
-                                                        entry.workExperience !==
+                                                    entry.workExperience !==
                                                         undefined
                                                         ? `${entry.workExperience} ${t("table.years")}`
                                                         : "N/A"}
                                                 </TableCell>
                                                 <TableCell className="text-stone-300">
                                                     {entry.age !== null &&
-                                                        entry.age !== undefined
+                                                    entry.age !== undefined
                                                         ? `${entry.age} ${t("table.years")}`
                                                         : "N/A"}
                                                 </TableCell>
@@ -1127,7 +1176,7 @@ export function DashboardClient({
                                                 } else if (
                                                     currentPage >=
                                                     totalPages -
-                                                    Math.floor(maxPages / 2)
+                                                        Math.floor(maxPages / 2)
                                                 ) {
                                                     pageNum =
                                                         totalPages -
@@ -1148,7 +1197,7 @@ export function DashboardClient({
                                                         key={pageNum}
                                                         variant={
                                                             currentPage ===
-                                                                pageNum
+                                                            pageNum
                                                                 ? "default"
                                                                 : "outline"
                                                         }
@@ -1158,11 +1207,12 @@ export function DashboardClient({
                                                                 pageNum
                                                             )
                                                         }
-                                                        className={`w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm ${currentPage ===
+                                                        className={`w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm ${
+                                                            currentPage ===
                                                             pageNum
-                                                            ? "bg-stone-100 text-stone-900"
-                                                            : "bg-stone-700 border-stone-600 text-stone-100"
-                                                            }`}
+                                                                ? "bg-stone-100 text-stone-900"
+                                                                : "bg-stone-700 border-stone-600 text-stone-100"
+                                                        }`}
                                                     >
                                                         {pageNum}
                                                     </Button>

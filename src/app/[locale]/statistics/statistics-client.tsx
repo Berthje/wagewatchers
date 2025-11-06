@@ -26,6 +26,7 @@ import {
     LocationHeatmapChart,
 } from "@/components/statistics";
 import { exportToCSV, exportToPDF } from "@/lib/utils/export.utils";
+import { fetchAllEntries } from "@/lib/services/entry.service";
 
 interface SectorData {
     sector: string;
@@ -96,7 +97,8 @@ export default function StatisticsClient() {
     const [loading, setLoading] = useState<boolean>(true);
 
     // Use shared filters hook
-    const { filters, actions, filteredEntries, activeFilterCount, options } = useFilters(allEntries);
+    const { filters, actions, filteredEntries, activeFilterCount, options } =
+        useFilters(allEntries);
 
     // Extract filter values for easier access
     const {
@@ -141,8 +143,7 @@ export default function StatisticsClient() {
 
     // Fetch all entries on mount
     useEffect(() => {
-        fetch("/api/entries")
-            .then((res) => res.json())
+        fetchAllEntries()
             .then((entries: SalaryEntry[]) => {
                 setAllEntries(entries);
                 setLoading(false);

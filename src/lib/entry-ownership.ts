@@ -45,6 +45,24 @@ export function isEntryEditable(editableUntil: Date | null): boolean {
 }
 
 /**
+ * Get edit status information for an entry
+ * Returns whether entry is editable and hours remaining
+ */
+export function getEditStatus(
+    editableUntil: Date | null,
+): { editable: boolean; hoursLeft: number } {
+    const editable = isEntryEditable(editableUntil);
+    if (!editable || !editableUntil) {
+        return { editable: false, hoursLeft: 0 };
+    }
+
+    const hoursLeft = Math.ceil(
+        (new Date(editableUntil).getTime() - Date.now()) / (1000 * 60 * 60),
+    );
+    return { editable: true, hoursLeft };
+}
+
+/**
  * Client-side: Store an entry token in localStorage
  */
 export function storeEntryToken(entryId: number, token: string): void {
@@ -132,18 +150,29 @@ export function clearAllEntryTokens(): void {
 /**
  * Verify an owner token (JWT or legacy plain token)
  */
-export function verifyOwnerToken(token: string, entryId: number, storedToken: string | null, editableUntil: Date | null): boolean {
+export function verifyOwnerToken(
+    token: string,
+    entryId: number,
+    storedToken: string | null,
+    editableUntil: Date | null,
+): boolean {
     if (!JWT_SECRET) {
         // If no JWT_SECRET, fall back to legacy comparison
-        return !!storedToken && token === storedToken && isEntryEditable(editableUntil);
+        return !!storedToken && token === storedToken &&
+            isEntryEditable(editableUntil);
     }
     try {
         // Try to verify as JWT
-        const decoded = jwt.verify(token, JWT_SECRET) as { entryId: number; editableUntil: string };
+        const decoded = jwt.verify(token, JWT_SECRET) as {
+            entryId: number;
+            editableUntil: string;
+        };
         // Check if entryId matches and still editable
-        return decoded.entryId === entryId && isEntryEditable(new Date(decoded.editableUntil));
+        return decoded.entryId === entryId &&
+            isEntryEditable(new Date(decoded.editableUntil));
     } catch {
         // If JWT verification fails, fall back to legacy plain token comparison
-        return !!storedToken && token === storedToken && isEntryEditable(editableUntil);
+        return !!storedToken && token === storedToken &&
+            isEntryEditable(editableUntil);
     }
 }

@@ -14,6 +14,7 @@ import {
     isEntryEditable,
     verifyOwnerToken,
 } from "@/lib/entry-ownership";
+import { fetchEntryById } from "@/lib/services";
 
 export default function EditEntryClient() {
     const params = useParams();
@@ -53,17 +54,17 @@ export default function EditEntryClient() {
                 }
 
                 // Fetch the entry
-                const res = await fetch(`/api/entries/${entryId}`);
-                if (!res.ok) {
-                    setError(t("errors.notFound"));
-                    setIsLoading(false);
-                    return;
-                }
-
-                const data: SalaryEntry = await res.json();
+                const data = await fetchEntryById(entryId);
 
                 // Verify ownership using proper token verification
-                if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
+                if (
+                    !verifyOwnerToken(
+                        token,
+                        entryId,
+                        data.ownerToken,
+                        data.editableUntil
+                    )
+                ) {
                     setError(t("errors.notOwner"));
                     setIsLoading(false);
                     return;
@@ -128,7 +129,9 @@ export default function EditEntryClient() {
                             <div className="space-x-4">
                                 <Button
                                     variant="outline"
-                                    onClick={() => router.push(`/${locale}/my-entries`)}
+                                    onClick={() =>
+                                        router.push(`/${locale}/my-entries`)
+                                    }
                                 >
                                     {t("goBack")}
                                 </Button>

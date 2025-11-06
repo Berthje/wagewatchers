@@ -17,7 +17,12 @@ import {
 } from "@/components/ui/tooltip";
 import { shouldDisplayField } from "@/lib/salary-config";
 import { createFieldConfigs } from "@/lib/field-configs";
-import { getFieldDisplayValue, getCurrencySymbol, createCityDisplayFormatter } from "@/lib/utils/format.utils";
+import {
+    getFieldDisplayValue,
+    getCurrencySymbol,
+    createCityDisplayFormatter,
+    formatDate,
+} from "@/lib/utils/format.utils";
 import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
@@ -69,20 +74,6 @@ export function EntryDetailClient({
     const [comments, setComments] = useState<Comment[]>([]);
     const [commentsLoading, setCommentsLoading] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
-
-    const formatDate = (date: Date): string => {
-        const dateObj = new Date(date);
-        const dateStr = dateObj.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-        const timeStr = dateObj.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-        return `${dateStr} at ${timeStr}`;
-    };
 
     // Helper to check if field should be displayed for this entry's country
     const shouldShow = (fieldName: string): boolean => {
@@ -206,7 +197,10 @@ export function EntryDetailClient({
                                 className="border-stone-600 text-stone-300"
                             >
                                 <MapPin className="mr-1 h-3 w-3" />
-                                {formatCityDisplay(entry.country, entry.workCity)}
+                                {formatCityDisplay(
+                                    entry.country,
+                                    entry.workCity
+                                )}
                             </Badge>
                         )}
                         {entry.sector && (
@@ -308,24 +302,39 @@ export function EntryDetailClient({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InfoItem
                                 label={t("age")}
-                                value={entry.age !== null && entry.age !== undefined ? `${entry.age} ${t("years")}` : undefined}
+                                value={
+                                    entry.age !== null &&
+                                    entry.age !== undefined
+                                        ? `${entry.age} ${t("years")}`
+                                        : undefined
+                                }
                             />
                             <InfoItem
                                 label={t("education")}
-                                value={getFieldDisplayValue("education", entry.education, fieldConfigs, tAdd)}
+                                value={getFieldDisplayValue(
+                                    "education",
+                                    entry.education,
+                                    fieldConfigs,
+                                    tAdd
+                                )}
                             />
                             <InfoItem
                                 label={t("workExperience")}
                                 value={
                                     entry.workExperience !== null &&
-                                        entry.workExperience !== undefined
+                                    entry.workExperience !== undefined
                                         ? `${entry.workExperience} ${t("years")}`
                                         : undefined
                                 }
                             />
                             <InfoItem
                                 label={t("civilStatus")}
-                                value={getFieldDisplayValue("civilStatus", entry.civilStatus, fieldConfigs, tAdd)}
+                                value={getFieldDisplayValue(
+                                    "civilStatus",
+                                    entry.civilStatus,
+                                    fieldConfigs,
+                                    tAdd
+                                )}
                             />
                             <InfoItem
                                 label={t("dependents")}
@@ -351,20 +360,30 @@ export function EntryDetailClient({
                             />
                             <InfoItem
                                 label={t("sector")}
-                                value={getFieldDisplayValue("sector", entry.sector, fieldConfigs, tAdd)}
+                                value={getFieldDisplayValue(
+                                    "sector",
+                                    entry.sector,
+                                    fieldConfigs,
+                                    tAdd
+                                )}
                             />
                             <InfoItem
                                 label={t("seniority")}
                                 value={
                                     entry.seniority !== null &&
-                                        entry.seniority !== undefined
+                                    entry.seniority !== undefined
                                         ? `${entry.seniority} ${t("years")}`
                                         : undefined
                                 }
                             />
                             <InfoItem
                                 label={t("employeeCount")}
-                                value={getFieldDisplayValue("employeeCount", entry.employeeCount, fieldConfigs, tAdd)}
+                                value={getFieldDisplayValue(
+                                    "employeeCount",
+                                    entry.employeeCount,
+                                    fieldConfigs,
+                                    tAdd
+                                )}
                             />
                             <InfoItem
                                 label={t("multinational")}
@@ -403,7 +422,8 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("officialHours")}
                                 value={
-                                    entry.officialHours !== null && entry.officialHours !== undefined
+                                    entry.officialHours !== null &&
+                                    entry.officialHours !== undefined
                                         ? `${entry.officialHours} ${t("hoursPerWeek")}`
                                         : undefined
                                 }
@@ -411,7 +431,8 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("averageHours")}
                                 value={
-                                    entry.averageHours !== null && entry.averageHours !== undefined
+                                    entry.averageHours !== null &&
+                                    entry.averageHours !== undefined
                                         ? `${entry.averageHours} ${t("hoursPerWeek")}`
                                         : undefined
                                 }
@@ -419,7 +440,8 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("vacationDays")}
                                 value={
-                                    entry.vacationDays !== null && entry.vacationDays !== undefined
+                                    entry.vacationDays !== null &&
+                                    entry.vacationDays !== undefined
                                         ? `${entry.vacationDays} ${t("days")}`
                                         : undefined
                                 }
@@ -427,7 +449,8 @@ export function EntryDetailClient({
                             <InfoItem
                                 label={t("teleworkDays")}
                                 value={
-                                    entry.teleworkDays !== null && entry.teleworkDays !== undefined
+                                    entry.teleworkDays !== null &&
+                                    entry.teleworkDays !== undefined
                                         ? `${entry.teleworkDays} ${t("daysPerWeek")}`
                                         : undefined
                                 }
@@ -457,23 +480,29 @@ export function EntryDetailClient({
                             {shouldShow("thirteenthMonth") && (
                                 <InfoItem
                                     label={t("thirteenthMonth")}
-                                    value={getFieldDisplayValue("thirteenthMonth", entry.thirteenthMonth, fieldConfigs, tAdd)}
+                                    value={getFieldDisplayValue(
+                                        "thirteenthMonth",
+                                        entry.thirteenthMonth,
+                                        fieldConfigs,
+                                        tAdd
+                                    )}
                                 />
                             )}
                             {shouldShow("mealVouchers") && (
                                 <InfoItem
                                     label={t("mealVouchers", { symbol })}
                                     value={
-                                        entry.mealVouchers !== null && entry.mealVouchers !== undefined
+                                        entry.mealVouchers !== null &&
+                                        entry.mealVouchers !== undefined
                                             ? formatSalaryWithPreferences(
-                                                entry.mealVouchers,
-                                                entry.currency,
-                                                false,
-                                                preferences.currency,
-                                                preferences.period,
-                                                locale,
-                                                false
-                                            )
+                                                  entry.mealVouchers,
+                                                  entry.currency,
+                                                  false,
+                                                  preferences.currency,
+                                                  preferences.period,
+                                                  locale,
+                                                  false
+                                              )
                                             : undefined
                                     }
                                 />
@@ -482,16 +511,17 @@ export function EntryDetailClient({
                                 <InfoItem
                                     label={t("ecoCheques", { symbol })}
                                     value={
-                                        entry.ecoCheques !== null && entry.ecoCheques !== undefined
+                                        entry.ecoCheques !== null &&
+                                        entry.ecoCheques !== undefined
                                             ? formatSalaryWithPreferences(
-                                                entry.ecoCheques,
-                                                entry.currency,
-                                                false,
-                                                preferences.currency,
-                                                preferences.period,
-                                                locale,
-                                                false
-                                            )
+                                                  entry.ecoCheques,
+                                                  entry.currency,
+                                                  false,
+                                                  preferences.currency,
+                                                  preferences.period,
+                                                  locale,
+                                                  false
+                                              )
                                             : undefined
                                     }
                                 />
@@ -538,7 +568,12 @@ export function EntryDetailClient({
                             />
                             <InfoItem
                                 label={t("commuteDistance")}
-                                value={entry.commuteDistance !== null && entry.commuteDistance !== undefined ? `${entry.commuteDistance} km` : undefined}
+                                value={
+                                    entry.commuteDistance !== null &&
+                                    entry.commuteDistance !== undefined
+                                        ? `${entry.commuteDistance} km`
+                                        : undefined
+                                }
                             />
                             <InfoItem
                                 label={t("commuteMethod")}
@@ -564,11 +599,21 @@ export function EntryDetailClient({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InfoItem
                                 label={t("dayOffEase")}
-                                value={getFieldDisplayValue("dayOffEase", entry.dayOffEase, fieldConfigs, tAdd)}
+                                value={getFieldDisplayValue(
+                                    "dayOffEase",
+                                    entry.dayOffEase,
+                                    fieldConfigs,
+                                    tAdd
+                                )}
                             />
                             <InfoItem
                                 label={t("stressLevel")}
-                                value={getFieldDisplayValue("stressLevel", entry.stressLevel, fieldConfigs, tAdd)}
+                                value={getFieldDisplayValue(
+                                    "stressLevel",
+                                    entry.stressLevel,
+                                    fieldConfigs,
+                                    tAdd
+                                )}
                             />
                             <InfoItem
                                 label={t("reports")}
@@ -625,9 +670,7 @@ function InfoItem({
     const displayValue = value == null || value === "" ? "/" : value;
     return (
         <div>
-            <p className="text-sm font-medium text-stone-400 mb-1">
-                {label}
-            </p>
+            <p className="text-sm font-medium text-stone-400 mb-1">{label}</p>
             <p className="text-stone-100">{displayValue}</p>
         </div>
     );

@@ -33,6 +33,28 @@ export function isEntryEditable(editableUntil: Date | string): boolean {
 }
 
 /**
+ * Get edit status information for an entry
+ * Returns whether entry is editable and hours remaining
+ */
+export function getEditStatus(
+    editableUntil: Date | string | null,
+): { editable: boolean; hoursLeft: number } {
+    if (!editableUntil) {
+        return { editable: false, hoursLeft: 0 };
+    }
+
+    const editable = isEntryEditable(editableUntil);
+    if (!editable) {
+        return { editable: false, hoursLeft: 0 };
+    }
+
+    const hoursLeft = Math.ceil(
+        (new Date(editableUntil).getTime() - Date.now()) / (1000 * 60 * 60),
+    );
+    return { editable: true, hoursLeft };
+}
+
+/**
  * Store entry token in localStorage
  */
 export function storeEntryToken(entryId: number, token: string): void {

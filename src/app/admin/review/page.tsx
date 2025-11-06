@@ -2,11 +2,18 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
 
 interface SalaryEntry {
     id: number;
@@ -71,7 +78,10 @@ export default function ReviewPage() {
         }
     };
 
-    const handleAction = async (entryId: number, action: "approve" | "reject") => {
+    const handleAction = async (
+        entryId: number,
+        action: "approve" | "reject"
+    ) => {
         try {
             setProcessingId(entryId);
 
@@ -107,16 +117,6 @@ export default function ReviewPage() {
         }
     };
 
-    const formatCurrency = (amount: number | null, currency: string | null = "EUR") => {
-        if (!amount) return "N/A";
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: currency || "EUR",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(amount);
-    };
-
     if (loading) {
         return (
             <div className="container mx-auto p-6">
@@ -138,7 +138,8 @@ export default function ReviewPage() {
                 </Link>
                 <h1 className="text-3xl font-bold mb-2">Entry Review Queue</h1>
                 <p className="text-muted-foreground">
-                    Review flagged entries and approve or reject them based on anomaly detection analysis.
+                    Review flagged entries and approve or reject them based on
+                    anomaly detection analysis.
                 </p>
             </div>
 
@@ -152,7 +153,9 @@ export default function ReviewPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.total}
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -163,7 +166,9 @@ export default function ReviewPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+                            <div className="text-2xl font-bold text-green-600">
+                                {stats.approved}
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -174,7 +179,9 @@ export default function ReviewPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+                            <div className="text-2xl font-bold text-yellow-600">
+                                {stats.pending}
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -185,7 +192,9 @@ export default function ReviewPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-orange-600">{stats.needsReview}</div>
+                            <div className="text-2xl font-bold text-orange-600">
+                                {stats.needsReview}
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -196,7 +205,9 @@ export default function ReviewPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+                            <div className="text-2xl font-bold text-red-600">
+                                {stats.rejected}
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -220,15 +231,26 @@ export default function ReviewPage() {
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <CardTitle className="text-xl mb-2">
-                                            {entry.jobTitle || "Untitled Position"}
+                                            {entry.jobTitle ||
+                                                "Untitled Position"}
                                         </CardTitle>
                                         <CardDescription>
-                                            Submitted: {new Date(entry.createdAt).toLocaleDateString()}
+                                            Submitted:{" "}
+                                            {new Date(
+                                                entry.createdAt
+                                            ).toLocaleDateString()}
                                         </CardDescription>
                                     </div>
                                     <div className="flex flex-col gap-2 items-end">
                                         {getAnomalyBadge(entry.anomalyScore)}
-                                        <Badge variant={entry.reviewStatus === "NEEDS_REVIEW" ? "destructive" : "secondary"}>
+                                        <Badge
+                                            variant={
+                                                entry.reviewStatus ===
+                                                "NEEDS_REVIEW"
+                                                    ? "destructive"
+                                                    : "secondary"
+                                            }
+                                        >
                                             {entry.reviewStatus}
                                         </Badge>
                                     </div>
@@ -237,23 +259,40 @@ export default function ReviewPage() {
                             <CardContent>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                     <div>
-                                        <p className="text-sm text-muted-foreground">Gross Salary</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            Gross Salary
+                                        </p>
                                         <p className="font-semibold text-lg">
-                                            {formatCurrency(entry.grossSalary, entry.currency)}
+                                            {formatCurrency(
+                                                entry.grossSalary,
+                                                entry.currency
+                                            )}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-muted-foreground">Country</p>
-                                        <p className="font-semibold">{entry.country || "N/A"}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Sector</p>
-                                        <p className="font-semibold">{entry.sector || "N/A"}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Experience</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            Country
+                                        </p>
                                         <p className="font-semibold">
-                                            {entry.workExperience === null ? "N/A" : `${entry.workExperience} years`}
+                                            {entry.country || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">
+                                            Sector
+                                        </p>
+                                        <p className="font-semibold">
+                                            {entry.sector || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">
+                                            Experience
+                                        </p>
+                                        <p className="font-semibold">
+                                            {entry.workExperience === null
+                                                ? "N/A"
+                                                : `${entry.workExperience} years`}
                                         </p>
                                     </div>
                                 </div>
@@ -266,7 +305,9 @@ export default function ReviewPage() {
                                                 <p className="font-semibold text-yellow-900 text-sm mb-1">
                                                     Anomaly Detection Reason
                                                 </p>
-                                                <p className="text-sm text-yellow-800">{entry.anomalyReason}</p>
+                                                <p className="text-sm text-yellow-800">
+                                                    {entry.anomalyReason}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -275,7 +316,9 @@ export default function ReviewPage() {
                                 <div className="flex gap-2 justify-end">
                                     <Button
                                         variant="destructive"
-                                        onClick={() => handleAction(entry.id, "reject")}
+                                        onClick={() =>
+                                            handleAction(entry.id, "reject")
+                                        }
                                         disabled={processingId === entry.id}
                                     >
                                         <XCircle className="mr-2 h-4 w-4" />
@@ -283,7 +326,9 @@ export default function ReviewPage() {
                                     </Button>
                                     <Button
                                         variant="default"
-                                        onClick={() => handleAction(entry.id, "approve")}
+                                        onClick={() =>
+                                            handleAction(entry.id, "approve")
+                                        }
                                         disabled={processingId === entry.id}
                                     >
                                         <CheckCircle className="mr-2 h-4 w-4" />

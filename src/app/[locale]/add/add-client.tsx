@@ -47,14 +47,19 @@ import {
     isEntryEditable,
     verifyOwnerToken,
 } from "@/lib/entry-ownership";
+import { getCurrencySymbol } from "@/lib/utils/format.utils";
 
 // Utility function to clean commute distance by keeping only numbers and dashes
 const cleanCommuteDistance = (value: string): string => {
     // Keep only numbers and dashes, remove all other characters
-    return value.replace(/[^0-9-]/g, '').trim();
+    return value.replace(/[^0-9-]/g, "").trim();
 };
 
-const getSubmitButtonText = (isSubmitting: boolean, isEditMode: boolean, t: (key: string) => string) => {
+const getSubmitButtonText = (
+    isSubmitting: boolean,
+    isEditMode: boolean,
+    t: (key: string) => string
+) => {
     if (isSubmitting) {
         return isEditMode ? t("updatingEntry") : t("submittingEntry");
     }
@@ -96,7 +101,9 @@ function AddEntryContent() {
 
                 const labelKey = fieldConfigs[fieldName]?.labelKey || fieldName;
                 const name = moneyFields.includes(fieldName)
-                    ? t(labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
+                    ? t(labelKey, {
+                          symbol: getCurrencySymbol(selectedCurrency),
+                      })
                     : t(labelKey);
 
                 return {
@@ -110,15 +117,6 @@ function AddEntryContent() {
         };
     };
 
-    // Helper function to get currency symbol
-    const getCurrencySymbol = (currency: string) => {
-        const currencies = [
-            { value: "EUR", symbol: "€" },
-            { value: "USD", symbol: "$" },
-        ];
-        return currencies.find((c) => c.value === currency)?.symbol || "€";
-    };
-
     // Create the validation schema with translations
     const salaryEntrySchema = createSalaryEntrySchema(t);
 
@@ -126,7 +124,7 @@ function AddEntryContent() {
         resolver: zodResolver(salaryEntrySchema),
         defaultValues: {
             multinational: false,
-            currency: "EUR"
+            currency: "EUR",
         },
     });
 
@@ -166,7 +164,14 @@ function AddEntryContent() {
                 })
                 .then((data) => {
                     // Verify ownership using proper token verification
-                    if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
+                    if (
+                        !verifyOwnerToken(
+                            token,
+                            entryId,
+                            data.ownerToken,
+                            data.editableUntil
+                        )
+                    ) {
                         setError(tEdit("errors.notOwner"));
                         setIsLoadingEntry(false);
                         return;
@@ -209,7 +214,11 @@ function AddEntryContent() {
                         otherInsurances: data.otherInsurances || undefined,
                         otherBenefits: data.otherBenefits || undefined,
                         workCity: data.workCity || undefined,
-                        commuteDistance: data.commuteDistance ? cleanCommuteDistance(data.commuteDistance.toString()) : undefined,
+                        commuteDistance: data.commuteDistance
+                            ? cleanCommuteDistance(
+                                  data.commuteDistance.toString()
+                              )
+                            : undefined,
                         commuteMethod: data.commuteMethod || undefined,
                         commuteCompensation:
                             data.commuteCompensation || undefined,
@@ -245,7 +254,9 @@ function AddEntryContent() {
             const bodyData: any = {
                 ...data,
                 source: "Manual submission",
-                commuteDistance: data.commuteDistance ? cleanCommuteDistance(data.commuteDistance.toString()) : undefined
+                commuteDistance: data.commuteDistance
+                    ? cleanCommuteDistance(data.commuteDistance.toString())
+                    : undefined,
             };
             if (isEditMode && editEntryId) {
                 const tokens = localStorage.getItem(
@@ -334,7 +345,9 @@ function AddEntryContent() {
                     setError(errorData.message || t("rateLimitExceeded"));
                 } else {
                     setRetryAfter(null);
-                    setError(errorData.details || errorData.error || t("error"));
+                    setError(
+                        errorData.details || errorData.error || t("error")
+                    );
                 }
             }
         } catch (err) {
@@ -358,9 +371,9 @@ function AddEntryContent() {
             "Employer Profile": "employer",
             "Job Profile": "job",
             "Working Hours": "workingHours",
-            "Salary": "salary",
-            "Benefits": "benefits",
-            "Commute": "commute",
+            Salary: "salary",
+            Benefits: "benefits",
+            Commute: "commute",
             "Work-Life Balance": "workLife",
             "Additional Notes": "notes",
         };
@@ -401,7 +414,9 @@ function AddEntryContent() {
                     value={field.value?.toString() || ""}
                     onChange={(e) =>
                         field.onChange(
-                            e.target.value ? Number.parseFloat(e.target.value) : undefined
+                            e.target.value
+                                ? Number.parseFloat(e.target.value)
+                                : undefined
                         )
                     }
                 />
@@ -553,7 +568,11 @@ function AddEntryContent() {
                                 ];
 
                                 if (moneyFields.includes(fieldName)) {
-                                    return t(config.labelKey, { symbol: getCurrencySymbol(selectedCurrency) });
+                                    return t(config.labelKey, {
+                                        symbol: getCurrencySymbol(
+                                            selectedCurrency
+                                        ),
+                                    });
                                 }
 
                                 return t(config.labelKey);
@@ -606,37 +625,53 @@ function AddEntryContent() {
                                 <h2 className="text-2xl font-bold text-stone-100 mb-2">
                                     {tEdit("errorTitle")}
                                 </h2>
-                                <p className="text-stone-400 mb-4">
-                                    {error}
-                                </p>
+                                <p className="text-stone-400 mb-4">{error}</p>
                                 {retryAfter && (
                                     <p className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded-md border border-amber-800/30 mb-6">
                                         {t("rateLimitRetry", {
                                             time: (() => {
                                                 const now = new Date();
-                                                const diffMs = retryAfter.getTime() - now.getTime();
+                                                const diffMs =
+                                                    retryAfter.getTime() -
+                                                    now.getTime();
                                                 if (diffMs <= 0) return "now";
-                                                const diffMins = Math.floor(diffMs / 60000);
-                                                const diffHours = Math.floor(diffMins / 60);
-                                                const remainingMins = diffMins % 60;
+                                                const diffMins = Math.floor(
+                                                    diffMs / 60000
+                                                );
+                                                const diffHours = Math.floor(
+                                                    diffMins / 60
+                                                );
+                                                const remainingMins =
+                                                    diffMins % 60;
                                                 if (diffHours > 0) {
-                                                    const hourText = diffHours === 1 ? 'hour' : 'hours';
-                                                    const minText = remainingMins === 1 ? 'minute' : 'minutes';
+                                                    const hourText =
+                                                        diffHours === 1
+                                                            ? "hour"
+                                                            : "hours";
+                                                    const minText =
+                                                        remainingMins === 1
+                                                            ? "minute"
+                                                            : "minutes";
                                                     return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
                                                 } else if (diffMins > 0) {
-                                                    const minText = diffMins === 1 ? 'minute' : 'minutes';
+                                                    const minText =
+                                                        diffMins === 1
+                                                            ? "minute"
+                                                            : "minutes";
                                                     return `${diffMins} ${minText}`;
                                                 } else {
                                                     return "less than a minute";
                                                 }
-                                            })()
+                                            })(),
                                         })}
                                     </p>
                                 )}
                                 <div className="space-x-4">
                                     <Button
                                         variant="outline"
-                                        onClick={() => router.push(`/${locale}/dashboard`)}
+                                        onClick={() =>
+                                            router.push(`/${locale}/dashboard`)
+                                        }
                                     >
                                         {tEdit("goBack")}
                                     </Button>
@@ -675,7 +710,9 @@ function AddEntryContent() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => router.push(`/${locale}/dashboard`)}
+                                onClick={() =>
+                                    router.push(`/${locale}/dashboard`)
+                                }
                                 className="mb-4 -ml-2 text-stone-400 hover:text-stone-100"
                             >
                                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -691,262 +728,305 @@ function AddEntryContent() {
                     </div>
                 )}
 
-                {!error && (isLoadingEntry ? (
-                    <div className="min-h-[40vh] flex items-center justify-center">
-                        <LoadingSpinner
-                            message={t("loadingEntry")}
-                            fullScreen={false}
-                            size="lg"
-                        />
-                    </div>
-                ) : (
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-8"
-                        >
-                            {/* Location Information */}
-                            <Card className="bg-stone-800 border-stone-700">
-                                <CardHeader>
-                                    <CardTitle className="text-stone-100 mb-3">
-                                        {t("sections.location.title")}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-[4fr_1fr] gap-4">
-                                        <FormField
-                                            control={form.control}
-                                            name="country"
-                                            render={({ field, fieldState }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-stone-300">
-                                                        {t("fields.country.label")}
-                                                    </FormLabel>
-                                                    <Select
-                                                        onValueChange={
-                                                            field.onChange
-                                                        }
-                                                        defaultValue={field.value}
-                                                    >
+                {!error &&
+                    (isLoadingEntry ? (
+                        <div className="min-h-[40vh] flex items-center justify-center">
+                            <LoadingSpinner
+                                message={t("loadingEntry")}
+                                fullScreen={false}
+                                size="lg"
+                            />
+                        </div>
+                    ) : (
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className="space-y-8"
+                            >
+                                {/* Location Information */}
+                                <Card className="bg-stone-800 border-stone-700">
+                                    <CardHeader>
+                                        <CardTitle className="text-stone-100 mb-3">
+                                            {t("sections.location.title")}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="grid grid-cols-[4fr_1fr] gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="country"
+                                                render={({
+                                                    field,
+                                                    fieldState,
+                                                }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-stone-300">
+                                                            {t(
+                                                                "fields.country.label"
+                                                            )}
+                                                        </FormLabel>
+                                                        <Select
+                                                            onValueChange={
+                                                                field.onChange
+                                                            }
+                                                            defaultValue={
+                                                                field.value
+                                                            }
+                                                        >
+                                                            <FormControl>
+                                                                <div
+                                                                    className="relative"
+                                                                    title={
+                                                                        fieldState
+                                                                            .error
+                                                                            ?.message
+                                                                    }
+                                                                >
+                                                                    <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
+                                                                        <SelectValue
+                                                                            placeholder={t(
+                                                                                "fields.country.placeholder"
+                                                                            )}
+                                                                        />
+                                                                    </SelectTrigger>
+                                                                </div>
+                                                            </FormControl>
+                                                            <SelectContent className="bg-stone-700 border-stone-600">
+                                                                {getAllCountries().map(
+                                                                    (
+                                                                        country
+                                                                    ) => (
+                                                                        <SelectItem
+                                                                            key={
+                                                                                country
+                                                                            }
+                                                                            className="text-stone-100 focus:bg-stone-600"
+                                                                            value={
+                                                                                country
+                                                                            }
+                                                                        >
+                                                                            {t(
+                                                                                `countries.${country.toLowerCase()}`
+                                                                            )}
+                                                                        </SelectItem>
+                                                                    )
+                                                                )}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="currency"
+                                                render={({
+                                                    field,
+                                                    fieldState,
+                                                }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-stone-300">
+                                                            {t(
+                                                                "fields.currency.label"
+                                                            )}
+                                                        </FormLabel>
                                                         <FormControl>
                                                             <div
                                                                 className="relative"
                                                                 title={
-                                                                    fieldState.error
+                                                                    fieldState
+                                                                        .error
                                                                         ?.message
                                                                 }
                                                             >
-                                                                <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
-                                                                    <SelectValue
-                                                                        placeholder={t(
-                                                                            "fields.country.placeholder"
-                                                                        )}
-                                                                    />
-                                                                </SelectTrigger>
+                                                                <CurrencySelector
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onValueChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    placeholder={t(
+                                                                        "fields.currency.placeholder"
+                                                                    )}
+                                                                    showFullLabel={
+                                                                        true
+                                                                    }
+                                                                />
                                                             </div>
                                                         </FormControl>
-                                                        <SelectContent className="bg-stone-700 border-stone-600">
-                                                            {getAllCountries().map(
-                                                                (country) => (
-                                                                    <SelectItem
-                                                                        key={
-                                                                            country
-                                                                        }
-                                                                        className="text-stone-100 focus:bg-stone-600"
-                                                                        value={
-                                                                            country
-                                                                        }
-                                                                    >
-                                                                        {t(
-                                                                            `countries.${country.toLowerCase()}`
-                                                                        )}
-                                                                    </SelectItem>
-                                                                )
-                                                            )}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="currency"
-                                            render={({ field, fieldState }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-stone-300">
-                                                        {t("fields.currency.label")}
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <div
-                                                            className="relative"
-                                                            title={
-                                                                fieldState.error
-                                                                    ?.message
-                                                            }
-                                                        >
-                                                            <CurrencySelector
-                                                                value={field.value}
-                                                                onValueChange={field.onChange}
-                                                                placeholder={t("fields.currency.placeholder")}
-                                                                showFullLabel={true}
-                                                            />
-                                                        </div>
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Show remaining sections only when country is selected */}
-                            {selectedCountry && formConfig && (
-                                <>
-                                    {formConfig.sections.map((section, index) => (
-                                        <Card
-                                            key={section.title}
-                                            className="bg-stone-800 border-stone-700 relative"
-                                        >
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                className="absolute top-3 right-3 h-9 w-9 p-0 bg-stone-700 border-stone-600 rounded-lg hover:bg-stone-600 transition-colors z-10"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setShowSectionHelp(
-                                                        showSectionHelp ===
-                                                            getSectionKey(
-                                                                section.title
-                                                            )
-                                                            ? null
-                                                            : getSectionKey(
-                                                                section.title
-                                                            )
-                                                    );
-                                                }}
-                                            >
-                                                <HelpCircle className="h-5 w-5" />
-                                            </Button>
-                                            <CardHeader>
-                                                <CardTitle className="text-stone-100 mb-3">
-                                                    {index + 1}. {t(
-                                                        `sections.${getSectionKey(section.title)}.title`
-                                                    )}
-                                                </CardTitle>
-                                            </CardHeader>
-                                            {showSectionHelp ===
-                                                getSectionKey(
-                                                    section.title
-                                                ) && (
-                                                    <div className="px-6 pb-4 my-4 border-stone-700">
-                                                        <div className="bg-stone-800/50 rounded-lg p-4 border border-stone-600">
-                                                            <h4 className="font-semibold text-stone-100 mb-3">
-                                                                {t(
-                                                                    "fieldExplanations"
-                                                                )}
-                                                            </h4>
-                                                            <div className="space-y-3">
-                                                                {getSectionHelpContent(
-                                                                    getSectionKey(
-                                                                        section.title
-                                                                    ),
-                                                                    section.fields
-                                                                )?.fields.map(
-                                                                    (
-                                                                        field
-                                                                    ) => (
-                                                                        <div
-                                                                            key={
-                                                                                field.name
-                                                                            }
-                                                                            className="text-sm"
-                                                                        >
-                                                                            <div className="font-medium text-stone-200">
-                                                                                {
-                                                                                    field.name
-                                                                                }
-                                                                            </div>
-                                                                            <div className="text-stone-300 mt-1">
-                                                                                {
-                                                                                    field.description
-                                                                                }
-                                                                            </div>
-                                                                            <div className="text-stone-400 mt-1 font-mono text-xs bg-stone-700/50 px-2 py-1 rounded">
-                                                                                {t(
-                                                                                    "example"
-                                                                                )}
-                                                                                :{" "}
-                                                                                {
-                                                                                    field.example
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    )
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            <CardContent className="flex flex-wrap gap-4">
-                                                {section.fields.map(
-                                                    (fieldName) =>
-                                                        renderField(fieldName)
-                                                )}
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-
-                                    {/* Honesty Confirmation */}
-                                    <Card className="bg-stone-800 border-stone-700">
-                                        <CardContent>
-                                            <FormField
-                                                control={form.control}
-                                                name="honestyConfirmation"
-                                                render={({ field }) => (
-                                                    <FormItem className="flex space-x-2">
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={field.value}
-                                                                onCheckedChange={field.onChange}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-stone-300">
-                                                            {t("honestyConfirmation")}
-                                                        </FormLabel>
                                                     </FormItem>
                                                 )}
                                             />
-                                        </CardContent>
-                                    </Card>
+                                        </div>
+                                    </CardContent>
+                                </Card>
 
-                                    <div className="flex justify-end space-x-4">
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={() => router.push(`/${locale}/dashboard`)}
-                                        >
-                                            {tCommon("cancel")}
-                                        </Button>
-                                        <Button
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                        >
-                                            {getSubmitButtonText(isSubmitting, isEditMode, t)}
-                                        </Button>
-                                    </div>
-                                </>
-                            )}
-                        </form>
-                    </Form>
-                ))}
+                                {/* Show remaining sections only when country is selected */}
+                                {selectedCountry && formConfig && (
+                                    <>
+                                        {formConfig.sections.map(
+                                            (section, index) => (
+                                                <Card
+                                                    key={section.title}
+                                                    className="bg-stone-800 border-stone-700 relative"
+                                                >
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="absolute top-3 right-3 h-9 w-9 p-0 bg-stone-700 border-stone-600 rounded-lg hover:bg-stone-600 transition-colors z-10"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            setShowSectionHelp(
+                                                                showSectionHelp ===
+                                                                    getSectionKey(
+                                                                        section.title
+                                                                    )
+                                                                    ? null
+                                                                    : getSectionKey(
+                                                                          section.title
+                                                                      )
+                                                            );
+                                                        }}
+                                                    >
+                                                        <HelpCircle className="h-5 w-5" />
+                                                    </Button>
+                                                    <CardHeader>
+                                                        <CardTitle className="text-stone-100 mb-3">
+                                                            {index + 1}.{" "}
+                                                            {t(
+                                                                `sections.${getSectionKey(section.title)}.title`
+                                                            )}
+                                                        </CardTitle>
+                                                    </CardHeader>
+                                                    {showSectionHelp ===
+                                                        getSectionKey(
+                                                            section.title
+                                                        ) && (
+                                                        <div className="px-6 pb-4 my-4 border-stone-700">
+                                                            <div className="bg-stone-800/50 rounded-lg p-4 border border-stone-600">
+                                                                <h4 className="font-semibold text-stone-100 mb-3">
+                                                                    {t(
+                                                                        "fieldExplanations"
+                                                                    )}
+                                                                </h4>
+                                                                <div className="space-y-3">
+                                                                    {getSectionHelpContent(
+                                                                        getSectionKey(
+                                                                            section.title
+                                                                        ),
+                                                                        section.fields
+                                                                    )?.fields.map(
+                                                                        (
+                                                                            field
+                                                                        ) => (
+                                                                            <div
+                                                                                key={
+                                                                                    field.name
+                                                                                }
+                                                                                className="text-sm"
+                                                                            >
+                                                                                <div className="font-medium text-stone-200">
+                                                                                    {
+                                                                                        field.name
+                                                                                    }
+                                                                                </div>
+                                                                                <div className="text-stone-300 mt-1">
+                                                                                    {
+                                                                                        field.description
+                                                                                    }
+                                                                                </div>
+                                                                                <div className="text-stone-400 mt-1 font-mono text-xs bg-stone-700/50 px-2 py-1 rounded">
+                                                                                    {t(
+                                                                                        "example"
+                                                                                    )}
+
+                                                                                    :{" "}
+                                                                                    {
+                                                                                        field.example
+                                                                                    }
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <CardContent className="flex flex-wrap gap-4">
+                                                        {section.fields.map(
+                                                            (fieldName) =>
+                                                                renderField(
+                                                                    fieldName
+                                                                )
+                                                        )}
+                                                    </CardContent>
+                                                </Card>
+                                            )
+                                        )}
+
+                                        {/* Honesty Confirmation */}
+                                        <Card className="bg-stone-800 border-stone-700">
+                                            <CardContent>
+                                                <FormField
+                                                    control={form.control}
+                                                    name="honestyConfirmation"
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex space-x-2">
+                                                            <FormControl>
+                                                                <Checkbox
+                                                                    checked={
+                                                                        field.value
+                                                                    }
+                                                                    onCheckedChange={
+                                                                        field.onChange
+                                                                    }
+                                                                />
+                                                            </FormControl>
+                                                            <FormLabel className="text-stone-300">
+                                                                {t(
+                                                                    "honestyConfirmation"
+                                                                )}
+                                                            </FormLabel>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </CardContent>
+                                        </Card>
+
+                                        <div className="flex justify-end space-x-4">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/${locale}/dashboard`
+                                                    )
+                                                }
+                                            >
+                                                {tCommon("cancel")}
+                                            </Button>
+                                            <Button
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                            >
+                                                {getSubmitButtonText(
+                                                    isSubmitting,
+                                                    isEditMode,
+                                                    t
+                                                )}
+                                            </Button>
+                                        </div>
+                                    </>
+                                )}
+                            </form>
+                        </Form>
+                    ))}
             </main>
         </div>
     );
 }
-
-
 
 export default function AddClient() {
     return (

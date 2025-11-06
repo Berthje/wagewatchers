@@ -31,7 +31,10 @@
         "clearSelection": "Clear selection",
         "loadingCities": "Loading cities...",
         "close": "Close",
-        "searchCities": "Search cities..."
+        "searchCities": "Search cities...",
+        "loading": "Loading...",
+        "error": "Error",
+        "unknownFieldType": "Unknown field type"
     },
     "home": {
         "title": {
@@ -625,7 +628,19 @@
         "filter": "Filter",
         "sort": "Sort",
         "export": "Export",
-        "optional": "optional"
+        "optional": "optional",
+        "success": "Success",
+        "failed": "Failed",
+        "retry": "Retry",
+        "close": "Close",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "back": "Back",
+        "next": "Next",
+        "previous": "Previous",
+        "yes": "Yes",
+        "no": "No"
     },
     "language": {
         "english": "English",
@@ -996,6 +1011,7 @@
     "adminReview": {
         "title": "Entry Review Queue",
         "description": "Review flagged entries and approve or reject them based on anomaly detection analysis.",
+        "backToAdmin": "Back to Admin Dashboard",
         "loading": "Loading...",
         "noEntries": "No entries pending review. Great job!",
         "stats": {

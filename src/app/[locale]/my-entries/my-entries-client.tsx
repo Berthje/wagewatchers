@@ -36,14 +36,18 @@ import {
 import {
     getOwnedEntryIds,
     getEntryToken,
-    isEntryEditable,
+    getEditStatus,
     removeEntryToken,
 } from "@/lib/entry-ownership";
 import {
     useSalaryDisplay,
     formatSalaryWithPreferences,
 } from "@/contexts/salary-display-context";
-import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
+import {
+    createCityDisplayFormatter,
+    formatDate,
+} from "@/lib/utils/format.utils";
+import { fetchEntriesByIds, deleteEntry } from "@/lib/services/entry.service";
 import confetti from "canvas-confetti";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -148,15 +152,10 @@ function MyEntriesContent() {
                 return;
             }
 
-            const res = await fetch(`/api/entries?ids=${entryIds.join(",")}`);
-            if (res.ok) {
-                const data = await res.json();
-                setEntries(data);
-            } else {
-                console.error("Failed to load entries");
-            }
+            const data = await fetchEntriesByIds(entryIds);
+            setEntries(data);
         } catch (error) {
-            console.error("Error loading entries:", error);
+            console.error("Failed to load entries:", error);
         } finally {
             setIsLoading(false);
         }
@@ -182,48 +181,33 @@ function MyEntriesContent() {
         setDeletingId(entryToDelete.id);
         try {
             const token = getEntryToken(entryToDelete.id);
-            const res = await fetch(`/api/entries/${entryToDelete.id}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ownerToken: token }),
-            });
-
-            if (res.ok) {
-                removeEntryToken(entryToDelete.id);
-                setEntries(entries.filter((e) => e.id !== entryToDelete.id));
-                setDeleteError(null);
-                setDeleteDialogOpen(false);
-                setEntryToDelete(null);
-                setDeleteConfirmText("");
-            } else {
-                const error = await res.json();
-                setDeleteError(
-                    t("deleteError") + ": " + (error.error || "Unknown error")
-                );
+            if (!token) {
+                setDeleteError(t("deleteError") + ": No token found");
+                return;
             }
-        } catch (error) {
+
+            await deleteEntry(entryToDelete.id, token);
+
+            removeEntryToken(entryToDelete.id);
+            setEntries(entries.filter((e) => e.id !== entryToDelete.id));
+            setDeleteError(null);
+            setDeleteDialogOpen(false);
+            setEntryToDelete(null);
+            setDeleteConfirmText("");
+        } catch (error: any) {
             console.error("Delete error:", error);
-            setDeleteError(t("deleteError"));
+            setDeleteError(
+                t("deleteError") + ": " + (error.message || "Unknown error")
+            );
         } finally {
             setDeletingId(null);
         }
     };
 
-    const formatDate = (date: Date) => {
-        const dateObj = new Date(date);
-        const dateStr = dateObj.toLocaleDateString(locale, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-        });
-        const timeStr = dateObj.toLocaleTimeString(locale, {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-        return `${dateStr} ${timeStr}`;
-    };
-
-    const formatSalary = (amount: number | null, currency: string | null = "EUR") => {
+    const formatSalary = (
+        amount: number | null,
+        currency: string | null = "EUR"
+    ) => {
         if (!amount) return "-";
         return formatSalaryWithPreferences(
             amount,
@@ -236,25 +220,9 @@ function MyEntriesContent() {
         );
     };
 
-    const getEditStatus = (entry: SalaryEntry) => {
-        const editable = isEntryEditable(entry.editableUntil);
-        if (editable) {
-            const hoursLeft = Math.ceil(
-                (new Date(entry.editableUntil!).getTime() - Date.now()) /
-                (1000 * 60 * 60)
-            );
-            return { editable: true, hoursLeft };
-        }
-        return { editable: false, hoursLeft: 0 };
-    };
-
     const getReviewStatusBadge = (reviewStatus: string | null) => {
         if (!reviewStatus) {
-            return (
-                <Badge variant="outline">
-                    {t("table.pending")}
-                </Badge>
-            );
+            return <Badge variant="outline">{t("table.pending")}</Badge>;
         }
 
         const statusConfig = {
@@ -354,11 +322,8 @@ function MyEntriesContent() {
                             </DialogContent>
                         </Dialog>
                     </div>
-                    <p className="text-stone-400">
-                        {t("description")}
-                    </p>
+                    <p className="text-stone-400">{t("description")}</p>
                 </div>
-
 
                 {deleteError && (
                     <Alert variant="destructive" className="mb-6">
@@ -428,15 +393,19 @@ function MyEntriesContent() {
                                     </TableHeader>
                                     <TableBody>
                                         {entries.map((entry) => {
-                                            const editStatus =
-                                                getEditStatus(entry);
+                                            const editStatus = getEditStatus(
+                                                entry.editableUntil
+                                            );
                                             return (
                                                 <TableRow key={entry.id}>
                                                     <TableCell>
                                                         <div className="flex flex-col gap-1">
                                                             <Badge variant="outline">
                                                                 {entry.country
-                                                                    ? formatCityDisplay(entry.country, entry.workCity)
+                                                                    ? formatCityDisplay(
+                                                                          entry.country,
+                                                                          entry.workCity
+                                                                      )
                                                                     : "-"}
                                                             </Badge>
                                                         </div>
@@ -457,7 +426,9 @@ function MyEntriesContent() {
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
-                                                        {getReviewStatusBadge(entry.reviewStatus)}
+                                                        {getReviewStatusBadge(
+                                                            entry.reviewStatus
+                                                        )}
                                                     </TableCell>
                                                     <TableCell>
                                                         {editStatus.editable ? (
@@ -561,7 +532,10 @@ function MyEntriesContent() {
                                     </p>
                                     <p className="text-stone-400">
                                         {entryToDelete.country
-                                            ? formatCityDisplay(entryToDelete.country, entryToDelete.workCity)
+                                            ? formatCityDisplay(
+                                                  entryToDelete.country,
+                                                  entryToDelete.workCity
+                                              )
                                             : "-"}{" "}
                                         •{" "}
                                         {formatSalary(

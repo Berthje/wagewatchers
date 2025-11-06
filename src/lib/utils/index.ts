@@ -3,7 +3,7 @@
  * Centralized export for all utility functions
  */
 
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 // Tailwind utility (from original utils.ts)
@@ -14,30 +14,43 @@ export function cn(...inputs: ClassValue[]) {
 // Rate limiter utilities
 export {
     checkRateLimit,
+    getClientIp,
     getRemainingRequests,
     resetRateLimit,
-    getClientIp,
-} from './rate-limiter.utils';
-export type { RateLimitResult } from './rate-limiter.utils';
+} from "./rate-limiter.utils";
+export type { RateLimitResult } from "./rate-limiter.utils";
 
 // Entry ownership utilities
 export {
     generateOwnerToken,
     getEditableUntilDate,
-    isEntryEditable,
-    storeEntryToken,
+    getEditStatus,
     getEntryToken,
     getOwnedEntryIds,
+    isEntryEditable,
     removeEntryToken,
-} from './entry-ownership.utils';
+    storeEntryToken,
+} from "./entry-ownership.utils";
 
 // Format utilities
 export {
-    formatNumber,
-    getCurrencySymbol,
+    formatCurrency,
     formatDate,
+    formatNumber,
     formatRelativeTime,
-} from './format.utils';
+    getCurrencySymbol,
+} from "./format.utils";
 
 // Export utilities
-export { exportToCSV, exportToPDF } from './export.utils';
+export { exportToCSV, exportToPDF } from "./export.utils";
+
+// Sorting utilities
+export { sortEntries, toggleSortDirection } from "./sorting.utils";
+
+// Pagination utilities
+export {
+    calculateTotalPages,
+    getPaginationInfo,
+    normalizePage,
+    paginateItems,
+} from "./pagination.utils";

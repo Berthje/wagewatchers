@@ -45,6 +45,23 @@ export function getCurrencySymbol(currency?: string | null): string {
 }
 
 /**
+ * Format currency with locale-specific formatting
+ */
+export function formatCurrency(
+    amount: number | null,
+    currency: string | null = "EUR",
+    locale: string = "en-US",
+): string {
+    if (!amount) return "N/A";
+    return new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: currency || "EUR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(amount);
+}
+
+/**
  * Format time until retry (e.g., "2 hours 15 minutes")
  */
 export function formatTimeUntilRetry(retryAfter: Date): string {
@@ -58,11 +75,11 @@ export function formatTimeUntilRetry(retryAfter: Date): string {
     const remainingMins = diffMins % 60;
 
     if (diffHours > 0) {
-        const hourText = diffHours === 1 ? 'hour' : 'hours';
-        const minText = remainingMins === 1 ? 'minute' : 'minutes';
+        const hourText = diffHours === 1 ? "hour" : "hours";
+        const minText = remainingMins === 1 ? "minute" : "minutes";
         return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
     } else if (diffMins > 0) {
-        const minText = diffMins === 1 ? 'minute' : 'minutes';
+        const minText = diffMins === 1 ? "minute" : "minutes";
         return `${diffMins} ${minText}`;
     } else {
         return "less than a minute";
@@ -117,7 +134,7 @@ export function getFieldDisplayValue(
     const fieldConfig = fieldConfigs[fieldName];
     if (!fieldConfig?.options) {
         // For fields without options, just return the value with basic formatting
-        if (fieldName === 'civilStatus') {
+        if (fieldName === "civilStatus") {
             return value.charAt(0).toUpperCase() + value.slice(1);
         }
         return value;
@@ -127,7 +144,10 @@ export function getFieldDisplayValue(
     const option = fieldConfig.options.find((opt: any) => opt.value === value);
     if (option) {
         // If the label is a translation key, translate it
-        if (t && typeof option.label === 'string' && option.label.startsWith('formOptions.')) {
+        if (
+            t && typeof option.label === "string" &&
+            option.label.startsWith("formOptions.")
+        ) {
             return t(option.label);
         }
         return option.label;
@@ -140,7 +160,11 @@ export function getFieldDisplayValue(
 /**
  * Format city display with proper translation of special values like "remoteHome"
  */
-export function formatCityDisplayForMetadata(country: string, workCity?: string | null, locale: string = 'en'): string {
+export function formatCityDisplayForMetadata(
+    country: string,
+    workCity?: string | null,
+    locale: string = "en",
+): string {
     if (!workCity) return country;
 
     let cityLabel = workCity;
@@ -148,13 +172,13 @@ export function formatCityDisplayForMetadata(country: string, workCity?: string 
     // Translate special values
     if (workCity === "remoteHome") {
         switch (locale) {
-            case 'nl':
+            case "nl":
                 cityLabel = "Vanuit thuis (Remote)";
                 break;
-            case 'fr':
+            case "fr":
                 cityLabel = "Télétravail (Remote)";
                 break;
-            case 'de':
+            case "de":
                 cityLabel = "Homeoffice (Remote)";
                 break;
             default: // 'en'
@@ -174,7 +198,9 @@ export function createCityDisplayFormatter(tUi: (key: string) => string) {
     return (country: string, workCity?: string | null) => {
         if (!workCity) return country;
 
-        const cityLabel = workCity === "remoteHome" ? tUi("remoteHome") : workCity;
+        const cityLabel = workCity === "remoteHome"
+            ? tUi("remoteHome")
+            : workCity;
         return `${country}, ${cityLabel}`;
     };
 }

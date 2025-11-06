@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Initialize Resend with API key from environment variables
+// Lazy initialize Resend client to avoid build-time errors
 // Get your API key from https://resend.com/api-keys
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: Resend | null = null;
+
+function getResendClient(): Resend {
+    if (!resend) {
+        resend = new Resend(
+            process.env.RESEND_API_KEY || "dummy_key_for_build",
+        );
+    }
+    return resend;
+}
 
 interface Report {
     id: number;
@@ -69,7 +78,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Send email using Resend
-        const data = await resend.emails.send({
+        const resendClient = getResendClient();
+        const data = await resendClient.emails.send({
             from: process.env.RESEND_FROM_EMAIL ||
                 "WageWatchers <onboarding@resend.dev>",
             to: report.email,
@@ -217,9 +227,11 @@ function generateStatusUpdateEmailHTML(
 
         <div class="status-update">
             <p style="margin: 0 0 8px 0;"><strong>Great news!</strong></p>
-            <p style="margin: 0;">Your ${typeLabels[report.type] || report.type
-        } has been marked as <strong>${statusLabels[report.status] || report.status
-        }</strong>.</p>
+            <p style="margin: 0;">Your ${
+        typeLabels[report.type] || report.type
+    } has been marked as <strong>${
+        statusLabels[report.status] || report.status
+    }</strong>.</p>
         </div>
 
         <div class="tracking-id">
@@ -230,16 +242,19 @@ function generateStatusUpdateEmailHTML(
         <div class="report-details">
             <h3 style="margin-top: 0; color: #1c1917;">Report Details</h3>
             <div class="detail-row">
-                <span class="detail-label">Type:</span> ${typeLabels[report.type] || report.type
-        }
+                <span class="detail-label">Type:</span> ${
+        typeLabels[report.type] || report.type
+    }
             </div>
             <div class="detail-row">
-                <span class="detail-label">Priority:</span> ${priorityLabels[report.priority] || report.priority
-        }
+                <span class="detail-label">Priority:</span> ${
+        priorityLabels[report.priority] || report.priority
+    }
             </div>
             <div class="detail-row">
-                <span class="detail-label">Status:</span> ${statusLabels[report.status] || report.status
-        }
+                <span class="detail-label">Status:</span> ${
+        statusLabels[report.status] || report.status
+    }
             </div>
             <div class="detail-row">
                 <span class="detail-label">Title:</span> ${report.title}
@@ -249,11 +264,12 @@ function generateStatusUpdateEmailHTML(
                 ${report.description.replace(/\n/g, "<br>")}
             </div>
             <div class="detail-row">
-                <span class="detail-label">Submitted:</span> ${new Date(report.createdAt).toLocaleString("en-US", {
+                <span class="detail-label">Submitted:</span> ${
+        new Date(report.createdAt).toLocaleString("en-US", {
             dateStyle: "long",
             timeStyle: "short",
         })
-        }
+    }
             </div>
         </div>
 
@@ -374,8 +390,9 @@ function generateEmailHTML(report: Report, baseUrl: string): string {
 
         <h1 style="color: #1c1917; margin-top: 0;">Thank You for Your Feedback!</h1>
 
-        <p>We've received your ${typeLabels[report.type] || report.type
-        } and appreciate you taking the time to help us improve WageWatchers.</p>
+        <p>We've received your ${
+        typeLabels[report.type] || report.type
+    } and appreciate you taking the time to help us improve WageWatchers.</p>
 
         <div class="tracking-id">
             <p style="margin: 0 0 8px 0;"><strong>Your Tracking ID:</strong></p>
@@ -386,12 +403,14 @@ function generateEmailHTML(report: Report, baseUrl: string): string {
         <div class="report-details">
             <h3 style="margin-top: 0; color: #1c1917;">Report Details</h3>
             <div class="detail-row">
-                <span class="detail-label">Type:</span> ${typeLabels[report.type] || report.type
-        }
+                <span class="detail-label">Type:</span> ${
+        typeLabels[report.type] || report.type
+    }
             </div>
             <div class="detail-row">
-                <span class="detail-label">Priority:</span> ${priorityLabels[report.priority] || report.priority
-        }
+                <span class="detail-label">Priority:</span> ${
+        priorityLabels[report.priority] || report.priority
+    }
             </div>
             <div class="detail-row">
                 <span class="detail-label">Title:</span> ${report.title}
@@ -401,11 +420,12 @@ function generateEmailHTML(report: Report, baseUrl: string): string {
                 ${report.description.replace(/\n/g, "<br>")}
             </div>
             <div class="detail-row">
-                <span class="detail-label">Submitted:</span> ${new Date(report.createdAt).toLocaleString("en-US", {
+                <span class="detail-label">Submitted:</span> ${
+        new Date(report.createdAt).toLocaleString("en-US", {
             dateStyle: "long",
             timeStyle: "short",
         })
-        }
+    }
             </div>
         </div>
 
