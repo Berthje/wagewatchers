@@ -1,24 +1,49 @@
 /**
- * Changelog entries for WageWatchers
+ * Task:
+ * Read my git log & Add a new changelog entry (or entries) for recently added features, updates, or improvements that are **visible or relevant to end users**.
  * 
- * IMPORTANT: Entries from the past 7 days are automatically sent in the weekly newsletter!
+ * Rules:
+ * - Only include **changes that affect the user experience**, not internal or admin/developer-only updates.
+ * - Use clear and friendly language — no technical jargon.
+ * - Keep descriptions short and action-oriented (e.g., “Added…”, “Improved…”, “Fixed…”).
+ * - Follow this JSON structure:
+ *   {
+ *     version: "x.x.x",
+ *     date: "YYYY-MM-DD",
+ *     changes: [
+ *       "Added ...",
+ *       "Improved ...",
+ *       "Fixed ..."
+ *     ]
+ *   }
  * 
- * Format:
- * - version: Semantic version (e.g., "1.2.0")
- * - date: ISO date string or readable format (e.g., "2024-11-04" or "November 4, 2024")
- * - changes: Array of change descriptions (user-friendly, avoid technical jargon)
+ * Examples of valid changes:
+ * - “Added dark mode toggle for better visibility at night”
+ * - “Improved salary insights with clearer charts and new filtering options”
+ * - “Fixed incorrect city names appearing in search results”
  * 
- * Tips:
- * - Keep descriptions clear and concise
- * - Start with action verbs (Added, Fixed, Improved, Updated)
- * - Order entries newest to oldest
- * - Each change should be one line
+ * Do NOT include:
+ * - Internal or admin-only features (e.g., “Improved admin panel UI”)
+ * - Backend or infrastructure work (e.g., “Refactored API calls”)
+ * - Minor layout tweaks or refactors invisible to users
+ * 
+ * Tip:
+ * Make sure the date and version follow the latest entry, and list the newest entries first.
  */
 export const changelogEntries: Array<{
     version: string;
     date: string;
     changes: string[];
 }> = [
+        {
+            version: "1.6.1",
+            date: "2025-11-06",
+            changes: [
+                "Enhanced privacy protection by preventing unauthorized viewing of other users' salary entries",
+                "Improved the process for editing salary entries with better error messages and reliability",
+                "Simplified the salary entry form by removing unnecessary validation for commute details"
+            ]
+        },
         {
             version: "1.6.0",
             date: "2025-11-05",
