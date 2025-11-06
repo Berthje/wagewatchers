@@ -5,8 +5,8 @@
         "addEntry": "Salaris Delen",
         "feedback": "Feedback",
         "status": "Status",
-        "donate": "Doneer",
-        "changelog": "Wijzigingslog",
+        "donate": "Doneren",
+        "changelog": "Wijzigingslogboek",
         "displaySettings": "Weergave-instellingen",
         "currency": "Valuta",
         "period": "Periode",
@@ -19,94 +19,97 @@
         }
     },
     "ui": {
-        "commandPalette": "Opdrachtpalet",
-        "searchCommand": "Zoek naar een opdracht om uit te voeren...",
+        "commandPalette": "Commando Palet",
+        "searchCommand": "Zoek naar een uit te voeren commando...",
         "selectOption": "Selecteer optie...",
         "selectCity": "Selecteer stad...",
         "enter3Characters": "Voer 3 of meer tekens in",
-        "searchOptions": "Zoek opties...",
+        "searchOptions": "Zoekopties...",
         "noOptionsFound": "Geen opties gevonden.",
-        "typeToSearch": "Typ minimaal 2 tekens om te zoeken...",
-        "remoteHome": "Vanuit thuis (Remote)",
+        "typeToSearch": "Typ minstens 2 tekens om te zoeken...",
+        "remoteHome": "Van huis (Op Afstand)",
         "clearSelection": "Selectie wissen",
         "loadingCities": "Steden laden...",
         "close": "Sluiten",
-        "searchCities": "Zoek steden..."
+        "searchCities": "Zoek steden...",
+        "loading": "Laden...",
+        "error": "Fout",
+        "unknownFieldType": "Onbekend veldtype"
     },
     "home": {
         "title": {
             "workLife": {
-                "title": "11. Work-Life Balance",
-                "description": "Work-life balance beoordeling",
-                "teleworkDays": "Thuiswerkdagen per Week",
-                "dayOffEase": "Gemak om een Dag Vrij te Nemen",
+                "title": "Werk-Privé Balans",
+                "description": "Beoordeling van de werk-privé balans",
+                "teleworkDays": "Dagen Telewerk per Week",
+                "dayOffEase": "Gemak van een Dag Vrij Nemen",
                 "stressLevel": "Stressniveau",
                 "reports": "Verantwoordelijk voor Personeel"
             },
             "workingHours": {
-                "title": "4. Werkuren",
+                "title": "Werkuren",
                 "description": "Uw werkschema en uren",
                 "officialHours": "Officiële Uren per Week",
                 "averageHours": "Gemiddelde Uren per Week",
-                "shiftDescription": "Ploegenbeschrijving",
-                "onCall": "Bereikbaarheidsdienst"
+                "shiftDescription": "Beschrijving Ploegendienst",
+                "onCall": "Wachtdienst/Bereikbaarheid"
             },
             "vacation": {
-                "title": "5. Vakantie",
-                "description": "Vakantie- en vrije tijd informatie",
+                "title": "Vakantie",
+                "description": "Vakantie- en verlofinformatie",
                 "vacationDays": "Vakantiedagen per Jaar"
             },
             "commute": {
-                "title": "8. Woon-Werk Verkeer",
-                "description": "Uw dagelijkse woon-werk verkeer details",
-                "workCity": "Werkstad",
-                "commuteDistance": "Woon-Werk Afstand (km)",
+                "title": "Pendelen",
+                "description": "Uw dagelijkse pendeldetails",
+                "workCity": "Stad van Werk",
+                "commuteDistance": "Afstand Woon-Werk (km)",
                 "commuteMethod": "Vervoersmethode",
-                "commuteCompensation": "Woon-Werk Vergoeding"
+                "commuteCompensation": "Vergoeding woon-werkverkeer"
             },
             "salary": "Salaris",
             "transparency": "Transparantie"
         },
-        "subtitle": "Begrijp marktcompensatie in Europese markten. Vergelijk salarissen, voordelen en werkomstandigheden met gegevens van gemeenschapsgedreven salarisdiscussies.",
-        "exploreData": "Salarissen Verkennen",
+        "subtitle": "Krijg inzicht in marktvergoedingen in Europese markten. Vergelijk salarissen, voordelen en arbeidsvoorwaarden met gegevens uit community-gedreven salarisdiscussies.",
+        "exploreData": "Gegevens Verkennen",
         "shareSalary": "Salaris Delen",
         "features": {
             "multiCountry": {
-                "title": "Multi-Land Ondersteuning",
-                "description": "Salarisgegevens van Belgische gemeenschappen met gelokaliseerde compensatie inzichten."
+                "title": "Ondersteuning Meerdere Landen",
+                "description": "Salarisgegevens van Belgische gemeenschappen met gelokaliseerde compensatie-inzichten."
             },
             "privacy": {
-                "title": "Privacy Gericht",
-                "description": "Anoniem salaris delen met uitgebreide gegevensbescherming. Gemeenschapsgedreven transparantie."
+                "title": "Privacygericht",
+                "description": "Anoniem salaris delen met uitgebreide gegevensbescherming. Community-gedreven transparantie."
             },
             "analysis": {
                 "title": "Uitgebreide Analyse",
-                "description": "Gedetailleerde uitsplitsingen van compensatiepakketten, voordelen, werkuren en work-life balance."
+                "description": "Gedetailleerde uitsplitsing van vergoedingspakketten, voordelen, werkuren en werk-privé balans."
             }
         },
-        "footer": "🧡 Gemeenschapsgedreven salaristransparantie"
+        "footer": "🧡 Community-gedreven salaristransparantie"
     },
     "dashboard": {
         "title": "Salaris Dashboard",
-        "subtitle": "Verken {count} salarisgegevens uit Europese arbeidsmarkten",
-        "myEntries": "Mijn Invoer",
+        "subtitle": "Verken {count} salarisvermeldingen uit de Europese arbeidsmarkten",
+        "myEntries": "Mijn Inzendingen",
         "nav": {
             "addEntry": "Salaris Delen"
         },
         "stats": {
-            "totalEntries": "Totaal Invoeren",
-            "medianGrossSalary": "Mediaan Bruto Salaris (€/maand)",
-            "avgNetSalary": "Gem. Netto Salaris (€/maand)",
+            "totalEntries": "Totaal Aantal Inzendingen",
+            "medianGrossSalary": "Mediane Bruto Salaris",
+            "avgNetSalary": "Gemiddeld Netto Salaris",
             "medianSalary": "Mediaan Salaris",
-            "salaryRange": "Salaris Bereik (€/maand)",
-            "avgAge": "Gem. Leeftijd",
+            "salaryRange": "Salarisbereik",
+            "avgAge": "Gemiddelde Leeftijd",
             "sectors": "Sectoren",
             "topSector": "Top Sector",
-            "entries": "invoeren"
+            "entries": "inzendingen"
         },
         "filters": {
             "title": "Filters",
-            "description": "Filter salarisgegevens op verschillende criteria",
+            "description": "Filter salarisgegevens op basis van verschillende criteria",
             "country": "Land",
             "location": "Locatie",
             "sector": "Sector",
@@ -120,31 +123,31 @@
             "allSectors": "Alle sectoren",
             "allLevels": "Alle niveaus",
             "junior": "Junior (0-2 jaar)",
-            "mid": "Midden (3-5 jaar)",
+            "mid": "Medior (3-5 jaar)",
             "senior": "Senior (6+ jaar)",
             "search": "Zoeken",
-            "searchPlaceholder": "Zoek met meerdere trefwoorden gescheiden door komma's (bijv. ontwikkelaar, ingenieur, manager)...",
+            "searchPlaceholder": "Zoek op meerdere trefwoorden gescheiden door komma's (bv. ontwikkelaar, ingenieur, manager)...",
             "activeFilters": "Actieve Filters",
             "activeFiltersLabel": "Actieve Filters",
             "activeFilter": "actief filter",
             "noActiveFilters": "Geen actieve filters",
-            "clearAll": "Alles Wissen",
+            "clearAll": "Alles wissen",
             "apply": "Klaar",
             "filters": "Filters",
             "locationSection": "Locatie",
-            "workSection": "Werk Details",
+            "workSection": "Werkdetails",
             "ageSection": "Leeftijd",
             "ageRange": "Leeftijdsbereik",
             "minAge": "Min Leeftijd",
             "maxAge": "Max Leeftijd",
-            "minAgePlaceholder": "bijv., 18",
-            "maxAgePlaceholder": "bijv., 65",
+            "minAgePlaceholder": "bv. 18",
+            "maxAgePlaceholder": "bv. 65",
             "workExperienceSection": "Werkervaring",
-            "workExperienceRange": "Werkervaringsbereik",
+            "workExperienceRange": "Bereik Werkervaring",
             "minWorkExperience": "Min Ervaring (jaren)",
             "maxWorkExperience": "Max Ervaring (jaren)",
-            "minWorkExperiencePlaceholder": "bijv., 0",
-            "maxWorkExperiencePlaceholder": "bijv., 10",
+            "minWorkExperiencePlaceholder": "bv. 0",
+            "maxWorkExperiencePlaceholder": "bv. 10",
             "selectedCountries": "geselecteerde landen",
             "selectedLocations": "geselecteerde locaties",
             "selectedCities": "geselecteerde steden",
@@ -159,8 +162,8 @@
             "sectorsSelected": "sectoren geselecteerd"
         },
         "table": {
-            "title": "Salaris Invoeren",
-            "description": "Gedetailleerde weergave van alle salarisgegevens",
+            "title": "Salaris Inzendingen",
+            "description": "Gedetailleerd overzicht van alle salarisgegevens",
             "country": "Land",
             "location": "Locatie",
             "age": "Leeftijd",
@@ -168,14 +171,14 @@
             "jobTitle": "Functietitel",
             "experience": "Ervaring",
             "seniority": "Senioriteit",
-            "grossSalary": "Bruto Salaris (€/maand)",
+            "grossSalary": "Bruto Salaris",
             "netSalary": "Netto Salaris",
-            "submittedOn": "Ingediend",
+            "submittedOn": "Ingediend op",
             "years": "jaar",
-            "noResults": "Geen items gevonden die overeenkomen met uw filters",
+            "noResults": "Geen inzendingen gevonden die overeenkomen met uw filters",
             "source": "Bron",
             "viewSource": "Bekijk bron",
-            "clickToViewDetails": "Klik op een rij om alle details te bekijken",
+            "clickToViewDetails": "Klik op een rij om de volledige details te bekijken",
             "viewDetails": "Bekijk details"
         },
         "pagination": {
@@ -202,7 +205,7 @@
             "allSectors": "Alle sectoren",
             "selectSectors": "Selecteer sectoren...",
             "sectorsSelected": "sectoren geselecteerd",
-            "clearFilters": "Filters Wissen"
+            "clearFilters": "Filters wissen"
         },
         "export": {
             "csv": "Exporteren naar CSV",
@@ -215,11 +218,11 @@
         "charts": {
             "topSectors": {
                 "title": "Top 10 Sectoren op Gemiddeld Salaris",
-                "description": "Hoogst betaalde sectoren in alle inzendingen"
+                "description": "Hoogst betalende sectoren over alle inzendingen"
             },
             "experienceGrowth": {
                 "title": "Salarisgroei per Ervaring",
-                "description": "Hoe het salaris stijgt met jaren ervaring",
+                "description": "Hoe salaris stijgt met de jaren ervaring",
                 "xAxisLabel": "Jaren",
                 "yearsLabel": "jaar ervaring"
             },
@@ -236,21 +239,21 @@
                 "description": "Verdeling van respondenten per leeftijdsgroep"
             },
             "scatterPlot": {
-                "title": "Ervaring vs Salaris Spreidingsdiagram",
+                "title": "Spreidingsgrafiek Ervaring vs Salaris",
                 "description": "Individuele datapunten die de relatie tussen ervaring en salaris tonen",
                 "xAxisLabel": "Jaren Ervaring",
-                "dataPointLabel": "Data Punt"
+                "dataPointLabel": "Datapunt"
             },
             "yearOverYear": {
-                "title": "Jaar-op-jaar Salaristrends",
-                "description": "Vergelijk gemiddelde en mediaansalarissen over verschillende jaren"
+                "title": "Jaar-op-Jaar Salaristrends",
+                "description": "Vergelijk gemiddelde en mediane salarissen over verschillende jaren"
             },
             "industryInsights": {
-                "title": "Branche-specifieke Salarisinzichten",
+                "title": "Sector-Specifieke Salaris Inzichten",
                 "description": "Gedetailleerde uitsplitsing van salarisstatistieken per sector",
                 "sector": "Sector",
                 "entries": "Inzendingen",
-                "avg": "Gemiddeld",
+                "avg": "Gemiddelde",
                 "median": "Mediaan",
                 "range": "Bereik",
                 "percentile": "25e-75e Percentiel"
@@ -260,8 +263,8 @@
                 "description": "Gemiddelde salarissen in verschillende steden (min. 3 inzendingen per locatie)"
             },
             "tooltips": {
-                "avgSalary": "Gem. Salaris",
-                "medianSalary": "Mediaan Salaris",
+                "avgSalary": "Gem. Salaris (€/maand)",
+                "medianSalary": "Mediaan Salaris (€/maand)",
                 "entries": "Inzendingen",
                 "experience": "Ervaring",
                 "salary": "Salaris"
@@ -269,13 +272,13 @@
         }
     },
     "add": {
-        "title": "Uw Salaris Delen",
-        "subtitle": "Deel uw salarisinformatie anoniem om transparantie te helpen opbouwen",
-        "editTitle": "Salarisinvoer Bewerken",
+        "title": "Deel Uw Salaris",
+        "subtitle": "Deel uw salarisinformatie anoniem om transparantie op te bouwen",
+        "editTitle": "Salarisvermelding Bewerken",
         "editSubtitle": "Werk uw salarisinformatie hieronder bij",
-        "goBack": "Terug",
-        "loadingEntry": "Invoergegevens laden...",
-        "fieldExplanations": "Velduitleg",
+        "goBack": "Teruggaan",
+        "loadingEntry": "Inzending laden...",
+        "fieldExplanations": "Veldverklaringen",
         "example": "Voorbeeld",
         "fields": {
             "country": {
@@ -294,7 +297,7 @@
         "sections": {
             "location": {
                 "title": "Locatie Informatie",
-                "description": "Land informatie",
+                "description": "Landinformatie",
                 "country": "Land",
                 "subreddit": "Subreddit",
                 "selectCountry": "Selecteer land",
@@ -302,7 +305,7 @@
             },
             "personal": {
                 "title": "Persoonlijke Informatie",
-                "description": "Basis persoonlijke gegevens",
+                "description": "Elementaire persoonlijke gegevens",
                 "age": "Leeftijd",
                 "education": "Opleiding",
                 "workExperience": "Werkervaring",
@@ -317,63 +320,63 @@
                 "multinational": "Multinational"
             },
             "job": {
-                "title": "4. Functie Profiel",
+                "title": "Functie Profiel",
                 "description": "Details over uw rol en verantwoordelijkheden",
                 "jobTitle": "Functietitel",
                 "jobDescription": "Functiebeschrijving",
                 "seniority": "Senioriteit"
             },
             "salary": {
-                "title": "6 Salaris",
-                "description": "Uw compensatie details",
+                "title": "Salaris",
+                "description": "Uw vergoedingsdetails",
                 "grossSalary": "Bruto Salaris ({symbol}/maand)",
                 "netSalary": "Netto Salaris ({symbol}/maand)",
-                "netCompensation": "Netto Compensatie ({symbol}/maand)"
+                "netCompensation": "Netto Vergoeding ({symbol}/maand)"
             },
             "benefits": {
-                "title": "9. Voordelen",
-                "description": "Extra compensatie en voordelen",
-                "thirteenthMonth": "13de Maand",
+                "title": "Voordelen",
+                "description": "Aanvullende vergoeding en extra's",
+                "thirteenthMonth": "13e Maand",
                 "mealVouchers": "Maaltijdcheques ({symbol}/dag)",
                 "ecoCheques": "Ecocheques ({symbol}/jaar)",
                 "groupInsurance": "Groepsverzekering",
                 "otherInsurances": "Andere Verzekeringen",
                 "otherBenefits": "Andere Voordelen",
-                "otherBenefitsPlaceholder": "bijv. Bedrijfswagen, opleidingsbudget, etc."
+                "otherBenefitsPlaceholder": "bv. Bedrijfswagen, opleidingsbudget, enz."
             },
             "workLife": {
-                "title": "11. Work-Life Balance",
-                "description": "Uw work-life balance ervaring",
-                "teleworkDays": "Thuiswerkdagen per Week",
-                "dayOffEase": "Gemak om een Dag Vrij te Nemen",
+                "title": "Werk-Privé Balans",
+                "description": "Uw werk-privé balans ervaring",
+                "teleworkDays": "Dagen Telewerk per Week",
+                "dayOffEase": "Gemak van een Dag Vrij Nemen",
                 "stressLevel": "Stressniveau",
-                "reports": "Rapporteert aan"
+                "reports": "Rapporteurs"
             },
             "workingHours": {
-                "title": "5. Werkuren",
+                "title": "Werkuren",
                 "description": "Uw werkschema en uren",
                 "officialHours": "Officiële Uren per Week",
                 "averageHours": "Gemiddelde Uren per Week",
-                "shiftDescription": "Ploegenbeschrijving",
-                "onCall": "Bereikbaarheidsdienst"
+                "shiftDescription": "Beschrijving Ploegendienst",
+                "onCall": "Wachtdienst/Bereikbaarheid"
             },
             "vacation": {
-                "title": "6. Vakantie",
-                "description": "Vakantie en vrije tijd informatie",
+                "title": "Vakantie",
+                "description": "Vakantie- en verlofinformatie",
                 "vacationDays": "Vakantiedagen per Jaar"
             },
             "commute": {
-                "title": "10. Woon-Werk Verkeer",
-                "description": "Uw dagelijkse woon-werk verkeer details",
-                "workCity": "Werkstad",
-                "commuteDistance": "Woon-Werk Afstand (heenreis)",
+                "title": "Pendelen",
+                "description": "Uw dagelijkse pendeldetails",
+                "workCity": "Stad van Werk",
+                "commuteDistance": "Afstand Woon-Werk (enkele reis)",
                 "commuteMethod": "Vervoersmethode",
-                "commuteCompensation": "Woon-Werk Vergoeding"
+                "commuteCompensation": "Vergoeding woon-werkverkeer"
             },
             "notes": {
-                "title": "12. Extra Notities",
-                "description": "Optionele notities voor deze invoer",
-                "extraNotes": "Extra Notities"
+                "title": "Aanvullende Opmerkingen",
+                "description": "Optionele opmerkingen voor deze inzending",
+                "extraNotes": "Aanvullende Opmerkingen"
             }
         },
         "options": {
@@ -389,99 +392,99 @@
             "netherlands": "Nederland",
             "unitedKingdom": "Verenigd Koninkrijk"
         },
-        "honestyConfirmation": "Ik bevestig dat de verstrekte informatie accuraat en eerlijk is",
+        "honestyConfirmation": "Ik bevestig dat de verstrekte informatie nauwkeurig en eerlijk is",
         "submit": "Salaris Delen",
-        "submitEntry": "Invoer Indienen",
-        "updateEntry": "Invoer Bijwerken",
+        "submitEntry": "Inzending Indienen",
+        "updateEntry": "Inzending Bijwerken",
         "submittingEntry": "Indienen...",
         "updatingEntry": "Bijwerken...",
         "success": "Salaris succesvol gedeeld!",
-        "successDetails": "U kunt deze invoer 1 dag lang bewerken. Vind het in 'Mijn Invoer'.",
-        "error": "Salaris delen mislukt",
-        "errorGeneric": "Er is een fout opgetreden tijdens het verzenden",
-        "errorLoadingEntry": "Fout bij Laden van Invoer",
-        "rateLimitExceeded": "Frequentielimiet overschreden",
+        "successDetails": "U kunt deze inzending nu 1 dag bewerken. Vind deze onder 'Mijn Inzendingen'.",
+        "error": "Delen van salaris mislukt",
+        "errorGeneric": "Er is een fout opgetreden tijdens het indienen",
+        "errorLoadingEntry": "Fout bij het laden van de inzending",
+        "rateLimitExceeded": "Limiet voor aanvragen overschreden",
         "rateLimitRetry": "U kunt het opnieuw proberen over {time}",
         "placeholders": {
-            "age": "bijv. 30",
+            "age": "bv. 30",
             "education": "Selecteer of voer opleidingsniveau in",
-            "workExperience": "bijv. 5",
+            "workExperience": "bv. 5",
             "civilStatus": "Selecteer burgerlijke staat",
-            "dependents": "bijv. 2",
+            "dependents": "bv. 2",
             "sector": "Selecteer sector",
-            "employeeCount": "Selecteer aantal werknemers bereik",
-            "jobTitle": "bijv. Software Engineer",
-            "seniority": "bijv. 3",
-            "jobDescription": "Beschrijf uw functie verantwoordelijkheden",
-            "officialHours": "bijv. 40",
-            "averageHours": "bijv. 45",
-            "shiftDescription": "bijv. Standaard kantooruren",
-            "onCall": "bijv. Af en toe",
-            "vacationDays": "bijv. 25",
-            "grossSalary": "bijv. 5000",
-            "netSalary": "bijv. 3500",
-            "netCompensation": "bijv. 150",
-            "thirteenthMonth": "Selecteer 13e maand optie",
-            "mealVouchers": "bijv. 8/dag",
-            "ecoCheques": "bijv. 250/jaar",
-            "groupInsurance": "bijv. Ja, uitgebreid",
-            "otherInsurances": "bijv. Zorgverzekering",
-            "workCity": "bijv. Brussel",
-            "commuteDistance": "bijv. 15 of 10-30 km",
-            "commuteMethod": "bijv. Auto, Openbaar vervoer",
-            "commuteCompensation": "bijv. Brandstofvergoeding",
-            "teleworkDays": "bijv. 2",
-            "dayOffEase": "Selecteer gemak van vrij nemen",
+            "employeeCount": "Selecteer bereik aantal werknemers",
+            "jobTitle": "bv. Software Ingenieur",
+            "seniority": "bv. 3",
+            "jobDescription": "Beschrijf uw hoofdverantwoordelijkheden",
+            "officialHours": "bv. 40",
+            "averageHours": "bv. 45",
+            "shiftDescription": "bv. Standaard kantooruren",
+            "onCall": "bv. Af en toe",
+            "vacationDays": "bv. 25",
+            "grossSalary": "bv. 5000",
+            "netSalary": "bv. 3500",
+            "netCompensation": "bv. 150",
+            "thirteenthMonth": "Selecteer optie 13e maand",
+            "mealVouchers": "bv. 8/dag",
+            "ecoCheques": "bv. 250/jaar",
+            "groupInsurance": "bv. Ja, uitgebreid",
+            "otherInsurances": "bv. Ziektekostenverzekering",
+            "workCity": "bv. Brussel",
+            "commuteDistance": "bv. 15 of 10-30 km",
+            "commuteMethod": "bv. Auto, Openbaar vervoer",
+            "commuteCompensation": "bv. Brandstofvergoeding",
+            "teleworkDays": "bv. 2",
+            "dayOffEase": "Selecteer gemak van een dag vrij nemen",
             "stressLevel": "Selecteer stressniveau",
-            "reports": "bijv. 5",
-            "extraNotes": "Voeg eventuele aanvullende opmerkingen toe over deze salarisvermelding..."
+            "reports": "bv. 5",
+            "extraNotes": "Voeg aanvullende opmerkingen toe over deze salarisinzending..."
         },
         "help": {
             "age": "Uw huidige leeftijd in jaren",
             "education": "Uw hoogst voltooide opleidingsniveau",
             "workExperience": "Totaal aantal jaren professionele werkervaring",
             "civilStatus": "Uw huidige burgerlijke staat",
-            "dependents": "Aantal personen financieel afhankelijk van u",
+            "dependents": "Aantal personen die financieel afhankelijk van u zijn",
             "sector": "De industrie of sector waarin uw bedrijf actief is",
             "employeeCount": "Geschat aantal werknemers in uw bedrijf",
             "multinational": "Of uw bedrijf actief is in meerdere landen",
             "jobTitle": "Uw officiële functietitel of positienaam",
-            "jobDescription": "Korte beschrijving van uw belangrijkste verantwoordelijkheden",
-            "seniority": "Jaren in uw huidige rol of vergelijkbare functies",
+            "jobDescription": "Korte beschrijving van uw hoofdverantwoordelijkheden",
+            "seniority": "Jaren in uw huidige rol of vergelijkbare posities",
             "officialHours": "Contractuele werkuren per week",
-            "averageHours": "Werkelijke gemiddelde gewerkte uren per week",
-            "shiftDescription": "Beschrijving van uw werkschema (bijv. 9-17, ploegendienst)",
-            "onCall": "Frequentie van bereikbaarheidsdiensten",
+            "averageHours": "Werkelijk gemiddeld gewerkte uren per week",
+            "shiftDescription": "Beschrijving van uw werkschema (bv. 9-5, ploegen)",
+            "onCall": "Frequentie van wachtdiensten of bereikbaarheidsvereisten",
             "vacationDays": "Totaal aantal betaalde vakantiedagen per jaar",
-            "grossSalary": "Maandelijks brutosalaris vóór belastingen",
-            "netSalary": "Maandelijks nettosalaris na belastingen",
+            "grossSalary": "Maandelijks bruto salaris vóór belastingen en inhoudingen",
+            "netSalary": "Maandelijks netto salaris na belastingen",
             "netCompensation": "Totale maandelijkse vergoeding inclusief alle voordelen",
-            "thirteenthMonth": "Eindejaarsbonus of 13de maand",
-            "mealVouchers": "Dagelijkse waarde van maaltijdcheques",
-            "ecoCheques": "Jaarlijkse waarde van ecocheques",
-            "groupInsurance": "Door bedrijf verstrekte groepsverzekering",
-            "otherInsurances": "Eventuele aanvullende verzekeringsdekkingen",
-            "otherBenefits": "Andere voordelen zoals bedrijfswagen, opleiding, sportschoollidmaatschap, etc.",
-            "workCity": "Stad waar uw hoofdwerkplek is gevestigd",
-            "commuteDistance": "Afstand van thuis naar werk (heenreis, niet retour). Je kunt een enkel getal of een bereik invoeren (bijv. 15 of 10-30)",
-            "commuteMethod": "Hoe u naar werk reist (auto, openbaar vervoer, etc.)",
-            "commuteCompensation": "Eventuele vergoeding voor woon-werkverkeer",
-            "teleworkDays": "Aantal dagen per week dat u thuiswerkt",
+            "thirteenthMonth": "Eindejaarsbonus of 13e maand betaling",
+            "mealVouchers": "Dagelijkse waarde van maaltijdcheques of lunchvergoedingen",
+            "ecoCheques": "Jaarlijkse waarde van ecocheques of cadeaucheques",
+            "groupInsurance": "Details van de door het bedrijf verstrekte ziektekosten- of groepsverzekering",
+            "otherInsurances": "Eventuele aanvullende verzekeringsdekking",
+            "otherBenefits": "Andere extra's zoals bedrijfswagen, opleiding, fitnesslidmaatschap, enz.",
+            "workCity": "Stad waar uw primaire werkplek zich bevindt",
+            "commuteDistance": "Afstand van huis naar werk (enkele reis, niet heen en terug). U kunt één nummer of een bereik invoeren (bv. 15 of 10-30)",
+            "commuteMethod": "Hoe u naar het werk pendelt (auto, openbaar vervoer, enz.)",
+            "commuteCompensation": "Eventuele vergoeding voor pendelkosten",
+            "teleworkDays": "Aantal dagen per week dat u van huis werkt",
             "dayOffEase": "Hoe gemakkelijk het is om ongepland vrij te nemen",
-            "stressLevel": "Uw algemene werkgerelateerde stressniveau",
-            "reports": "Aantal personen die direct aan u rapporteren",
-            "extraNotes": "Extra notities of context over deze salarisinvoer"
+            "stressLevel": "Uw algehele werkgerelateerde stressniveau",
+            "reports": "Aantal personen die rechtstreeks aan u rapporteren",
+            "extraNotes": "Aanvullende opmerkingen of context over deze salarisinzending"
         },
         "formOptions": {
             "education": {
                 "highSchool": "Middelbare School",
-                "associate": "Associate Degree",
-                "bachelor": "Bachelor Diploma",
-                "master": "Master Diploma",
+                "associate": "Associate Degree (HBO-niveau)",
+                "bachelor": "Bachelor's Degree (Universitair/HBO)",
+                "master": "Master's Degree (Universitair)",
                 "phd": "PhD / Doctoraat",
-                "professional": "Professioneel Diploma (MD, JD, enz.)",
+                "professional": "Professionele Graad (bv. arts, advocaat)",
                 "vocational": "Beroepsopleiding",
-                "someCollege": "Enkele Hogeschool"
+                "someCollege": "Gedeeltelijke Hogere Opleiding"
             },
             "employeeCount": {
                 "range1": "1-10",
@@ -497,10 +500,10 @@
                 "none": "Geen"
             },
             "civilStatus": {
-                "single": "Ongehuwd",
-                "cohabiting": "Samenwonend/Gehuisvest",
+                "single": "Alleenstaand",
+                "cohabiting": "Samenwonend/Partner",
                 "civilUnion": "Geregistreerd Partnerschap",
-                "married": "Gehuwd",
+                "married": "Getrouwd",
                 "divorced": "Gescheiden",
                 "widowed": "Weduwe/Weduwnaar"
             },
@@ -508,15 +511,15 @@
                 "IT": "IT",
                 "Finance": "Financiën",
                 "Healthcare": "Gezondheidszorg",
-                "Pharmaceutical": "Farmaceutisch",
+                "Pharmaceutical": "Farmaceutica",
                 "Education": "Onderwijs",
                 "Manufacturing": "Productie",
                 "Energy": "Energie",
-                "Consulting": "Consulting",
+                "Consulting": "Consultancy",
                 "Retail": "Detailhandel",
-                "FMCG": "FMCG",
-                "Public Sector": "Publieke sector",
-                "Public Affairs": "Publieke zaken",
+                "FMCG": "FMCG (Fast-Moving Consumer Goods)",
+                "Public Sector": "Publieke Sector",
+                "Public Affairs": "Publieke Zaken",
                 "Transportation": "Transport",
                 "Construction": "Bouw",
                 "Telecommunications": "Telecommunicatie",
@@ -526,12 +529,12 @@
                 "Research": "Onderzoek",
                 "Nonprofit": "Non-profit",
                 "Agriculture": "Landbouw",
-                "Automotive": "Automobiel",
+                "Automotive": "Automotive",
                 "Aerospace": "Luchtvaart",
                 "RealEstate": "Vastgoed",
                 "Entertainment": "Entertainment",
-                "Biotech": "Biotech",
-                "Other": "Anders"
+                "Biotech": "Biotechnologie",
+                "Other": "Overige"
             },
             "combobox": {
                 "custom": "Aangepast",
@@ -540,31 +543,31 @@
             "stressLevel": {
                 "veryLow": "Zeer Laag",
                 "low": "Laag",
-                "moderate": "Gemiddeld",
+                "moderate": "Matig",
                 "high": "Hoog",
                 "veryHigh": "Zeer Hoog",
-                "situational": "Afhankelijk van situatie",
+                "situational": "Afhankelijk van de situatie",
                 "none": "Geen"
             },
             "dayOffEase": {
                 "veryEasy": "Zeer Gemakkelijk",
                 "easy": "Gemakkelijk",
-                "moderate": "Gemiddeld",
+                "moderate": "Matig",
                 "hard": "Moeilijk",
                 "veryHard": "Zeer Moeilijk",
-                "situational": "Afhankelijk van situatie",
+                "situational": "Afhankelijk van de situatie",
                 "impossible": "Bijna Onmogelijk"
             }
         },
         "validation": {
-            "numberExpected": "Getal verwacht",
-            "integerExpected": "Geheel getal verwacht",
+            "numberExpected": "Nummer verwacht",
+            "integerExpected": "Heel getal verwacht",
             "stringExpected": "Tekst verwacht",
             "countryRequired": "Land is verplicht",
             "ageMin": "Leeftijd moet minimaal 18 zijn",
             "ageMax": "Leeftijd mag niet hoger zijn dan 100",
             "workExperienceMax": "Werkervaring mag niet hoger zijn dan 82 jaar",
-            "dependentsMax": "Aantal gezinsleden ten laste mag niet hoger zijn dan 20",
+            "dependentsMax": "Aantal afhankelijken mag niet hoger zijn dan 20",
             "educationRequired": "Opleiding is verplicht",
             "civilStatusRequired": "Burgerlijke staat is verplicht",
             "sectorRequired": "Sector is verplicht",
@@ -573,47 +576,47 @@
             "currencyRequired": "Valuta is verplicht",
             "thirteenthMonthRequired": "13e maand is verplicht",
             "groupInsuranceRequired": "Groepsverzekering is verplicht",
-            "workCityRequired": "Werkstad is verplicht",
-            "commuteDistanceRequired": "Woon-werkafstand is verplicht",
-            "commuteMethodRequired": "Vervoersmiddel is verplicht",
-            "commuteCompensationRequired": "Woon-werkvergoeding is verplicht",
-            "dayOffEaseRequired": "Vrij nemen gemak is verplicht",
+            "workCityRequired": "Stad van werk is verplicht",
+            "commuteDistanceRequired": "Afstand woon-werk is verplicht",
+            "commuteMethodRequired": "Vervoersmethode is verplicht",
+            "commuteCompensationRequired": "Vergoeding woon-werkverkeer is verplicht",
+            "dayOffEaseRequired": "Gemak van dag vrij nemen is verplicht",
             "stressLevelRequired": "Stressniveau is verplicht",
             "jobTitleMax": "Functietitel mag niet langer zijn dan 200 tekens",
-            "jobDescriptionMax": "Functieomschrijving mag niet langer zijn dan 5000 tekens",
-            "seniorityMax": "Dienstjaren mogen niet hoger zijn dan 50 jaar",
+            "jobDescriptionMax": "Functiebeschrijving mag niet langer zijn dan 5000 tekens",
+            "seniorityMax": "Senioriteit mag niet hoger zijn dan 50 jaar",
             "hoursMin": "Uren moeten minimaal 1 zijn",
             "hoursMax": "Uren mogen niet hoger zijn dan 80 per week",
-            "shiftDescriptionMax": "Ploegenbeschrijving mag niet langer zijn dan 1000 tekens",
+            "shiftDescriptionMax": "Beschrijving ploegendienst mag niet langer zijn dan 1000 tekens",
             "vacationDaysMax": "Vakantiedagen mogen niet hoger zijn dan 365 per jaar",
-            "teleworkMax": "Thuiswerkdagen mogen niet meer dan 7 per week zijn",
-            "grossSalaryPositive": "Brutosalaris moet positief zijn",
+            "teleworkMax": "Telewerkdagen mogen niet hoger zijn dan 7 per week",
+            "grossSalaryPositive": "Bruto salaris moet positief zijn",
             "salaryMax": "Salaris mag niet hoger zijn dan €1.000.000",
             "mealVouchersMax": "Maaltijdcheques mogen niet hoger zijn dan €12 per dag",
             "ecoChequesMax": "Ecocheques mogen niet hoger zijn dan €10.000 per jaar",
-            "otherInsurancesMax": "Beschrijving van andere verzekeringen mag niet langer zijn dan 2000 tekens",
-            "otherBenefitsMax": "Beschrijving van andere voordelen mag niet langer zijn dan 2000 tekens",
-            "workCityMax": "Werkstad mag niet langer zijn dan 200 tekens",
-            "commuteDistanceMax": "Woon-werkafstand mag niet langer zijn dan 500 tekens",
-            "commuteDistanceFormat": "Woon-werkafstand moet een getal of bereik zijn (bijv. 15 of 10-30)",
-            "commuteCompensationMax": "Woon-werkvergoeding mag niet langer zijn dan 1000 tekens",
-            "reportsMax": "Aantal rapporten mag niet hoger zijn dan 1000",
+            "otherInsurancesMax": "Beschrijving andere verzekeringen mag niet langer zijn dan 2000 tekens",
+            "otherBenefitsMax": "Beschrijving andere voordelen mag niet langer zijn dan 2000 tekens",
+            "workCityMax": "Stad van werk mag niet langer zijn dan 200 tekens",
+            "commuteDistanceMax": "Afstand woon-werk mag niet langer zijn dan 500 tekens",
+            "commuteDistanceFormat": "Afstand woon-werk moet een nummer of bereik zijn (bv. 15 of 10-30)",
+            "commuteCompensationMax": "Vergoeding woon-werkverkeer mag niet langer zijn dan 1000 tekens",
+            "reportsMax": "Aantal rapporteurs mag niet hoger zijn dan 1000",
             "urlInvalid": "Voer een geldige URL in",
-            "urlDomainInvalid": "Gebruik een URL van een vacaturegerelateerde website (Reddit, LinkedIn, Indeed, etc.)",
-            "extraNotesMax": "Extra notities mogen niet langer zijn dan 5000 tekens",
-            "atLeastOneSalary": "Minimaal één salarisveld (bruto, netto of netto compensatie) is verplicht",
-            "workExperienceVsAge": "Werkervaring mag niet hoger zijn dan de jaren sinds je 18 werd",
-            "seniorityVsExperience": "Dienstjaren in huidige functie mogen niet hoger zijn dan totale werkervaring",
-            "averageHoursVsOfficial": "Gemiddelde uren mogen niet meer dan 20 uur boven de officiële uren liggen",
-            "workCityRequiredForCommute": "Werkstad is verplicht wanneer je woon-werkdetails opgeeft",
-            "netSalaryVsGross": "Nettosalaris mag niet hoger zijn dan brutosalaris",
+            "urlDomainInvalid": "Gebruik een URL van een aan werk gerelateerde website (Reddit, LinkedIn, Indeed, enz.)",
+            "extraNotesMax": "Aanvullende opmerkingen mogen niet langer zijn dan 5000 tekens",
+            "atLeastOneSalary": "Minstens één salarisveld (bruto, netto of netto vergoeding) is verplicht",
+            "workExperienceVsAge": "Werkervaring mag de jaren sinds uw 18e niet overschrijden",
+            "seniorityVsExperience": "Senioriteit in de huidige rol mag de totale werkervaring niet overschrijden",
+            "averageHoursVsOfficial": "Gemiddelde uren mogen de officiële uren niet met meer dan 20 uur overschrijden",
+            "workCityRequiredForCommute": "Stad van werk is vereist bij het verstrekken van pendeldetails",
+            "netSalaryVsGross": "Netto salaris mag het bruto salaris niet overschrijden",
             "contentContainsBadWords": "Inhoud bevat ongepaste taal",
-            "contentContainsUrls": "URLs zijn niet toegestaan in dit veld",
-            "honestyRequired": "Je moet bevestigen dat de verstrekte informatie accuraat en eerlijk is"
+            "contentContainsUrls": "URL's zijn niet toegestaan in dit veld",
+            "honestyRequired": "U moet bevestigen dat de verstrekte informatie nauwkeurig en eerlijk is"
         },
         "validationSummary": {
-            "title": "Corrigeer de volgende fouten:",
-            "errorCount": "{count, plural, =1 {1 fout gevonden} other {# fouten gevonden}}"
+            "title": "Gelieve de volgende fouten te corrigeren:",
+            "errorCount": "{count, plural, one {1 fout gevonden} other {# fouten gevonden}}"
         }
     },
     "common": {
@@ -625,24 +628,36 @@
         "filter": "Filteren",
         "sort": "Sorteren",
         "export": "Exporteren",
-        "optional": "optioneel"
+        "optional": "optioneel",
+        "success": "Succes",
+        "failed": "Mislukt",
+        "retry": "Opnieuw proberen",
+        "close": "Sluiten",
+        "save": "Opslaan",
+        "delete": "Verwijderen",
+        "edit": "Bewerken",
+        "back": "Terug",
+        "next": "Volgende",
+        "previous": "Vorige",
+        "yes": "Ja",
+        "no": "Nee"
     },
     "language": {
-        "english": "English",
+        "english": "Engels",
         "dutch": "Nederlands",
-        "french": "Français",
-        "german": "Deutsch",
-        "toggle": "Taal wijzigen"
+        "french": "Frans",
+        "german": "Duits",
+        "toggle": "Wissel taal"
     },
     "feedback": {
         "meta": {
-            "title": "Feedback Verzenden - WageWatchers",
-            "description": "Help het salariszichtbaarheidsplatform te verbeteren door bugs te melden, functies aan te vragen of verbeteringen voor te stellen."
+            "title": "Feedback Indienen - WageWatchers",
+            "description": "Help het salaristransparantieplatform te verbeteren door bugs te melden, functies aan te vragen of verbeteringen voor te stellen."
         },
-        "title": "Feedback Verzenden",
-        "subtitle": "Help ons het salariszichtbaarheidsplatform te verbeteren door bugs te melden, functies aan te vragen of verbeteringen voor te stellen.",
+        "title": "Feedback Indienen",
+        "subtitle": "Help ons het salaristransparantieplatform te verbeteren door bugs te melden, functies aan te vragen of verbeteringen voor te stellen.",
         "nav": {
-            "goBack": "Ga Terug"
+            "goBack": "Teruggaan"
         },
         "form": {
             "title": "Titel",
@@ -653,19 +668,19 @@
             "priority": "Prioriteit",
             "email": "E-mail (Optioneel)",
             "emailPlaceholder": "uw.email@voorbeeld.com",
-            "emailHint": "Geef uw e-mailadres op als u wilt dat we contact met u opnemen over uw feedback.",
+            "emailHint": "Geef uw e-mail op als u wilt dat wij uw feedback opvolgen.",
             "emailInvalid": "Ongeldig e-mailadres opgegeven",
-            "submit": "Feedback Verzenden",
-            "submitting": "Verzenden..."
+            "submit": "Feedback Indienen",
+            "submitting": "Indienen..."
         },
         "types": {
             "bug": {
-                "label": "Bug Rapport",
+                "label": "Bugmelding",
                 "description": "Meld een probleem of fout"
             },
             "feature": {
                 "label": "Functie",
-                "description": "Stel een nieuwe functie voor"
+                "description": "Stel een nieuwe functie voor de applicatie voor"
             },
             "improvement": {
                 "label": "Verbetering",
@@ -675,7 +690,7 @@
         "priorities": {
             "low": {
                 "label": "Laag",
-                "description": "Leuk om te hebben, geen urgentie"
+                "description": "Aangenaam om te hebben, geen urgentie"
             },
             "medium": {
                 "label": "Gemiddeld",
@@ -683,11 +698,11 @@
             },
             "high": {
                 "label": "Hoog",
-                "description": "Belangrijk voor gebruikerservaring"
+                "description": "Belangrijk voor de gebruikerservaring"
             },
             "critical": {
                 "label": "Kritiek",
-                "description": "Breekt functionaliteit of beveiliging"
+                "description": "Verbreekt functionaliteit of beveiliging"
             }
         },
         "validation": {
@@ -696,165 +711,165 @@
             "descriptionRequired": "Beschrijving is verplicht",
             "descriptionTooLong": "Beschrijving te lang",
             "contentContainsBadWords": "Inhoud bevat ongepaste taal",
-            "contentContainsUrls": "URLs zijn niet toegestaan in feedback"
+            "contentContainsUrls": "URL's zijn niet toegestaan in feedback"
         },
-        "success": "Bedankt voor uw feedback! We hebben uw rapport ontvangen.",
-        "error": "Feedback verzenden mislukt. Probeer het opnieuw.",
+        "success": "Bedankt voor uw feedback! We hebben uw melding ontvangen.",
+        "error": "Indienen van feedback mislukt. Probeer het opnieuw.",
         "networkError": "Netwerkfout. Probeer het opnieuw.",
         "rateLimit": {
             "title": "Indieningslimiet Bereikt",
-            "message": "U heeft de dagelijkse limiet van 5 feedback-inzendingen bereikt. Dit helpt ons spam te voorkomen en kwaliteitsfeedback te garanderen.",
-            "resetInfo": "U kunt opnieuw indienen na {resetTime}.",
-            "remaining": "U heeft vandaag nog {count} {count, plural, one {indiening} other {indieningen}} over."
+            "message": "U heeft de dagelijkse limiet van 5 feedbackinzendingen bereikt. Dit helpt ons spam te voorkomen en kwaliteitsfeedback te waarborgen.",
+            "resetInfo": "U kunt het opnieuw indienen na {resetTime}.",
+            "remaining": "U heeft {count} {count, plural, one {inzending} other {inzendingen}} over vandaag."
         },
         "trackingId": {
-            "title": "Uw Tracking-ID",
-            "instruction": "Bewaar deze ID om de status van uw rapport op elk moment te volgen."
+            "title": "Uw Tracking ID",
+            "instruction": "Bewaar dit ID om de status van uw melding op elk moment te volgen."
         },
-        "emailSent": "We hebben een bevestigingsmail gestuurd naar {email} met uw tracking-ID en rapportdetails.",
-        "noEmail": "Gebruik uw tracking-ID om de status van uw rapport te controleren op de Status-pagina."
+        "emailSent": "We hebben een bevestigingsmail naar {email} gestuurd met uw tracking ID en meldingsdetails.",
+        "noEmail": "Gebruik uw tracking ID om de status van uw melding te controleren op de Statuspagina."
     },
     "status": {
         "title": "Rapport Status Controleren",
-        "subtitle": "Volg de status van uw ingediende bugrapporten of functieverzoeken.",
-        "loading": "Uw rapporten worden geladen...",
+        "subtitle": "Volg de status van uw ingediende bugmeldingen of functieverzoeken.",
+        "loading": "Uw meldingen laden...",
         "nav": {
             "home": "Home",
             "feedback": "Feedback",
-            "addEntry": "Invoer Toevoegen"
+            "addEntry": "Salaris Delen"
         },
         "search": {
-            "searchTitle": "Zoek Uw Rapporten",
-            "searchAnother": "Zoek Een Ander Rapport",
-            "label": "Tracking-ID of E-mail",
+            "searchTitle": "Zoek Uw Meldingen",
+            "searchAnother": "Zoek Een Andere Melding",
+            "label": "Tracking ID of E-mail",
             "placeholder": "XXXX-XXXX",
-            "placeholderEmail": "uw@email.nl",
+            "placeholderEmail": "uw@email.com",
             "hint": "Voer de 8 tekens na TRK- of uw e-mailadres in",
-            "button": "Rapporten Zoeken",
+            "button": "Zoek Meldingen",
             "searching": "Zoeken...",
-            "instruction": "Voer uw tracking-ID of e-mailadres in om de status van uw feedback te bekijken.",
-            "invalidFormat": "Ongeldig formaat. Tracking-ID moet 8 tekens (XXXX-XXXX) of een geldig e-mailadres zijn.",
+            "instruction": "Voer uw tracking ID of e-mailadres in om de status van uw feedback te bekijken.",
+            "invalidFormat": "Ongeldig formaat. Tracking ID moet 8 tekens zijn (XXXX-XXXX) of een geldig e-mailadres.",
             "searchType": {
-                "trackingId": "Tracking-ID",
+                "trackingId": "Tracking ID",
                 "email": "E-mailadres"
             }
         },
         "results": {
-            "title": "Uw Rapporten",
-            "recentTitle": "Recente Rapporten",
-            "savedTitle": "Mijn Opgeslagen Rapporten",
-            "recentSavedTitle": "Mijn Recente Rapporten",
+            "title": "Uw Meldingen",
+            "recentTitle": "Recente Meldingen",
+            "savedTitle": "Mijn Opgeslagen Meldingen",
+            "recentSavedTitle": "Mijn Recente Meldingen",
             "total": "totaal",
-            "allReportsTitle": "Al Uw Rapporten",
-            "allReportsSubtitle": "Volledig overzicht van al uw ingediende rapporten en hun huidige status.",
-            "showingAll": "Alle {count} rapporten weergeven",
+            "allReportsTitle": "Al Uw Meldingen",
+            "allReportsSubtitle": "Volledig overzicht van al uw ingediende meldingen en hun huidige status.",
+            "showingAll": "Toont alle {count} meldingen",
             "backToStatus": "Terug naar Status",
             "submittedOn": "Ingediend op",
-            "trackingId": "Tracking-ID:",
+            "trackingId": "Tracking ID:",
             "lastUpdated": "Laatst bijgewerkt:",
-            "noReportsTitle": "Geen rapporten gevonden",
-            "noReportsMessage": "We konden geen rapporten vinden die overeenkomen met die identificatie. Controleer uw tracking-ID of e-mailadres.",
-            "viewAll": "Alles Weergeven",
-            "showRecent": "Recente Weergeven"
+            "noReportsTitle": "Geen meldingen gevonden",
+            "noReportsMessage": "We konden geen meldingen vinden die overeenkomen met die identificatie. Controleer uw tracking ID of e-mailadres.",
+            "viewAll": "Bekijk Alles",
+            "showRecent": "Toon Recent"
         },
         "statuses": {
             "TODO": "Te Doen",
-            "IN_PROGRESS": "In Uitvoering",
+            "IN_PROGRESS": "In Behandeling",
             "DONE": "Voltooid",
             "CANCELLED": "Geannuleerd"
         },
-        "noResults": "Geen rapporten gevonden met die identificatie",
+        "noResults": "Geen meldingen gevonden met die identificatie",
         "errors": {
-            "empty": "Voer een rapporteur ID of e-mailadres in",
-            "network": "Rapporten zoeken mislukt. Probeer het opnieuw."
+            "empty": "Voer een reporter ID of e-mailadres in",
+            "network": "Zoeken naar meldingen mislukt. Probeer het opnieuw."
         }
     },
     "donate": {
-        "goBack": "Ga Terug",
-        "title": "Koop een Koffie voor Me ☕",
+        "goBack": "Teruggaan",
+        "title": "Koop Me een Koffie",
         "subtitle": "Help WageWatchers draaiende te houden!",
-        "description": "WageWatchers is gratis en gemeenschapsgedreven, maar het kost geld om het draaiende te houden. Serverhosting, databasekosten en ontwikkelingstijd tellen allemaal op. Als je dit platform waardevol vindt, overweeg dan om het te ondersteunen met een kleine donatie!",
+        "description": "WageWatchers is gratis en community-gedreven, maar het kost geld om de lichten aan te houden. Serverhosting, databasekosten en ontwikkelingstijd tellen allemaal op. Als u dit platform waardevol vindt, overweeg dan een kleine donatie!",
         "whyDonate": "Waarom Doneren?",
         "benefits": {
             "hosting": {
-                "title": "Serverhosting",
+                "title": "Server Hosting",
                 "description": "Houd het platform snel en 24/7 beschikbaar"
             },
             "database": {
                 "title": "Databasekosten",
-                "description": "Opslaan en verwerken van duizenden salarisvermeldingen"
+                "description": "Bewaar en verwerk duizenden salarisinzendingen"
             },
             "development": {
                 "title": "Ontwikkeling",
-                "description": "Nieuwe functies en verbeteringen toevoegen"
+                "description": "Voeg nieuwe functies en verbeteringen toe"
             },
             "free": {
                 "title": "Houd het Gratis",
-                "description": "Geen betalingsmuren, geen premium functies, nooit"
+                "description": "Geen betaalmuren, geen premium functies, ooit"
             }
         },
         "amount": "Kies een bedrag",
         "monthly": "Maandelijks",
         "oneTime": "Eenmalig",
         "custom": "Aangepast",
-        "donate": "Doneer via PayPal",
-        "donateOptions": "Kies je Donatiemethode",
-        "buyMeCoffee": "Koop een Koffie",
+        "donate": "Doneren via PayPal",
+        "donateOptions": "Kies Uw Donatiemethode",
+        "buyMeCoffee": "Koop Me een Koffie",
         "paypal": "PayPal",
         "kofi": "Ko-fi",
         "github": "GitHub Sponsors",
-        "crypto": "Cryptocurrency",
+        "crypto": "Cryptovaluta",
         "copyAddress": "Kopieer Adres",
         "addressCopied": "Adres gekopieerd!",
         "bitcoin": "Bitcoin (BTC)",
         "ethereum": "Ethereum (ETH)",
-        "ethereumNote": "Ondersteunt meerdere ERC-20 tokens (USDC, LRC, LINK, UNI, etc.)",
+        "ethereumNote": "Ondersteunt meerdere ERC-20 tokens (USDC, LRC, LINK, UNI, enz.)",
         "usdc": "USD Coin (USDC)",
         "solana": "Solana (SOL)",
         "traditional": "Traditioneel",
         "otherWays": "Andere Manieren om te Ondersteunen",
-        "share": "Deel met vrienden",
-        "contribute": "Deel salarisgegevens",
+        "share": "Delen met vrienden",
+        "contribute": "Draag salarisgegevens bij",
         "feedback": "Geef feedback",
-        "thankYou": "Bedankt voor je steun! 🎉",
-        "thankYouMessage": "Elke bijdrage, groot of klein, helpt om dit platform levend en gratis te houden voor iedereen.",
-        "connect": "Maak contact met mij",
+        "thankYou": "Bedankt voor uw steun! 🎉",
+        "thankYouMessage": "Elke bijdrage, groot of klein, helpt dit platform levend en gratis te houden voor iedereen.",
+        "connect": "Verbind met mij",
         "socials": {
             "reddit": "Reddit",
             "portfolio": "Portfolio",
             "github": "GitHub"
         },
-        "oneTimeSupport": "Eenmalige ondersteuning",
+        "oneTimeSupport": "Eenmalige steun",
         "securePayment": "Veilige betaling",
-        "supportWithKofi": "Ondersteun met Ko-fi",
+        "supportWithKofi": "Steun met Ko-fi",
         "monthlySponsorship": "Maandelijkse sponsoring",
-        "shareTitle": "WageWatchers - Europese Salaristransparantie Platform",
+        "shareTitle": "WageWatchers - Europees Salaristransparantieplatform",
         "shareText": "Bekijk WageWatchers - Community-gedreven salaristransparantie in Europese markten!",
         "footerCommunity": "🧡 Community-gedreven salaristransparantie",
         "footerMadeWith": "Gemaakt met ❤️ voor de community •",
         "footerViewOnGithub": "Bekijk op GitHub"
     },
     "entryDetail": {
-        "backToDashboard": "Ga Terug",
-        "untitled": "Naamloze Positie",
+        "backToDashboard": "Terug naar Dashboard",
+        "untitled": "Ongetitelde Positie",
         "submittedOn": "Ingediend op",
         "grossSalary": "Bruto Salaris",
         "netSalary": "Netto Salaris",
-        "netCompensation": "Netto Compensatie",
+        "netCompensation": "Netto Vergoeding",
         "personalInfo": "Persoonlijke Informatie",
         "age": "Leeftijd",
         "education": "Opleiding",
         "workExperience": "Werkervaring",
         "civilStatus": "Burgerlijke Staat",
-        "dependents": "Personen ten Laste",
+        "dependents": "Afhankelijken",
         "years": "jaar",
-        "jobInfo": "Baan Informatie",
+        "jobInfo": "Functie Informatie",
         "jobTitle": "Functietitel",
         "sector": "Sector",
         "seniority": "Senioriteit",
         "employeeCount": "Aantal Werknemers",
         "multinational": "Multinational",
-        "jobDescription": "Functieomschrijving",
+        "jobDescription": "Functiebeschrijving",
         "yes": "Ja",
         "no": "Nee",
         "workSchedule": "Werkschema",
@@ -863,22 +878,22 @@
         "hoursPerWeek": "uur/week",
         "vacationDays": "Vakantiedagen",
         "days": "dagen",
-        "teleworkDays": "Thuiswerk Dagen",
+        "teleworkDays": "Telewerk Dagen",
         "daysPerWeek": "dagen/week",
-        "shiftDescription": "Ploegendienst Beschrijving",
-        "onCall": "Bereikbaar",
-        "benefits": "Voordelen & Compensatie",
+        "shiftDescription": "Beschrijving Ploegendienst",
+        "onCall": "Wachtdienst/Bereikbaarheid",
+        "benefits": "Voordelen & Vergoeding",
         "thirteenthMonth": "13e Maand",
         "mealVouchers": "Maaltijdcheques ({symbol}/dag)",
         "ecoCheques": "Ecocheques ({symbol}/jaar)",
         "groupInsurance": "Groepsverzekering",
         "otherInsurances": "Andere Verzekeringen",
         "otherBenefits": "Andere Voordelen",
-        "locationCommute": "Locatie & Woon-Werkverkeer",
-        "workCity": "Werkstad",
-        "commuteDistance": "Afstand Woon-Werk (heenreis)",
-        "commuteMethod": "Vervoersmiddel",
-        "commuteCompensation": "Reiskostenvergoeding",
+        "locationCommute": "Locatie & Pendelen",
+        "workCity": "Stad van Werk",
+        "commuteDistance": "Afstand Woon-Werk (enkele reis)",
+        "commuteMethod": "Vervoersmethode",
+        "commuteCompensation": "Vergoeding woon-werkverkeer",
         "workEnvironment": "Werkomgeving",
         "dayOffEase": "Gemak van Vrij Nemen",
         "stressLevel": "Stressniveau",
@@ -887,126 +902,127 @@
         "viewRedditPost": "Bekijk Reddit Post",
         "viewSource": "Bekijk Originele Bron",
         "sourceDescription": "Bron",
-        "extraNotes": "Extra Notities",
-        "additionalNotes": "Extra Notities",
+        "extraNotes": "Aanvullende Opmerkingen",
+        "additionalNotes": "Aanvullende Opmerkingen",
         "reviewStatus": {
             "approved": "Goedgekeurd",
-            "pendingReview": "In Afwachting van Beoordeling",
-            "needsReview": "Beoordeling Nodig",
-            "rejected": "Afgewezen",
+            "pendingReview": "Wacht op Review",
+            "needsReview": "Vereist Review",
+            "rejected": "Afgekeurd",
             "tooltip": {
-                "approved": "Deze invoer is geverifieerd en goedgekeurd",
-                "pendingReview": "Deze invoer wacht op beoordeling",
-                "needsReview": "Deze invoer is gemarkeerd en vereist beoordeling",
-                "rejected": "Deze invoer is afgewezen en verborgen voor publiek"
+                "approved": "Deze inzending is geverifieerd en goedgekeurd",
+                "pendingReview": "Deze inzending wacht op beoordeling",
+                "needsReview": "Deze inzending is gemarkeerd en vereist beoordeling",
+                "rejected": "Deze inzending is afgekeurd en verborgen voor publieke weergave"
             }
         }
     },
     "comments": {
-        "title": "Reacties",
-        "loading": "Reacties laden...",
-        "noComments": "Geen reacties beschikbaar",
-        "reply": "reactie",
+        "title": "Opmerkingen",
+        "loading": "Opmerkingen laden...",
+        "noComments": "Geen opmerkingen beschikbaar",
+        "reply": "reageren",
         "replies": "reacties",
         "collapsed": "ingeklapt",
         "ago": "geleden",
         "justNow": "zojuist"
     },
     "myEntries": {
-        "title": "Mijn Salarisinvoer",
-        "description": "Bekijk en beheer uw ingediende salarisinvoer",
+        "title": "Mijn Salaris Inzendingen",
+        "description": "Bekijk en beheer uw ingediende salarisinzendingen",
         "howItWorks": "Hoe werkt het?",
-        "loading": "Uw invoer laden...",
-        "noEntries": "Geen invoer gevonden",
-        "noEntriesDescription": "U heeft nog geen salarisinvoer ingediend. Uw invoer verschijnt hier voor eenvoudig beheer.",
-        "addFirst": "Deel uw eerste salaris",
-        "yourEntries": "Uw Invoer ({count})",
+        "loading": "Uw inzendingen laden...",
+        "noEntries": "Geen inzendingen gevonden",
+        "noEntriesDescription": "U heeft nog geen salarisinzendingen ingediend. Uw inzendingen verschijnen hier voor eenvoudig beheer.",
+        "addFirst": "Deel Uw Eerste Salaris",
+        "yourEntries": "Uw Inzendingen ({count})",
         "table": {
             "location": "Locatie",
             "country": "Land",
             "jobTitle": "Functietitel",
-            "salary": "Brutosalaris",
+            "salary": "Bruto Salaris",
             "submitted": "Ingediend",
             "status": "Status",
-            "editStatus": "Bewerkingsstatus",
+            "editStatus": "Bewerk Status",
             "actions": "Acties",
-            "noTitle": "Geen titel opgegeven",
-            "editableFor": "{hours}u over",
+            "noTitle": "Geen titel verstrekt",
+            "editableFor": "Nog {hours}u",
             "readonly": "Alleen-lezen",
-            "pending": "In Afwachting"
+            "pending": "In afwachting"
         },
-        "deleteConfirm": "Weet u zeker dat u deze invoer wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
-        "deleteError": "Verwijderen van invoer mislukt",
-        "infoTitle": "ℹ️ Hoe het Werkt",
-        "info1": "Uw invoer wordt anoniem in uw browser opgeslagen met behulp van beveiligde tokens",
-        "info2": "U kunt invoer 1 dag na indiening bewerken of verwijderen",
-        "info3": "Na het bewerkingsvenster worden invoer alleen-lezen maar blijven zichtbaar",
-        "info4": "Het wissen van browsergegevens verwijdert uw toegang tot het beheren van deze invoer",
+        "deleteConfirm": "Weet u zeker dat u deze inzending wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "deleteError": "Verwijderen van inzending mislukt",
+        "infoTitle": "ℹ️ Hoe werkt het?",
+        "info1": "Uw inzendingen worden anoniem in uw browser opgeslagen met behulp van beveiligde tokens",
+        "info2": "U kunt inzendingen 1 dag na indiening bewerken of verwijderen",
+        "info3": "Na de bewerkingsperiode worden inzendingen alleen-lezen, maar blijven zichtbaar",
+        "info4": "Het wissen van browsergegevens verwijdert uw toegang om deze inzendingen te beheren",
         "deleteDialog": {
-            "title": "Salarisinvoer Verwijderen",
+            "title": "Salaris Inzending Verwijderen",
             "deletingEntry": "U staat op het punt te verwijderen:",
-            "canEdit": "U kunt deze invoer bewerken in plaats van deze te verwijderen",
+            "canEdit": "U kunt deze inzending bewerken in plaats van te verwijderen",
             "permanent": "Deze actie kan niet ongedaan worden gemaakt",
-            "helpsOthers": "Uw invoer helpt anderen eerlijke compensatie te begrijpen",
-            "typeToConfirm": "Typ DELETE om te bevestigen",
-            "confirmPlaceholder": "Typ hier DELETE",
-            "confirmHint": "Typ het woord DELETE (in hoofdletters) om de verwijderknop te activeren",
+            "helpsOthers": "Uw inzending helpt anderen om eerlijke vergoeding te begrijpen",
+            "typeToConfirm": "Typ VERWIJDEREN om te bevestigen",
+            "confirmPlaceholder": "Typ VERWIJDEREN hier",
+            "confirmHint": "Typ het woord VERWIJDEREN (in hoofdletters) om de verwijderknop in te schakelen",
             "cancel": "Annuleren",
-            "confirmDelete": "Ja, Invoer Verwijderen",
+            "confirmDelete": "Ja, Verwijder Inzending",
             "deleting": "Verwijderen..."
         }
     },
     "edit": {
         "meta": {
-            "title": "Salarisinvoer Bewerken - WageWatchers",
-            "description": "Bewerk uw ingediende salarisinvoer anoniem. Werk salarisinformatie, voordelen en werkomstandigheden bij."
+            "title": "Salarisvermelding Bewerken - WageWatchers",
+            "description": "Bewerk uw ingediende salarisinzending anoniem. Werk salarisinformatie, voordelen en arbeidsvoorwaarden bij."
         },
-        "title": "Salarisinvoer Bewerken",
-        "loading": "Invoer laden...",
-        "redirecting": "Doorsturen naar bewerkingsformulier...",
-        "errorTitle": "Kan Invoer Niet Bewerken",
-        "goBack": "Ga Terug",
-        "goToMyEntries": "Ga naar Mijn Invoer",
+        "title": "Salarisvermelding Bewerken",
+        "loading": "Inzending laden...",
+        "redirecting": "Doorverwijzen naar bewerkingsformulier...",
+        "errorTitle": "Kan Inzending Niet Bewerken",
+        "goBack": "Teruggaan",
+        "goToMyEntries": "Ga naar Mijn Inzendingen",
         "goToDashboard": "Ga naar Dashboard",
         "errors": {
-            "noToken": "U heeft geen toestemming om deze invoer te bewerken. Het is mogelijk ingediend vanuit een andere browser.",
-            "notFound": "Invoer niet gevonden. Het is mogelijk verwijderd.",
-            "notOwner": "U heeft geen toestemming om deze invoer te bewerken.",
-            "expired": "Het bewerkingsvenster voor deze invoer is verlopen (1 dag na indiening).",
-            "generic": "Laden van invoer mislukt. Probeer het opnieuw."
+            "noToken": "U heeft geen toestemming om deze inzending te bewerken. Deze is mogelijk ingediend vanaf een andere browser.",
+            "notFound": "Inzending niet gevonden. Deze is mogelijk verwijderd.",
+            "notOwner": "U heeft geen toestemming om deze inzending te bewerken.",
+            "expired": "De bewerkingsperiode voor deze inzending is verlopen (1 dag na indiening).",
+            "generic": "Laden van inzending mislukt. Probeer het opnieuw."
         }
     },
     "changelog": {
-        "title": "Wijzigingslog",
-        "description": "Blijf op de hoogte van de nieuwste functies en verbeteringen aan WageWatchers.",
+        "title": "Wijzigingslogboek",
+        "description": "Blijf op de hoogte van de nieuwste functies en verbeteringen van WageWatchers.",
         "backToHome": "Terug naar Home",
         "stayUpdated": "Blijf Op de Hoogte",
-        "newsletterPrompt": "Abonneer je op onze nieuwsbrief om wekelijks updates te krijgen over nieuwe functies en verbeteringen.",
+        "newsletterPrompt": "Abonneer u op onze nieuwsbrief om wekelijkse updates te ontvangen over nieuwe functies en verbeteringen.",
         "version": "Versie",
         "bullet": "•",
         "newsletter": {
-            "placeholder": "Voer je e-mailadres in",
+            "placeholder": "Voer uw e-mailadres in",
             "subscribe": "Abonneren",
-            "subscribing": "Aan het abonneren...",
-            "success": "Succesvol geabonneerd op nieuwsbrief!",
+            "subscribing": "Abonneren...",
+            "success": "Succesvol geabonneerd op de nieuwsbrief!",
             "error": "Abonneren mislukt",
             "networkError": "Netwerkfout. Probeer het opnieuw."
         }
     },
     "adminReview": {
-        "title": "Goedkeuringswachtrij",
-        "description": "Beoordeel gemarkeerde vermeldingen en keur ze goed of wijs ze af op basis van anomalie detectie analyse.",
+        "title": "Wachtrij voor Inzending Review",
+        "description": "Beoordeel gemarkeerde inzendingen en keur ze goed of af op basis van anomaliedetectieanalyse.",
+        "backToAdmin": "Terug naar Admin Dashboard",
         "loading": "Laden...",
-        "noEntries": "Geen vermeldingen wachten op goedkeuring. Goed gedaan!",
+        "noEntries": "Geen inzendingen in afwachting van review. Goed gedaan!",
         "stats": {
-            "total": "Totaal Vermeldingen",
+            "total": "Totaal Aantal Inzendingen",
             "approved": "Goedgekeurd",
-            "pending": "In Behandeling",
-            "needsReview": "Beoordeling Vereist",
-            "rejected": "Afgewezen"
+            "pending": "In afwachting",
+            "needsReview": "Vereist Review",
+            "rejected": "Afgekeurd"
         },
         "entry": {
-            "untitledPosition": "Naamloze Positie",
+            "untitledPosition": "Ongetitelde Positie",
             "submitted": "Ingediend",
             "grossSalary": "Bruto Salaris",
             "country": "Land",
@@ -1016,26 +1032,26 @@
             "na": "N.v.t."
         },
         "anomaly": {
-            "title": "Reden Anomalie Detectie",
+            "title": "Reden Anomalietectie",
             "highRisk": "Hoog Risico ({score})",
             "mediumRisk": "Gemiddeld Risico ({score})",
             "lowRisk": "Laag Risico ({score})"
         },
         "actions": {
             "approve": "Goedkeuren",
-            "reject": "Afwijzen",
+            "reject": "Afkeuren",
             "processing": "Verwerken..."
         },
         "status": {
             "APPROVED": "Goedgekeurd",
-            "PENDING": "In Behandeling",
-            "NEEDS_REVIEW": "Beoordeling Vereist",
-            "REJECTED": "Afgewezen"
+            "PENDING": "In afwachting",
+            "NEEDS_REVIEW": "Vereist Review",
+            "REJECTED": "Afgekeurd"
         },
         "errors": {
-            "loadFailed": "Laden van vermeldingen mislukt. Ververs de pagina.",
-            "actionFailed": "Kon vermelding niet {action}. Probeer opnieuw.",
-            "unauthorized": "Niet geautoriseerd. Log in."
+            "loadFailed": "Laden van inzendingen mislukt. Ververs de pagina.",
+            "actionFailed": "Actie voor inzending {action} mislukt. Probeer het opnieuw.",
+            "unauthorized": "Niet geautoriseerd. Gelieve in te loggen."
         }
     }
-}
+    }
