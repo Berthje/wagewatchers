@@ -1,7 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import {
     Card,
     CardDescription,
@@ -15,6 +12,8 @@ import {
     ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { verifyAdminAuth } from "@/lib/admin-auth";
+import { AdminHeader } from "@/components/admin-header";
 
 interface DashboardCard {
     title: string;
@@ -25,35 +24,12 @@ interface DashboardCard {
     stats?: string;
 }
 
-export default function AdminDashboardPage() {
-    const router = useRouter();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const checkAuth = () => {
-            const authenticated =
-                localStorage.getItem("adminAuthenticated") === "true";
-            if (!authenticated) {
-                router.push("/admin/login");
-            } else {
-                setIsAuthenticated(true);
-            }
-            setIsLoading(false);
-        };
-        checkAuth();
-    }, [router]);
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-        );
-    }
+export default async function AdminDashboardPage() {
+    // Server-side authentication check
+    const isAuthenticated = await verifyAdminAuth();
 
     if (!isAuthenticated) {
-        return null;
+        redirect("/admin/login");
     }
 
     const dashboardCards: DashboardCard[] = [
@@ -76,9 +52,12 @@ export default function AdminDashboardPage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-stone-950 via-stone-950 to-stone-900">
-            <div className="container mx-auto px-4 py-12">
+            <div className="container mx-auto px-4 py-6">
+                {/* Home and Logout buttons */}
+                <AdminHeader />
+
                 {/* Header */}
-                <div className="mb-12">
+                <div className="mb-12 mt-8">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 rounded-xl">
                             <ShieldCheck className="h-8 w-8 md:w-12 md:h-12 text-primary" />
@@ -96,8 +75,8 @@ export default function AdminDashboardPage() {
 
                 {/* Dashboard Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                    {dashboardCards.map((card, index) => (
-                        <Link key={index} href={card.href} className="group">
+                    {dashboardCards.map((card) => (
+                        <Link key={card.href} href={card.href} className="group">
                             <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] border-2 hover:border-primary/50 h-full">
                                 {/* Gradient Background */}
                                 <div

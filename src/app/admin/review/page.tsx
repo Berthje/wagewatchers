@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, AlertTriangle, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { AdminAuthGuard } from "@/components/admin-auth-guard";
+import { AdminHeader } from "@/components/admin-header";
 
 interface SalaryEntry {
     id: number;
@@ -32,7 +32,6 @@ interface AnomalyStats {
 }
 
 export default function ReviewPage() {
-    const router = useRouter();
     const [entries, setEntries] = useState<SalaryEntry[]>([]);
     const [stats, setStats] = useState<AnomalyStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -49,10 +48,6 @@ export default function ReviewPage() {
             // Fetch pending entries
             const entriesRes = await fetch("/api/admin/review?status=all");
             if (!entriesRes.ok) {
-                if (entriesRes.status === 401) {
-                    router.push("/admin/login");
-                    return;
-                }
                 throw new Error("Failed to fetch entries");
             }
             const entriesData = await entriesRes.json();
@@ -119,28 +114,32 @@ export default function ReviewPage() {
 
     if (loading) {
         return (
-            <div className="container mx-auto p-6">
-                <h1 className="text-3xl font-bold mb-6">Entry Review Queue</h1>
-                <p>Loading...</p>
-            </div>
+            <AdminAuthGuard>
+                <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
+                    <div className="container mx-auto px-4 py-6">
+                        <AdminHeader />
+                        <div className="mt-6">
+                            <h1 className="text-3xl font-bold mb-6 text-stone-100">Entry Review Queue</h1>
+                            <p className="text-stone-400">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </AdminAuthGuard>
         );
     }
 
     return (
-        <div className="container mx-auto p-6">
-            <div className="mb-6">
-                <Link
-                    href="/admin"
-                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to Admin Dashboard
-                </Link>
-                <h1 className="text-3xl font-bold mb-2">Entry Review Queue</h1>
-                <p className="text-muted-foreground">
-                    Review flagged entries and approve or reject them based on anomaly detection analysis.
-                </p>
-            </div>
+        <AdminAuthGuard>
+            <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
+                <div className="container mx-auto px-4 py-6">
+                    <AdminHeader />
+
+                    <div className="mt-6">
+                        <h1 className="text-3xl font-bold mb-2 text-stone-100">Entry Review Queue</h1>
+                        <p className="text-stone-400">
+                            Review flagged entries and approve or reject them based on anomaly detection analysis.
+                        </p>
+                    </div>
 
             {/* Statistics Cards */}
             {stats && (
@@ -295,6 +294,8 @@ export default function ReviewPage() {
                     ))}
                 </div>
             )}
-        </div>
+                </div>
+            </div>
+        </AdminAuthGuard>
     );
 }

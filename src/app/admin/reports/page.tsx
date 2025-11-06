@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,8 +17,6 @@ import {
     Bug,
     Lightbulb,
     TrendingUp,
-    LogOut,
-    Home,
     X,
     Calendar,
     User,
@@ -28,8 +24,9 @@ import {
     GripVertical,
     Search,
     Loader2,
-    ArrowLeft,
 } from "lucide-react";
+import { AdminAuthGuard } from "@/components/admin-auth-guard";
+import { AdminHeader } from "@/components/admin-header";
 import {
     DndContext,
     DragEndEvent,
@@ -206,7 +203,6 @@ export default function AdminReportsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
     const [activeId, setActiveId] = useState<number | null>(null);
-    const router = useRouter();
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -236,26 +232,8 @@ export default function AdminReportsPage() {
     }, [filter]);
 
     useEffect(() => {
-        // Check authentication
-        const checkAuth = async () => {
-            try {
-                const response = await fetch("/api/admin/verify");
-                const data = await response.json();
-
-                if (!data.authenticated) {
-                    router.push("/admin/login");
-                    return;
-                }
-
-                fetchReports();
-            } catch (error) {
-                console.error("Auth check failed:", error);
-                router.push("/admin/login");
-            }
-        };
-
-        checkAuth();
-    }, [fetchReports, router]);
+        fetchReports();
+    }, [fetchReports]);
 
     const updateReportStatus = async (reportId: number, newStatus: string) => {
         try {
@@ -338,79 +316,30 @@ export default function AdminReportsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
-                    <p className="text-sm text-stone-400">
-                        Loading reports...
-                    </p>
+            <AdminAuthGuard>
+                <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
+                        <p className="text-sm text-stone-400">
+                            Loading reports...
+                        </p>
+                    </div>
                 </div>
-            </div>
+            </AdminAuthGuard>
         );
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-            {/* Header */}
-            <header className="relative z-10 container mx-auto px-4 py-4 md:py-6">
-                <nav className="flex items-center justify-between">
-                    <Link href="/en" className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-stone-100 rounded-lg flex items-center justify-center">
-                            <span className="text-stone-900 font-bold text-sm">
-                                WW
-                            </span>
-                        </div>
-                        <span className="text-lg md:text-xl font-bold text-stone-100">
-                            WageWatchers
-                        </span>
-                    </Link>
-                    <div className="flex items-center space-x-2">
-                        <Link href="/en">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-stone-300 hover:text-stone-100 text-sm md:text-base"
-                            >
-                                <Home className="w-4 h-4 mr-2" />
-                                Home
-                            </Button>
-                        </Link>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={async () => {
-                                try {
-                                    // Clear the admin token cookie by making a logout request
-                                    await fetch("/api/admin/logout", {
-                                        method: "POST",
-                                    });
-                                } catch (error) {
-                                    console.error("Logout error:", error);
-                                }
-                                localStorage.removeItem("adminAuthenticated");
-                                router.push("/admin/login");
-                            }}
-                            className="text-stone-300 hover:text-stone-100 text-sm md:text-base"
-                        >
-                            <LogOut className="w-4 h-4 mr-2" />
-                            Logout
-                        </Button>
-                    </div>
-                </nav>
-            </header>
+        <AdminAuthGuard>
+            <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
+                <div className="container mx-auto px-4 py-6">
+                    {/* Admin Header with Home, Logout, and Back button */}
+                    <AdminHeader />
 
-            <div className="container mx-auto p-6">
-                <div className="mb-6">
-                    <Link
-                        href="/admin"
-                        className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-200 transition-colors mb-4"
-                    >
-                        <ArrowLeft className="h-4 w-4" />
-                        Back to Admin Dashboard
-                    </Link>
-                    <h1 className="text-3xl font-bold mb-4 text-stone-100">
-                        Bug & Feature Reports
-                    </h1>
+                    <div className="mt-6">
+                        <h1 className="text-3xl font-bold mb-4 text-stone-100">
+                            Bug & Feature Reports
+                        </h1>
 
                     {/* Filters */}
                     <div className="space-y-4 mb-6">
@@ -822,6 +751,7 @@ export default function AdminReportsPage() {
                     </div>
                 </div>
             )}
-        </div>
+            </div>
+        </AdminAuthGuard>
     );
 }
