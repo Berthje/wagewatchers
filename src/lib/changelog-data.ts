@@ -139,7 +139,6 @@ export const changelogEntries: Array<{
     date: "2025-10-24",
     changes: [
       "Launched WageWatchers platform with multi-country salary transparency",
-      "Implemented automated Reddit scraping for BESalary and NLSalaris communities",
       "Added comprehensive salary entry form with 50+ fields covering work conditions and benefits",
       "Built interactive dashboard with advanced filtering and sorting capabilities",
       "Added admin panel for managing bug reports and user feedback",

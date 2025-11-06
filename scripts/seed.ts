@@ -110,7 +110,7 @@ async function seed() {
       // Belgium - Software Engineers
       {
         country: "Belgium",
-        subreddit: "BESalary",
+        subreddit: "",
         age: 28,
         education: "Master's degree",
         workExperience: 5,
@@ -151,7 +151,7 @@ async function seed() {
       },
       {
         country: "Belgium",
-        subreddit: "BESalary",
+        subreddit: "",
         age: 32,
         education: "Bachelor's degree",
         workExperience: 8,
@@ -193,7 +193,7 @@ async function seed() {
       // Belgium - Other sectors
       {
         country: "Belgium",
-        subreddit: "BESalary",
+        subreddit: "",
         age: 35,
         education: "Master's degree",
         workExperience: 10,
@@ -234,7 +234,7 @@ async function seed() {
       },
       {
         country: "Belgium",
-        subreddit: "BESalary",
+        subreddit: "",
         age: 26,
         education: "Bachelor's degree",
         workExperience: 3,
