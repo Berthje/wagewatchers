@@ -36,6 +36,13 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.7.0",
+    date: "2025-11-06",
+    changes: [
+      "Added interactive world map with salary statistics for enhanced data visualization",
+    ],
+  },
+  {
     version: "1.6.1",
     date: "2025-11-06",
     changes: [
