@@ -8,6 +8,8 @@
         "build": "next build --turbopack",
         "start": "next start",
         "lint": "eslint",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "create-admin": "tsx scripts/create-admin.ts",
         "update-cities": "tsx scripts/update-cities.ts",
         "studio": "npx drizzle-kit studio",
@@ -84,6 +86,7 @@
         "drizzle-kit": "^0.31.6",
         "eslint": "^9",
         "eslint-config-next": "15.5.4",
+        "prettier": "^3.6.2",
         "tailwindcss": "^4",
         "tsx": "^4.7.0",
         "typescript": "^5"
