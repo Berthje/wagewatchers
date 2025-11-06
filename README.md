@@ -51,22 +51,32 @@ pnpm install
 ### 5. Run Database Migrations
 
 ```bash
-npm run db:push
+npm run db:push:dev
 ```
 
-### 6. (Optional) Seed Database
+### 6. Seed Database with Sample Data
 
 ```bash
-npm run db:seed
+npm run db:seed:dev
 ```
 
-### 7. Create Admin User
+This populates the database with:
+- 10 sample salary entries (Belgium, Netherlands, France, Germany)
+- Threaded comments
+- Bug/feature reports
+- Admin user (email: `admin@wagewatchers.dev`, password: `admin123`)
+- **Real cities from CSV** (`public/data/cities.csv`) - falls back to minimal set if CSV not found
+- Exchange rates and newsletter subscribers
+
+⚠️ **Note**: The seed script only runs in development mode to prevent accidental data loss in production.
+
+### 7. Create Custom Admin User (Optional)
 
 ```bash
-npm run create-admin
+npm run create-admin:dev
 ```
 
-Follow the prompts to create your admin account.
+Follow the prompts to create your own admin account.
 
 ### 8. Start Development Server
 
@@ -107,25 +117,48 @@ docker exec -it wagewatchers-postgres psql -U postgres -d wagewatchers
 ### Drizzle Studio (Database GUI)
 
 ```bash
-npm run studio
+npm run studio:dev
 ```
 
 Opens at [http://localhost:4983](http://localhost:4983)
 
-### Useful Database Commands
+### Development Database Commands
+
+All development commands use the local Docker PostgreSQL instance (`localhost:5433`):
 
 ```bash
 # Generate migrations after schema changes
-npm run db:generate
+npm run db:generate:dev
 
-# Push schema changes directly (dev)
-npm run db:push
+# Push schema changes directly (recommended for dev)
+npm run db:push:dev
 
 # Apply migrations
-npm run db:migrate
+npm run db:migrate:dev
 
 # Introspect existing database
-npm run db:introspect
+npm run db:introspect:dev
+
+# Seed with sample data
+npm run db:seed:dev
+
+# Create admin user
+npm run create-admin:dev
+
+# Update cities data
+npm run update-cities:dev
+```
+
+### Production Database Commands
+
+These use the `DATABASE_URL` from your `.env` file:
+
+```bash
+npm run db:generate
+npm run db:push
+npm run db:migrate
+npm run studio
+npm run seed  # ⚠️ Requires FORCE_SEED=true in production
 ```
 
 ---
