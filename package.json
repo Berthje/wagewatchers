@@ -21,7 +21,13 @@
         "db:generate-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit generate",
         "db:push-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit push",
         "db:migrate-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit migrate",
-        "db:introspect-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit introspect"
+        "db:introspect-dev": "npx cross-env DATABASE_URL=postgresql://postgres:root@localhost:5432/wagewatchers drizzle-kit introspect",
+        "docker:up": "docker-compose up -d",
+        "docker:down": "docker-compose down",
+        "docker:restart": "docker-compose restart",
+        "docker:logs": "docker-compose logs -f",
+        "docker:clean": "docker-compose down -v",
+        "docker:health": "pwsh -File health-check.ps1"
     },
     "dependencies": {
         "@dnd-kit/core": "^6.3.1",

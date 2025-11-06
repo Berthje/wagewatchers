@@ -1,0 +1,42 @@
+name: Docker Setup Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-docker-setup:
+    name: Test Docker Compose Setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Start Docker containers
+        run: docker-compose up -d
+
+      - name: Wait for PostgreSQL to be healthy
+        run: |
+          timeout 60 bash -c 'until docker exec wagewatchers-postgres pg_isready -U postgres; do sleep 2; done'
+
+      - name: Verify PostgreSQL connection
+        run: |
+          docker exec wagewatchers-postgres psql -U postgres -d wagewatchers -c "SELECT 1;"
+
+      - name: Show container status
+        run: docker-compose ps
+
+      - name: Show container logs on failure
+        if: failure()
+        run: |
+          docker-compose logs postgres
+
+      - name: Cleanup
+        if: always()
+        run: docker-compose down -v
