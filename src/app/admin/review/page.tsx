@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Eye } from "lucide-react";
 import { AdminAuthGuard } from "@/components/admin-auth-guard";
 import { AdminHeader } from "@/components/admin-header";
+import { AdminEntryDetailModal } from "@/components/admin-entry-detail-modal";
+import type { SalaryEntry as FullSalaryEntry } from "@/lib/db/schema";
 
 interface SalaryEntry {
     id: number;
@@ -36,6 +38,9 @@ export default function ReviewPage() {
     const [stats, setStats] = useState<AnomalyStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState<number | null>(null);
+    const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+    const [detailEntry, setDetailEntry] = useState<FullSalaryEntry | null>(null);
+    const [detailLoading, setDetailLoading] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -88,6 +93,30 @@ export default function ReviewPage() {
         } finally {
             setProcessingId(null);
         }
+    };
+
+    const handleViewDetails = async (entryId: number) => {
+        setSelectedEntryId(entryId);
+        setDetailLoading(true);
+        try {
+            const res = await fetch(`/api/entries/${entryId}`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch entry details");
+            }
+            const data = await res.json();
+            setDetailEntry(data);
+        } catch (error) {
+            console.error("Failed to fetch entry details:", error);
+            alert("Failed to load entry details. Please try again.");
+            setSelectedEntryId(null);
+        } finally {
+            setDetailLoading(false);
+        }
+    };
+
+    const closeDetailView = () => {
+        setSelectedEntryId(null);
+        setDetailEntry(null);
     };
 
     const getAnomalyBadge = (score: number | null) => {
@@ -221,8 +250,8 @@ export default function ReviewPage() {
                                         <CardTitle className="text-xl mb-2">
                                             {entry.jobTitle || "Untitled Position"}
                                         </CardTitle>
-                                        <CardDescription>
-                                            Submitted: {new Date(entry.createdAt).toLocaleDateString()}
+                                        <CardDescription className="flex flex-col gap-1">
+                                            <span>Submitted: {new Date(entry.createdAt).toLocaleDateString()} at {new Date(entry.createdAt).toLocaleTimeString()}</span>
                                         </CardDescription>
                                     </div>
                                     <div className="flex flex-col gap-2 items-end">
@@ -273,6 +302,13 @@ export default function ReviewPage() {
 
                                 <div className="flex gap-2 justify-end">
                                     <Button
+                                        variant="outline"
+                                        onClick={() => handleViewDetails(entry.id)}
+                                    >
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        View Details
+                                    </Button>
+                                    <Button
                                         variant="destructive"
                                         onClick={() => handleAction(entry.id, "reject")}
                                         disabled={processingId === entry.id}
@@ -295,6 +331,15 @@ export default function ReviewPage() {
                 </div>
             )}
                 </div>
+
+                {/* Detail Modal */}
+                {selectedEntryId && (
+                    <AdminEntryDetailModal
+                        entry={detailEntry}
+                        isLoading={detailLoading}
+                        onClose={closeDetailView}
+                    />
+                )}
             </div>
         </AdminAuthGuard>
     );
