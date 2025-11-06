@@ -25,7 +25,7 @@ cd wagewatchers
 docker-compose up -d
 ```
 
-This will start **PostgreSQL** on `localhost:5432`
+This will start **PostgreSQL** on `localhost:5433`
 
 Verify container is running:
 ```bash
