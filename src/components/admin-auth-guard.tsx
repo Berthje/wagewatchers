@@ -12,7 +12,7 @@ interface AdminAuthGuardProps {
  * Client-side authentication guard for admin pages
  * Verifies admin session and redirects to login if not authenticated
  */
-export function AdminAuthGuard({ children }: AdminAuthGuardProps) {
+export function AdminAuthGuard({ children }: Readonly<AdminAuthGuardProps>) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

@@ -7,3 +7,4 @@ export { ScatterPlotChart } from "./scatter-plot-chart";
 export { YearOverYearChart } from "./year-over-year-chart";
 export { LocationHeatmapChart } from "./location-heatmap-chart";
 export { CustomTooltip } from "./custom-tooltip";
+export { InteractiveWorldMap } from "./interactive-world-map";

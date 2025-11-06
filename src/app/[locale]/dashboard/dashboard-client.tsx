@@ -212,24 +212,32 @@ export function DashboardClient({
       updateArrayParam("sectors", updates.sectors);
       updateArrayParam("cities", updates.cities);
       if (updates.minAge !== undefined) {
-        updates.minAge !== null
-          ? params.set("minAge", updates.minAge.toString())
-          : params.delete("minAge");
+        if (updates.minAge === null) {
+          params.delete("minAge");
+        } else {
+          params.set("minAge", updates.minAge.toString());
+        }
       }
       if (updates.maxAge !== undefined) {
-        updates.maxAge !== null
-          ? params.set("maxAge", updates.maxAge.toString())
-          : params.delete("maxAge");
+        if (updates.maxAge === null) {
+          params.delete("maxAge");
+        } else {
+          params.set("maxAge", updates.maxAge.toString());
+        }
       }
       if (updates.minWorkExperience !== undefined) {
-        updates.minWorkExperience !== null
-          ? params.set("minWorkExperience", updates.minWorkExperience.toString())
-          : params.delete("minWorkExperience");
+        if (updates.minWorkExperience === null) {
+          params.delete("minWorkExperience");
+        } else {
+          params.set("minWorkExperience", updates.minWorkExperience.toString());
+        }
       }
       if (updates.maxWorkExperience !== undefined) {
-        updates.maxWorkExperience !== null
-          ? params.set("maxWorkExperience", updates.maxWorkExperience.toString())
-          : params.delete("maxWorkExperience");
+        if (updates.maxWorkExperience === null) {
+          params.delete("maxWorkExperience");
+        } else {
+          params.set("maxWorkExperience", updates.maxWorkExperience.toString());
+        }
       }
       updateStringParam("search", updates.search);
       updateNumericParam("page", updates.page, 1);
@@ -304,7 +312,7 @@ export function DashboardClient({
         setSelectedCities(stillValidCities);
       }
     }
-  }, [selectedCountries, entries, selectedCities]);
+  }, [selectedCountries, entries, selectedCities, setSelectedCities]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -719,46 +727,38 @@ export function DashboardClient({
                     value: sector,
                     category: "sector" as const,
                   })),
-                  ...(minAge !== null
-                    ? [
-                        {
-                          id: `min-age-${minAge}`,
-                          label: `${t("filters.minAge")}: ${minAge}`,
-                          value: minAge.toString(),
-                          category: "age" as const,
-                        },
-                      ]
-                    : []),
-                  ...(maxAge !== null
-                    ? [
-                        {
-                          id: `max-age-${maxAge}`,
-                          label: `${t("filters.maxAge")}: ${maxAge}`,
-                          value: maxAge.toString(),
-                          category: "age" as const,
-                        },
-                      ]
-                    : []),
-                  ...(minWorkExperience !== null
-                    ? [
-                        {
-                          id: `min-work-experience-${minWorkExperience}`,
-                          label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
-                          value: minWorkExperience.toString(),
-                          category: "workExperience" as const,
-                        },
-                      ]
-                    : []),
-                  ...(maxWorkExperience !== null
-                    ? [
-                        {
-                          id: `max-work-experience-${maxWorkExperience}`,
-                          label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
-                          value: maxWorkExperience.toString(),
-                          category: "workExperience" as const,
-                        },
-                      ]
-                    : []),
+                  ...(minAge === null ? [] : [
+                    {
+                      id: `min-age-${minAge}`,
+                      label: `${t("filters.minAge")}: ${minAge}`,
+                      value: minAge.toString(),
+                      category: "age" as const,
+                    },
+                  ]),
+                  ...(maxAge === null ? [] : [
+                    {
+                      id: `max-age-${maxAge}`,
+                      label: `${t("filters.maxAge")}: ${maxAge}`,
+                      value: maxAge.toString(),
+                      category: "age" as const,
+                    },
+                  ]),
+                  ...(minWorkExperience === null ? [] : [
+                    {
+                      id: `min-work-experience-${minWorkExperience}`,
+                      label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
+                      value: minWorkExperience.toString(),
+                      category: "workExperience" as const,
+                    },
+                  ]),
+                  ...(maxWorkExperience === null ? [] : [
+                    {
+                      id: `max-work-experience-${maxWorkExperience}`,
+                      label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
+                      value: maxWorkExperience.toString(),
+                      category: "workExperience" as const,
+                    },
+                  ]),
                 ]}
                 onRemoveFilter={(value, category) => {
                   if (category === "country") {

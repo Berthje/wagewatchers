@@ -141,6 +141,9 @@ export function useFilters(
     // Search query filter (searches across multiple fields)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
+      // Split by comma and filter out empty keywords
+      const keywords = query.split(',').map(k => k.trim()).filter(k => k.length > 0);
+
       filtered = filtered.filter((entry) => {
         const searchableFields = [
           entry.jobTitle,
@@ -150,7 +153,15 @@ export function useFilters(
           entry.jobDescription,
         ].filter(Boolean);
 
-        return searchableFields.some((field) => (field as string).toLowerCase().includes(query));
+        // Check if any keyword matches any field
+        for (const keyword of keywords) {
+          for (const field of searchableFields) {
+            if ((field as string).toLowerCase().includes(keyword)) {
+              return true;
+            }
+          }
+        }
+        return false;
       });
     }
 
@@ -173,10 +184,10 @@ export function useFilters(
       selectedCountries.length +
       selectedSectors.length +
       selectedCities.length +
-      (minAge !== null ? 1 : 0) +
-      (maxAge !== null ? 1 : 0) +
-      (minWorkExperience !== null ? 1 : 0) +
-      (maxWorkExperience !== null ? 1 : 0) +
+      (minAge === null ? 0 : 1) +
+      (maxAge === null ? 0 : 1) +
+      (minWorkExperience === null ? 0 : 1) +
+      (maxWorkExperience === null ? 0 : 1) +
       (searchQuery.trim() ? 1 : 0)
     );
   }, [

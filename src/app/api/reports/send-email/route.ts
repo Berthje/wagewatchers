@@ -1,21 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import type { Report } from "@/lib/db/schema";
 
 // Initialize Resend with API key from environment variables
 // Get your API key from https://resend.com/api-keys
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-interface Report {
-  id: number;
-  trackingId: string;
-  title: string;
-  description: string;
-  type: string;
-  priority: string;
-  status: string;
-  email?: string;
-  createdAt: string;
-}
 
 export async function POST(request: NextRequest) {
   try {

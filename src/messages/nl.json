@@ -269,7 +269,23 @@
         "experience": "Ervaring",
         "salary": "Salaris"
       }
-    }
+    },
+    "avgSalary": "Gem. Salaris (€/maand)",
+    "medianSalary": "Mediaan Salaris (€/maand)",
+    "entries": "Inzendingen",
+    "worldSalaryMap": "Wereldwijde Salariskaart",
+    "provinceMap": "Provinciale Kaart",
+    "worldMapDescription": "Klik op een land met gegevens om de regionale uitsplitsing te zien",
+    "provinceMapDescription": "Regionale salarisverdeling over provincies/staten",
+    "backToWorld": "Terug naar Wereldweergave",
+    "countries": {
+      "belgium": "België",
+      "netherlands": "Nederland",
+      "germany": "Duitsland",
+      "france": "Frankrijk"
+    },
+    "noDataAvailable": "Geen gegevens beschikbaar",
+    "loading": "Laden"
   },
   "add": {
     "title": "Deel Uw Salaris",
@@ -390,6 +406,8 @@
     "countries": {
       "belgium": "België",
       "netherlands": "Nederland",
+      "germany": "Duitsland",
+      "france": "Frankrijk",
       "unitedKingdom": "Verenigd Koninkrijk"
     },
     "honestyConfirmation": "Ik bevestig dat de verstrekte informatie nauwkeurig en eerlijk is",

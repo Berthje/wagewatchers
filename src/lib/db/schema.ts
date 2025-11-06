@@ -136,12 +136,22 @@ export const cities = pgTable(
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     country: text("country").notNull(),
+    countryCode: text("countryCode"),
+    admin1Code: text("admin1Code"),
+    admin2Code: text("admin2Code"),
+    admin3Code: text("admin3Code"),
+    admin4Code: text("admin4Code"),
+    latitude: real("latitude"),
+    longitude: real("longitude"),
+    alternateNames: text("alternateNames"),
     createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
     index("country_idx").on(table.country),
     index("name_country_idx").on(table.name, table.country),
+    index("admin1Code_idx").on(table.admin1Code),
+    index("admin2Code_idx").on(table.admin2Code),
   ]
 );
 

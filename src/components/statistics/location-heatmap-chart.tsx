@@ -14,15 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useTranslations } from "next-intl";
 import { useSalaryDisplay, formatSalaryWithPreferences } from "@/contexts/salary-display-context";
 import { CustomTooltip } from "./custom-tooltip";
-
-interface LocationHeatmapData {
-  city: string;
-  country: string;
-  avgSalary: number;
-  count: number;
-  lat?: number;
-  lng?: number;
-}
+import type { LocationHeatmapData } from "@/types";
 
 interface LocationHeatmapChartProps {
   readonly data: LocationHeatmapData[];

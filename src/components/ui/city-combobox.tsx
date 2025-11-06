@@ -3,6 +3,7 @@ import * as React from "react";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "use-debounce";
 import { Combobox } from "@/components/ui/combobox";
+import type { CityOption } from "@/types";
 
 interface CityComboboxProps {
   value: string;
@@ -19,12 +20,11 @@ export function CityCombobox({
 }: Readonly<CityComboboxProps>) {
   const [search, setSearch] = React.useState("");
   const [debouncedSearch] = useDebounce(search, 300);
-  const [cities, setCities] = React.useState<{ value: string; label: string }[]>([]);
+  const [cities, setCities] = React.useState<CityOption[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const t = useTranslations("ui");
 
-  // Cache for API responses to avoid unnecessary fetches
-  const cacheRef = React.useRef<Map<string, { value: string; label: string }[]>>(new Map());
+  const cacheRef = React.useRef<Map<string, CityOption[]>>(new Map());
 
   const emptyMessage = React.useMemo(() => {
     if (isLoading) return t("loadingCities");
@@ -56,9 +56,8 @@ export function CityCombobox({
     const fetchCities = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `/api/cities?country=${encodeURIComponent(location)}&search=${encodeURIComponent(debouncedSearch)}`
-        );
+        const url = `/api/cities?country=${encodeURIComponent(location)}&search=${encodeURIComponent(debouncedSearch)}`;
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           const formattedCities = data.map((city: { name: string }) => ({
@@ -70,10 +69,9 @@ export function CityCombobox({
             .toLowerCase()
             .includes(debouncedSearch.toLowerCase());
 
-          const citiesWithRemote =
-            remoteMatchesSearch || formattedCities.length > 0
-              ? [remoteOption, ...formattedCities]
-              : formattedCities;
+          const citiesWithRemote = remoteMatchesSearch
+            ? [remoteOption, ...formattedCities]
+            : formattedCities;
 
           cacheRef.current.set(cacheKey, citiesWithRemote);
           setCities(citiesWithRemote);

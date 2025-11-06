@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { cities } from "@/lib/db/schema";
-import { eq, ilike, and } from "drizzle-orm";
+import { eq, ilike, and, or } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,9 +14,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where conditions
+    // Search in city name and alternate names
     const whereConditions =
       search && search.length >= 3
-        ? and(eq(cities.country, country), ilike(cities.name, `%${search}%`))
+        ? and(
+            eq(cities.country, country),
+            or(
+              ilike(cities.name, `%${search}%`),
+              ilike(cities.alternateNames, `%${search}%`)
+            )
+          )
         : eq(cities.country, country);
 
     const result = await db

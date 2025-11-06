@@ -269,7 +269,23 @@
         "experience": "Expérience",
         "salary": "Salaire"
       }
-    }
+    },
+    "avgSalary": "Salaire Moyen (€/mois)",
+    "medianSalary": "Salaire Médian (€/mois)",
+    "entries": "Entrées",
+    "worldSalaryMap": "Carte Mondiale des Salaires",
+    "provinceMap": "Carte Provinciale",
+    "worldMapDescription": "Cliquez sur un pays avec des données pour voir la répartition régionale",
+    "provinceMapDescription": "Distribution salariale régionale par provinces/états",
+    "backToWorld": "Retour à la Vue Mondiale",
+    "countries": {
+      "belgium": "Belgique",
+      "netherlands": "Pays-Bas",
+      "germany": "Allemagne",
+      "france": "France"
+    },
+    "noDataAvailable": "Aucune donnée disponible",
+    "loading": "Chargement"
   },
   "add": {
     "title": "Partagez Votre Salaire",
@@ -390,6 +406,8 @@
     "countries": {
       "belgium": "Belgique",
       "netherlands": "Pays-Bas",
+      "germany": "Allemagne",
+      "france": "France",
       "unitedKingdom": "Royaume-Uni"
     },
     "honestyConfirmation": "Je confirme que les informations fournies sont exactes et honnêtes",

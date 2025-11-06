@@ -102,7 +102,7 @@ export function Combobox({
           />
         )}
         <PopoverContent className="w-(--radix-popover-trigger-width) p-0 bg-stone-700 border-stone-600">
-          <Command className="bg-stone-700">
+          <Command className="bg-stone-700" shouldFilter={false}>
             <CommandInput
               placeholder={commandInputPlaceholder || t("searchOptions")}
               className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"

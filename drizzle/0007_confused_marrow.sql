@@ -1,0 +1,1 @@
+ALTER TABLE "City" ADD COLUMN "alternateNames" text;

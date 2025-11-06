@@ -8,7 +8,7 @@ import { verify } from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
 
 // Verify admin authentication
-async function verifyAdmin(request: NextRequest): Promise<boolean> {
+async function verifyAdmin(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("admin-token");
@@ -45,7 +45,7 @@ async function getAdminId(): Promise<number | null> {
  * GET - Fetch entries pending review
  */
 export async function GET(request: NextRequest) {
-  const isAdmin = await verifyAdmin(request);
+  const isAdmin = await verifyAdmin();
 
   if (!isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
  * POST - Approve or reject an entry
  */
 export async function POST(request: NextRequest) {
-  const isAdmin = await verifyAdmin(request);
+  const isAdmin = await verifyAdmin();
 
   if (!isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

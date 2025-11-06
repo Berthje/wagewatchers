@@ -96,7 +96,7 @@ export function MultiSelect({
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
+              onClick={() => {}}
               onBlur={(e) => {
                 // Small delay to allow option clicks to register
                 setTimeout(() => {

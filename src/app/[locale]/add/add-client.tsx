@@ -212,7 +212,7 @@ function AddEntryContent() {
           setIsLoadingEntry(false);
         });
     }
-  }, [searchParams, form, router, locale, t]);
+  }, [searchParams, form, router, locale, t, tEdit]);
 
   const onSubmit = async (data: SalaryEntryFormData) => {
     setIsSubmitting(true);

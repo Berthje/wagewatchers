@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getAnomalyStats } from "@/lib/anomaly-detector";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
@@ -6,7 +6,7 @@ import { verify } from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
 
 // Verify admin authentication
-async function verifyAdmin(request: NextRequest): Promise<boolean> {
+async function verifyAdmin(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("admin-token");
@@ -25,8 +25,8 @@ async function verifyAdmin(request: NextRequest): Promise<boolean> {
 /**
  * GET - Fetch anomaly detection statistics
  */
-export async function GET(request: NextRequest) {
-  const isAdmin = await verifyAdmin(request);
+export async function GET() {
+  const isAdmin = await verifyAdmin();
 
   if (!isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

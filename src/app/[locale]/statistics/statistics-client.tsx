@@ -24,6 +24,7 @@ import {
   ScatterPlotChart,
   YearOverYearChart,
   LocationHeatmapChart,
+  InteractiveWorldMap,
 } from "@/components/statistics";
 import { exportToCSV, exportToPDF } from "@/lib/utils/export.utils";
 import {
@@ -455,6 +456,17 @@ export default function StatisticsClient() {
               data={scatterData}
               loading={false}
               onPointClick={handleScatterClick}
+            />
+
+            {/* Interactive World Map with Drill-Down */}
+            <InteractiveWorldMap
+              filters={{
+                sector: selectedSectors.length > 0 ? selectedSectors[0] : undefined,
+                minExperience: minWorkExperience ?? undefined,
+                maxExperience: maxWorkExperience ?? undefined,
+                minAge: minAge ?? undefined,
+                maxAge: maxAge ?? undefined,
+              }}
             />
           </div>
         )}
