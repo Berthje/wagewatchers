@@ -10,8 +10,6 @@ const Sheet = SheetPrimitive.Root;
 
 const SheetTrigger = SheetPrimitive.Trigger;
 
-const SheetClose = SheetPrimitive.Close;
-
 const SheetPortal = SheetPrimitive.Portal;
 
 const SheetOverlay = React.forwardRef<
@@ -102,10 +100,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <SheetPrimitive.Title
         ref={ref}
-        className={cn(
-            "text-lg font-semibold text-stone-50",
-            className
-        )}
+        className={cn("text-lg font-semibold text-stone-50", className)}
         {...props}
     />
 ));
@@ -123,15 +118,4 @@ const SheetDescription = React.forwardRef<
 ));
 SheetDescription.displayName = SheetPrimitive.Description.displayName;
 
-export {
-    Sheet,
-    SheetPortal,
-    SheetOverlay,
-    SheetTrigger,
-    SheetClose,
-    SheetContent,
-    SheetHeader,
-    SheetFooter,
-    SheetTitle,
-    SheetDescription,
-};
+export { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle };

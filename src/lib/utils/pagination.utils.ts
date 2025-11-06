@@ -29,7 +29,7 @@ export function calculateTotalPages(
 /**
  * Get pagination info
  */
-export function getPaginationInfo(
+function getPaginationInfo(
     totalItems: number,
     currentPage: number,
     itemsPerPage: number,
@@ -52,7 +52,7 @@ export function getPaginationInfo(
 /**
  * Validate and normalize page number
  */
-export function normalizePage(
+function normalizePage(
     page: number,
     totalPages: number,
 ): number {

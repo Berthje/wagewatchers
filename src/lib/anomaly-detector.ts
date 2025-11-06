@@ -1,20 +1,20 @@
 /**
  * Anomaly Detection Service
- * 
+ *
  * Identifies and flags unrealistic salary entries using statistical analysis.
  * Compares new entries against similar entries based on contextual attributes
  * like sector, role, age, experience, and region.
  */
 
-import { db } from './db';
-import { salaryEntries, type SalaryEntry } from './db/schema';
-import { and, eq, sql, ne, isNotNull } from 'drizzle-orm';
+import { db } from "./db";
+import { salaryEntries, type SalaryEntry } from "./db/schema";
+import { and, eq, isNotNull, ne, sql } from "drizzle-orm";
 
 export interface AnomalyDetectionResult {
     isAnomaly: boolean;
     anomalyScore: number; // 0-100, higher = more anomalous
     reason: string;
-    reviewStatus: 'APPROVED' | 'PENDING' | 'NEEDS_REVIEW' | 'REJECTED';
+    reviewStatus: "APPROVED" | "PENDING" | "NEEDS_REVIEW" | "REJECTED";
     comparisonGroup: string;
     sampleSize: number;
 }
@@ -60,16 +60,18 @@ const THRESHOLDS = {
  * Main entry point for anomaly detection
  * Analyzes a new salary entry and determines if it's anomalous
  */
-export async function detectAnomaly(entry: Partial<SalaryEntry>): Promise<AnomalyDetectionResult> {
+export async function detectAnomaly(
+    entry: Partial<SalaryEntry>,
+): Promise<AnomalyDetectionResult> {
     // Try progressively broader comparison groups
-    let result = await analyzeWithContextualComparison(entry, 'strict');
+    let result = await analyzeWithContextualComparison(entry, "strict");
 
     if (result.sampleSize < THRESHOLDS.MIN_SAMPLE_SIZE_STRICT) {
-        result = await analyzeWithContextualComparison(entry, 'moderate');
+        result = await analyzeWithContextualComparison(entry, "moderate");
     }
 
     if (result.sampleSize < THRESHOLDS.MIN_SAMPLE_SIZE_MODERATE) {
-        result = await analyzeWithContextualComparison(entry, 'loose');
+        result = await analyzeWithContextualComparison(entry, "loose");
     }
 
     if (result.sampleSize < THRESHOLDS.MIN_SAMPLE_SIZE_LOOSE) {
@@ -77,8 +79,8 @@ export async function detectAnomaly(entry: Partial<SalaryEntry>): Promise<Anomal
         return {
             isAnomaly: false,
             anomalyScore: 0,
-            reason: 'Insufficient comparable data for analysis',
-            reviewStatus: 'NEEDS_REVIEW',
+            reason: "Insufficient comparable data for analysis",
+            reviewStatus: "NEEDS_REVIEW",
             comparisonGroup: result.comparisonGroup,
             sampleSize: result.sampleSize,
         };
@@ -92,7 +94,7 @@ export async function detectAnomaly(entry: Partial<SalaryEntry>): Promise<Anomal
  */
 async function analyzeWithContextualComparison(
     entry: Partial<SalaryEntry>,
-    level: 'strict' | 'moderate' | 'loose'
+    level: "strict" | "moderate" | "loose",
 ): Promise<AnomalyDetectionResult> {
     const filters = buildComparisonFilters(entry, level);
     const comparisonEntries = await fetchComparisonEntries(filters, entry.id);
@@ -101,21 +103,23 @@ async function analyzeWithContextualComparison(
         return {
             isAnomaly: false,
             anomalyScore: 0,
-            reason: 'No comparable entries found',
-            reviewStatus: 'NEEDS_REVIEW',
+            reason: "No comparable entries found",
+            reviewStatus: "NEEDS_REVIEW",
             comparisonGroup: filters.description,
             sampleSize: 0,
         };
     }
 
-    const salaries = comparisonEntries.map(e => e.grossSalary).filter((s): s is number => s !== null);
+    const salaries = comparisonEntries.map((e) => e.grossSalary).filter((
+        s,
+    ): s is number => s !== null);
 
     if (salaries.length === 0) {
         return {
             isAnomaly: false,
             anomalyScore: 0,
-            reason: 'No salary data in comparison group',
-            reviewStatus: 'NEEDS_REVIEW',
+            reason: "No salary data in comparison group",
+            reviewStatus: "NEEDS_REVIEW",
             comparisonGroup: filters.description,
             sampleSize: 0,
         };
@@ -125,13 +129,13 @@ async function analyzeWithContextualComparison(
     const anomalyAnalysis = analyzeAnomalyScore(entry.grossSalary!, profile);
 
     // Determine review status based on anomaly score
-    let reviewStatus: 'APPROVED' | 'PENDING' | 'NEEDS_REVIEW';
+    let reviewStatus: "APPROVED" | "PENDING" | "NEEDS_REVIEW";
     if (anomalyAnalysis.score < THRESHOLDS.AUTO_APPROVE_THRESHOLD) {
-        reviewStatus = 'APPROVED';
+        reviewStatus = "APPROVED";
     } else if (anomalyAnalysis.score >= THRESHOLDS.NEEDS_REVIEW_THRESHOLD) {
-        reviewStatus = 'NEEDS_REVIEW';
+        reviewStatus = "NEEDS_REVIEW";
     } else {
-        reviewStatus = 'PENDING';
+        reviewStatus = "PENDING";
     }
 
     return {
@@ -147,13 +151,16 @@ async function analyzeWithContextualComparison(
 /**
  * Builds database filters based on comparison level
  */
-function buildComparisonFilters(entry: Partial<SalaryEntry>, level: 'strict' | 'moderate' | 'loose') {
+function buildComparisonFilters(
+    entry: Partial<SalaryEntry>,
+    level: "strict" | "moderate" | "loose",
+) {
     const conditions: any[] = [
-        eq(salaryEntries.reviewStatus, 'APPROVED'), // Only compare against approved entries
+        eq(salaryEntries.reviewStatus, "APPROVED"), // Only compare against approved entries
         isNotNull(salaryEntries.grossSalary),
     ];
 
-    let description = '';
+    let description = "";
 
     // Always filter by country if available
     if (entry.country) {
@@ -161,24 +168,28 @@ function buildComparisonFilters(entry: Partial<SalaryEntry>, level: 'strict' | '
         description = `Country: ${entry.country}`;
     }
 
-    if (level === 'strict') {
+    if (level === "strict") {
         applyStrictFilters(entry, conditions, description);
-    } else if (level === 'moderate') {
+    } else if (level === "moderate") {
         applyModerateFilters(entry, conditions, description);
     } else {
-        description += ', National average';
+        description += ", National average";
     }
 
     return {
         conditions,
-        description: description || 'General comparison',
+        description: description || "General comparison",
     };
 }
 
 /**
  * Apply strict comparison filters
  */
-function applyStrictFilters(entry: Partial<SalaryEntry>, conditions: any[], description: string): string {
+function applyStrictFilters(
+    entry: Partial<SalaryEntry>,
+    conditions: any[],
+    description: string,
+): string {
     let desc = description;
 
     if (entry.sector) {
@@ -189,7 +200,9 @@ function applyStrictFilters(entry: Partial<SalaryEntry>, conditions: any[], desc
     if (entry.workExperience !== null && entry.workExperience !== undefined) {
         const expRange = 3;
         conditions.push(
-            sql`${salaryEntries.workExperience} BETWEEN ${entry.workExperience - expRange} AND ${entry.workExperience + expRange}`
+            sql`${salaryEntries.workExperience} BETWEEN ${
+                entry.workExperience - expRange
+            } AND ${entry.workExperience + expRange}`,
         );
         desc += `, Experience: ${entry.workExperience}±${expRange}yrs`;
     }
@@ -197,7 +210,9 @@ function applyStrictFilters(entry: Partial<SalaryEntry>, conditions: any[], desc
     if (entry.age !== null && entry.age !== undefined) {
         const ageRange = 5;
         conditions.push(
-            sql`${salaryEntries.age} BETWEEN ${entry.age - ageRange} AND ${entry.age + ageRange}`
+            sql`${salaryEntries.age} BETWEEN ${entry.age - ageRange} AND ${
+                entry.age + ageRange
+            }`,
         );
         desc += `, Age: ${entry.age}±${ageRange}yrs`;
     }
@@ -208,16 +223,24 @@ function applyStrictFilters(entry: Partial<SalaryEntry>, conditions: any[], desc
 /**
  * Apply moderate comparison filters
  */
-function applyModerateFilters(entry: Partial<SalaryEntry>, conditions: any[], description: string): string {
+function applyModerateFilters(
+    entry: Partial<SalaryEntry>,
+    conditions: any[],
+    description: string,
+): string {
     let desc = description;
 
     if (entry.sector) {
         conditions.push(eq(salaryEntries.sector, entry.sector));
         desc += `, Sector: ${entry.sector}`;
-    } else if (entry.workExperience !== null && entry.workExperience !== undefined) {
+    } else if (
+        entry.workExperience !== null && entry.workExperience !== undefined
+    ) {
         const expRange = 5;
         conditions.push(
-            sql`${salaryEntries.workExperience} BETWEEN ${entry.workExperience - expRange} AND ${entry.workExperience + expRange}`
+            sql`${salaryEntries.workExperience} BETWEEN ${
+                entry.workExperience - expRange
+            } AND ${entry.workExperience + expRange}`,
         );
         desc += `, Experience: ${entry.workExperience}±${expRange}yrs`;
     }
@@ -229,8 +252,8 @@ function applyModerateFilters(entry: Partial<SalaryEntry>, conditions: any[], de
  * Fetches comparable entries from database
  */
 async function fetchComparisonEntries(
-    filters: { conditions: any[], description: string },
-    excludeId?: number
+    filters: { conditions: any[]; description: string },
+    excludeId?: number,
 ): Promise<SalaryEntry[]> {
     const conditions = filters.conditions;
 
@@ -265,7 +288,8 @@ function calculateStatisticalProfile(salaries: number[]): StatisticalProfile {
         : sorted[Math.floor(count / 2)];
 
     // Standard deviation
-    const variance = sorted.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / count;
+    const variance =
+        sorted.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / count;
     const std = Math.sqrt(variance);
 
     // Quartiles
@@ -301,11 +325,15 @@ function analyzeAnomalyScore(salary: number, profile: StatisticalProfile): {
     let maxScore = 0;
 
     // 1. Z-Score Analysis (distance from mean in standard deviations)
-    const zScore = profile.std > 0 ? Math.abs((salary - profile.mean) / profile.std) : 0;
+    const zScore = profile.std > 0
+        ? Math.abs((salary - profile.mean) / profile.std)
+        : 0;
 
     if (zScore >= THRESHOLDS.EXTREME_Z_SCORE) {
         maxScore = Math.max(maxScore, 95);
-        reasons.push(`Extremely high Z-score (${zScore.toFixed(2)}σ from mean)`);
+        reasons.push(
+            `Extremely high Z-score (${zScore.toFixed(2)}σ from mean)`,
+        );
     } else if (zScore >= THRESHOLDS.SIGNIFICANT_Z_SCORE) {
         maxScore = Math.max(maxScore, 75);
         reasons.push(`Significant Z-score (${zScore.toFixed(2)}σ from mean)`);
@@ -315,37 +343,58 @@ function analyzeAnomalyScore(salary: number, profile: StatisticalProfile): {
     }
 
     // 2. IQR Analysis (Tukey's fences method)
-    const lowerFence = profile.q1 - (THRESHOLDS.SIGNIFICANT_IQR_MULTIPLIER * profile.iqr);
-    const upperFence = profile.q3 + (THRESHOLDS.SIGNIFICANT_IQR_MULTIPLIER * profile.iqr);
-    const extremeLowerFence = profile.q1 - (THRESHOLDS.EXTREME_IQR_MULTIPLIER * profile.iqr);
-    const extremeUpperFence = profile.q3 + (THRESHOLDS.EXTREME_IQR_MULTIPLIER * profile.iqr);
+    const lowerFence = profile.q1 -
+        (THRESHOLDS.SIGNIFICANT_IQR_MULTIPLIER * profile.iqr);
+    const upperFence = profile.q3 +
+        (THRESHOLDS.SIGNIFICANT_IQR_MULTIPLIER * profile.iqr);
+    const extremeLowerFence = profile.q1 -
+        (THRESHOLDS.EXTREME_IQR_MULTIPLIER * profile.iqr);
+    const extremeUpperFence = profile.q3 +
+        (THRESHOLDS.EXTREME_IQR_MULTIPLIER * profile.iqr);
 
     if (salary < extremeLowerFence || salary > extremeUpperFence) {
         maxScore = Math.max(maxScore, 90);
-        reasons.push(`Outside extreme IQR fences (${extremeLowerFence.toFixed(0)}-${extremeUpperFence.toFixed(0)})`);
+        reasons.push(
+            `Outside extreme IQR fences (${extremeLowerFence.toFixed(0)}-${
+                extremeUpperFence.toFixed(0)
+            })`,
+        );
     } else if (salary < lowerFence || salary > upperFence) {
         maxScore = Math.max(maxScore, 60);
-        reasons.push(`Outside IQR fences (${lowerFence.toFixed(0)}-${upperFence.toFixed(0)})`);
+        reasons.push(
+            `Outside IQR fences (${lowerFence.toFixed(0)}-${
+                upperFence.toFixed(0)
+            })`,
+        );
     }
 
     // 3. Percentile Analysis
-    const percentileFromMedian = Math.abs(salary - profile.median) / profile.median;
+    const percentileFromMedian = Math.abs(salary - profile.median) /
+        profile.median;
 
     if (percentileFromMedian > 3) { // 300% difference from median
         maxScore = Math.max(maxScore, 85);
-        reasons.push(`${(percentileFromMedian * 100).toFixed(0)}% difference from median`);
+        reasons.push(
+            `${
+                (percentileFromMedian * 100).toFixed(0)
+            }% difference from median`,
+        );
     } else if (percentileFromMedian > 2) { // 200% difference
         maxScore = Math.max(maxScore, 55);
-        reasons.push(`${(percentileFromMedian * 100).toFixed(0)}% difference from median`);
+        reasons.push(
+            `${
+                (percentileFromMedian * 100).toFixed(0)
+            }% difference from median`,
+        );
     }
 
     // 4. Absolute range check (suspicious values)
     if (salary < 1000) {
         maxScore = Math.max(maxScore, 80);
-        reasons.push('Suspiciously low salary (<1,000)');
+        reasons.push("Suspiciously low salary (<1,000)");
     } else if (salary > 1000000) {
         maxScore = Math.max(maxScore, 85);
-        reasons.push('Suspiciously high salary (>1,000,000)');
+        reasons.push("Suspiciously high salary (>1,000,000)");
     }
 
     // 5. Ratio to mean/median
@@ -365,8 +414,10 @@ function analyzeAnomalyScore(salary: number, profile: StatisticalProfile): {
     // Compile final result
     const isAnomaly = maxScore >= THRESHOLDS.AUTO_APPROVE_THRESHOLD;
     const finalReason = reasons.length > 0
-        ? reasons.join('; ')
-        : `Normal entry (Mean: €${profile.mean.toFixed(0)}, Median: €${profile.median.toFixed(0)}, Z-score: ${zScore.toFixed(2)})`;
+        ? reasons.join("; ")
+        : `Normal entry (Mean: €${profile.mean.toFixed(0)}, Median: €${
+            profile.median.toFixed(0)
+        }, Z-score: ${zScore.toFixed(2)})`;
 
     return {
         isAnomaly,
@@ -377,19 +428,20 @@ function analyzeAnomalyScore(salary: number, profile: StatisticalProfile): {
 
 /**
  * Batch analysis for existing entries (for migration or recalculation)
+ * This is a maintenance function that should be run periodically
  */
-export async function batchAnalyzeEntries(limit = 100): Promise<void> {
+async function batchAnalyzeEntries(limit = 100): Promise<void> {
     const entries = await db
         .select()
         .from(salaryEntries)
-        .where(eq(salaryEntries.reviewStatus, 'APPROVED'))
+        .where(eq(salaryEntries.reviewStatus, "APPROVED"))
         .limit(limit);
 
     for (const entry of entries) {
         const result = await detectAnomaly(entry);
 
         // Only flag if it would have been flagged
-        if (result.reviewStatus !== 'APPROVED') {
+        if (result.reviewStatus !== "APPROVED") {
             await db
                 .update(salaryEntries)
                 .set({
@@ -409,22 +461,22 @@ export async function getAnomalyStats() {
     const approved = await db
         .select({ count: sql<number>`count(*)` })
         .from(salaryEntries)
-        .where(eq(salaryEntries.reviewStatus, 'APPROVED'));
+        .where(eq(salaryEntries.reviewStatus, "APPROVED"));
 
     const pending = await db
         .select({ count: sql<number>`count(*)` })
         .from(salaryEntries)
-        .where(eq(salaryEntries.reviewStatus, 'PENDING'));
+        .where(eq(salaryEntries.reviewStatus, "PENDING"));
 
     const needsReview = await db
         .select({ count: sql<number>`count(*)` })
         .from(salaryEntries)
-        .where(eq(salaryEntries.reviewStatus, 'NEEDS_REVIEW'));
+        .where(eq(salaryEntries.reviewStatus, "NEEDS_REVIEW"));
 
     const rejected = await db
         .select({ count: sql<number>`count(*)` })
         .from(salaryEntries)
-        .where(eq(salaryEntries.reviewStatus, 'REJECTED'));
+        .where(eq(salaryEntries.reviewStatus, "REJECTED"));
 
     return {
         approved: Number(approved[0]?.count || 0),

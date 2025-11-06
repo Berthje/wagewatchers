@@ -1,4 +1,4 @@
-export const SUBREDDIT_CONFIGS: Record<string, any> = {
+const SUBREDDIT_CONFIGS: Record<string, any> = {
     "BESalary": {
         country: "Belgium",
         currency: "EUR",
@@ -69,7 +69,7 @@ export interface CountryFormConfig {
     sections: FormSection[];
 }
 
-export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
+const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
     Belgium: {
         sections: [
             {
@@ -148,8 +148,6 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
             },
         ],
     },
-
-
 };
 
 export const getFormConfigForCountry = (
@@ -159,7 +157,7 @@ export const getFormConfigForCountry = (
 };
 
 // Helper to get all fields that should be displayed for a country
-export const getCountryFields = (country: string): Set<string> => {
+const getCountryFields = (country: string): Set<string> => {
     const config = getFormConfigForCountry(country);
     if (!config) return new Set();
 

@@ -132,7 +132,7 @@ export function getClientIP(headers: Headers): string {
 /**
  * Get remaining submissions for an identifier
  */
-export function getRemainingSubmissions(
+function getRemainingSubmissions(
     identifier: string,
     limit: number = 5,
 ): { remaining: number; resetAt: Date | null } {

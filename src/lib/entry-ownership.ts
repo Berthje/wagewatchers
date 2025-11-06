@@ -65,7 +65,7 @@ export function getEditStatus(
 /**
  * Client-side: Store an entry token in localStorage
  */
-export function storeEntryToken(entryId: number, token: string): void {
+function storeEntryToken(entryId: number, token: string): void {
     if (globalThis.window === undefined) return;
 
     try {
@@ -98,7 +98,7 @@ export function getEntryToken(entryId: number): string | null {
 /**
  * Client-side: Get all entry tokens from localStorage
  */
-export function getAllEntryTokens(): Record<string, string> {
+function getAllEntryTokens(): Record<string, string> {
     if (globalThis.window === undefined) return {};
 
     try {
@@ -138,7 +138,7 @@ export function removeEntryToken(entryId: number): void {
 /**
  * Client-side: Clear all entry tokens
  */
-export function clearAllEntryTokens(): void {
+function clearAllEntryTokens(): void {
     if (globalThis.window === undefined) return;
     try {
         localStorage.removeItem(STORAGE_KEY);

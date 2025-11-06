@@ -1,13 +1,13 @@
 export interface FieldConfig {
     labelKey: string;
     type:
-    | "text"
-    | "number"
-    | "select"
-    | "textarea"
-    | "boolean"
-    | "combobox"
-    | "richtext";
+        | "text"
+        | "number"
+        | "select"
+        | "textarea"
+        | "boolean"
+        | "combobox"
+        | "richtext";
     placeholder?: string;
     options?: { value: string; label: string }[];
     allowCustom?: boolean;
@@ -77,8 +77,14 @@ export const createFieldConfigs = (
         placeholder: t("placeholders.civilStatus"),
         options: [
             { value: "single", label: t("formOptions.civilStatus.single") },
-            { value: "cohabiting", label: t("formOptions.civilStatus.cohabiting") },
-            { value: "civilUnion", label: t("formOptions.civilStatus.civilUnion") },
+            {
+                value: "cohabiting",
+                label: t("formOptions.civilStatus.cohabiting"),
+            },
+            {
+                value: "civilUnion",
+                label: t("formOptions.civilStatus.civilUnion"),
+            },
             { value: "married", label: t("formOptions.civilStatus.married") },
             { value: "divorced", label: t("formOptions.civilStatus.divorced") },
             { value: "widowed", label: t("formOptions.civilStatus.widowed") },
@@ -99,32 +105,62 @@ export const createFieldConfigs = (
         placeholder: t("placeholders.sector"),
         options: [
             { value: "Aerospace", label: t("formOptions.sector.Aerospace") },
-            { value: "Agriculture", label: t("formOptions.sector.Agriculture") },
+            {
+                value: "Agriculture",
+                label: t("formOptions.sector.Agriculture"),
+            },
             { value: "Automotive", label: t("formOptions.sector.Automotive") },
             { value: "Biotech", label: t("formOptions.sector.Biotech") },
-            { value: "Construction", label: t("formOptions.sector.Construction") },
+            {
+                value: "Construction",
+                label: t("formOptions.sector.Construction"),
+            },
             { value: "Consulting", label: t("formOptions.sector.Consulting") },
             { value: "Education", label: t("formOptions.sector.Education") },
             { value: "Energy", label: t("formOptions.sector.Energy") },
-            { value: "Entertainment", label: t("formOptions.sector.Entertainment") },
+            {
+                value: "Entertainment",
+                label: t("formOptions.sector.Entertainment"),
+            },
             { value: "Finance", label: t("formOptions.sector.Finance") },
             { value: "FMCG", label: t("formOptions.sector.FMCG") },
             { value: "Healthcare", label: t("formOptions.sector.Healthcare") },
-            { value: "Hospitality", label: t("formOptions.sector.Hospitality") },
+            {
+                value: "Hospitality",
+                label: t("formOptions.sector.Hospitality"),
+            },
             { value: "IT", label: t("formOptions.sector.IT") },
             { value: "Legal", label: t("formOptions.sector.Legal") },
-            { value: "Manufacturing", label: t("formOptions.sector.Manufacturing") },
+            {
+                value: "Manufacturing",
+                label: t("formOptions.sector.Manufacturing"),
+            },
             { value: "Media", label: t("formOptions.sector.Media") },
             { value: "Nonprofit", label: t("formOptions.sector.Nonprofit") },
             { value: "Other", label: t("formOptions.sector.Other") },
-            { value: "Pharmaceutical", label: t("formOptions.sector.Pharmaceutical") },
-            { value: "Public Affairs", label: t("formOptions.sector.Public Affairs") },
-            { value: "Public Sector", label: t("formOptions.sector.Public Sector") },
+            {
+                value: "Pharmaceutical",
+                label: t("formOptions.sector.Pharmaceutical"),
+            },
+            {
+                value: "Public Affairs",
+                label: t("formOptions.sector.Public Affairs"),
+            },
+            {
+                value: "Public Sector",
+                label: t("formOptions.sector.Public Sector"),
+            },
             { value: "RealEstate", label: t("formOptions.sector.RealEstate") },
             { value: "Research", label: t("formOptions.sector.Research") },
             { value: "Retail", label: t("formOptions.sector.Retail") },
-            { value: "Telecommunications", label: t("formOptions.sector.Telecommunications") },
-            { value: "Transportation", label: t("formOptions.sector.Transportation") },
+            {
+                value: "Telecommunications",
+                label: t("formOptions.sector.Telecommunications"),
+            },
+            {
+                value: "Transportation",
+                label: t("formOptions.sector.Transportation"),
+            },
         ].sort((a, b) => a.label.localeCompare(b.label)),
         helpKey: "help.sector",
         width: "half",
@@ -224,7 +260,7 @@ export const createFieldConfigs = (
         type: "number",
         placeholder: t("placeholders.vacationDays"),
         helpKey: "help.vacationDays",
-        width: "third"
+        width: "third",
     },
     grossSalary: {
         labelKey: "sections.salary.grossSalary",
@@ -344,8 +380,14 @@ export const createFieldConfigs = (
             { value: "moderate", label: t("formOptions.dayOffEase.moderate") },
             { value: "hard", label: t("formOptions.dayOffEase.hard") },
             { value: "veryHard", label: t("formOptions.dayOffEase.veryHard") },
-            { value: "situational", label: t("formOptions.dayOffEase.situational") },
-            { value: "impossible", label: t("formOptions.dayOffEase.impossible") },
+            {
+                value: "situational",
+                label: t("formOptions.dayOffEase.situational"),
+            },
+            {
+                value: "impossible",
+                label: t("formOptions.dayOffEase.impossible"),
+            },
         ],
         helpKey: "help.dayOffEase",
         width: "half",
@@ -360,7 +402,10 @@ export const createFieldConfigs = (
             { value: "moderate", label: t("formOptions.stressLevel.moderate") },
             { value: "high", label: t("formOptions.stressLevel.high") },
             { value: "veryHigh", label: t("formOptions.stressLevel.veryHigh") },
-            { value: "situational", label: t("formOptions.stressLevel.situational") },
+            {
+                value: "situational",
+                label: t("formOptions.stressLevel.situational"),
+            },
             { value: "none", label: t("formOptions.stressLevel.none") },
         ],
         helpKey: "help.stressLevel",
@@ -384,7 +429,7 @@ export const createFieldConfigs = (
 });
 
 // Define which fields are available for each country
-export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
+const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
     Belgium: [
         "age",
         "education",

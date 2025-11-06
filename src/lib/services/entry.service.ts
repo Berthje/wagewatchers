@@ -33,7 +33,7 @@ export async function fetchEntryById(id: number): Promise<SalaryEntry> {
 /**
  * Fetch multiple entries by IDs
  */
-export async function fetchEntriesByIds(ids: number[]): Promise<SalaryEntry[]> {
+async function fetchEntriesByIds(ids: number[]): Promise<SalaryEntry[]> {
     if (ids.length === 0) return [];
 
     const response = await fetch(`/api/entries?ids=${ids.join(",")}`);
@@ -46,7 +46,7 @@ export async function fetchEntriesByIds(ids: number[]): Promise<SalaryEntry[]> {
 /**
  * Delete an entry
  */
-export async function deleteEntry(id: number, token: string): Promise<void> {
+async function deleteEntry(id: number, token: string): Promise<void> {
     const response = await fetch(`/api/entries/${id}`, {
         method: "DELETE",
         headers: {
@@ -64,7 +64,7 @@ export async function deleteEntry(id: number, token: string): Promise<void> {
 /**
  * Create a new entry
  */
-export async function createEntry(
+async function createEntry(
     data: any,
 ): Promise<{ success: boolean; id?: number; token?: string; error?: string }> {
     const response = await fetch("/api/entries", {
@@ -81,7 +81,7 @@ export async function createEntry(
 /**
  * Update an existing entry
  */
-export async function updateEntry(
+async function updateEntry(
     id: number,
     data: any,
     token: string,
