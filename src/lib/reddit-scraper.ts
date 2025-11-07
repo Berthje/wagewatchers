@@ -20,21 +20,27 @@ let redditClient: Snoowrap | null = null;
 function getRedditClient(): Snoowrap {
   if (redditClient) return redditClient;
 
-  if (
-    !process.env.REDDIT_CLIENT_ID ||
-    !process.env.REDDIT_CLIENT_SECRET ||
-    !process.env.REDDIT_USERNAME ||
-    !process.env.REDDIT_PASSWORD
-  ) {
-    throw new Error("Reddit API credentials are not configured");
+  const clientId = process.env.REDDIT_CLIENT_ID;
+  const clientSecret = process.env.REDDIT_CLIENT_SECRET;
+  const refreshToken = process.env.REDDIT_REFRESH_TOKEN;
+
+  if (!clientId || !clientSecret || !refreshToken) {
+    throw new Error(
+      "Reddit API credentials are not configured. Required environment variables:\n" +
+      "  - REDDIT_CLIENT_ID\n" +
+      "  - REDDIT_CLIENT_SECRET\n" +
+      "  - REDDIT_REFRESH_TOKEN\n\n" +
+      "To get a refresh token, run: npm run reddit:get-token"
+    );
   }
 
+  console.log("✓ Using Reddit OAuth with refresh token");
+
   redditClient = new Snoowrap({
-    userAgent: "WageWatchers:v1.0.0 (by /u/" + process.env.REDDIT_USERNAME + ")",
-    clientId: process.env.REDDIT_CLIENT_ID,
-    clientSecret: process.env.REDDIT_CLIENT_SECRET,
-    username: process.env.REDDIT_USERNAME,
-    password: process.env.REDDIT_PASSWORD,
+    userAgent: "WageWatchers:v1.0.0 (by /u/wagewatchers)",
+    clientId,
+    clientSecret,
+    refreshToken,
   });
 
   return redditClient;
