@@ -220,16 +220,16 @@ const COMPANY_SIZE_MAPPINGS: Record<string, string[]> = {
     "very large",
     "zeer groot",
   ],
-  "1001-5000": [
+  "1000+": [
+    "1000+",
     "1001-5000",
-    "enterprise",
-    "multinational",
-  ],
-  "5001+": [
     "5001+",
     "5000+",
-    "mega corporation",
-    "fortune 500",
+    "enterprise",
+    "multinational",
+    "corporate",
+    "very big",
+    "huge",
   ],
 };
 
@@ -345,11 +345,35 @@ export function normalizeContractType(value: string | null): string | null {
 }
 
 /**
- * Normalize company size from Reddit text to standard value
- * @example "startup" → "1-10"
- * @example "multinational" → "1001-5000"
+ * Normalize company size from text or numeric ranges
+ * Handles both text descriptions ("small", "medium") and numeric values ("42+", "500", "100+")
  */
 export function normalizeCompanySize(value: string | null): string | null {
+  if (!value) return null;
+
+  const cleaned = value.toLowerCase().trim();
+
+  // First try numeric patterns (check this BEFORE text matching to avoid fuzzy false positives)
+  const numericPattern = /(\d+)\s*[-+±]?\s*(\d+)?/;
+  const numericMatch = numericPattern.exec(cleaned);
+
+  if (numericMatch) {
+    const num1 = Number.parseInt(numericMatch[1], 10);
+    const num2 = numericMatch[2] ? Number.parseInt(numericMatch[2], 10) : null;
+
+    // If we have a range (e.g., "100-200"), use the midpoint
+    const valueToCheck = num2 ? Math.floor((num1 + num2) / 2) : num1;
+
+    // Map to our predefined ranges
+    if (valueToCheck <= 10) return "1-10";
+    if (valueToCheck <= 50) return "11-50";
+    if (valueToCheck <= 200) return "51-200";
+    if (valueToCheck <= 500) return "201-500";
+    if (valueToCheck <= 1000) return "501-1000";
+    return "1000+";
+  }
+
+  // If no numeric match, try text-based matching
   return normalizeWithFuzzyMatch(value, COMPANY_SIZE_MAPPINGS);
 }
 

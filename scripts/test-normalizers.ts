@@ -112,8 +112,7 @@ for (const test of contractTests) {
   const normalized = normalizeContractType(test);
   console.log(`  "${test}" → "${normalized}"`);
 }
-
-// Test Company Size normalization
+// Test Company Size normalization (text and numeric)
 console.log("\n🏢 COMPANY SIZE NORMALIZATION:");
 const companySizeTests = [
   "startup",
@@ -121,6 +120,15 @@ const companySizeTests = [
   "multinational",
   "< 10",
   "5000+",
+  "42+",           // Should be 11-50
+  "47+-",          // Should be 11-50
+  "16",            // Should be 11-50
+  "500+",          // Should be 201-500
+  "100+",          // Should be 51-200
+  "550",           // Should be 501-1000
+  "5",             // Should be 1-10
+  "2000",          // Should be 1000+
+  "100-200",       // Should be 51-200 (average is 150)
 ];
 
 for (const test of companySizeTests) {

@@ -358,11 +358,13 @@ export async function fetchCommentsForRecentPosts(): Promise<{
 
         // Fetch submission with comments
         // @ts-expect-error Snoowrap has circular type references
-        const submission = await reddit.getSubmission(postId);
+        let submission = await reddit.getSubmission(postId);
 
-        await submission.expandReplies({
+        // Expand all comment replies with infinite depth to get all comments
+        // expandReplies returns the submission with expanded comments
+        submission = await submission.expandReplies({
           limit: Infinity,
-          depth: 10
+          depth: Infinity
         });
 
         // Process all comments recursively
