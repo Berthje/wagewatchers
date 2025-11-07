@@ -29,8 +29,7 @@ function getRedditClient(): Snoowrap {
       "Reddit API credentials are not configured. Required environment variables:\n" +
       "  - REDDIT_CLIENT_ID\n" +
       "  - REDDIT_CLIENT_SECRET\n" +
-      "  - REDDIT_REFRESH_TOKEN\n\n" +
-      "To get a refresh token, run: npm run reddit:get-token"
+      "  - REDDIT_REFRESH_TOKEN\n\n"
     );
   }
 
@@ -93,6 +92,14 @@ export async function scrapeSubredditPosts(
       result.postsProcessed++;
 
       try {
+        // Filter: Only process posts with "salary" flair
+        const postFlair = post.link_flair_text?.toLowerCase() || '';
+        if (!postFlair.includes('salary')) {
+          result.postsSkipped++;
+          console.log(`[Reddit Scraper] Skipping post without salary flair: ${post.id} (flair: "${post.link_flair_text || 'none'}")`);
+          continue;
+        }
+
         const sourceUrl = `https://reddit.com${post.permalink}`;
 
         // Check if post already exists in database
@@ -180,10 +187,28 @@ function parseBESalaryTemplate(content: string, config: any): ParsedPostData {
     malformedSections: [],
   };
 
-  // Validate all required sections are present (from config)
-  const missingSections = config.templateSections.filter(
-    (section: string) => !content.includes(section)
-  );
+  // Normalize content: remove all Unicode control/formatting characters and normalize whitespace
+  const normalizedContent = content
+    .replaceAll(/[\u0000-\u001F\u007F-\u009F\u200B-\u200F\u2028-\u202F\u205F-\u206F\uFEFF]/g, '') // Remove all control chars, zero-width spaces, etc.
+    .replaceAll(/\s+/g, ' ') // Normalize whitespace to single spaces
+    .trim();
+
+  // Validate all required sections are present (flexible matching)
+  const missingSections = config.templateSections.filter((section: string) => {
+    // Normalize the section text the same way
+    const normalizedSection = section.replaceAll(/\s+/g, ' ').trim();
+
+    // Try exact match
+    if (normalizedContent.includes(normalizedSection)) return false;
+
+    // Try with # markdown headers (e.g., "# 1. PERSONALIA")
+    if (normalizedContent.includes(`# ${normalizedSection}`)) return false;
+
+    // Try with ** bold (e.g., "**1. PERSONALIA**")
+    if (normalizedContent.includes(`**${normalizedSection}**`)) return false;
+
+    return true; // Section not found
+  });
 
   if (missingSections.length > 0) {
     result.isValid = false;
@@ -192,11 +217,10 @@ function parseBESalaryTemplate(content: string, config: any): ParsedPostData {
   }
 
   // Extract fields using regex patterns from config
-  const extractedData: Record<string, any> = {};
-
-  // Use the field mappings from config with type information
+  const extractedData: Record<string, any> = {};  // Use the field mappings from config with type information
   for (const [fieldName, fieldMappingUnknown] of Object.entries(config.fieldMappings)) {
     const fieldMapping = fieldMappingUnknown as { pattern: RegExp; type: string; required?: boolean };
+    // Use original content for extraction (preserves newlines for regex lookaheads)
     const value = extractField(content, fieldMapping.pattern);
 
     if (value) {
@@ -209,12 +233,14 @@ function parseBESalaryTemplate(content: string, config: any): ParsedPostData {
 
         case 'currency': {
           const numericValue = value.replaceAll(/[,\s]/g, "");
-          extractedData[fieldName] = Number.parseInt(numericValue, 10);
+          const parsed = Number.parseInt(numericValue, 10);
+          extractedData[fieldName] = Number.isNaN(parsed) ? null : parsed;
           break;
         }
 
         case 'integer': {
-          extractedData[fieldName] = Number.parseInt(value, 10);
+          const parsed = Number.parseInt(value, 10);
+          extractedData[fieldName] = Number.isNaN(parsed) ? null : parsed;
           break;
         }
 
@@ -259,13 +285,24 @@ function parseBESalaryTemplate(content: string, config: any): ParsedPostData {
 
 /**
  * Extract a single field using regex
+ * Strips markdown formatting (bold, italic, etc.) and currency symbols from captured values
  */
 function extractField(content: string, pattern: RegExp): string | null {
   const match = new RegExp(pattern).exec(content);
   if (!match?.[1]) return null;
 
-  const value = match[1].trim();
-  return value === "" || value === "-" || value === "N/A" ? null : value;
+  let value = match[1].trim();
+
+  // Strip markdown formatting
+  value = value
+    .replaceAll('**', '')  // Bold
+    .replaceAll('__', '')  // Bold (alternative)
+    .replaceAll('*', '')   // Italic
+    .replaceAll('_', '')   // Italic (alternative)
+    .replaceAll(/[€$£¥]/g, '')  // Currency symbols
+    .trim();
+
+  return value === "" || value === "-" || value === "N/A" || value === "/" ? null : value;
 }
 
 /**
@@ -329,8 +366,15 @@ export async function fetchCommentsForRecentPosts(): Promise<{
         });
 
         // Process all comments recursively
+        const commentsList = Array.isArray(submission.comments) ? submission.comments : [];
+
+        if (commentsList.length === 0) {
+          console.log(`[Comment Fetcher] No comments found for post ${postId}`);
+          continue;
+        }
+
         const commentCount = await processCommentTree(
-          submission.comments,
+          commentsList,
           entry.id,
           null
         );

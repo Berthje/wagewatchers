@@ -30,9 +30,9 @@
     "studio": "npx drizzle-kit studio",
     "create-admin": "tsx scripts/create-admin.ts",
     "update-cities": "tsx scripts/update-cities.ts",
-    "test:scrape:posts": "tsx scripts/test-reddit-scraper.ts",
-    "test:scrape:comments": "tsx scripts/test-comment-fetcher.ts",
-    "test:normalizers": "tsx scripts/test-normalizers.ts"
+    "scrape:posts:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-reddit-scraper.ts",
+    "scrape:comments:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-comment-fetcher.ts",
+    "test:normalizers:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-normalizers.ts"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.14.4",

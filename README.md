@@ -159,20 +159,86 @@ npm run db:seed:dev
 npm run create-admin:dev
 
 # Update cities data
-npm run update-cities:dev
+npm run update-cities
 ```
 
-### Production Database Commands
+---
 
-These use the `DATABASE_URL` from your `.env` file:
+## 🤖 Reddit Scraping System
+
+WageWatchers automatically scrapes salary data from designated subreddits.
+
+### Initial Setup
+
+1. **Create Reddit App** at https://www.reddit.com/prefs/apps
+   - App type: **script**
+   - Redirect URI: `http://localhost:8080`
+   - Note your **Client ID** and **Client Secret**
+
+2. **Add to `.env`**:
+   ```env
+   REDDIT_CLIENT_ID=your_client_id
+   REDDIT_CLIENT_SECRET=your_client_secret
+   ```
+
+### Testing Scrapers
 
 ```bash
-npm run db:generate
-npm run db:push
-npm run db:migrate
-npm run studio
-npm run seed  # ⚠️ Requires FORCE_SEED=true in production
+# Test post scraping (fetches 10 latest posts)
+npm run scrape:posts:dev
+
+# Test comment fetching
+npm run scrape:comments:dev
+
+# Test field normalization
+npm run test:normalizers:dev
 ```
+
+### Features
+
+✅ **OAuth Authentication** - Secure refresh token auth (no password needed)
+✅ **Flair Filtering** - Only scrapes posts with "salary" flair
+✅ **Field Normalization** - Transforms human text to standardized values:
+- `"Prof Bachelor energy"` → `"bachelor"`
+- `"2.5 Y"` → `2` years
+- `"Unmarried"` → `"single"`
+- Multi-language support (EN/NL/FR/DE)
+
+✅ **Duplicate Detection** - Checks sourceUrl to avoid re-scraping
+✅ **Template Validation** - Verifies post structure before saving
+✅ **Markdown Handling** - Supports both `**bold**` and plain text formats
+✅ **Unicode Normalization** - Handles zero-width spaces and special characters
+
+### Subreddits Configured
+
+- **r/BESalary** - Belgium salary discussions
+- *(More can be added in `src/lib/salary-config.ts`)*
+
+### Production Deployment
+
+Automated scraping runs via **Vercel Cron Jobs**:
+- Posts: Every 12 hours (2 AM UTC) - `/api/jobs/fetch-posts`
+- Comments: Every 4 hours (6 AM UTC) - `/api/jobs/fetch-comments`
+
+Protected by `CRON_SECRET` environment variable.
+
+---
+
+## 🔍 Field Normalization
+
+The scraper intelligently normalizes human-written Reddit values:
+
+| Field | Input Examples | Output |
+|-------|---------------|---------|
+| Education | "Prof Bachelor energy", "MA", "ingenieur" | `"bachelor"`, `"master"`, `"master"` |
+| Civil Status | "Unmarried", "samenwonend", "living together" | `"single"`, `"cohabiting"`, `"cohabiting"` |
+| Work Experience | "2.5 Y", "18 months", "5 years" | `2`, `1`, `5` |
+| Contract Type | "vast", "cdi", "freelance" | `"permanent"`, `"permanent"`, `"freelance"` |
+| Company Size | "startup", "multinational", "5000+" | `"1-10"`, `"1001-5000"`, `"5001+"` |
+
+**Algorithm**: Exact match → Substring match → Fuzzy match (Levenshtein distance)
+
+For full details, see [`docs/field-normalization.md`](docs/field-normalization.md)
 
 ---
 
@@ -183,19 +249,36 @@ npm run seed  # ⚠️ Requires FORCE_SEED=true in production
 - `src/app/` - Next.js 15 App Router pages
 - `src/components/` - React components
 - `src/lib/` - Utilities, configs, database
+  - `reddit-scraper.ts` - Reddit API integration
+  - `field-normalizers.ts` - Value transformation logic
+  - `salary-config.ts` - Subreddit templates & field mappings
 - `drizzle/` - Database schema and migrations
 - `src/messages/` - i18n translations (en, nl, fr, de)
+- `scripts/` - Development utilities & test scripts
 
 ### Available Scripts
 
 ```bash
+# Development
 npm run dev          # Start dev server with Turbopack
 npm run build        # Production build
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run format       # Format with Prettier
-npm run create-admin # Create admin user
-npm run studio       # Open Drizzle Studio
+
+# Database (Dev)
+npm run db:push:dev     # Push schema changes
+npm run db:seed:dev     # Seed sample data
+npm run studio:dev      # Open Drizzle Studio
+npm run create-admin:dev # Create admin user
+
+# Reddit Scraping (Dev)
+npm run scrape:posts:dev      # Test post scraping
+npm run scrape:comments:dev   # Test comment fetching
+npm run test:normalizers:dev  # Test field normalization
+
+# Utilities
+npm run update-cities  # Update cities from CSV
 ```
 
 ---
@@ -214,10 +297,19 @@ All user-facing routes are locale-prefixed: `/[locale]/*`
 
 See `.env.example` for all available configuration options:
 
+### Required
 - `DATABASE_URL` - PostgreSQL connection string
-- `CRON_SECRET` - Protects cron endpoints
-- `RESEND_API_KEY` - Email notifications (optional)
 - `JWT_SECRET` - Admin session signing
+
+### Reddit API (for scraping)
+- `REDDIT_CLIENT_ID` - From https://www.reddit.com/prefs/apps
+- `REDDIT_CLIENT_SECRET` - From your Reddit app
+
+### Optional
+- `CRON_SECRET` - Protects cron endpoints (production)
+- `RESEND_API_KEY` - Email notifications
+- `RESEND_FROM_EMAIL` - Sender email address
+- `CURRENCY_CONVERSION_API` - Exchange rate API (future feature)
 
 ---
 
@@ -242,8 +334,11 @@ for details.
 
 Built with:
 
-- [Next.js 15](https://nextjs.org/)
-- [Drizzle ORM](https://orm.drizzle.team/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [next-intl](https://next-intl-docs.vercel.app/)
-- [Recharts](https://recharts.org/)
+- [Next.js 15](https://nextjs.org/) - React framework
+- [Drizzle ORM](https://orm.drizzle.team/) - TypeScript ORM
+- [PostgreSQL](https://www.postgresql.org/) - Database
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [next-intl](https://next-intl-docs.vercel.app/) - Internationalization
+- [Recharts](https://recharts.org/) - Data visualization
+- [Snoowrap](https://github.com/not-an-aardvark/snoowrap) - Reddit API client
+- [fastest-levenshtein](https://github.com/ka-weihe/fastest-levenshtein) - String similarity
