@@ -4,10 +4,18 @@ import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HelpCircle, ArrowLeft, Lock } from "lucide-react";
+import { HelpCircle, ArrowLeft, Lock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -64,6 +72,12 @@ function AddEntryContent() {
   const [isLoadingEntry, setIsLoadingEntry] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryAfter, setRetryAfter] = useState<Date | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<{
+    duplicateEntryId: number;
+    similarityScore: number;
+    matchDetails: string[];
+  } | null>(null);
+  const [pendingSubmission, setPendingSubmission] = useState<SalaryEntryFormData | null>(null);
   const t = useTranslations("add");
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
@@ -214,7 +228,7 @@ function AddEntryContent() {
     }
   }, [searchParams, form, router, locale, t, tEdit]);
 
-  const onSubmit = async (data: SalaryEntryFormData) => {
+  const submitEntry = async (data: SalaryEntryFormData, forceSubmit = false) => {
     setIsSubmitting(true);
     setError(null);
     setRetryAfter(null);
@@ -230,6 +244,7 @@ function AddEntryContent() {
         commuteDistance: data.commuteDistance
           ? cleanCommuteDistance(data.commuteDistance.toString())
           : undefined,
+        forceSubmit, // Include force submit flag
       };
       if (isEditMode && editEntryId) {
         const tokens = localStorage.getItem("wagewatchers_entry_tokens");
@@ -245,6 +260,20 @@ function AddEntryContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData),
       });
+
+      // Handle duplicate detection (409 Conflict)
+      if (res.status === 409) {
+        const duplicateData = await res.json();
+        setDuplicateWarning({
+          duplicateEntryId: duplicateData.duplicateEntryId,
+          similarityScore: duplicateData.similarityScore,
+          matchDetails: duplicateData.matchDetails,
+        });
+        setPendingSubmission(data);
+        setIsSubmitting(false);
+        return;
+      }
+
       if (res.ok) {
         const entry = await res.json();
 
@@ -318,6 +347,22 @@ function AddEntryContent() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const onSubmit = (data: SalaryEntryFormData) => {
+    submitEntry(data, false);
+  };
+
+  const handleForceSubmit = () => {
+    if (pendingSubmission) {
+      setDuplicateWarning(null);
+      submitEntry(pendingSubmission, true);
+    }
+  };
+
+  const handleCancelSubmit = () => {
+    setDuplicateWarning(null);
+    setPendingSubmission(null);
   };
 
   // Field rendering configurations - now loaded from external config
@@ -794,6 +839,53 @@ function AddEntryContent() {
             </Form>
           ))}
       </main>
+
+      {/* Duplicate Warning Dialog */}
+      <Dialog open={!!duplicateWarning} onOpenChange={(open) => !open && handleCancelSubmit()}>
+        <DialogContent className="bg-stone-800 border-stone-700 text-stone-100">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-500">
+              <AlertTriangle className="h-5 w-5" />
+              {t("duplicateWarning.title")}
+            </DialogTitle>
+            <DialogDescription className="text-stone-300">
+              {t("duplicateWarning.description", {
+                similarityScore: duplicateWarning?.similarityScore.toFixed(0) || "0",
+              })}
+            </DialogDescription>
+          </DialogHeader>
+
+          {duplicateWarning && duplicateWarning.matchDetails.length > 0 && (
+            <div className="my-4">
+              <p className="text-sm font-medium text-stone-300 mb-2">
+                {t("duplicateWarning.matchingFields")}:
+              </p>
+              <ul className="list-disc list-inside text-sm text-stone-400 space-y-1">
+                {duplicateWarning.matchDetails.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancelSubmit}
+              className="bg-stone-700 hover:bg-stone-600"
+            >
+              {t("duplicateWarning.cancel")}
+            </Button>
+            <Button
+              onClick={handleForceSubmit}
+              disabled={isSubmitting}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
+              {isSubmitting ? t("submittingEntry") : t("duplicateWarning.submitAnyway")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

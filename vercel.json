@@ -7,6 +7,14 @@
     {
       "path": "/api/newsletter/send-changelog",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/jobs/fetch-posts",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/jobs/fetch-comments",
+      "schedule": "0 6 * * *"
     }
   ]
 }

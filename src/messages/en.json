@@ -423,6 +423,13 @@
     "errorLoadingEntry": "Error Loading Entry",
     "rateLimitExceeded": "Rate limit exceeded",
     "rateLimitRetry": "You can try again in {time}",
+    "duplicateWarning": {
+      "title": "Possible Duplicate Detected",
+      "description": "We found an existing entry that is {similarityScore}% similar to yours. This might be a duplicate from Reddit or another source.",
+      "matchingFields": "Matching fields",
+      "cancel": "Cancel",
+      "submitAnyway": "Submit Anyway"
+    },
     "placeholders": {
       "age": "e.g. 30",
       "education": "Select or enter education level",
@@ -1070,6 +1077,35 @@
       "loadFailed": "Failed to load entries. Please refresh the page.",
       "actionFailed": "Failed to {action} entry. Please try again.",
       "unauthorized": "Unauthorized. Please log in."
+    }
+  },
+  "reddit": {
+    "scraping": {
+      "title": "Reddit Data Scraping",
+      "description": "Automated salary data collection from Reddit",
+      "lastRun": "Last run",
+      "nextRun": "Next run",
+      "status": "Status",
+      "running": "Running",
+      "idle": "Idle",
+      "error": "Error"
+    },
+    "duplicate": {
+      "detected": "Possible Duplicate Detected",
+      "message": "This Reddit entry appears to already exist (possibly reposted on subreddit {subreddit}). Did you post this before?",
+      "question": "Have you submitted this salary information before?",
+      "yesPosted": "Yes, I posted this before",
+      "noNotPosted": "No, I didn't post this",
+      "similarityScore": "Similarity: {score}%",
+      "matchingFields": "Matching fields",
+      "viewExisting": "View existing entry",
+      "continueAnyway": "Continue saving anyway",
+      "cancel": "Cancel"
+    },
+    "sources": {
+      "manual": "Manual Entry",
+      "reddit": "Reddit",
+      "scraped": "Scraped from {subreddit}"
     }
   }
 }

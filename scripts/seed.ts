@@ -12,6 +12,18 @@ import bcrypt from "bcrypt";
 import { updateCitiesFromCSV } from "../src/lib/city-fetcher";
 import path from "node:path";
 
+// Helper function to generate mock owner tokens for seeding (no JWT needed)
+function generateMockOwnerToken(id: number): string {
+  return `SEED_TOKEN_${id}_${Date.now()}`;
+}
+
+// Helper to get editable until date (1 day from now)
+function getMockEditableUntilDate(): Date {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date;
+}
+
 // Check if we're in development
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -105,27 +117,27 @@ async function seed() {
     console.log(`   ✓ Created ${exchangeRateData.length} exchange rates`);
 
     // Seed salary entries
-    console.log("💰 Seeding salary entries...");
+    console.log("💰 Seeding salary entries (mix of Reddit posts and manual entries)...");
     const salaryEntryData = [
-      // Belgium - Software Engineers
+      // REDDIT SCRAPED POST #1
       {
         country: "Belgium",
-        subreddit: "",
+        subreddit: "BESalary",
         age: 28,
-        education: "Master's degree",
+        education: "Master's degree in Computer Science",
         workExperience: 5,
         civilStatus: "Single",
         dependents: 0,
-        sector: "Technology",
+        sector: "Technology - Software",
         employeeCount: "100-500",
         multinational: true,
         jobTitle: "Senior Software Engineer",
-        jobDescription: "Full-stack development with React and Node.js",
+        jobDescription: "Full-stack development with React and Node.js, microservices",
         seniority: 5,
         officialHours: 38,
         averageHours: 40,
-        shiftDescription: "Regular office hours",
-        onCall: "1 week per month",
+        shiftDescription: "Regular office hours, flexible start",
+        onCall: "1 week per month, compensated",
         vacationDays: 20,
         currency: "EUR",
         grossSalary: 4500,
@@ -138,30 +150,35 @@ async function seed() {
         otherInsurances: "Hospitalization",
         otherBenefits: "Company car, laptop, phone",
         workCity: "Brussels",
-        commuteDistance: "15",
+        commuteDistance: "15 km",
         commuteMethod: "Car",
         commuteCompensation: "Fuel card",
         teleworkDays: 3,
         dayOffEase: "Easy",
         stressLevel: "Medium",
         reports: 2,
-        isManualEntry: true,
+        isManualEntry: false,
         reviewStatus: "APPROVED" as const,
-        source: "Manual submission",
+        source: "r/BESalary",
+        sourceUrl: "https://reddit.com/r/BESalary/abc123",
+        lastCommentsFetch: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        ownerToken: null,
+        editableUntil: null,
       },
+      // REDDIT SCRAPED POST #2
       {
         country: "Belgium",
-        subreddit: "",
+        subreddit: "BESalary",
         age: 32,
-        education: "Bachelor's degree",
+        education: "Master's degree in Engineering",
         workExperience: 8,
         civilStatus: "Married",
         dependents: 1,
-        sector: "Technology",
+        sector: "Technology - DevOps",
         employeeCount: "500+",
         multinational: true,
-        jobTitle: "Lead Developer",
-        jobDescription: "Team lead for cloud infrastructure",
+        jobTitle: "Lead DevOps Engineer",
+        jobDescription: "Team lead for cloud infrastructure, AWS/Azure, CI/CD pipelines",
         seniority: 8,
         officialHours: 38,
         averageHours: 42,
@@ -179,27 +196,31 @@ async function seed() {
         otherInsurances: "Hospitalization, dental",
         otherBenefits: "Company car, laptop, phone, stock options",
         workCity: "Antwerp",
-        commuteDistance: "8",
+        commuteDistance: "8 km",
         commuteMethod: "Bike",
         commuteCompensation: "Bike allowance",
         teleworkDays: 4,
         dayOffEase: "Easy",
         stressLevel: "High",
         reports: 5,
-        isManualEntry: true,
+        isManualEntry: false,
         reviewStatus: "APPROVED" as const,
-        source: "Manual submission",
+        source: "r/BESalary",
+        sourceUrl: "https://reddit.com/r/BESalary/def456",
+        lastCommentsFetch: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        ownerToken: null,
+        editableUntil: null,
       },
-      // Belgium - Other sectors
+      // MANUAL ENTRY WITH OWNER TOKEN #1
       {
         country: "Belgium",
         subreddit: "",
         age: 35,
-        education: "Master's degree",
+        education: "Master's degree in Business",
         workExperience: 10,
         civilStatus: "Married",
         dependents: 2,
-        sector: "Finance",
+        sector: "Finance - Banking",
         employeeCount: "500+",
         multinational: true,
         jobTitle: "Financial Analyst",
@@ -221,7 +242,7 @@ async function seed() {
         otherInsurances: "Full package",
         otherBenefits: "Bonus scheme, laptop",
         workCity: "Brussels",
-        commuteDistance: "25",
+        commuteDistance: "25 km",
         commuteMethod: "Train",
         commuteCompensation: "Train subscription",
         teleworkDays: 2,
@@ -231,19 +252,24 @@ async function seed() {
         isManualEntry: true,
         reviewStatus: "APPROVED" as const,
         source: "Manual submission",
+        sourceUrl: null,
+        lastCommentsFetch: null,
+        ownerToken: generateMockOwnerToken(1000),
+        editableUntil: getMockEditableUntilDate(),
       },
+      // MANUAL ENTRY WITH OWNER TOKEN #2
       {
         country: "Belgium",
         subreddit: "",
         age: 26,
-        education: "Bachelor's degree",
+        education: "Bachelor's degree in Marketing",
         workExperience: 3,
         civilStatus: "Single",
         dependents: 0,
-        sector: "Marketing",
+        sector: "Marketing - Digital",
         employeeCount: "50-100",
         multinational: false,
-        jobTitle: "Marketing Specialist",
+        jobTitle: "Digital Marketing Specialist",
         jobDescription: "Digital marketing and social media",
         seniority: 2,
         officialHours: 38,
@@ -262,7 +288,7 @@ async function seed() {
         otherInsurances: "Hospitalization",
         otherBenefits: "Laptop",
         workCity: "Ghent",
-        commuteDistance: "5",
+        commuteDistance: "5 km",
         commuteMethod: "Bike",
         commuteCompensation: "Bike allowance",
         teleworkDays: 2,
@@ -272,8 +298,59 @@ async function seed() {
         isManualEntry: true,
         reviewStatus: "APPROVED" as const,
         source: "Manual submission",
+        sourceUrl: null,
+        lastCommentsFetch: null,
+        ownerToken: generateMockOwnerToken(1001),
+        editableUntil: getMockEditableUntilDate(),
       },
-      // Entry with anomaly (for testing anomaly detection)
+      // NEAR-DUPLICATE ENTRY (for testing duplicate detection) - Similar to first Reddit post
+      // This manual entry is very similar to the first Reddit post to test duplicate detection
+      {
+        country: "Belgium",
+        subreddit: "",
+        age: 29, // Slightly different
+        education: "Master's degree in Computer Science", // Same
+        workExperience: 5,
+        civilStatus: "Single",
+        dependents: 0,
+        sector: "Technology - Software",
+        employeeCount: "100-500",
+        multinational: true,
+        jobTitle: "Senior Software Engineer", // Same - critical matching field
+        jobDescription: "Full-stack development with React and Node.js", // Very similar
+        seniority: 5,
+        officialHours: 38,
+        averageHours: 40,
+        shiftDescription: "Regular office hours",
+        onCall: "1 week per month",
+        vacationDays: 20,
+        currency: "EUR",
+        grossSalary: 4500, // Same - critical matching field
+        netSalary: 2800,
+        netCompensation: 3200,
+        thirteenthMonth: "Yes",
+        mealVouchers: 160,
+        ecoCheques: 250,
+        groupInsurance: "Yes",
+        otherInsurances: "Hospitalization",
+        otherBenefits: "Company car, laptop",
+        workCity: "Brussels", // Same - critical matching field
+        commuteDistance: "15 km",
+        commuteMethod: "Car",
+        commuteCompensation: "Fuel card",
+        teleworkDays: 3,
+        dayOffEase: "Easy",
+        stressLevel: "Medium",
+        reports: 2,
+        isManualEntry: true,
+        reviewStatus: "PENDING" as const, // Pending review - potential duplicate
+        source: "Manual submission",
+        sourceUrl: null,
+        lastCommentsFetch: null,
+        ownerToken: generateMockOwnerToken(1002),
+        editableUntil: getMockEditableUntilDate(),
+      },
+      // Entry with anomaly (for testing anomaly detection) - REDDIT SCRAPED
       {
         country: "Belgium",
         subreddit: "BESalary",
@@ -303,7 +380,7 @@ async function seed() {
         groupInsurance: "No",
         otherBenefits: "Laptop",
         workCity: "Brussels",
-        commuteDistance: "10",
+        commuteDistance: "10 km",
         commuteMethod: "Public transport",
         commuteCompensation: "Train subscription",
         teleworkDays: 1,
@@ -314,7 +391,11 @@ async function seed() {
         reviewStatus: "NEEDS_REVIEW" as const,
         anomalyScore: 0.95,
         anomalyReason: "Salary significantly higher than expected for experience level",
-        source: "Reddit",
+        source: "r/BESalary",
+        sourceUrl: "https://reddit.com/r/BESalary/comments/xyz789",
+        lastCommentsFetch: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        ownerToken: null,
+        editableUntil: null,
       },
     ];
 
@@ -329,6 +410,10 @@ async function seed() {
       .returning();
 
     console.log(`   ✓ Created ${insertedEntries.length} salary entries`);
+    console.log(`      - ${salaryEntryData.filter(e => !e.isManualEntry).length} Reddit scraped posts (with source URLs)`);
+    console.log(`      - ${salaryEntryData.filter(e => e.isManualEntry).length} Manual submissions (with owner tokens)`);
+    console.log(`      - ${salaryEntryData.filter(e => e.reviewStatus === 'PENDING').length} Pending review (potential duplicates)`);
+    console.log(`      - ${salaryEntryData.filter(e => e.reviewStatus === 'NEEDS_REVIEW').length} Flagged for anomaly review`);
 
     // Seed comments
     console.log("💬 Seeding comments...");
@@ -518,3 +603,4 @@ async function seed() {
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
 void seed();
+

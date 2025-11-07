@@ -423,6 +423,13 @@
     "errorLoadingEntry": "Fehler beim Laden des Eintrags",
     "rateLimitExceeded": "Ratenlimit überschritten",
     "rateLimitRetry": "Sie können es in {time} erneut versuchen",
+    "duplicateWarning": {
+      "title": "Mögliches Duplikat Erkannt",
+      "description": "Wir haben einen bestehenden Eintrag gefunden, der zu {similarityScore}% mit Ihrem übereinstimmt. Dies könnte ein Duplikat von Reddit oder einer anderen Quelle sein.",
+      "matchingFields": "Übereinstimmende Felder",
+      "cancel": "Abbrechen",
+      "submitAnyway": "Trotzdem Einreichen"
+    },
     "placeholders": {
       "age": "z.B. 30",
       "education": "Bildungsniveau auswählen oder eingeben",
@@ -1070,6 +1077,35 @@
       "loadFailed": "Laden der Einträge fehlgeschlagen. Bitte aktualisieren Sie die Seite.",
       "actionFailed": "Aktion für Eintrag {action} fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "unauthorized": "Nicht autorisiert. Bitte melden Sie sich an."
+    }
+  },
+  "reddit": {
+    "scraping": {
+      "title": "Reddit-Daten-Scraping",
+      "description": "Automatisierte Gehaltserhebung von Reddit",
+      "lastRun": "Letzte Ausführung",
+      "nextRun": "Nächste Ausführung",
+      "status": "Status",
+      "running": "Läuft",
+      "idle": "Inaktiv",
+      "error": "Fehler"
+    },
+    "duplicate": {
+      "detected": "Mögliches Duplikat Erkannt",
+      "message": "Dieser Reddit-Eintrag scheint bereits zu existieren (möglicherweise erneut auf Subreddit {subreddit} gepostet). Haben Sie dies bereits gepostet?",
+      "question": "Haben Sie diese Gehaltsinformationen bereits eingereicht?",
+      "yesPosted": "Ja, ich habe dies bereits gepostet",
+      "noNotPosted": "Nein, ich habe dies nicht gepostet",
+      "similarityScore": "Ähnlichkeit: {score}%",
+      "matchingFields": "Übereinstimmende Felder",
+      "viewExisting": "Vorhandenen Eintrag anzeigen",
+      "continueAnyway": "Trotzdem fortfahren",
+      "cancel": "Abbrechen"
+    },
+    "sources": {
+      "manual": "Manuelle Eingabe",
+      "reddit": "Reddit",
+      "scraped": "Von {subreddit} gesammelt"
     }
   }
 }

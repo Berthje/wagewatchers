@@ -21,7 +21,8 @@ export function AnimatedWorldMap() {
         newSvg.setAttribute("class", "w-full h-full");
 
         // Add paths with animation classes
-        paths.forEach((path, index) => {
+        let index = 0;
+        for (const path of paths) {
           const newPath = path.cloneNode(true) as SVGPathElement;
           newPath.setAttribute("class", `world-path path-${index}`);
           newPath.style.stroke = "currentColor";
@@ -32,7 +33,8 @@ export function AnimatedWorldMap() {
           newPath.style.animationDelay = `${index * 0.85}s`;
           newPath.style.animation = "drawPath 2.5s ease-in-out forwards";
           newSvg.appendChild(newPath);
-        });
+          index++;
+        }
 
         // Add CSS animation
         const style = document.createElementNS("http://www.w3.org/2000/svg", "style");

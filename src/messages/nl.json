@@ -423,6 +423,13 @@
     "errorLoadingEntry": "Fout bij het laden van de inzending",
     "rateLimitExceeded": "Limiet voor aanvragen overschreden",
     "rateLimitRetry": "U kunt het opnieuw proberen over {time}",
+    "duplicateWarning": {
+      "title": "Mogelijk Duplicaat Gedetecteerd",
+      "description": "We hebben een bestaande inzending gevonden die {similarityScore}% vergelijkbaar is met de uwe. Dit kan een duplicaat zijn van Reddit of een andere bron.",
+      "matchingFields": "Overeenkomende velden",
+      "cancel": "Annuleren",
+      "submitAnyway": "Toch Indienen"
+    },
     "placeholders": {
       "age": "bv. 30",
       "education": "Selecteer of voer opleidingsniveau in",
@@ -1070,6 +1077,35 @@
       "loadFailed": "Laden van inzendingen mislukt. Ververs de pagina.",
       "actionFailed": "Actie voor inzending {action} mislukt. Probeer het opnieuw.",
       "unauthorized": "Niet geautoriseerd. Gelieve in te loggen."
+    }
+  },
+  "reddit": {
+    "scraping": {
+      "title": "Reddit Data Scraping",
+      "description": "Geautomatiseerde salarisverzameling van Reddit",
+      "lastRun": "Laatste uitvoering",
+      "nextRun": "Volgende uitvoering",
+      "status": "Status",
+      "running": "Bezig",
+      "idle": "Inactief",
+      "error": "Fout"
+    },
+    "duplicate": {
+      "detected": "Mogelijk Duplicaat Gedetecteerd",
+      "message": "Deze Reddit-entry lijkt al te bestaan (mogelijk opnieuw gepost op subreddit {subreddit}). Heb je dit eerder gepost?",
+      "question": "Heb je deze salarisinformatie eerder ingediend?",
+      "yesPosted": "Ja, ik heb dit eerder gepost",
+      "noNotPosted": "Nee, ik heb dit niet gepost",
+      "similarityScore": "Gelijkenis: {score}%",
+      "matchingFields": "Overeenkomende velden",
+      "viewExisting": "Bekijk bestaande inzending",
+      "continueAnyway": "Toch opslaan",
+      "cancel": "Annuleren"
+    },
+    "sources": {
+      "manual": "Handmatige Invoer",
+      "reddit": "Reddit",
+      "scraped": "Verzameld van {subreddit}"
     }
   }
 }

@@ -29,7 +29,10 @@
     "db:introspect": "drizzle-kit introspect",
     "studio": "npx drizzle-kit studio",
     "create-admin": "tsx scripts/create-admin.ts",
-    "update-cities": "tsx scripts/update-cities.ts"
+    "update-cities": "tsx scripts/update-cities.ts",
+    "test:scrape:posts": "tsx scripts/test-reddit-scraper.ts",
+    "test:scrape:comments": "tsx scripts/test-comment-fetcher.ts",
+    "test:normalizers": "tsx scripts/test-normalizers.ts"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.14.4",
@@ -62,6 +65,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.6",
     "drizzle-orm": "^0.44.7",
+    "fastest-levenshtein": "^1.0.16",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",

@@ -5,6 +5,7 @@ import { eq, inArray, desc } from "drizzle-orm";
 import { generateOwnerToken, getEditableUntilDate } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
+import { detectDuplicate } from "@/lib/duplicate-detector";
 
 export const dynamic = "force-dynamic";
 
@@ -99,11 +100,30 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    const { forceSubmit, ...entryData } = body;
 
     const bodyTyped: Omit<
       typeof salaryEntries.$inferInsert,
       "id" | "createdAt" | "ownerToken" | "editableUntil"
-    > = body;
+    > = entryData;
+
+    // Check for duplicates before inserting (unless force submit is true)
+    if (!forceSubmit) {
+      const duplicateCheck = await detectDuplicate(bodyTyped);
+
+      if (duplicateCheck.isDuplicate) {
+        // Return duplicate information to client for user decision
+        return NextResponse.json(
+          {
+            duplicate: true,
+            duplicateEntryId: duplicateCheck.duplicateEntryId,
+            similarityScore: duplicateCheck.similarityScore,
+            matchDetails: duplicateCheck.matchDetails,
+          },
+          { status: 409 } // 409 Conflict
+        );
+      }
+    }
 
     // Generate ownership token and editable window
     const editableUntil = getEditableUntilDate();

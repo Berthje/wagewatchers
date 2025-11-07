@@ -423,6 +423,13 @@
     "errorLoadingEntry": "Erreur lors du Chargement de l'Entrée",
     "rateLimitExceeded": "Limite de taux dépassée",
     "rateLimitRetry": "Vous pouvez réessayer dans {time}",
+    "duplicateWarning": {
+      "title": "Doublon Possible Détecté",
+      "description": "Nous avons trouvé une entrée existante qui est {similarityScore}% similaire à la vôtre. Il pourrait s'agir d'un doublon provenant de Reddit ou d'une autre source.",
+      "matchingFields": "Champs correspondants",
+      "cancel": "Annuler",
+      "submitAnyway": "Soumettre Quand Même"
+    },
     "placeholders": {
       "age": "ex. 30",
       "education": "Sélectionner ou entrer le niveau d'éducation",
@@ -1070,6 +1077,35 @@
       "loadFailed": "Échec du chargement des entrées. Veuillez rafraîchir la page.",
       "actionFailed": "Échec de {action} l'entrée. Veuillez réessayer.",
       "unauthorized": "Non autorisé. Veuillez vous connecter."
+    }
+  },
+  "reddit": {
+    "scraping": {
+      "title": "Collecte de Données Reddit",
+      "description": "Collecte automatisée de données salariales depuis Reddit",
+      "lastRun": "Dernière exécution",
+      "nextRun": "Prochaine exécution",
+      "status": "Statut",
+      "running": "En cours",
+      "idle": "Inactif",
+      "error": "Erreur"
+    },
+    "duplicate": {
+      "detected": "Doublon Possible Détecté",
+      "message": "Cette entrée Reddit semble déjà exister (peut-être republiée sur le subreddit {subreddit}). L'avez-vous déjà posté?",
+      "question": "Avez-vous déjà soumis ces informations salariales?",
+      "yesPosted": "Oui, j'ai déjà posté ceci",
+      "noNotPosted": "Non, je n'ai pas posté ceci",
+      "similarityScore": "Similarité: {score}%",
+      "matchingFields": "Champs correspondants",
+      "viewExisting": "Voir l'entrée existante",
+      "continueAnyway": "Continuer quand même",
+      "cancel": "Annuler"
+    },
+    "sources": {
+      "manual": "Saisie Manuelle",
+      "reddit": "Reddit",
+      "scraped": "Collecté depuis {subreddit}"
     }
   }
 }
