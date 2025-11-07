@@ -33,8 +33,6 @@ function getRedditClient(): Snoowrap {
     );
   }
 
-  console.log("✓ Using Reddit OAuth with refresh token");
-
   redditClient = new Snoowrap({
     userAgent: "WageWatchers:v1.0.0 (by /u/wagewatchers)",
     clientId,
@@ -86,8 +84,6 @@ export async function scrapeSubredditPosts(
     const subreddit = reddit.getSubreddit(subredditName);
     const posts = await subreddit.getNew({ limit });
 
-    console.log(`[Reddit Scraper] Fetched ${posts.length} posts from r/${subredditName}`);
-
     for (const post of posts) {
       result.postsProcessed++;
 
@@ -96,7 +92,6 @@ export async function scrapeSubredditPosts(
         const postFlair = post.link_flair_text?.toLowerCase() || '';
         if (!postFlair.includes('salary')) {
           result.postsSkipped++;
-          console.log(`[Reddit Scraper] Skipping post without salary flair: ${post.id} (flair: "${post.link_flair_text || 'none'}")`);
           continue;
         }
 
@@ -111,7 +106,6 @@ export async function scrapeSubredditPosts(
 
         if (existingEntry.length > 0) {
           result.postsSkipped++;
-          console.log(`[Reddit Scraper] Post already exists: ${post.id}`);
           continue;
         }
 
@@ -120,11 +114,6 @@ export async function scrapeSubredditPosts(
 
         if (!parsedData.isValid) {
           result.postsSkipped++;
-          console.log(
-            `[Reddit Scraper] Invalid post structure: ${post.id}`,
-            parsedData.missingFields,
-            parsedData.malformedSections
-          );
           continue;
         }
 
@@ -141,7 +130,6 @@ export async function scrapeSubredditPosts(
         });
 
         result.postsSaved++;
-        console.log(`[Reddit Scraper] Saved post: ${post.id} from r/${subredditName}`);
       } catch (error) {
         result.errors.push(`Error processing post ${post.id}: ${error}`);
         console.error(`[Reddit Scraper] Error processing post ${post.id}:`, error);
@@ -425,8 +413,6 @@ export async function fetchCommentsForRecentPosts(): Promise<{
         )
       );
 
-    console.log(`[Comment Fetcher] Found ${entriesToUpdate.length} entries to update`);
-
     for (const entry of entriesToUpdate) {
       result.entriesProcessed++;
 
@@ -455,14 +441,10 @@ export async function fetchCommentsForRecentPosts(): Promise<{
         const commentsList = Array.isArray(submission.comments) ? submission.comments : [];
 
         if (commentsList.length === 0) {
-          console.log(`[Comment Fetcher] No comments found for post ${postId}`);
-
           // Mark all existing comments for this entry as deleted (they were removed from Reddit)
           await markMissingCommentsAsDeleted(entry.id, []);
           continue;
         }
-
-        console.log(`[Comment Fetcher] Processing ${commentsList.length} top-level comments for post ${postId}`);
 
         // Collect all comment IDs from Reddit's response
         const redditCommentIds = new Set<string>();
@@ -484,10 +466,6 @@ export async function fetchCommentsForRecentPosts(): Promise<{
           .update(salaryEntries)
           .set({ lastCommentsFetch: new Date() })
           .where(eq(salaryEntries.id, entry.id));
-
-        console.log(
-          `[Comment Fetcher] Processed ${commentCount} comments for entry ${entry.id}`
-        );
       } catch (error) {
         const errorMessage = `Error fetching comments for entry ${entry.id}: ${error}`;
         result.errors.push(errorMessage);
@@ -526,14 +504,9 @@ async function processCommentTree(
       const isBodyDeleted = comment.body === "[deleted]" || comment.body === "[removed]";
 
       // Check if author is deleted (Reddit sets author to [deleted] when user deletes but keeps body for replies)
-      const isAuthorDeleted = !comment.author || !comment.author.name || comment.author.name === "[deleted]";
+      const isAuthorDeleted = !comment.author?.name || comment.author.name === "[deleted]";
 
       const authorName = comment.author?.name || "[deleted]";
-
-      // Debug logging for deleted comments
-      if (isBodyDeleted || isAuthorDeleted) {
-        console.log(`[Comment Fetcher] Found deleted comment ${comment.id}, author: ${authorName}, body: ${isBodyDeleted ? "[deleted]" : "preserved"}`);
-      }
 
       // Check if comment already exists
       const existing = await db
@@ -559,10 +532,6 @@ async function processCommentTree(
               author: isAuthorDeleted ? "[deleted]" : authorName,
             })
             .where(eq(comments.externalId, comment.id));
-
-          if ((nowDeleted || isAuthorDeleted) && !wasDeleted) {
-            console.log(`[Comment Fetcher] Updated comment ${comment.id} to deleted status (author: ${existing[0].author} -> [deleted], body: ${nowDeleted ? "deleted" : "preserved"})`);
-          }
         }
 
         // Process replies recursively even for existing comments (but not for fully deleted comments)
@@ -649,10 +618,6 @@ async function markMissingCommentsAsDeleted(
     );
 
     if (missingComments.length > 0) {
-      console.log(
-        `[Comment Fetcher] Found ${missingComments.length} deleted comments for entry ${salaryEntryId}`
-      );
-
       // Update each missing comment to mark as deleted
       for (const comment of missingComments) {
         // Only update if not already marked as deleted
@@ -664,10 +629,6 @@ async function markMissingCommentsAsDeleted(
               author: "[deleted]",
             })
             .where(eq(comments.id, comment.id));
-
-          console.log(
-            `[Comment Fetcher] Marked comment ${comment.externalId} as deleted (was by ${comment.author})`
-          );
         }
       }
     }
@@ -690,7 +651,6 @@ export async function scrapeAllSubreddits(): Promise<{
   let allSuccessful = true;
 
   for (const subredditName of Object.keys(SUBREDDIT_CONFIGS)) {
-    console.log(`[Reddit Scraper] Starting scrape for r/${subredditName}`);
     const result = await scrapeSubredditPosts(subredditName);
     results[subredditName] = result;
 

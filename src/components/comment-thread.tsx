@@ -6,6 +6,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   ChevronDown,
   ChevronRight,
   MessageSquare,
@@ -33,9 +39,6 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
 
   return (
     <div className="relative" style={{ marginLeft: depth > 0 ? `${marginLeft}px` : "0" }}>
-      {/* Vertical line for nested comments */}
-      {depth > 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-stone-700" />}
-
       <div className="mb-3">
         {/* Comment Header */}
         <div className="flex items-center gap-2 mb-2">
@@ -58,7 +61,16 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
             <User className="h-3 w-3" />
             <span className="font-medium">{comment.author || "Anonymous"}</span>
             <span>•</span>
-            <span>{formatRelativeTime(comment.createdAt)}</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">{formatRelativeTime(comment.createdAt)}</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{new Date(comment.createdAt).toLocaleString()}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             {comment.score !== null && comment.score > 0 && (
               <>
                 <span>•</span>
@@ -107,17 +119,17 @@ export function CommentSection({
   const t = useTranslations("comments");
 
   if (isLoading || !comments || comments.length === 0) {
-  return (
-    <Card className="bg-stone-800 border-stone-700">
-      <CardContent className="pt-6">
-        <div className="flex flex-col items-center justify-center py-8 text-stone-400">
-          <MessageSquare className="h-12 w-12 mb-3 opacity-50" />
-          <p>{isLoading ? t("loading") : t("noComments")}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+    return (
+      <Card className="bg-stone-800 border-stone-700">
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center justify-center py-8 text-stone-400">
+            <MessageSquare className="h-12 w-12 mb-3 opacity-50" />
+            <p>{isLoading ? t("loading") : t("noComments")}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-stone-800 border-stone-700">
