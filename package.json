@@ -32,7 +32,9 @@
     "update-cities": "tsx scripts/update-cities.ts",
     "scrape:posts:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-reddit-scraper.ts",
     "scrape:comments:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-comment-fetcher.ts",
-    "test:normalizers:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-normalizers.ts"
+    "inspect:comments:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/inspect-comments.ts",
+    "test:normalizers:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/test-normalizers.ts",
+    "test:commute:dev": "tsx scripts/test-commute-distance.ts"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.14.4",

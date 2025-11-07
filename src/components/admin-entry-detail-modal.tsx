@@ -297,7 +297,9 @@ export function AdminEntryDetailModal({
                   <InfoItem
                     label="Commute Distance"
                     value={
-                      entry.commuteDistance !== null ? `${entry.commuteDistance} km` : undefined
+                      entry.commuteDistance !== null
+                        ? `${entry.commuteDistance.replaceAll(/[^0-9-]/g, '').trim()} km`
+                        : undefined
                     }
                   />
                   <InfoItem label="Commute Method" value={entry.commuteMethod} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -71,7 +72,7 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
         </div>
 
         {/* Comment Body - Always show the comment itself */}
-        <div className="text-sm text-stone-100 whitespace-pre-wrap break-words pl-8 mb-2">
+        <div className="text-sm text-stone-100 whitespace-pre-wrap wrap-break-word pl-8 mb-2">
           {comment.body}
         </div>
 
@@ -103,30 +104,20 @@ export function CommentSection({
   sourceUrl,
   source,
 }: Readonly<CommentSectionProps>) {
-  if (isLoading) {
-    return (
-      <Card className="bg-stone-800 border-stone-700">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-pulse text-stone-400">Loading comments...</div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const t = useTranslations("comments");
 
-  if (!comments || comments.length === 0) {
-    return (
-      <Card className="bg-stone-800 border-stone-700">
-        <CardContent className="pt-6">
-          <div className="flex flex-col items-center justify-center py-8 text-stone-400">
-            <MessageSquare className="h-12 w-12 mb-3 opacity-50" />
-            <p>No comments available</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  if (isLoading || !comments || comments.length === 0) {
+  return (
+    <Card className="bg-stone-800 border-stone-700">
+      <CardContent className="pt-6">
+        <div className="flex flex-col items-center justify-center py-8 text-stone-400">
+          <MessageSquare className="h-12 w-12 mb-3 opacity-50" />
+          <p>{isLoading ? t("loading") : t("noComments")}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
   return (
     <Card className="bg-stone-800 border-stone-700">

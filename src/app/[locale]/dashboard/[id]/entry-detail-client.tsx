@@ -508,7 +508,7 @@ export function EntryDetailClient({
                 label={t("commuteDistance")}
                 value={
                   entry.commuteDistance !== null && entry.commuteDistance !== undefined
-                    ? `${entry.commuteDistance} km`
+                    ? `${entry.commuteDistance.replaceAll(/[^0-9-]/g, '').trim()} km`
                     : undefined
                 }
               />

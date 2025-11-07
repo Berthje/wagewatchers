@@ -246,10 +246,15 @@ function parseBESalaryTemplate(content: string, config: any): ParsedPostData {
 
         case 'text':
         default: {
-          // Apply field normalization for text fields
-          // This transforms human-written values like "Prof Bachelor energy" → "bachelor"
-          const normalizedValue = normalizeFieldValue(fieldName, value);
-          extractedData[fieldName] = normalizedValue;
+          // Special handling for commuteDistance: extract distance value intelligently
+          if (fieldName === 'commuteDistance') {
+            extractedData[fieldName] = parseCommuteDistance(value);
+          } else {
+            // Apply field normalization for text fields
+            // This transforms human-written values like "Prof Bachelor energy" → "bachelor"
+            const normalizedValue = normalizeFieldValue(fieldName, value);
+            extractedData[fieldName] = normalizedValue;
+          }
           break;
         }
       }
@@ -281,6 +286,85 @@ function parseBESalaryTemplate(content: string, config: any): ParsedPostData {
   Object.assign(result, extractedData);
 
   return result;
+}
+
+/**
+ * Parse commute distance from various formats
+ * Examples:
+ * - "18km 25min" → "18"
+ * - "25 kilometers" → "25"
+ * - "30 km, 45 minutes" → "30"
+ * - "15" → "15"
+ * - "20-30 km" → "20-30"
+ */
+function parseCommuteDistance(value: string): string | null {
+  if (!value) return null;
+
+  const lowerValue = value.toLowerCase().trim();
+
+  // Distance keywords in multiple languages
+  const distanceKeywords = [
+    'km',
+    'kilometer',
+    'kilometers',
+    'kilometre',
+    'kilometres',
+    'miles',
+    'mile',
+  ];
+
+  // Time keywords to ignore
+  const timeKeywords = [
+    'min',
+    'mins',
+    'minute',
+    'minutes',
+    'hour',
+    'hours',
+    'h',
+  ];
+
+  // Check if value contains distance keywords
+  const hasDistanceKeyword = distanceKeywords.some(keyword => lowerValue.includes(keyword));
+
+  if (hasDistanceKeyword) {
+    // Extract number(s) before distance keyword
+    // Matches patterns like "18km", "25 kilometers", "20-30 km"
+    const distancePattern = /(\d+(?:-\d+)?(?:\.\d+)?)\s*(?:km|kilometer|kilometers|kilometre|kilometres|miles|mile)/i;
+    const match = distancePattern.exec(value);
+
+    if (match) {
+      return match[1];
+    }
+  }
+
+  // If no distance keyword but has time keyword, try to extract distance part
+  const hasTimeKeyword = timeKeywords.some(keyword => lowerValue.includes(keyword));
+
+  if (hasTimeKeyword) {
+    // Try to find a number that's NOT followed by time keywords
+    // Pattern: number followed by distance unit or standalone number before time
+    const beforeTimePattern = /(\d+(?:-\d+)?(?:\.\d+)?)\s*(?:km|kilometer|kilometers|kilometre|kilometres)?(?=.*(?:min|minute|hour|h))/i;
+    const match = beforeTimePattern.exec(value);
+
+    if (match) {
+      return match[1];
+    }
+  }
+
+  // If no keywords found, check if it's just a number or range
+  const simpleNumberPattern = /^(\d+(?:-\d+)?(?:\.\d+)?)$/;
+  const match = simpleNumberPattern.exec(lowerValue);
+
+  if (match) {
+    return match[1];
+  }
+
+  // Last resort: extract first number found
+  const anyNumberPattern = /(\d+(?:-\d+)?(?:\.\d+)?)/;
+  const anyMatch = anyNumberPattern.exec(value);
+
+  return anyMatch ? anyMatch[1] : null;
 }
 
 /**
@@ -372,8 +456,17 @@ export async function fetchCommentsForRecentPosts(): Promise<{
 
         if (commentsList.length === 0) {
           console.log(`[Comment Fetcher] No comments found for post ${postId}`);
+
+          // Mark all existing comments for this entry as deleted (they were removed from Reddit)
+          await markMissingCommentsAsDeleted(entry.id, []);
           continue;
         }
+
+        console.log(`[Comment Fetcher] Processing ${commentsList.length} top-level comments for post ${postId}`);
+
+        // Collect all comment IDs from Reddit's response
+        const redditCommentIds = new Set<string>();
+        collectCommentIds(commentsList, redditCommentIds);
 
         const commentCount = await processCommentTree(
           commentsList,
@@ -382,6 +475,9 @@ export async function fetchCommentsForRecentPosts(): Promise<{
         );
 
         result.commentsAdded += commentCount;
+
+        // Mark comments that are in DB but not in Reddit's response as deleted
+        await markMissingCommentsAsDeleted(entry.id, Array.from(redditCommentIds));
 
         // Update last fetch timestamp
         await db
@@ -420,12 +516,25 @@ async function processCommentTree(
   let count = 0;
 
   for (const comment of commentList) {
-    // Skip "More Comments" objects and deleted comments
-    if (!comment.body || comment.body === "[deleted]" || comment.body === "[removed]") {
+    // Skip "More Comments" objects but process deleted/removed comments
+    if (!comment.body) {
       continue;
     }
 
     try {
+      // Check if this is a deleted comment (body shows [deleted] or [removed])
+      const isBodyDeleted = comment.body === "[deleted]" || comment.body === "[removed]";
+
+      // Check if author is deleted (Reddit sets author to [deleted] when user deletes but keeps body for replies)
+      const isAuthorDeleted = !comment.author || !comment.author.name || comment.author.name === "[deleted]";
+
+      const authorName = comment.author?.name || "[deleted]";
+
+      // Debug logging for deleted comments
+      if (isBodyDeleted || isAuthorDeleted) {
+        console.log(`[Comment Fetcher] Found deleted comment ${comment.id}, author: ${authorName}, body: ${isBodyDeleted ? "[deleted]" : "preserved"}`);
+      }
+
       // Check if comment already exists
       const existing = await db
         .select()
@@ -434,14 +543,38 @@ async function processCommentTree(
         .limit(1);
 
       if (existing.length > 0) {
-        // Update existing comment (score might have changed)
-        await db
-          .update(comments)
-          .set({
-            score: comment.score,
-            body: comment.body,
-          })
-          .where(eq(comments.externalId, comment.id));
+        // Update existing comment (score, body, or deletion status might have changed)
+        const wasDeleted = existing[0].body === "[deleted]" || existing[0].body === "[removed]";
+        const nowDeleted = isBodyDeleted;
+        const authorChanged = existing[0].author !== authorName;
+
+        if (wasDeleted !== nowDeleted || existing[0].body !== comment.body || existing[0].score !== comment.score || authorChanged) {
+          await db
+            .update(comments)
+            .set({
+              score: comment.score,
+              // Keep the body if Reddit kept it (author deleted but has replies)
+              body: comment.body,
+              // Update author to [deleted] if Reddit marked it as deleted
+              author: isAuthorDeleted ? "[deleted]" : authorName,
+            })
+            .where(eq(comments.externalId, comment.id));
+
+          if ((nowDeleted || isAuthorDeleted) && !wasDeleted) {
+            console.log(`[Comment Fetcher] Updated comment ${comment.id} to deleted status (author: ${existing[0].author} -> [deleted], body: ${nowDeleted ? "deleted" : "preserved"})`);
+          }
+        }
+
+        // Process replies recursively even for existing comments (but not for fully deleted comments)
+        if (!isBodyDeleted && comment.replies && comment.replies.length > 0) {
+          const replyCount = await processCommentTree(
+            comment.replies,
+            salaryEntryId,
+            existing[0].id,
+            depth + 1
+          );
+          count += replyCount;
+        }
       } else {
         // Insert new comment
         const inserted = await db
@@ -449,7 +582,7 @@ async function processCommentTree(
           .values({
             externalId: comment.id,
             body: comment.body,
-            author: comment.author.name,
+            author: isAuthorDeleted ? "[deleted]" : authorName,
             score: comment.score,
             depth,
             parentId,
@@ -460,8 +593,8 @@ async function processCommentTree(
 
         count++;
 
-        // Process replies recursively
-        if (comment.replies && comment.replies.length > 0) {
+        // Process replies recursively for new comments (but not for fully deleted comments)
+        if (!isBodyDeleted && comment.replies && comment.replies.length > 0) {
           const replyCount = await processCommentTree(
             comment.replies,
             salaryEntryId,
@@ -477,6 +610,73 @@ async function processCommentTree(
   }
 
   return count;
+}
+
+/**
+ * Recursively collect all comment IDs from Reddit's response
+ */
+function collectCommentIds(commentList: any[], idSet: Set<string>): void {
+  for (const comment of commentList) {
+    if (comment.id) {
+      idSet.add(comment.id);
+    }
+
+    // Recursively collect from replies
+    if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
+      collectCommentIds(comment.replies, idSet);
+    }
+  }
+}
+
+/**
+ * Mark comments that exist in DB but not in Reddit's response as deleted
+ * This respects user privacy when they delete their comments on Reddit
+ */
+async function markMissingCommentsAsDeleted(
+  salaryEntryId: number,
+  redditCommentIds: string[]
+): Promise<void> {
+  try {
+    // Get all comments from DB for this entry
+    const dbComments = await db
+      .select()
+      .from(comments)
+      .where(eq(comments.salaryEntryId, salaryEntryId));
+
+    // Find comments that are in DB but not in Reddit's response
+    const missingComments = dbComments.filter(
+      (dbComment) => dbComment.externalId && !redditCommentIds.includes(dbComment.externalId)
+    );
+
+    if (missingComments.length > 0) {
+      console.log(
+        `[Comment Fetcher] Found ${missingComments.length} deleted comments for entry ${salaryEntryId}`
+      );
+
+      // Update each missing comment to mark as deleted
+      for (const comment of missingComments) {
+        // Only update if not already marked as deleted
+        if (comment.body !== "[deleted]" && comment.body !== "[removed]") {
+          await db
+            .update(comments)
+            .set({
+              body: "[deleted]",
+              author: "[deleted]",
+            })
+            .where(eq(comments.id, comment.id));
+
+          console.log(
+            `[Comment Fetcher] Marked comment ${comment.externalId} as deleted (was by ${comment.author})`
+          );
+        }
+      }
+    }
+  } catch (error) {
+    console.error(
+      `[Comment Fetcher] Error marking missing comments as deleted:`,
+      error
+    );
+  }
 }
 
 /**
