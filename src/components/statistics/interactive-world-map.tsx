@@ -175,6 +175,31 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
       </div>
     `);
 
+    polygonSeries.mapPolygons.template.adapters.add("tooltipHTML", (html, target) => {
+      const dataContext = target.dataItem?.dataContext as any;
+      const hasData = dataContext?.value > 0;
+
+      if (hasData) {
+        return html;
+      }
+
+      // For countries with no data, show a simple tooltip with just the name.
+      return `
+        <div style="
+          background: rgb(87, 83, 79);
+          color: rgb(231, 229, 228);
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          border: 1px solid rgb(68, 64, 60);
+          font-family: ui-sans-serif, system-ui, sans-serif;
+          font-size: 0.875rem;
+          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        ">
+          {name}
+        </div>
+      `;
+    });
+
     polygonSeries.mapPolygons.template.states.create("hover", {
       fill: am5.color(0x57534e),
     });
