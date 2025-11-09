@@ -175,6 +175,10 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
       </div>
     `);
 
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fill: am5.color(0x57534e),
+    });
+
     if (currentView === "world") {
       polygonSeries.mapPolygons.template.events.on("click", (ev) => {
         const polygon = ev.target;
@@ -189,10 +193,6 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
           setSelectedCountry(COUNTRY_NAMES[countryId]);
           setCurrentView("country");
         }
-      });
-
-      polygonSeries.mapPolygons.template.states.create("hover", {
-        fill: am5.color(0xfb923c),
       });
     }
 
