@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import {
   Dialog,
   DialogContent,
@@ -70,10 +71,49 @@ export function FiltersModal({
   const t = useTranslations("dashboard");
   const [open, setOpen] = useState(false);
 
+  // Local state for slider values to update UI immediately
+  const [localMinAge, setLocalMinAge] = useState(minAge ?? 18);
+  const [localMaxAge, setLocalMaxAge] = useState(maxAge ?? 100);
+  const [localMinWorkExp, setLocalMinWorkExp] = useState(minWorkExperience ?? 0);
+  const [localMaxWorkExp, setLocalMaxWorkExp] = useState(maxWorkExperience ?? 50);
+
+  // Update local state when props change
+  useEffect(() => {
+    setLocalMinAge(minAge ?? 18);
+    setLocalMaxAge(maxAge ?? 100);
+  }, [minAge, maxAge]);
+
+  useEffect(() => {
+    setLocalMinWorkExp(minWorkExperience ?? 0);
+    setLocalMaxWorkExp(maxWorkExperience ?? 50);
+  }, [minWorkExperience, maxWorkExperience]);
+
+  // Debounced callbacks for age changes (500ms delay)
+  const debouncedAgeChange = useDebouncedCallback(
+    (values: number[]) => {
+      onMinAgeChange?.(values[0] === 18 ? null : values[0]);
+      onMaxAgeChange?.(values[1] === 100 ? null : values[1]);
+    },
+    500
+  );
+
+  // Debounced callbacks for work experience changes (500ms delay)
+  const debouncedWorkExpChange = useDebouncedCallback(
+    (values: number[]) => {
+      onMinWorkExperienceChange?.(values[0] === 0 ? null : values[0]);
+      onMaxWorkExperienceChange?.(values[1] === 50 ? null : values[1]);
+    },
+    500
+  );
+
   const handleClearAll = () => {
     onCountriesChange([]);
     onCitiesChange([]);
     onSectorsChange([]);
+    setLocalMinAge(18);
+    setLocalMaxAge(100);
+    setLocalMinWorkExp(0);
+    setLocalMaxWorkExp(50);
     onMinAgeChange?.(null);
     onMaxAgeChange?.(null);
     onMinWorkExperienceChange?.(null);
@@ -198,14 +238,15 @@ export function FiltersModal({
                       {t("filters.ageRange")}
                     </label>
                     <span className="text-sm text-stone-400">
-                      {minAge ?? 18} - {maxAge ?? 100} {t("table.years")}
+                      {localMinAge} - {localMaxAge} {t("table.years")}
                     </span>
                   </div>
                   <Slider
-                    value={[minAge ?? 18, maxAge ?? 100]}
+                    value={[localMinAge, localMaxAge]}
                     onValueChange={(values) => {
-                      onMinAgeChange(values[0] === 18 ? null : values[0]);
-                      onMaxAgeChange(values[1] === 100 ? null : values[1]);
+                      setLocalMinAge(values[0]);
+                      setLocalMaxAge(values[1]);
+                      debouncedAgeChange(values);
                     }}
                     min={18}
                     max={100}
@@ -236,14 +277,15 @@ export function FiltersModal({
                         {t("filters.workExperienceRange")}
                       </label>
                       <span className="text-sm text-stone-400">
-                        {minWorkExperience ?? 0} - {maxWorkExperience ?? 50} {t("table.years")}
+                        {localMinWorkExp} - {localMaxWorkExp} {t("table.years")}
                       </span>
                     </div>
                     <Slider
-                      value={[minWorkExperience ?? 0, maxWorkExperience ?? 50]}
+                      value={[localMinWorkExp, localMaxWorkExp]}
                       onValueChange={(values) => {
-                        onMinWorkExperienceChange(values[0] === 0 ? null : values[0]);
-                        onMaxWorkExperienceChange(values[1] === 50 ? null : values[1]);
+                        setLocalMinWorkExp(values[0]);
+                        setLocalMaxWorkExp(values[1]);
+                        debouncedWorkExpChange(values);
                       }}
                       min={0}
                       max={50}
