@@ -36,6 +36,14 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.7.1",
+    date: "2025-11-10",
+    changes: [
+      "Improved filter performance with debounced mechanism for smoother interaction",
+      "Enhanced interactive world map with hover effects and helpful tooltips for countries without data",
+    ],
+  },
+  {
     version: "1.7.0",
     date: "2025-11-06",
     changes: [
