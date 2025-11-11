@@ -5,6 +5,9 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
 import am5geodata_belgiumHigh from "@amcharts/amcharts5-geodata/belgiumHigh";
+import am5geodata_netherlandsHigh from "@amcharts/amcharts5-geodata/netherlandsHigh";
+import am5geodata_germanyHigh from "@amcharts/amcharts5-geodata/germanyHigh";
+import am5geodata_franceHigh from "@amcharts/amcharts5-geodata/franceHigh";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +20,9 @@ import type { FilterState } from "@/hooks/use-filters";
 
 const GEODATA_MAP = {
   Belgium: am5geodata_belgiumHigh,
+  Netherlands: am5geodata_netherlandsHigh,
+  Germany: am5geodata_germanyHigh,
+  France: am5geodata_franceHigh,
 } as const;
 
 interface InteractiveWorldMapProps {
