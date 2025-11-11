@@ -15,7 +15,7 @@ import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SUPPORTED_COUNTRIES, COUNTRY_NAMES, COUNTRY_TRANSLATION_KEYS } from "@/lib/constants";
 import type { MapDataResponse } from "@/types";
-import { useSalaryDisplay } from "@/contexts/salary-display-context";
+import { useSalaryDisplay, convertPeriod } from "@/contexts/salary-display-context";
 import type { FilterState } from "@/hooks/use-filters";
 
 const GEODATA_MAP = {
@@ -86,18 +86,31 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
       params.append("maxAge", filters.maxAge.toString());
     }
 
-    // Salary filters
+    // Salary filters - convert back to monthly for API comparison
+    // Database stores all salaries as monthly values
     if (filters?.minGrossSalary !== null && filters?.minGrossSalary !== undefined) {
-      params.append("minGrossSalary", filters.minGrossSalary.toString());
+      const monthlyValue = Math.round(
+        convertPeriod(filters.minGrossSalary, preferences.period, "monthly")
+      );
+      params.append("minGrossSalary", monthlyValue.toString());
     }
     if (filters?.maxGrossSalary !== null && filters?.maxGrossSalary !== undefined) {
-      params.append("maxGrossSalary", filters.maxGrossSalary.toString());
+      const monthlyValue = Math.round(
+        convertPeriod(filters.maxGrossSalary, preferences.period, "monthly")
+      );
+      params.append("maxGrossSalary", monthlyValue.toString());
     }
     if (filters?.minNetSalary !== null && filters?.minNetSalary !== undefined) {
-      params.append("minNetSalary", filters.minNetSalary.toString());
+      const monthlyValue = Math.round(
+        convertPeriod(filters.minNetSalary, preferences.period, "monthly")
+      );
+      params.append("minNetSalary", monthlyValue.toString());
     }
     if (filters?.maxNetSalary !== null && filters?.maxNetSalary !== undefined) {
-      params.append("maxNetSalary", filters.maxNetSalary.toString());
+      const monthlyValue = Math.round(
+        convertPeriod(filters.maxNetSalary, preferences.period, "monthly")
+      );
+      params.append("maxNetSalary", monthlyValue.toString());
     }
 
     return params.toString();
@@ -113,6 +126,7 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
     filters?.maxGrossSalary,
     filters?.minNetSalary,
     filters?.maxNetSalary,
+    preferences.period,
   ]);
 
   const dataToDisplay = useMemo(
