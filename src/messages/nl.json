@@ -544,6 +544,7 @@
         "Media": "Media",
         "Hospitality": "Horeca",
         "Legal": "Juridisch",
+        "Logistics": "Logistiek",
         "Research": "Onderzoek",
         "Nonprofit": "Non-profit",
         "Agriculture": "Landbouw",
@@ -552,6 +553,7 @@
         "RealEstate": "Vastgoed",
         "Entertainment": "Entertainment",
         "Biotech": "Biotechnologie",
+        "Chemical": "Chemie",
         "Other": "Overige"
       },
       "combobox": {

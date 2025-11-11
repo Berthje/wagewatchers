@@ -544,6 +544,7 @@
         "Media": "Medien",
         "Hospitality": "Gastgewerbe",
         "Legal": "Recht",
+        "Logistics": "Logistik",
         "Research": "Forschung",
         "Nonprofit": "Gemeinnützig",
         "Agriculture": "Landwirtschaft",
@@ -552,6 +553,7 @@
         "RealEstate": "Immobilien",
         "Entertainment": "Unterhaltung",
         "Biotech": "Biotech",
+        "Chemical": "Chemische",
         "Other": "Sonstige"
       },
       "combobox": {

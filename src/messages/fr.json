@@ -544,6 +544,7 @@
         "Media": "Médias",
         "Hospitality": "Hôtellerie",
         "Legal": "Juridique",
+        "Logistics": "Logistique",
         "Research": "Recherche",
         "Nonprofit": "Organisation à But Non Lucratif",
         "Agriculture": "Agriculture",
@@ -552,6 +553,7 @@
         "RealEstate": "Immobilier",
         "Entertainment": "Divertissement",
         "Biotech": "Biotechnologie",
+        "Chemical": "Chimique",
         "Other": "Autre"
       },
       "combobox": {
@@ -834,7 +836,6 @@
     "donateOptions": "Choisissez Votre Méthode de Don",
     "buyMeCoffee": "Offrez-moi un Café",
     "paypal": "PayPal",
-    "kofi": "Ko-fi",
     "github": "Parrainage GitHub",
     "crypto": "Cryptomonnaie",
     "copyAddress": "Copier l'Adresse",
