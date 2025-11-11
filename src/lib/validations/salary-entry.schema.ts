@@ -10,9 +10,7 @@ const noUrls = (fieldName: string) =>
   z.string().refine(
     (value) => {
       if (!value) return true; // Allow empty strings
-      const urlRegex =
-        /(https?:\/\/|www\.|\.com|\.org|\.net|\.edu|\.gov|\.mil|\.info|\.biz|\.co|\.uk|\.de|\.fr|\.nl|\.be)/i;
-      return !urlRegex.test(value);
+      return !z.url().safeParse(value).success;
     },
     {
       message: `URLs are not allowed in ${fieldName}`,
