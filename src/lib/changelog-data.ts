@@ -36,6 +36,14 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.7.2",
+    date: "2025-11-11",
+    changes: [
+      "Added gross and net salary range filters to the filters modal",
+      "Added Chemical and Logistics sector options with full localization support",
+    ],
+  },
+  {
     version: "1.7.1",
     date: "2025-11-10",
     changes: [
@@ -46,9 +54,7 @@ export const changelogEntries: Array<{
   {
     version: "1.7.0",
     date: "2025-11-06",
-    changes: [
-      "Added interactive world map with salary statistics for enhanced data visualization",
-    ],
+    changes: ["Added interactive world map with salary statistics for enhanced data visualization"],
   },
   {
     version: "1.6.1",
