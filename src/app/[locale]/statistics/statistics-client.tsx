@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
@@ -53,7 +53,8 @@ export default function StatisticsClient() {
   const { filters, actions, filteredEntries, activeFilterCount, options, maxValues } = useFilters(
     allEntries,
     undefined,
-    preferences.currency
+    preferences.currency,
+    preferences.period
   );
 
   // Extract filter values for easier access
@@ -113,54 +114,6 @@ export default function StatisticsClient() {
         setLoading(false);
       });
   }, []);
-
-  // Track previous currency and convert filter values when currency changes
-  const previousCurrency = useRef(preferences.currency);
-
-  useEffect(() => {
-    const prevCurrency = previousCurrency.current;
-    const currentCurrency = preferences.currency;
-
-    // Only convert if currency actually changed
-    if (prevCurrency !== currentCurrency) {
-      // Convert gross salary filters
-      if (minGrossSalary !== null) {
-        const converted = Math.round(
-          convertCurrency(minGrossSalary, prevCurrency, currentCurrency)
-        );
-        setMinGrossSalary(converted);
-      }
-      if (maxGrossSalary !== null) {
-        const converted = Math.round(
-          convertCurrency(maxGrossSalary, prevCurrency, currentCurrency)
-        );
-        setMaxGrossSalary(converted);
-      }
-
-      // Convert net salary filters
-      if (minNetSalary !== null) {
-        const converted = Math.round(convertCurrency(minNetSalary, prevCurrency, currentCurrency));
-        setMinNetSalary(converted);
-      }
-      if (maxNetSalary !== null) {
-        const converted = Math.round(convertCurrency(maxNetSalary, prevCurrency, currentCurrency));
-        setMaxNetSalary(converted);
-      }
-
-      // Update the ref for next time
-      previousCurrency.current = currentCurrency;
-    }
-  }, [
-    preferences.currency,
-    minGrossSalary,
-    maxGrossSalary,
-    minNetSalary,
-    maxNetSalary,
-    setMinGrossSalary,
-    setMaxGrossSalary,
-    setMinNetSalary,
-    setMaxNetSalary,
-  ]);
 
   // Process data whenever filtered entries change
   useEffect(() => {

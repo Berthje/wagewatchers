@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import type { SalaryEntry } from "@/lib/db/schema";
-import { convertCurrency, type DisplayCurrency } from "@/contexts/salary-display-context";
+import {
+  convertCurrency,
+  convertPeriod,
+  type DisplayCurrency,
+  type SalaryPeriod,
+} from "@/contexts/salary-display-context";
 
 export interface FilterState {
   selectedCountries: string[];
@@ -65,7 +70,8 @@ export interface UseFiltersReturn {
 export function useFilters(
   allEntries: SalaryEntry[],
   initialFilters?: Partial<FilterState>,
-  displayCurrency: DisplayCurrency = "EUR"
+  displayCurrency: DisplayCurrency = "EUR",
+  displayPeriod: SalaryPeriod = "monthly"
 ): UseFiltersReturn {
   // Initialize state with defaults or provided initial values
   const [selectedCountries, setSelectedCountries] = useState<string[]>(
@@ -98,6 +104,78 @@ export function useFilters(
     initialFilters?.maxNetSalary || null
   );
   const [searchQuery, setSearchQuery] = useState<string>(initialFilters?.searchQuery || "");
+
+  // Track previous currency and convert filter values when currency changes
+  const previousCurrency = useRef(displayCurrency);
+
+  useEffect(() => {
+    const prevCurrency = previousCurrency.current;
+    const currentCurrency = displayCurrency;
+
+    // Only convert if currency actually changed
+    if (prevCurrency !== currentCurrency) {
+      // Convert gross salary filters
+      if (minGrossSalary !== null) {
+        const converted = Math.round(
+          convertCurrency(minGrossSalary, prevCurrency, currentCurrency)
+        );
+        setMinGrossSalary(converted);
+      }
+      if (maxGrossSalary !== null) {
+        const converted = Math.round(
+          convertCurrency(maxGrossSalary, prevCurrency, currentCurrency)
+        );
+        setMaxGrossSalary(converted);
+      }
+
+      // Convert net salary filters
+      if (minNetSalary !== null) {
+        const converted = Math.round(convertCurrency(minNetSalary, prevCurrency, currentCurrency));
+        setMinNetSalary(converted);
+      }
+      if (maxNetSalary !== null) {
+        const converted = Math.round(convertCurrency(maxNetSalary, prevCurrency, currentCurrency));
+        setMaxNetSalary(converted);
+      }
+
+      // Update the ref for next time
+      previousCurrency.current = currentCurrency;
+    }
+  }, [displayCurrency, minGrossSalary, maxGrossSalary, minNetSalary, maxNetSalary]);
+
+  // Track previous period and convert filter values when period changes
+  const previousPeriod = useRef(displayPeriod);
+
+  useEffect(() => {
+    const prevPeriod = previousPeriod.current;
+    const currentPeriod = displayPeriod;
+
+    // Only convert if period actually changed
+    if (prevPeriod !== currentPeriod) {
+      // Convert gross salary filters
+      if (minGrossSalary !== null) {
+        const converted = Math.round(convertPeriod(minGrossSalary, prevPeriod, currentPeriod));
+        setMinGrossSalary(converted);
+      }
+      if (maxGrossSalary !== null) {
+        const converted = Math.round(convertPeriod(maxGrossSalary, prevPeriod, currentPeriod));
+        setMaxGrossSalary(converted);
+      }
+
+      // Convert net salary filters
+      if (minNetSalary !== null) {
+        const converted = Math.round(convertPeriod(minNetSalary, prevPeriod, currentPeriod));
+        setMinNetSalary(converted);
+      }
+      if (maxNetSalary !== null) {
+        const converted = Math.round(convertPeriod(maxNetSalary, prevPeriod, currentPeriod));
+        setMaxNetSalary(converted);
+      }
+
+      // Update the ref for next time
+      previousPeriod.current = currentPeriod;
+    }
+  }, [displayPeriod, minGrossSalary, maxGrossSalary, minNetSalary, maxNetSalary]);
 
   // Generate filter options from all entries
   const filterOptions = useMemo((): FilterOptions => {
@@ -168,34 +246,46 @@ export function useFilters(
       );
     }
 
-    // Gross salary range filter - convert to display currency before comparing
+    // Gross salary range filter - convert to display currency and period before comparing
     if (minGrossSalary !== null) {
       filtered = filtered.filter((entry) => {
         if (entry.grossSalary === null) return false;
-        const convertedSalary = convertCurrency(entry.grossSalary, entry.currency, displayCurrency);
+        // Convert currency first
+        let convertedSalary = convertCurrency(entry.grossSalary, entry.currency, displayCurrency);
+        // Then convert from monthly (source) to display period
+        convertedSalary = convertPeriod(convertedSalary, "monthly", displayPeriod);
         return convertedSalary >= minGrossSalary;
       });
     }
     if (maxGrossSalary !== null) {
       filtered = filtered.filter((entry) => {
         if (entry.grossSalary === null) return false;
-        const convertedSalary = convertCurrency(entry.grossSalary, entry.currency, displayCurrency);
+        // Convert currency first
+        let convertedSalary = convertCurrency(entry.grossSalary, entry.currency, displayCurrency);
+        // Then convert from monthly (source) to display period
+        convertedSalary = convertPeriod(convertedSalary, "monthly", displayPeriod);
         return convertedSalary <= maxGrossSalary;
       });
     }
 
-    // Net salary range filter - convert to display currency before comparing
+    // Net salary range filter - convert to display currency and period before comparing
     if (minNetSalary !== null) {
       filtered = filtered.filter((entry) => {
         if (entry.netSalary === null) return false;
-        const convertedSalary = convertCurrency(entry.netSalary, entry.currency, displayCurrency);
+        // Convert currency first
+        let convertedSalary = convertCurrency(entry.netSalary, entry.currency, displayCurrency);
+        // Then convert from monthly (source) to display period
+        convertedSalary = convertPeriod(convertedSalary, "monthly", displayPeriod);
         return convertedSalary >= minNetSalary;
       });
     }
     if (maxNetSalary !== null) {
       filtered = filtered.filter((entry) => {
         if (entry.netSalary === null) return false;
-        const convertedSalary = convertCurrency(entry.netSalary, entry.currency, displayCurrency);
+        // Convert currency first
+        let convertedSalary = convertCurrency(entry.netSalary, entry.currency, displayCurrency);
+        // Then convert from monthly (source) to display period
+        convertedSalary = convertPeriod(convertedSalary, "monthly", displayPeriod);
         return convertedSalary <= maxNetSalary;
       });
     }
@@ -246,6 +336,7 @@ export function useFilters(
     maxNetSalary,
     searchQuery,
     displayCurrency,
+    displayPeriod,
   ]);
 
   // Calculate active filter count
@@ -295,15 +386,21 @@ export function useFilters(
       .map((e) => e.workExperience)
       .filter((exp): exp is number => exp !== null);
 
-    // Convert all gross salaries to the display currency before finding the max
+    // Convert all gross salaries to the display currency and period before finding the max
     const grossSalariesConverted = allEntries
       .filter((e) => e.grossSalary !== null)
-      .map((e) => convertCurrency(e.grossSalary!, e.currency, displayCurrency));
+      .map((e) => {
+        const currencyConverted = convertCurrency(e.grossSalary!, e.currency, displayCurrency);
+        return convertPeriod(currencyConverted, "monthly", displayPeriod);
+      });
 
-    // Convert all net salaries to the display currency before finding the max
+    // Convert all net salaries to the display currency and period before finding the max
     const netSalariesConverted = allEntries
       .filter((e) => e.netSalary !== null)
-      .map((e) => convertCurrency(e.netSalary!, e.currency, displayCurrency));
+      .map((e) => {
+        const currencyConverted = convertCurrency(e.netSalary!, e.currency, displayCurrency);
+        return convertPeriod(currencyConverted, "monthly", displayPeriod);
+      });
 
     return {
       maxAge: ages.length > 0 ? Math.max(...ages) : 100,
@@ -312,7 +409,7 @@ export function useFilters(
         grossSalariesConverted.length > 0 ? Math.max(...grossSalariesConverted) : 20000,
       maxNetSalary: netSalariesConverted.length > 0 ? Math.max(...netSalariesConverted) : 15000,
     };
-  }, [allEntries, displayCurrency]);
+  }, [allEntries, displayCurrency, displayPeriod]);
 
   // Clear all filters action
   const clearAllFilters = useCallback(() => {

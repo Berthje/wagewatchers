@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { median } from "d3-array";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -131,7 +131,7 @@ export function DashboardClient({
     activeFilterCount,
     options,
     maxValues,
-  } = useFilters(entries, initialFilters, preferences.currency);
+  } = useFilters(entries, initialFilters, preferences.currency, preferences.period);
 
   // Extract filter values for easier access
   const {
@@ -182,54 +182,6 @@ export function DashboardClient({
   useEffect(() => {
     setSearchQuery(debouncedSearch);
   }, [debouncedSearch, setSearchQuery]);
-
-  // Track previous currency and convert filter values when currency changes
-  const previousCurrency = useRef(preferences.currency);
-
-  useEffect(() => {
-    const prevCurrency = previousCurrency.current;
-    const currentCurrency = preferences.currency;
-
-    // Only convert if currency actually changed
-    if (prevCurrency !== currentCurrency) {
-      // Convert gross salary filters
-      if (minGrossSalary !== null) {
-        const converted = Math.round(
-          convertCurrency(minGrossSalary, prevCurrency, currentCurrency)
-        );
-        setMinGrossSalary(converted);
-      }
-      if (maxGrossSalary !== null) {
-        const converted = Math.round(
-          convertCurrency(maxGrossSalary, prevCurrency, currentCurrency)
-        );
-        setMaxGrossSalary(converted);
-      }
-
-      // Convert net salary filters
-      if (minNetSalary !== null) {
-        const converted = Math.round(convertCurrency(minNetSalary, prevCurrency, currentCurrency));
-        setMinNetSalary(converted);
-      }
-      if (maxNetSalary !== null) {
-        const converted = Math.round(convertCurrency(maxNetSalary, prevCurrency, currentCurrency));
-        setMaxNetSalary(converted);
-      }
-
-      // Update the ref for next time
-      previousCurrency.current = currentCurrency;
-    }
-  }, [
-    preferences.currency,
-    minGrossSalary,
-    maxGrossSalary,
-    minNetSalary,
-    maxNetSalary,
-    setMinGrossSalary,
-    setMaxGrossSalary,
-    setMinNetSalary,
-    setMaxNetSalary,
-  ]);
 
   // Fetch entries on mount
   useEffect(() => {
