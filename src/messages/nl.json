@@ -148,6 +148,9 @@
       "maxWorkExperience": "Max Ervaring (jaren)",
       "minWorkExperiencePlaceholder": "bv. 0",
       "maxWorkExperiencePlaceholder": "bv. 10",
+      "salarySection": "Salarisbereik",
+      "grossSalaryRange": "Bruto Salarisbereik",
+      "netSalaryRange": "Netto Salarisbereik",
       "selectedCountries": "geselecteerde landen",
       "selectedLocations": "geselecteerde locaties",
       "selectedCities": "geselecteerde steden",
@@ -195,6 +198,7 @@
   "statistics": {
     "title": "Salaris Statistieken",
     "subtitle": "Visuele inzichten in salaristrends en -verdelingen",
+    "noEntriesFound": "Geen items gevonden die voldoen aan uw huidige filters. Probeer uw filters aan te passen om meer gegevens te zien.",
     "filters": {
       "title": "Filters",
       "countries": "Landen",

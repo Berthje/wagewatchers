@@ -148,6 +148,9 @@
       "maxWorkExperience": "Max Experience (years)",
       "minWorkExperiencePlaceholder": "e.g., 0",
       "maxWorkExperiencePlaceholder": "e.g., 10",
+      "salarySection": "Salary Range",
+      "grossSalaryRange": "Gross Salary Range",
+      "netSalaryRange": "Net Salary Range",
       "selectedCountries": "selected countries",
       "selectedLocations": "selected locations",
       "selectedCities": "selected cities",
@@ -195,6 +198,7 @@
   "statistics": {
     "title": "Salary Statistics",
     "subtitle": "Visual insights into salary trends and distributions",
+    "noEntriesFound": "No entries found matching your current filters. Try adjusting your filters to see more data.",
     "filters": {
       "title": "Filters",
       "countries": "Countries",

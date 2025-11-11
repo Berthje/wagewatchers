@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import type { SalaryEntry } from "@/lib/db/schema";
+import { convertCurrency, type DisplayCurrency } from "@/contexts/salary-display-context";
 
 export interface FilterState {
   selectedCountries: string[];
@@ -11,6 +12,10 @@ export interface FilterState {
   maxAge: number | null;
   minWorkExperience: number | null;
   maxWorkExperience: number | null;
+  minGrossSalary: number | null;
+  maxGrossSalary: number | null;
+  minNetSalary: number | null;
+  maxNetSalary: number | null;
   searchQuery: string;
 }
 
@@ -22,6 +27,10 @@ export interface FilterActions {
   setMaxAge: (age: number | null) => void;
   setMinWorkExperience: (experience: number | null) => void;
   setMaxWorkExperience: (experience: number | null) => void;
+  setMinGrossSalary: (salary: number | null) => void;
+  setMaxGrossSalary: (salary: number | null) => void;
+  setMinNetSalary: (salary: number | null) => void;
+  setMaxNetSalary: (salary: number | null) => void;
   setSearchQuery: (query: string) => void;
   clearAllFilters: () => void;
 }
@@ -30,6 +39,13 @@ export interface FilterOptions {
   countries: { value: string; label: string }[];
   sectors: { value: string; label: string }[];
   cities: { value: string; label: string }[];
+}
+
+export interface MaxFilterValues {
+  maxAge: number;
+  maxWorkExperience: number;
+  maxGrossSalary: number;
+  maxNetSalary: number;
 }
 
 export interface UseFiltersReturn {
@@ -43,11 +59,13 @@ export interface UseFiltersReturn {
   filteredEntries: SalaryEntry[];
   activeFilterCount: number;
   options: FilterOptions;
+  maxValues: MaxFilterValues;
 }
 
 export function useFilters(
   allEntries: SalaryEntry[],
-  initialFilters?: Partial<FilterState>
+  initialFilters?: Partial<FilterState>,
+  displayCurrency: DisplayCurrency = "EUR"
 ): UseFiltersReturn {
   // Initialize state with defaults or provided initial values
   const [selectedCountries, setSelectedCountries] = useState<string[]>(
@@ -66,6 +84,18 @@ export function useFilters(
   );
   const [maxWorkExperience, setMaxWorkExperience] = useState<number | null>(
     initialFilters?.maxWorkExperience || null
+  );
+  const [minGrossSalary, setMinGrossSalary] = useState<number | null>(
+    initialFilters?.minGrossSalary || null
+  );
+  const [maxGrossSalary, setMaxGrossSalary] = useState<number | null>(
+    initialFilters?.maxGrossSalary || null
+  );
+  const [minNetSalary, setMinNetSalary] = useState<number | null>(
+    initialFilters?.minNetSalary || null
+  );
+  const [maxNetSalary, setMaxNetSalary] = useState<number | null>(
+    initialFilters?.maxNetSalary || null
   );
   const [searchQuery, setSearchQuery] = useState<string>(initialFilters?.searchQuery || "");
 
@@ -138,11 +168,46 @@ export function useFilters(
       );
     }
 
+    // Gross salary range filter - convert to display currency before comparing
+    if (minGrossSalary !== null) {
+      filtered = filtered.filter((entry) => {
+        if (entry.grossSalary === null) return false;
+        const convertedSalary = convertCurrency(entry.grossSalary, entry.currency, displayCurrency);
+        return convertedSalary >= minGrossSalary;
+      });
+    }
+    if (maxGrossSalary !== null) {
+      filtered = filtered.filter((entry) => {
+        if (entry.grossSalary === null) return false;
+        const convertedSalary = convertCurrency(entry.grossSalary, entry.currency, displayCurrency);
+        return convertedSalary <= maxGrossSalary;
+      });
+    }
+
+    // Net salary range filter - convert to display currency before comparing
+    if (minNetSalary !== null) {
+      filtered = filtered.filter((entry) => {
+        if (entry.netSalary === null) return false;
+        const convertedSalary = convertCurrency(entry.netSalary, entry.currency, displayCurrency);
+        return convertedSalary >= minNetSalary;
+      });
+    }
+    if (maxNetSalary !== null) {
+      filtered = filtered.filter((entry) => {
+        if (entry.netSalary === null) return false;
+        const convertedSalary = convertCurrency(entry.netSalary, entry.currency, displayCurrency);
+        return convertedSalary <= maxNetSalary;
+      });
+    }
+
     // Search query filter (searches across multiple fields)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       // Split by comma and filter out empty keywords
-      const keywords = query.split(',').map(k => k.trim()).filter(k => k.length > 0);
+      const keywords = query
+        .split(",")
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0);
 
       filtered = filtered.filter((entry) => {
         const searchableFields = [
@@ -175,7 +240,12 @@ export function useFilters(
     maxAge,
     minWorkExperience,
     maxWorkExperience,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
     searchQuery,
+    displayCurrency,
   ]);
 
   // Calculate active filter count
@@ -188,6 +258,10 @@ export function useFilters(
       (maxAge === null ? 0 : 1) +
       (minWorkExperience === null ? 0 : 1) +
       (maxWorkExperience === null ? 0 : 1) +
+      (minGrossSalary === null ? 0 : 1) +
+      (maxGrossSalary === null ? 0 : 1) +
+      (minNetSalary === null ? 0 : 1) +
+      (maxNetSalary === null ? 0 : 1) +
       (searchQuery.trim() ? 1 : 0)
     );
   }, [
@@ -198,8 +272,47 @@ export function useFilters(
     maxAge,
     minWorkExperience,
     maxWorkExperience,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
     searchQuery,
   ]);
+
+  // Calculate max values from all entries
+  const maxValues = useMemo((): MaxFilterValues => {
+    if (allEntries.length === 0) {
+      return {
+        maxAge: 100,
+        maxWorkExperience: 50,
+        maxGrossSalary: 20000,
+        maxNetSalary: 15000,
+      };
+    }
+
+    const ages = allEntries.map((e) => e.age).filter((age): age is number => age !== null);
+    const workExps = allEntries
+      .map((e) => e.workExperience)
+      .filter((exp): exp is number => exp !== null);
+
+    // Convert all gross salaries to the display currency before finding the max
+    const grossSalariesConverted = allEntries
+      .filter((e) => e.grossSalary !== null)
+      .map((e) => convertCurrency(e.grossSalary!, e.currency, displayCurrency));
+
+    // Convert all net salaries to the display currency before finding the max
+    const netSalariesConverted = allEntries
+      .filter((e) => e.netSalary !== null)
+      .map((e) => convertCurrency(e.netSalary!, e.currency, displayCurrency));
+
+    return {
+      maxAge: ages.length > 0 ? Math.max(...ages) : 100,
+      maxWorkExperience: workExps.length > 0 ? Math.max(...workExps) : 50,
+      maxGrossSalary:
+        grossSalariesConverted.length > 0 ? Math.max(...grossSalariesConverted) : 20000,
+      maxNetSalary: netSalariesConverted.length > 0 ? Math.max(...netSalariesConverted) : 15000,
+    };
+  }, [allEntries, displayCurrency]);
 
   // Clear all filters action
   const clearAllFilters = useCallback(() => {
@@ -210,6 +323,10 @@ export function useFilters(
     setMaxAge(null);
     setMinWorkExperience(null);
     setMaxWorkExperience(null);
+    setMinGrossSalary(null);
+    setMaxGrossSalary(null);
+    setMinNetSalary(null);
+    setMaxNetSalary(null);
     setSearchQuery("");
   }, []);
 
@@ -221,6 +338,10 @@ export function useFilters(
     maxAge,
     minWorkExperience,
     maxWorkExperience,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
     searchQuery,
   };
 
@@ -232,6 +353,10 @@ export function useFilters(
     setMaxAge,
     setMinWorkExperience,
     setMaxWorkExperience,
+    setMinGrossSalary,
+    setMaxGrossSalary,
+    setMinNetSalary,
+    setMaxNetSalary,
     setSearchQuery,
     clearAllFilters,
   };
@@ -242,5 +367,6 @@ export function useFilters(
     filteredEntries,
     activeFilterCount,
     options: filterOptions,
+    maxValues,
   };
 }

@@ -148,6 +148,9 @@
       "maxWorkExperience": "Max Erfahrung (Jahre)",
       "minWorkExperiencePlaceholder": "z.B. 0",
       "maxWorkExperiencePlaceholder": "z.B. 10",
+      "salarySection": "Gehaltsbereich",
+      "grossSalaryRange": "Bruttogehaltsbereich",
+      "netSalaryRange": "Nettogehaltsbereich",
       "selectedCountries": "ausgewählte Länder",
       "selectedLocations": "ausgewählte Standorte",
       "selectedCities": "ausgewählte Städte",
@@ -195,6 +198,7 @@
   "statistics": {
     "title": "Gehaltsstatistiken",
     "subtitle": "Visuelle Einblicke in Gehaltstrends und -verteilungen",
+    "noEntriesFound": "Keine Einträge gefunden, die Ihren aktuellen Filtern entsprechen. Passen Sie Ihre Filter an, um mehr Daten zu sehen.",
     "filters": {
       "title": "Filter",
       "countries": "Länder",

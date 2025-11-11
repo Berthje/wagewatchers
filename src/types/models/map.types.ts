@@ -40,6 +40,10 @@ export interface MapFilters {
   maxExperience?: number;
   minAge?: number;
   maxAge?: number;
+  minGrossSalary?: number;
+  maxGrossSalary?: number;
+  minNetSalary?: number;
+  maxNetSalary?: number;
 }
 
 export interface MapDataParams extends MapFilters {

@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { median } from "d3-array";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +76,18 @@ export function DashboardClient({
     maxWorkExperience: searchParams.get("maxWorkExperience")
       ? Number.parseInt(searchParams.get("maxWorkExperience")!, 10)
       : null,
+    minGrossSalary: searchParams.get("minGrossSalary")
+      ? Number.parseInt(searchParams.get("minGrossSalary")!, 10)
+      : null,
+    maxGrossSalary: searchParams.get("maxGrossSalary")
+      ? Number.parseInt(searchParams.get("maxGrossSalary")!, 10)
+      : null,
+    minNetSalary: searchParams.get("minNetSalary")
+      ? Number.parseInt(searchParams.get("minNetSalary")!, 10)
+      : null,
+    maxNetSalary: searchParams.get("maxNetSalary")
+      ? Number.parseInt(searchParams.get("maxNetSalary")!, 10)
+      : null,
     searchQuery: searchParams.get("search") || "",
   };
 
@@ -118,7 +130,8 @@ export function DashboardClient({
     filteredEntries: filteredByFilters,
     activeFilterCount,
     options,
-  } = useFilters(entries, initialFilters);
+    maxValues,
+  } = useFilters(entries, initialFilters, preferences.currency);
 
   // Extract filter values for easier access
   const {
@@ -129,6 +142,10 @@ export function DashboardClient({
     maxAge,
     minWorkExperience,
     maxWorkExperience,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
     searchQuery,
   } = filters;
 
@@ -141,13 +158,78 @@ export function DashboardClient({
     setMaxAge,
     setMinWorkExperience,
     setMaxWorkExperience,
+    setMinGrossSalary,
+    setMaxGrossSalary,
+    setMinNetSalary,
+    setMaxNetSalary,
     setSearchQuery,
   } = actions;
+
+  // Helper function to get currency symbol
+  const getCurrencySymbol = () => {
+    switch (preferences.currency) {
+      case "USD":
+        return "$";
+      case "GBP":
+        return "£";
+      case "EUR":
+      default:
+        return "€";
+    }
+  };
 
   // Sync debounced search to hook
   useEffect(() => {
     setSearchQuery(debouncedSearch);
   }, [debouncedSearch, setSearchQuery]);
+
+  // Track previous currency and convert filter values when currency changes
+  const previousCurrency = useRef(preferences.currency);
+
+  useEffect(() => {
+    const prevCurrency = previousCurrency.current;
+    const currentCurrency = preferences.currency;
+
+    // Only convert if currency actually changed
+    if (prevCurrency !== currentCurrency) {
+      // Convert gross salary filters
+      if (minGrossSalary !== null) {
+        const converted = Math.round(
+          convertCurrency(minGrossSalary, prevCurrency, currentCurrency)
+        );
+        setMinGrossSalary(converted);
+      }
+      if (maxGrossSalary !== null) {
+        const converted = Math.round(
+          convertCurrency(maxGrossSalary, prevCurrency, currentCurrency)
+        );
+        setMaxGrossSalary(converted);
+      }
+
+      // Convert net salary filters
+      if (minNetSalary !== null) {
+        const converted = Math.round(convertCurrency(minNetSalary, prevCurrency, currentCurrency));
+        setMinNetSalary(converted);
+      }
+      if (maxNetSalary !== null) {
+        const converted = Math.round(convertCurrency(maxNetSalary, prevCurrency, currentCurrency));
+        setMaxNetSalary(converted);
+      }
+
+      // Update the ref for next time
+      previousCurrency.current = currentCurrency;
+    }
+  }, [
+    preferences.currency,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
+    setMinGrossSalary,
+    setMaxGrossSalary,
+    setMinNetSalary,
+    setMaxNetSalary,
+  ]);
 
   // Fetch entries on mount
   useEffect(() => {
@@ -178,6 +260,10 @@ export function DashboardClient({
       maxAge?: number | null;
       minWorkExperience?: number | null;
       maxWorkExperience?: number | null;
+      minGrossSalary?: number | null;
+      maxGrossSalary?: number | null;
+      minNetSalary?: number | null;
+      maxNetSalary?: number | null;
       search?: string;
       page?: number;
       perPage?: number;
@@ -189,21 +275,33 @@ export function DashboardClient({
       // Helper to update array parameters
       const updateArrayParam = (key: string, values?: string[]) => {
         if (values !== undefined) {
-          values.length > 0 ? params.set(key, values.join(",")) : params.delete(key);
+          if (values.length > 0) {
+            params.set(key, values.join(","));
+          } else {
+            params.delete(key);
+          }
         }
       };
 
       // Helper to update string parameters
       const updateStringParam = (key: string, value?: string | null) => {
         if (value !== undefined) {
-          value ? params.set(key, value) : params.delete(key);
+          if (value) {
+            params.set(key, value);
+          } else {
+            params.delete(key);
+          }
         }
       };
 
       // Helper to update numeric parameters with defaults
       const updateNumericParam = (key: string, value?: number, defaultValue?: number) => {
         if (value !== undefined) {
-          value !== defaultValue ? params.set(key, value.toString()) : params.delete(key);
+          if (value !== defaultValue) {
+            params.set(key, value.toString());
+          } else {
+            params.delete(key);
+          }
         }
       };
 
@@ -239,6 +337,34 @@ export function DashboardClient({
           params.set("maxWorkExperience", updates.maxWorkExperience.toString());
         }
       }
+      if (updates.minGrossSalary !== undefined) {
+        if (updates.minGrossSalary === null) {
+          params.delete("minGrossSalary");
+        } else {
+          params.set("minGrossSalary", updates.minGrossSalary.toString());
+        }
+      }
+      if (updates.maxGrossSalary !== undefined) {
+        if (updates.maxGrossSalary === null) {
+          params.delete("maxGrossSalary");
+        } else {
+          params.set("maxGrossSalary", updates.maxGrossSalary.toString());
+        }
+      }
+      if (updates.minNetSalary !== undefined) {
+        if (updates.minNetSalary === null) {
+          params.delete("minNetSalary");
+        } else {
+          params.set("minNetSalary", updates.minNetSalary.toString());
+        }
+      }
+      if (updates.maxNetSalary !== undefined) {
+        if (updates.maxNetSalary === null) {
+          params.delete("maxNetSalary");
+        } else {
+          params.set("maxNetSalary", updates.maxNetSalary.toString());
+        }
+      }
       updateStringParam("search", updates.search);
       updateNumericParam("page", updates.page, 1);
       updateNumericParam("perPage", updates.perPage, 10);
@@ -264,6 +390,10 @@ export function DashboardClient({
       maxAge: maxAge,
       minWorkExperience: minWorkExperience,
       maxWorkExperience: maxWorkExperience,
+      minGrossSalary: minGrossSalary,
+      maxGrossSalary: maxGrossSalary,
+      minNetSalary: minNetSalary,
+      maxNetSalary: maxNetSalary,
       search: debouncedSearch,
       page: currentPage,
       perPage: rowsPerPage,
@@ -278,6 +408,10 @@ export function DashboardClient({
     maxAge,
     minWorkExperience,
     maxWorkExperience,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
     debouncedSearch,
     currentPage,
     rowsPerPage,
@@ -325,6 +459,10 @@ export function DashboardClient({
     maxAge,
     minWorkExperience,
     maxWorkExperience,
+    minGrossSalary,
+    maxGrossSalary,
+    minNetSalary,
+    maxNetSalary,
     debouncedSearch,
   ]);
 
@@ -687,10 +825,22 @@ export function DashboardClient({
                   maxAge={maxAge}
                   onMinAgeChange={setMinAge}
                   onMaxAgeChange={setMaxAge}
+                  maxAgeLimit={maxValues.maxAge}
                   minWorkExperience={minWorkExperience}
                   maxWorkExperience={maxWorkExperience}
                   onMinWorkExperienceChange={setMinWorkExperience}
                   onMaxWorkExperienceChange={setMaxWorkExperience}
+                  maxWorkExperienceLimit={maxValues.maxWorkExperience}
+                  minGrossSalary={minGrossSalary}
+                  maxGrossSalary={maxGrossSalary}
+                  onMinGrossSalaryChange={setMinGrossSalary}
+                  onMaxGrossSalaryChange={setMaxGrossSalary}
+                  maxGrossSalaryLimit={maxValues.maxGrossSalary}
+                  minNetSalary={minNetSalary}
+                  maxNetSalary={maxNetSalary}
+                  onMinNetSalaryChange={setMinNetSalary}
+                  onMaxNetSalaryChange={setMaxNetSalary}
+                  maxNetSalaryLimit={maxValues.maxNetSalary}
                   activeFilterCount={activeFilterCount}
                 />
 
@@ -727,38 +877,86 @@ export function DashboardClient({
                     value: sector,
                     category: "sector" as const,
                   })),
-                  ...(minAge === null ? [] : [
-                    {
-                      id: `min-age-${minAge}`,
-                      label: `${t("filters.minAge")}: ${minAge}`,
-                      value: minAge.toString(),
-                      category: "age" as const,
-                    },
-                  ]),
-                  ...(maxAge === null ? [] : [
-                    {
-                      id: `max-age-${maxAge}`,
-                      label: `${t("filters.maxAge")}: ${maxAge}`,
-                      value: maxAge.toString(),
-                      category: "age" as const,
-                    },
-                  ]),
-                  ...(minWorkExperience === null ? [] : [
-                    {
-                      id: `min-work-experience-${minWorkExperience}`,
-                      label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
-                      value: minWorkExperience.toString(),
-                      category: "workExperience" as const,
-                    },
-                  ]),
-                  ...(maxWorkExperience === null ? [] : [
-                    {
-                      id: `max-work-experience-${maxWorkExperience}`,
-                      label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
-                      value: maxWorkExperience.toString(),
-                      category: "workExperience" as const,
-                    },
-                  ]),
+                  ...(minAge === null
+                    ? []
+                    : [
+                        {
+                          id: `min-age-${minAge}`,
+                          label: `${t("filters.minAge")}: ${minAge}`,
+                          value: minAge.toString(),
+                          category: "age" as const,
+                        },
+                      ]),
+                  ...(maxAge === null
+                    ? []
+                    : [
+                        {
+                          id: `max-age-${maxAge}`,
+                          label: `${t("filters.maxAge")}: ${maxAge}`,
+                          value: maxAge.toString(),
+                          category: "age" as const,
+                        },
+                      ]),
+                  ...(minWorkExperience === null
+                    ? []
+                    : [
+                        {
+                          id: `min-work-experience-${minWorkExperience}`,
+                          label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
+                          value: minWorkExperience.toString(),
+                          category: "workExperience" as const,
+                        },
+                      ]),
+                  ...(maxWorkExperience === null
+                    ? []
+                    : [
+                        {
+                          id: `max-work-experience-${maxWorkExperience}`,
+                          label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
+                          value: maxWorkExperience.toString(),
+                          category: "workExperience" as const,
+                        },
+                      ]),
+                  ...(minGrossSalary === null
+                    ? []
+                    : [
+                        {
+                          id: `min-gross-salary-${minGrossSalary}`,
+                          label: `Min Gross: ${getCurrencySymbol()}${minGrossSalary.toLocaleString()}`,
+                          value: minGrossSalary.toString(),
+                          category: "grossSalary" as const,
+                        },
+                      ]),
+                  ...(maxGrossSalary === null
+                    ? []
+                    : [
+                        {
+                          id: `max-gross-salary-${maxGrossSalary}`,
+                          label: `Max Gross: ${getCurrencySymbol()}${maxGrossSalary.toLocaleString()}`,
+                          value: maxGrossSalary.toString(),
+                          category: "grossSalary" as const,
+                        },
+                      ]),
+                  ...(minNetSalary === null
+                    ? []
+                    : [
+                        {
+                          id: `min-net-salary-${minNetSalary}`,
+                          label: `Min Net: ${getCurrencySymbol()}${minNetSalary.toLocaleString()}`,
+                          value: minNetSalary.toString(),
+                          category: "netSalary" as const,
+                        },
+                      ]),
+                  ...(maxNetSalary === null
+                    ? []
+                    : [
+                        {
+                          id: `max-net-salary-${maxNetSalary}`,
+                          label: `Max Net: ${getCurrencySymbol()}${maxNetSalary.toLocaleString()}`,
+                          value: maxNetSalary.toString(),
+                          category: "netSalary" as const,
+                        },
+                      ]),
                 ]}
                 onRemoveFilter={(value, category) => {
                   if (category === "country") {
@@ -782,6 +980,18 @@ export function DashboardClient({
                     ) {
                       setMaxWorkExperience(null);
                     }
+                  } else if (category === "grossSalary") {
+                    if (minGrossSalary !== null && minGrossSalary.toString() === value) {
+                      setMinGrossSalary(null);
+                    } else if (maxGrossSalary !== null && maxGrossSalary.toString() === value) {
+                      setMaxGrossSalary(null);
+                    }
+                  } else if (category === "netSalary") {
+                    if (minNetSalary !== null && minNetSalary.toString() === value) {
+                      setMinNetSalary(null);
+                    } else if (maxNetSalary !== null && maxNetSalary.toString() === value) {
+                      setMaxNetSalary(null);
+                    }
                   }
                 }}
                 onClearAll={() => {
@@ -792,6 +1002,10 @@ export function DashboardClient({
                   setMaxAge(null);
                   setMinWorkExperience(null);
                   setMaxWorkExperience(null);
+                  setMinGrossSalary(null);
+                  setMaxGrossSalary(null);
+                  setMinNetSalary(null);
+                  setMaxNetSalary(null);
                 }}
               />
             </div>

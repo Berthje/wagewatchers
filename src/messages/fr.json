@@ -148,6 +148,9 @@
       "maxWorkExperience": "Expérience Max (années)",
       "minWorkExperiencePlaceholder": "ex. 0",
       "maxWorkExperiencePlaceholder": "ex. 10",
+      "salarySection": "Plage Salariale",
+      "grossSalaryRange": "Plage Salaire Brut",
+      "netSalaryRange": "Plage Salaire Net",
       "selectedCountries": "pays sélectionnés",
       "selectedLocations": "localisations sélectionnées",
       "selectedCities": "villes sélectionnées",
@@ -195,6 +198,7 @@
   "statistics": {
     "title": "Statistiques Salariales",
     "subtitle": "Aperçus visuels des tendances et distributions salariales",
+    "noEntriesFound": "Aucune entrée trouvée correspondant à vos filtres actuels. Essayez d'ajuster vos filtres pour voir plus de données.",
     "filters": {
       "title": "Filtres",
       "countries": "Pays",

@@ -5,30 +5,22 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
 import am5geodata_belgiumHigh from "@amcharts/amcharts5-geodata/belgiumHigh";
-import am5geodata_netherlandsHigh from "@amcharts/amcharts5-geodata/netherlandsHigh";
-import am5geodata_germanyHigh from "@amcharts/amcharts5-geodata/germanyHigh";
-import am5geodata_franceHigh from "@amcharts/amcharts5-geodata/franceHigh";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
-import {
-  SUPPORTED_COUNTRIES,
-  COUNTRY_NAMES,
-  COUNTRY_TRANSLATION_KEYS,
-} from "@/lib/constants";
-import type { MapDataResponse, MapFilters } from "@/types";
+import { SUPPORTED_COUNTRIES, COUNTRY_NAMES, COUNTRY_TRANSLATION_KEYS } from "@/lib/constants";
+import type { MapDataResponse } from "@/types";
+import { useSalaryDisplay } from "@/contexts/salary-display-context";
+import type { FilterState } from "@/hooks/use-filters";
 
 const GEODATA_MAP = {
   Belgium: am5geodata_belgiumHigh,
-  Netherlands: am5geodata_netherlandsHigh,
-  Germany: am5geodata_germanyHigh,
-  France: am5geodata_franceHigh,
 } as const;
 
 interface InteractiveWorldMapProps {
-  filters?: MapFilters;
+  filters?: Partial<FilterState>;
 }
 
 export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapProps>) {
@@ -39,16 +31,83 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
   const [currentView, setCurrentView] = useState<"world" | "country">("world");
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const t = useTranslations("statistics");
+  const { preferences } = useSalaryDisplay();
+
+  // Helper function to get currency symbol - memoized with useCallback
+  const getCurrencySymbol = useCallback(() => {
+    switch (preferences.currency) {
+      case "USD":
+        return "$";
+      case "GBP":
+        return "£";
+      case "EUR":
+      default:
+        return "€";
+    }
+  }, [preferences.currency]);
 
   const filterParams = useMemo(() => {
     const params = new URLSearchParams();
-    if (filters?.sector) params.append("sector", filters.sector);
-    if (filters?.minExperience !== undefined) params.append("minExperience", filters.minExperience.toString());
-    if (filters?.maxExperience !== undefined) params.append("maxExperience", filters.maxExperience.toString());
-    if (filters?.minAge !== undefined) params.append("minAge", filters.minAge.toString());
-    if (filters?.maxAge !== undefined) params.append("maxAge", filters.maxAge.toString());
+
+    // Map selectedSectors to sector (use first selected sector for map filtering)
+    if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+      params.append("sector", filters.selectedSectors[0]);
+    }
+
+    // Map countries
+    if (filters?.selectedCountries && filters.selectedCountries.length > 0) {
+      params.append("countries", filters.selectedCountries.join(","));
+    }
+
+    // Map cities
+    if (filters?.selectedCities && filters.selectedCities.length > 0) {
+      params.append("cities", filters.selectedCities.join(","));
+    }
+
+    // Work experience filters
+    if (filters?.minWorkExperience !== null && filters?.minWorkExperience !== undefined) {
+      params.append("minExperience", filters.minWorkExperience.toString());
+    }
+    if (filters?.maxWorkExperience !== null && filters?.maxWorkExperience !== undefined) {
+      params.append("maxExperience", filters.maxWorkExperience.toString());
+    }
+
+    // Age filters
+    if (filters?.minAge !== null && filters?.minAge !== undefined) {
+      params.append("minAge", filters.minAge.toString());
+    }
+    if (filters?.maxAge !== null && filters?.maxAge !== undefined) {
+      params.append("maxAge", filters.maxAge.toString());
+    }
+
+    // Salary filters
+    if (filters?.minGrossSalary !== null && filters?.minGrossSalary !== undefined) {
+      params.append("minGrossSalary", filters.minGrossSalary.toString());
+    }
+    if (filters?.maxGrossSalary !== null && filters?.maxGrossSalary !== undefined) {
+      params.append("maxGrossSalary", filters.maxGrossSalary.toString());
+    }
+    if (filters?.minNetSalary !== null && filters?.minNetSalary !== undefined) {
+      params.append("minNetSalary", filters.minNetSalary.toString());
+    }
+    if (filters?.maxNetSalary !== null && filters?.maxNetSalary !== undefined) {
+      params.append("maxNetSalary", filters.maxNetSalary.toString());
+    }
+
     return params.toString();
-  }, [filters?.sector, filters?.minExperience, filters?.maxExperience, filters?.minAge, filters?.maxAge]);
+  }, [
+    filters?.selectedSectors,
+    filters?.selectedCountries,
+    filters?.selectedCities,
+    filters?.minWorkExperience,
+    filters?.maxWorkExperience,
+    filters?.minAge,
+    filters?.maxAge,
+    filters?.minGrossSalary,
+    filters?.maxGrossSalary,
+    filters?.minNetSalary,
+    filters?.maxNetSalary,
+  ]);
 
   const dataToDisplay = useMemo(
     () => (currentView === "world" ? mapData.countries : mapData.provinces),
@@ -56,14 +115,14 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
   );
 
   const countriesWithData = useMemo(
-    () => new Set(dataToDisplay?.map(item => item.id) || []),
+    () => new Set(dataToDisplay?.map((item) => item.id) || []),
     [dataToDisplay]
   );
 
   const translatedCountryName = useMemo(() => {
     if (!selectedCountry) return "";
     const countryCode = Object.keys(COUNTRY_NAMES).find(
-      key => COUNTRY_NAMES[key] === selectedCountry
+      (key) => COUNTRY_NAMES[key] === selectedCountry
     );
     if (!countryCode) return selectedCountry;
 
@@ -126,9 +185,11 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
       })
     );
 
-    const geodata = currentView === "world"
-      ? am5geodata_worldLow
-      : (selectedCountry && GEODATA_MAP[selectedCountry as keyof typeof GEODATA_MAP]) || am5geodata_worldLow;
+    const geodata =
+      currentView === "world"
+        ? am5geodata_worldLow
+        : (selectedCountry && GEODATA_MAP[selectedCountry as keyof typeof GEODATA_MAP]) ||
+          am5geodata_worldLow;
 
     const polygonSeries = chart.series.push(
       am5map.MapPolygonSeries.new(root, {
@@ -160,7 +221,9 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
     });
     polygonSeries.set("tooltip", tooltip);
 
-    polygonSeries.mapPolygons.template.set("tooltipHTML", `
+    polygonSeries.mapPolygons.template.set(
+      "tooltipHTML",
+      `
       <div style="
         background: rgb(87, 83, 79);
         color: rgb(231, 229, 228);
@@ -173,7 +236,8 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
       ">
         {tooltipText}
       </div>
-    `);
+    `
+    );
 
     polygonSeries.mapPolygons.template.adapters.add("tooltipHTML", (html, target) => {
       const dataContext = target.dataItem?.dataContext as any;
@@ -222,12 +286,13 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
     }
 
     if (dataToDisplay.length > 0) {
+      const currencySymbol = getCurrencySymbol();
       polygonSeries.data.setAll(
         dataToDisplay.map((item) => ({
           id: item.id,
           name: item.name,
           value: currentView === "country" ? item.count : item.avgSalary,
-          tooltipText: `<span style="color: rgb(251, 146, 60); font-weight: 600;">${item.name}</span><br/>${t("avgSalary")}: €${item.avgSalary.toLocaleString()}<br/>${t("medianSalary")}: €${item.medianSalary.toLocaleString()}<br/>${t("entries")}: ${item.count}`,
+          tooltipText: `<span style="color: rgb(251, 146, 60); font-weight: 600;">${item.name}</span><br/>${t("avgSalary")}: ${currencySymbol}${item.avgSalary.toLocaleString()}<br/>${t("medianSalary")}: ${currencySymbol}${item.medianSalary.toLocaleString()}<br/>${t("entries")}: ${item.count}`,
         }))
       );
 
@@ -258,18 +323,23 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
 
     if (currentView === "world") {
       setTimeout(() => {
-        chart.zoomToGeoPoint(
-          { longitude: 10, latitude: 50 },
-          5,
-          true
-        );
+        chart.zoomToGeoPoint({ longitude: 10, latitude: 50 }, 5, true);
       }, 100);
     }
 
     return () => {
       root.dispose();
     };
-  }, [mapData, loading, currentView, selectedCountry, t, dataToDisplay, countriesWithData]);
+  }, [
+    mapData,
+    loading,
+    currentView,
+    selectedCountry,
+    t,
+    dataToDisplay,
+    countriesWithData,
+    getCurrencySymbol,
+  ]);
 
   const handleBackToWorld = useCallback(() => {
     setCurrentView("world");
@@ -281,12 +351,12 @@ export function InteractiveWorldMap({ filters }: Readonly<InteractiveWorldMapPro
       <CardHeader className="flex flex-col justify-between md:flex-row">
         <div className="flex flex-col space-y-2">
           <CardTitle className="text-stone-100 md:pr-40">
-          {currentView === "world" ? t("worldSalaryMap") : `${translatedCountryName} ${t("provinceMap")}`}
+            {currentView === "world"
+              ? t("worldSalaryMap")
+              : `${translatedCountryName} ${t("provinceMap")}`}
           </CardTitle>
           <CardDescription className="text-stone-400">
-            {currentView === "world"
-              ? t("worldMapDescription")
-              : t("provinceMapDescription")}
+            {currentView === "world" ? t("worldMapDescription") : t("provinceMapDescription")}
           </CardDescription>
         </div>
         {currentView === "country" && (

@@ -27,10 +27,26 @@ function parseSearchParams(searchParams: URLSearchParams) {
   return {
     country: searchParams.get("country") || undefined,
     sector: searchParams.get("sector") || undefined,
-    minExperience: searchParams.get("minExperience") ? Number(searchParams.get("minExperience")) : undefined,
-    maxExperience: searchParams.get("maxExperience") ? Number(searchParams.get("maxExperience")) : undefined,
+    minExperience: searchParams.get("minExperience")
+      ? Number(searchParams.get("minExperience"))
+      : undefined,
+    maxExperience: searchParams.get("maxExperience")
+      ? Number(searchParams.get("maxExperience"))
+      : undefined,
     minAge: searchParams.get("minAge") ? Number(searchParams.get("minAge")) : undefined,
     maxAge: searchParams.get("maxAge") ? Number(searchParams.get("maxAge")) : undefined,
+    minGrossSalary: searchParams.get("minGrossSalary")
+      ? Number(searchParams.get("minGrossSalary"))
+      : undefined,
+    maxGrossSalary: searchParams.get("maxGrossSalary")
+      ? Number(searchParams.get("maxGrossSalary"))
+      : undefined,
+    minNetSalary: searchParams.get("minNetSalary")
+      ? Number(searchParams.get("minNetSalary"))
+      : undefined,
+    maxNetSalary: searchParams.get("maxNetSalary")
+      ? Number(searchParams.get("maxNetSalary"))
+      : undefined,
     drillDown: searchParams.get("drillDown") === "true",
   };
 }
@@ -38,9 +54,35 @@ function parseSearchParams(searchParams: URLSearchParams) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const { country, sector, minExperience, maxExperience, minAge, maxAge, drillDown } = parseSearchParams(searchParams);
+    const {
+      country,
+      sector,
+      minExperience,
+      maxExperience,
+      minAge,
+      maxAge,
+      minGrossSalary,
+      maxGrossSalary,
+      minNetSalary,
+      maxNetSalary,
+      drillDown,
+    } = parseSearchParams(searchParams);
 
-    const conditions = buildWhereConditions({ country, sector, minExperience, maxExperience, minAge, maxAge }, drillDown);
+    const conditions = buildWhereConditions(
+      {
+        country,
+        sector,
+        minExperience,
+        maxExperience,
+        minAge,
+        maxAge,
+        minGrossSalary,
+        maxGrossSalary,
+        minNetSalary,
+        maxNetSalary,
+      },
+      drillDown
+    );
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     if (drillDown && country) {
@@ -59,15 +101,25 @@ export async function GET(request: NextRequest) {
 function buildWhereConditions(params: MapDataParams, requireCity: boolean) {
   const conditions = [
     eq(salaryEntries.reviewStatus, "APPROVED"),
-    isNotNull(salaryEntries.grossSalary)
+    isNotNull(salaryEntries.grossSalary),
   ];
 
   if (params.country) conditions.push(eq(salaryEntries.country, params.country));
   if (params.sector) conditions.push(eq(salaryEntries.sector, params.sector));
-  if (params.minExperience !== undefined) conditions.push(sql`${salaryEntries.workExperience} >= ${params.minExperience}`);
-  if (params.maxExperience !== undefined) conditions.push(sql`${salaryEntries.workExperience} <= ${params.maxExperience}`);
+  if (params.minExperience !== undefined)
+    conditions.push(sql`${salaryEntries.workExperience} >= ${params.minExperience}`);
+  if (params.maxExperience !== undefined)
+    conditions.push(sql`${salaryEntries.workExperience} <= ${params.maxExperience}`);
   if (params.minAge !== undefined) conditions.push(sql`${salaryEntries.age} >= ${params.minAge}`);
   if (params.maxAge !== undefined) conditions.push(sql`${salaryEntries.age} <= ${params.maxAge}`);
+  if (params.minGrossSalary !== undefined)
+    conditions.push(sql`${salaryEntries.grossSalary} >= ${params.minGrossSalary}`);
+  if (params.maxGrossSalary !== undefined)
+    conditions.push(sql`${salaryEntries.grossSalary} <= ${params.maxGrossSalary}`);
+  if (params.minNetSalary !== undefined)
+    conditions.push(sql`${salaryEntries.netSalary} >= ${params.minNetSalary}`);
+  if (params.maxNetSalary !== undefined)
+    conditions.push(sql`${salaryEntries.netSalary} <= ${params.maxNetSalary}`);
 
   if (requireCity) {
     conditions.push(isNotNull(salaryEntries.workCity));
@@ -102,7 +154,7 @@ async function buildCityLookupMap(country: string): Promise<Map<string, CityLook
     lookupMap.set(city.name.toLowerCase(), cityLookup);
 
     if (city.alternateNames) {
-      for (const alt of city.alternateNames.split(',')) {
+      for (const alt of city.alternateNames.split(",")) {
         const normalizedAlt = alt.trim().toLowerCase();
         if (normalizedAlt && !lookupMap.has(normalizedAlt)) {
           lookupMap.set(normalizedAlt, cityLookup);
