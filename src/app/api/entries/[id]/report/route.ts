@@ -75,7 +75,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .set({
         reportCount: sql`${salaryEntries.reportCount} + 1`,
         // If the entry is approved, flag it for review
-        reviewStatus: entry.reviewStatus === "APPROVED" ? "NEEDS_REVIEW" : undefined,
+        reviewStatus: entry[0].reviewStatus === "APPROVED" ? "NEEDS_REVIEW" : undefined,
       })
       .where(eq(salaryEntries.id, entryId));
 
