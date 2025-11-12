@@ -15,6 +15,7 @@ import {
   Gift,
   FileText,
   X,
+  AlertTriangle,
 } from "lucide-react";
 
 interface AdminEntryDetailModalProps {
@@ -97,6 +98,12 @@ export function AdminEntryDetailModal({
               <Badge variant={entry.reviewStatus === "NEEDS_REVIEW" ? "destructive" : "secondary"}>
                 {entry.reviewStatus}
               </Badge>
+              {entry.reportCount && entry.reportCount > 0 && (
+                <Badge variant="destructive" className="bg-red-600">
+                  <AlertTriangle className="mr-1 h-3 w-3" />
+                  {entry.reportCount} report{entry.reportCount !== 1 ? "s" : ""}
+                </Badge>
+              )}
             </div>
 
             {/* Salary Highlights */}

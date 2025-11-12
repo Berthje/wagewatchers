@@ -57,6 +57,13 @@
       "when": 1762463254519,
       "tag": "0007_confused_marrow",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1762990407749,
+      "tag": "0008_great_valeria_richards",
+      "breakpoints": true
     }
   ]
 }

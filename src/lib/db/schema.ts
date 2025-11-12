@@ -71,6 +71,7 @@ export const salaryEntries = pgTable(
     anomalyReason: text("anomalyReason"),
     reviewedBy: integer("reviewedBy"),
     reviewedAt: timestamp("reviewedAt", { withTimezone: true }),
+    reportCount: integer("reportCount").default(0).notNull(),
   },
   (table) => [
     index("ownerToken_idx").on(table.ownerToken),
@@ -109,6 +110,21 @@ export const reports = pgTable("Report", {
   trackingId: text("trackingId").unique().notNull(),
   email: text("email"),
 });
+
+export const entryReports = pgTable(
+  "EntryReport",
+  {
+    id: serial("id").primaryKey(),
+    salaryEntryId: integer("salaryEntryId").notNull(),
+    ipAddress: text("ipAddress").notNull(),
+    userAgent: text("userAgent"),
+    createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("entryReport_salaryEntryId_idx").on(table.salaryEntryId),
+    index("entryReport_ipAddress_salaryEntryId_idx").on(table.ipAddress, table.salaryEntryId),
+  ]
+);
 
 export const admins = pgTable("Admin", {
   id: serial("id").primaryKey(),
@@ -187,6 +203,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
 export type SalaryEntry = typeof salaryEntries.$inferSelect;
 export type Comment = typeof comments.$inferSelect;
 export type Report = typeof reports.$inferSelect;
+export type EntryReport = typeof entryReports.$inferSelect;
 export type Admin = typeof admins.$inferSelect;
 export type ExchangeRate = typeof exchangeRates.$inferSelect;
 export type City = typeof cities.$inferSelect;

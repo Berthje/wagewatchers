@@ -33,6 +33,7 @@ interface SalaryEntry {
   reviewStatus: string;
   anomalyScore: number | null;
   anomalyReason: string | null;
+  reportCount: number;
 }
 
 interface AnomalyStats {
@@ -276,6 +277,12 @@ export default function ReviewPage() {
                             {entry.reviewStatus.replace("_", " ")}
                           </Badge>
                           {getAnomalyBadge(entry.anomalyScore)}
+                          {entry.reportCount > 0 && (
+                            <Badge variant="destructive" className="bg-red-600 shrink-0">
+                              <AlertTriangle className="mr-1 h-3 w-3" />
+                              {entry.reportCount} report{entry.reportCount !== 1 ? "s" : ""}
+                            </Badge>
+                          )}
                         </div>
                         <div className="flex items-center gap-4 text-sm text-stone-400 flex-wrap">
                           <span className="flex items-center gap-1">

@@ -54,6 +54,7 @@ export const salaryEntry = pgTable("SalaryEntry", {
 	anomalyReason: text(),
 	reviewedBy: integer(),
 	reviewedAt: timestamp({ withTimezone: true, mode: 'string' }),
+	reportCount: integer().default(0).notNull(),
 }, (table) => [
 	index("ownerToken_idx").using("btree", table.ownerToken.asc().nullsLast().op("text_ops")),
 	index("reviewStatus_idx").using("btree", table.reviewStatus.asc().nullsLast().op("text_ops")),
@@ -78,6 +79,17 @@ export const report = pgTable("Report", {
 	email: text(),
 }, (table) => [
 	unique("Report_trackingId_unique").on(table.trackingId),
+]);
+
+export const entryReport = pgTable("EntryReport", {
+	id: serial().primaryKey().notNull(),
+	salaryEntryId: integer().notNull(),
+	ipAddress: text().notNull(),
+	userAgent: text(),
+	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("entryReport_salaryEntryId_idx").using("btree", table.salaryEntryId.asc().nullsLast().op("int4_ops")),
+	index("entryReport_ipAddress_salaryEntryId_idx").using("btree", table.ipAddress.asc().nullsLast().op("text_ops"), table.salaryEntryId.asc().nullsLast().op("int4_ops")),
 ]);
 
 export const exchangeRate = pgTable("ExchangeRate", {

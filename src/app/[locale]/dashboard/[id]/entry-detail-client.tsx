@@ -31,6 +31,7 @@ import {
   Gift,
   FileText,
   ShieldCheck,
+  Flag,
 } from "lucide-react";
 
 interface Comment {
@@ -65,6 +66,10 @@ export function EntryDetailClient({
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
+
+  const [isReporting, setIsReporting] = useState(false);
+  const [hasReported, setHasReported] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const formatDate = (date: Date): string => {
     const dateObj = new Date(date);
@@ -136,6 +141,44 @@ export function EntryDetailClient({
     );
   };
 
+  // Handle reporting an entry
+  const handleReport = async () => {
+    if (hasReported || isReporting) return;
+
+    setIsReporting(true);
+    setReportError(null);
+
+    try {
+      const response = await fetch(`/api/entries/${entry.id}/report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setHasReported(true);
+        // Save to localStorage to prevent future reports
+        const reportedEntries = JSON.parse(
+          localStorage.getItem("wagewatchers_reported_entries") || "[]"
+        );
+        if (!reportedEntries.includes(entry.id)) {
+          reportedEntries.push(entry.id);
+          localStorage.setItem("wagewatchers_reported_entries", JSON.stringify(reportedEntries));
+        }
+      } else {
+        setReportError(data.error || "Failed to report entry");
+      }
+    } catch (error) {
+      console.error("Error reporting entry:", error);
+      setReportError("Failed to report entry");
+    } finally {
+      setIsReporting(false);
+    }
+  };
+
   // Fetch comments if entry has a source (external scrape)
   useEffect(() => {
     const fetchComments = async () => {
@@ -158,6 +201,16 @@ export function EntryDetailClient({
 
     fetchComments();
   }, [entry.id, entry.isManualEntry, entry.source]);
+
+  // Check if user has already reported this entry
+  useEffect(() => {
+    const reportedEntries = JSON.parse(
+      localStorage.getItem("wagewatchers_reported_entries") || "[]"
+    );
+    if (reportedEntries.includes(entry.id)) {
+      setHasReported(true);
+    }
+  }, [entry.id]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
@@ -188,29 +241,50 @@ export function EntryDetailClient({
           {t("backToDashboard")}
         </Button>
 
-        {/* Title */}
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-3">
-            {entry.jobTitle || t("untitled")}
-          </h1>
-          <div className="flex flex-wrap gap-2">
-            {entry.country && (
+        {/* Title and Report Button */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-3">
+              {entry.jobTitle || t("untitled")}
+            </h1>
+            <div className="flex flex-wrap gap-2">
+              {entry.country && (
+                <Badge variant="outline" className="border-stone-600 text-stone-300">
+                  <MapPin className="mr-1 h-3 w-3" />
+                  {formatCityDisplay(entry.country, entry.workCity)}
+                </Badge>
+              )}
+              {entry.sector && (
+                <Badge variant="outline" className="border-stone-600 text-stone-300">
+                  <Briefcase className="mr-1 h-3 w-3" />
+                  {entry.sector}
+                </Badge>
+              )}
               <Badge variant="outline" className="border-stone-600 text-stone-300">
-                <MapPin className="mr-1 h-3 w-3" />
-                {formatCityDisplay(entry.country, entry.workCity)}
+                <Calendar className="mr-1 h-3 w-3" />
+                {formatDate(entry.createdAt)}
               </Badge>
+              {getReviewStatusBadge()}
+            </div>
+          </div>
+          <div className="ml-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReport}
+              disabled={hasReported || isReporting}
+              className="border-stone-600 text-stone-300 hover:text-stone-100 hover:border-stone-500"
+            >
+              <Flag className="mr-2 h-4 w-4" />
+              {isReporting
+                ? t("reporting", { defaultValue: "Reporting..." })
+                : hasReported
+                ? t("reported", { defaultValue: "Reported" })
+                : t("reportEntry", { defaultValue: "Report Entry" })}
+            </Button>
+            {reportError && (
+              <p className="text-red-400 text-sm mt-2">{reportError}</p>
             )}
-            {entry.sector && (
-              <Badge variant="outline" className="border-stone-600 text-stone-300">
-                <Briefcase className="mr-1 h-3 w-3" />
-                {entry.sector}
-              </Badge>
-            )}
-            <Badge variant="outline" className="border-stone-600 text-stone-300">
-              <Calendar className="mr-1 h-3 w-3" />
-              {formatDate(entry.createdAt)}
-            </Badge>
-            {getReviewStatusBadge()}
           </div>
         </div>
 
