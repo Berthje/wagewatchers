@@ -1,6 +1,6 @@
 /**
  * Task:
- * Read my entire git log & Add a new changelog entry (or entries) for recently added features, updates, or improvements that are **visible or relevant to end users**.
+ * Read my entire git log and display their date etc so u can decide the date of that feature & Add a new changelog entry (or entries) for recently added features, updates, or improvements that are **visible or relevant to end users**.
  *
  * Rules:
  * - Only include **changes that affect the user experience**, not internal or admin/developer-only updates.
@@ -26,6 +26,7 @@
  * - Internal or admin-only features (e.g., “Improved admin panel UI”)
  * - Backend or infrastructure work (e.g., “Refactored API calls”)
  * - Minor layout tweaks or refactors invisible to users
+ * - Already existing features / changelog entries. Prevent duplicates.
  *
  * Tip:
  * Make sure the date and version follow the latest entry, and list the newest entries first.
@@ -35,6 +36,15 @@ export const changelogEntries: Array<{
   date: string;
   changes: string[];
 }> = [
+  {
+    version: "1.8.0",
+    date: "2025-11-13",
+    changes: [
+      "Added salary distribution box plot showing quartiles and median values across experience levels for clearer statistical insights",
+      "Added tax rate analysis chart to visualize effective tax rates based on gross vs net salary data",
+      "Added reporting functionality allowing users to flag inappropriate or suspicious salary entries",
+    ],
+  },
   {
     version: "1.7.2",
     date: "2025-11-11",
