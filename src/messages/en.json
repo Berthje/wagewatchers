@@ -240,13 +240,26 @@
       },
       "ageDemographics": {
         "title": "Age Demographics",
-        "description": "Distribution of respondents by age group"
+        "description": "Distribution of respondents by age group",
+        "years": "years"
       },
       "scatterPlot": {
         "title": "Experience vs Salary Scatter Plot",
         "description": "Individual data points showing relationship between experience and salary",
         "xAxisLabel": "Years of Experience",
         "dataPointLabel": "Data Point"
+      },
+      "experienceBoxPlot": {
+        "title": "Salary Distribution by Experience",
+        "description": "Box plot showing salary distribution for each experience level",
+        "xAxisLabel": "Years of Experience",
+        "yAxisLabel": "Salary (€/month)"
+      },
+      "taxRateAnalysis": {
+        "title": "Tax Rate Analysis",
+        "description": "Effective tax rates based on gross vs net salary data",
+        "xAxisLabel": "Gross Salary (€/month)",
+        "yAxisLabel": "Tax Percentage (%)"
       },
       "yearOverYear": {
         "title": "Year-over-Year Salary Trends",
@@ -271,7 +284,14 @@
         "medianSalary": "Median Salary (€/month)",
         "entries": "Entries",
         "experience": "Experience",
-        "salary": "Salary"
+        "salary": "Salary",
+        "grossSalary": "Gross Salary (€/month)",
+        "taxPercentage": "Tax Percentage (%)",
+        "q1": "1st Quartile",
+        "median": "Median",
+        "q3": "3rd Quartile",
+        "min": "Minimum",
+        "max": "Maximum"
       }
     },
     "avgSalary": "Avg Salary (€/month)",

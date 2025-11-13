@@ -1,32 +1,37 @@
 "use client";
 
 import {
-  AreaChart,
-  Area,
+  ComposedChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Line,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { useSalaryDisplay, formatSalaryWithPreferences } from "@/contexts/salary-display-context";
 import { CustomTooltip } from "./custom-tooltip";
 
-interface ExperienceData {
+interface ExperienceBoxPlotData {
   experience: number;
-  avgSalary: number;
-  medianSalary: number;
+  min: number;
+  q1: number;
+  median: number;
+  q3: number;
+  max: number;
   count: number;
+  salaries: number[];
 }
 
-interface ExperienceGrowthChartProps {
-  readonly data: ExperienceData[];
+interface ExperienceBoxPlotChartProps {
+  readonly data: ExperienceBoxPlotData[];
   readonly loading?: boolean;
 }
 
-export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowthChartProps) {
+export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxPlotChartProps) {
   const t = useTranslations("statistics");
   const { preferences } = useSalaryDisplay();
 
@@ -34,50 +39,40 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
     return (
       <Card className="bg-stone-800 border-stone-700 space-y-3">
         <CardHeader>
-          <CardTitle className="text-stone-100">{t("charts.experienceGrowth.title")}</CardTitle>
+          <CardTitle className="text-stone-100">{t("charts.experienceBoxPlot.title")}</CardTitle>
           <CardDescription className="text-stone-400">
-            {t("charts.experienceGrowth.description")}
+            {t("charts.experienceBoxPlot.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="w-full h-64 md:h-96 bg-stone-800 rounded p-4">
             <div className="relative h-full">
               {/* Grid lines */}
-              {[0, 1, 2, 3].map((i) => (
+              {[0, 1, 2, 3, 4].map((i) => (
                 <div
-                  key={`exp-grid-h-${i}`}
+                  key={`box-grid-h-${i}`}
                   className="absolute w-full h-px bg-stone-700"
-                  style={{ top: `${20 + i * 20}%` }}
+                  style={{ top: `${20 + i * 15}%` }}
                 ></div>
               ))}
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
-                  key={`exp-grid-v-${i}`}
+                  key={`box-grid-v-${i}`}
                   className="absolute h-full w-px bg-stone-700"
                   style={{ left: `${15 + i * 14}%` }}
                 ></div>
               ))}
-              {/* Area fill */}
-              <div className="absolute bottom-8 left-4 right-4 h-32 bg-linear-to-t from-stone-600/50 to-transparent rounded-t animate-pulse"></div>
-              {/* Wavy line */}
-              <svg className="absolute bottom-8 left-4 right-4 h-32" viewBox="0 0 350 80">
-                <path
-                  d="M0,60 Q25,30 50,50 T100,40 T150,25 T200,35 T250,45 T300,30 T350,40"
-                  stroke="rgb(120 113 108)"
-                  strokeWidth="2"
-                  fill="none"
-                  className="animate-pulse"
-                />
-              </svg>
-              {/* X-axis labels */}
-              <div className="absolute bottom-0 left-4 right-4 flex justify-between">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <div
-                    key={`exp-x-label-${i}`}
-                    className="h-3 bg-stone-700 rounded animate-pulse w-4 md:w-6"
-                  ></div>
-                ))}
-              </div>
+              {/* Box plot placeholders */}
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={`box-placeholder-${i}`}
+                  className="absolute bottom-8 w-6 bg-stone-600 rounded"
+                  style={{
+                    left: `${15 + i * 14}%`,
+                    height: `${40 + Math.random() * 30}%`,
+                  }}
+                ></div>
+              ))}
             </div>
           </div>
         </CardContent>
@@ -88,9 +83,9 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
   return (
     <Card className="bg-stone-800 border-stone-700 space-y-3">
       <CardHeader>
-        <CardTitle className="text-stone-100">{t("charts.experienceGrowth.title")}</CardTitle>
+        <CardTitle className="text-stone-100">{t("charts.experienceBoxPlot.title")}</CardTitle>
         <CardDescription className="text-stone-400">
-          {t("charts.experienceGrowth.description")}
+          {t("charts.experienceBoxPlot.description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -101,20 +96,21 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
             height="100%"
             minWidth={undefined}
           >
-            <AreaChart
+            <ComposedChart
               data={data}
               margin={{
                 top: 15,
+                right: 30,
+                left: 20,
+                bottom: 25,
               }}
             >
-              <defs>
-                <linearGradient id="salaryGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ea580c" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#ea580c" stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#44403c" />
-              <XAxis dataKey="experience" stroke="#78716c" axisLine={false} />
+              <XAxis
+                dataKey="experience"
+                stroke="#78716c"
+                axisLine={false}
+              />
               <YAxis
                 stroke="#78716c"
                 tickFormatter={(value) =>
@@ -127,19 +123,29 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
                   )
                 }
               />
-              <Tooltip
-                content={<CustomTooltip chartType="experience" />}
-                cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
-              />
-              <Area
+              <Tooltip content={<CustomTooltip chartType="experience" />} />
+
+              {/* Min to Q1 range (bottom whisker) */}
+              <Bar dataKey="min" stackId="a" fill="transparent" />
+
+              {/* Q1 to Median range */}
+              <Bar dataKey="q1" stackId="a" fill="#fed7aa80" />
+
+              {/* Median to Q3 range */}
+              <Bar dataKey="median" stackId="a" fill="#fb923c60" />
+
+              {/* Q3 to Max range (top whisker) */}
+              <Bar dataKey="q3" stackId="a" fill="#fed7aa80" />
+
+              {/* Median line */}
+              <Line
                 type="monotone"
-                dataKey="medianSalary"
+                dataKey="median"
                 stroke="#ea580c"
                 strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#salaryGradient)"
+                dot={false}
               />
-            </AreaChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </CardContent>

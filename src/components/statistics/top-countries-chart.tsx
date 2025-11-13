@@ -18,6 +18,7 @@ import { CustomTooltip } from "./custom-tooltip";
 interface CountryData {
   country: string;
   avgSalary: number;
+  medianSalary: number;
   count: number;
 }
 
@@ -148,7 +149,7 @@ export function TopCountriesChart({ data, loading = false }: TopCountriesChartPr
                 content={<CustomTooltip chartType="country" />}
                 cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
               />
-              <Bar dataKey="avgSalary" fill="#fb923c" radius={[8, 8, 0, 0]}>
+              <Bar dataKey="medianSalary" fill="#fb923c" radius={[8, 8, 0, 0]}>
                 <LabelList dataKey="country" content={renderBarLabel} />
               </Bar>
             </BarChart>

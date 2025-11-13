@@ -240,13 +240,26 @@
       },
       "ageDemographics": {
         "title": "Démographie par Âge",
-        "description": "Distribution des répondants par groupe d'âge"
+        "description": "Distribution des répondants par groupe d'âge",
+        "years": "ans"
       },
       "scatterPlot": {
         "title": "Nuage de Points Expérience vs Salaire",
         "description": "Points de données individuels montrant la relation entre l'expérience et le salaire",
         "xAxisLabel": "Années d'Expérience",
         "dataPointLabel": "Point de Donnée"
+      },
+      "experienceBoxPlot": {
+        "title": "Distribution Salariale par Expérience",
+        "description": "Boîte à moustaches montrant la distribution des salaires pour chaque niveau d'expérience (min. 5 entrées)",
+        "xAxisLabel": "Années d'Expérience",
+        "yAxisLabel": "Salaire (€/mois)"
+      },
+      "taxRateAnalysis": {
+        "title": "Analyse du Taux d'Imposition",
+        "description": "Taux d'imposition effectifs basés sur les données salaire brut vs net",
+        "xAxisLabel": "Salaire Brut (€/mois)",
+        "yAxisLabel": "Pourcentage d'Imposition (%)"
       },
       "yearOverYear": {
         "title": "Tendances Salariales Année après Année",
@@ -271,7 +284,14 @@
         "medianSalary": "Salaire Médian (€/mois)",
         "entries": "Entrées",
         "experience": "Expérience",
-        "salary": "Salaire"
+        "salary": "Salaire",
+        "grossSalary": "Salaire Brut (€/mois)",
+        "taxPercentage": "Pourcentage d'Imposition (%)",
+        "q1": "1er Quartile",
+        "median": "Médiane",
+        "q3": "3ème Quartile",
+        "min": "Minimum",
+        "max": "Maximum"
       }
     },
     "avgSalary": "Salaire Moyen (€/mois)",

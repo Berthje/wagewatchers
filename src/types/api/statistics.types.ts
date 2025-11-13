@@ -7,6 +7,7 @@ export interface SectorData {
   sector: string;
   count: number;
   avgGross: number;
+  medianGross: number;
   totalGross: number;
   salaries: number[];
 }
@@ -14,6 +15,7 @@ export interface SectorData {
 export interface CountryData {
   country: string;
   avgSalary: number;
+  medianSalary: number;
   count: number;
   salaries: number[];
 }
@@ -21,6 +23,7 @@ export interface CountryData {
 export interface ExperienceData {
   experience: number;
   avgSalary: number;
+  medianSalary: number;
   count: number;
   salaries: number[];
 }
@@ -56,6 +59,7 @@ export interface LocationHeatmapData {
   city: string;
   country: string;
   avgSalary: number;
+  medianSalary: number;
   count: number;
   lat?: number;
   lng?: number;

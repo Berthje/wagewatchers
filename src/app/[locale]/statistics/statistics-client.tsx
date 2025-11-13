@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileDown, FileSpreadsheet } from "lucide-react";
 import { FiltersModal } from "@/components/filters-modal";
 import { useFilters } from "@/hooks/use-filters";
-import { mean, median } from "d3-array";
+import { mean, median, quantile } from "d3-array";
 import {
   useSalaryDisplay,
   convertCurrency,
@@ -22,10 +22,11 @@ import {
   TopCountriesChart,
   SalaryDistributionChart,
   AgeDemographicsChart,
-  ScatterPlotChart,
   YearOverYearChart,
   LocationHeatmapChart,
   InteractiveWorldMap,
+  ExperienceBoxPlotChart,
+  TaxRateAnalysisChart,
 } from "@/components/statistics";
 import { exportToCSV, exportToPDF } from "@/lib/utils/export.utils";
 import {
@@ -34,14 +35,12 @@ import {
   ExperienceData,
   LocationHeatmapData,
   SalaryRangeData,
-  ScatterData,
   SectorData,
   YearlyData,
 } from "@/types";
 
 export default function StatisticsClient() {
   const params = useParams();
-  const router = useRouter();
   const locale = params.locale as string;
   const t = useTranslations("statistics");
   const tNav = useTranslations("nav");
@@ -91,16 +90,10 @@ export default function StatisticsClient() {
   const [experienceData, setExperienceData] = useState<ExperienceData[]>([]);
   const [salaryRangeData, setSalaryRangeData] = useState<SalaryRangeData[]>([]);
   const [ageData, setAgeData] = useState<AgeData[]>([]);
-  const [scatterData, setScatterData] = useState<ScatterData[]>([]);
   const [yearlyData, setYearlyData] = useState<YearlyData[]>([]);
   const [locationHeatmap, setLocationHeatmap] = useState<LocationHeatmapData[]>([]);
-
-  // Handle scatter point click
-  const handleScatterClick = (data: any) => {
-    if (data?.id) {
-      router.push(`/${locale}/dashboard/${data.id}`);
-    }
-  };
+  const [experienceBoxPlotData, setExperienceBoxPlotData] = useState<any[]>([]);
+  const [taxRateData, setTaxRateData] = useState<any[]>([]);
 
   // Fetch all entries on mount
   useEffect(() => {
@@ -128,6 +121,7 @@ export default function StatisticsClient() {
             sector,
             count: 0,
             avgGross: 0,
+            medianGross: 0,
             totalGross: 0,
             salaries: [],
           };
@@ -139,13 +133,14 @@ export default function StatisticsClient() {
         acc[sector].salaries.push(salaryInEur);
         acc[sector].totalGross += salaryInEur;
         acc[sector].avgGross = mean(acc[sector].salaries) ?? 0;
+        acc[sector].medianGross = median(acc[sector].salaries) ?? 0;
         return acc;
       },
       {}
     );
     setSectorData(
       Object.values(sectorAgg)
-        .sort((a, b) => b.avgGross - a.avgGross)
+        .sort((a, b) => b.medianGross - a.medianGross)
         .slice(0, 10)
     );
 
@@ -156,6 +151,7 @@ export default function StatisticsClient() {
           acc[country] = {
             country,
             avgSalary: 0,
+            medianSalary: 0,
             count: 0,
             salaries: [],
           };
@@ -166,13 +162,14 @@ export default function StatisticsClient() {
         salaryInEur = convertPeriod(salaryInEur, "monthly", preferences.period);
         acc[country].salaries.push(salaryInEur);
         acc[country].avgSalary = mean(acc[country].salaries) ?? 0;
+        acc[country].medianSalary = median(acc[country].salaries) ?? 0;
         return acc;
       },
       {}
     );
     setCountryData(
       Object.values(countryAgg)
-        .sort((a, b) => b.avgSalary - a.avgSalary)
+        .sort((a, b) => b.medianSalary - a.medianSalary)
         .slice(0, 8)
     );
 
@@ -183,6 +180,7 @@ export default function StatisticsClient() {
         expAgg[exp] = {
           experience: exp,
           avgSalary: 0,
+          medianSalary: 0,
           count: 0,
           salaries: [],
         };
@@ -194,8 +192,37 @@ export default function StatisticsClient() {
       salaryInEur = convertPeriod(salaryInEur, "monthly", preferences.period);
       expAgg[exp].salaries.push(salaryInEur);
       expAgg[exp].avgSalary = mean(expAgg[exp].salaries) ?? 0;
+      expAgg[exp].medianSalary = median(expAgg[exp].salaries) ?? 0;
     }
-    setExperienceData(Object.values(expAgg).sort((a, b) => a.experience - b.experience));
+    setExperienceData(
+      Object.values(expAgg)
+        .sort((a, b) => a.experience - b.experience)
+    );
+
+    // Process experience box plot data
+    const boxPlotData = Object.values(expAgg)
+      .map((exp) => {
+        const sortedSalaries = [...exp.salaries].sort((a, b) => a - b);
+        const min = sortedSalaries[0];
+        const max = sortedSalaries.at(-1) ?? 0;
+        const q1 = quantile(sortedSalaries, 0.25) ?? 0;
+        const median = quantile(sortedSalaries, 0.5) ?? 0;
+        const q3 = quantile(sortedSalaries, 0.75) ?? 0;
+
+        return {
+          experience: exp.experience,
+          min,
+          q1,
+          median,
+          q3,
+          max,
+          count: exp.count,
+          salaries: sortedSalaries,
+        };
+      })
+      .sort((a, b) => a.experience - b.experience);
+
+    setExperienceBoxPlotData(boxPlotData);
 
     const ranges = [
       { min: 0, max: 30000, label: "<30k" },
@@ -229,29 +256,6 @@ export default function StatisticsClient() {
       count: entries.filter((e) => (e.age || 0) >= group.min && (e.age || 0) < group.max).length,
     }));
     setAgeData(ageCount.filter((g) => g.count > 0));
-
-    const scatterPoints = entries
-      .filter(
-        (entry) =>
-          entry.grossSalary &&
-          entry.workExperience !== null &&
-          entry.workExperience !== undefined &&
-          entry.age
-      )
-      .map((entry) => {
-        let salaryInEur = convertCurrency(entry.grossSalary!, entry.currency, "EUR");
-        // Convert from monthly (source) to user's preferred period
-        salaryInEur = convertPeriod(salaryInEur, "monthly", preferences.period);
-        return {
-          id: entry.id,
-          experience: entry.workExperience!,
-          salary: salaryInEur,
-          age: entry.age!,
-          sector: entry.sector || "Unknown",
-          country: entry.country || "Unknown",
-        };
-      });
-    setScatterData(scatterPoints);
 
     const yearAgg: Record<number, { salaries: number[]; count: number }> = {};
     for (const entry of entries) {
@@ -326,17 +330,49 @@ export default function StatisticsClient() {
         const [city] = location.split(", ");
         const count = data.salaries.length;
         const avgSalary = mean(data.salaries) ?? 0;
+        const medianSalary = median(data.salaries) ?? 0;
         return {
           city,
           country: data.country,
           avgSalary,
+          medianSalary,
           count,
         };
       })
-      .filter((item) => item.count >= 3) // Only show locations with 3+ entries
-      .sort((a, b) => b.avgSalary - a.avgSalary)
+      .sort((a, b) => b.medianSalary - a.medianSalary)
       .slice(0, 20); // Top 20 locations
     setLocationHeatmap(locationStats);
+  }, [filteredEntries, preferences.period]);
+
+  // Process tax rate data
+  useEffect(() => {
+    if (filteredEntries.length === 0) return;
+
+    const taxRatePoints = filteredEntries
+      .filter(
+        (entry) =>
+          entry.grossSalary &&
+          entry.netSalary &&
+          entry.grossSalary > entry.netSalary &&
+          entry.netSalary > 0
+      )
+      .map((entry) => {
+        let grossSalaryInEur = convertCurrency(entry.grossSalary!, entry.currency, "EUR");
+        // Convert from monthly (source) to user's preferred period
+        grossSalaryInEur = convertPeriod(grossSalaryInEur, "monthly", preferences.period);
+
+        const taxPercentage = ((entry.grossSalary! - entry.netSalary!) / entry.grossSalary!) * 100;
+
+        return {
+          grossSalary: grossSalaryInEur,
+          taxPercentage: Math.round(taxPercentage * 100) / 100, // Round to 2 decimal places
+          country: entry.country || "Unknown",
+          sector: entry.sector || "Unknown",
+        };
+      })
+      .filter((point) => point.taxPercentage >= 0 && point.taxPercentage <= 50); // Reasonable tax range
+
+    setTaxRateData(taxRatePoints);
   }, [filteredEntries, preferences.period]);
 
   // Export to CSV function
@@ -444,9 +480,6 @@ export default function StatisticsClient() {
               {/* Age Demographics Skeleton */}
               <AgeDemographicsChart data={[]} loading={true} />
             </div>
-
-            {/* Scatter Plot Skeleton */}
-            <ScatterPlotChart data={[]} loading={true} />
           </div>
         ) : (
           <div className="grid gap-4 md:gap-8">
@@ -486,11 +519,16 @@ export default function StatisticsClient() {
                   <AgeDemographicsChart data={ageData} loading={false} />
                 </div>
 
-                {/* Scatter Plot */}
-                <ScatterPlotChart
-                  data={scatterData}
+                {/* Experience Box Plot */}
+                <ExperienceBoxPlotChart
+                  data={experienceBoxPlotData}
                   loading={false}
-                  onPointClick={handleScatterClick}
+                />
+
+                {/* Tax Rate Analysis */}
+                <TaxRateAnalysisChart
+                  data={taxRateData}
+                  loading={false}
                 />
 
                 {/* Interactive World Map with Drill-Down */}

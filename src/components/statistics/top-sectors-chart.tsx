@@ -20,6 +20,7 @@ interface SectorData {
   sector: string;
   count: number;
   avgGross: number;
+  medianGross: number;
   totalGross: number;
 }
 
@@ -150,7 +151,7 @@ export function TopSectorsChart({ data, loading = false }: TopSectorsChartProps)
                 cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
               />
 
-              <Bar dataKey="avgGross" fill="#ea580c" radius={[0, 8, 8, 0]}>
+              <Bar dataKey="medianGross" fill="#ea580c" radius={[0, 8, 8, 0]}>
                 <LabelList dataKey="sector" content={renderBarLabel} />
               </Bar>
             </BarChart>

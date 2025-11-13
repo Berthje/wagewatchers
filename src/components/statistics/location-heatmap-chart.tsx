@@ -138,7 +138,7 @@ export function LocationHeatmapChart({ data, loading = false }: LocationHeatmapC
                   return location ? `${location.city} (${location.count} entries)` : label;
                 }}
               />
-              <Bar dataKey="avgSalary" radius={[0, 8, 8, 0]}>
+              <Bar dataKey="medianSalary" radius={[0, 8, 8, 0]}>
                 {data.map((entry, index) => (
                   <Cell key={entry.city} fill={COLORS.gradient[index % COLORS.gradient.length]} />
                 ))}

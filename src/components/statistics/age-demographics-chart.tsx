@@ -97,7 +97,7 @@ export function AgeDemographicsChart({ data, loading = false }: AgeDemographicsC
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={(entry: any) => `${entry.ageGroup}`}
+                label={(entry: any) => `${entry.ageGroup} ${t("charts.ageDemographics.years")}`}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="count"

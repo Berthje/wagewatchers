@@ -33,9 +33,10 @@ export function CustomTooltip({
   const t = useTranslations("statistics");
   const { preferences } = useSalaryDisplay();
 
-  if (!active || !payload || payload.length === 0) {
-    return null;
-  }
+  // Filter payload for box plot charts to avoid duplicate median entries
+  const filteredPayload = chartType === "experience" && payload
+    ? payload.filter(entry => entry.dataKey !== "median" || entry.type !== "line")
+    : payload;
 
   const formatLabel = (label: any) => {
     if (chartType === "experience") {
@@ -56,7 +57,7 @@ export function CustomTooltip({
   };
 
   const formatValue = (value: any, dataKey: string) => {
-    if (dataKey === "avgSalary" || dataKey === "avgGross" || dataKey === "medianSalary") {
+    if (dataKey === "avgSalary" || dataKey === "avgGross" || dataKey === "medianSalary" || dataKey === "medianGross" || dataKey === "grossSalary" || dataKey === "min" || dataKey === "q1" || dataKey === "median" || dataKey === "q3" || dataKey === "max") {
       return formatSalaryWithPreferences(
         value,
         "EUR",
@@ -64,6 +65,9 @@ export function CustomTooltip({
         preferences.currency,
         preferences.period
       );
+    }
+    if (dataKey === "taxPercentage") {
+      return `${value}%`;
     }
     if (chartType === "age-demographics" && dataKey === "count" && total) {
       const percentage = ((value / total) * 100).toFixed(1);
@@ -112,7 +116,22 @@ export function CustomTooltip({
       case "avgGross":
         return t("charts.tooltips.avgSalary");
       case "medianSalary":
+      case "medianGross":
         return t("charts.tooltips.medianSalary");
+      case "grossSalary":
+        return t("charts.tooltips.grossSalary");
+      case "taxPercentage":
+        return t("charts.tooltips.taxPercentage");
+      case "min":
+        return t("charts.tooltips.min");
+      case "q1":
+        return t("charts.tooltips.q1");
+      case "median":
+        return t("charts.tooltips.median");
+      case "q3":
+        return t("charts.tooltips.q3");
+      case "max":
+        return t("charts.tooltips.max");
       case "count":
         if (chartType === "age-demographics") {
           // For pie chart, show "Entries" as the label
@@ -175,7 +194,7 @@ export function CustomTooltip({
         {formatLabel(label)}
       </div>
       <div className="space-y-1">
-        {payload.map((entry, index) => (
+        {filteredPayload!.map((entry, index) => (
           <div
             key={`${entry.dataKey}-${index}`}
             className="flex items-center justify-between gap-4"

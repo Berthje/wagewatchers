@@ -240,13 +240,26 @@
       },
       "ageDemographics": {
         "title": "Leeftijdsdemografie",
-        "description": "Verdeling van respondenten per leeftijdsgroep"
+        "description": "Verdeling van respondenten per leeftijdsgroep",
+        "years": "jaar"
       },
       "scatterPlot": {
         "title": "Spreidingsgrafiek Ervaring vs Salaris",
         "description": "Individuele datapunten die de relatie tussen ervaring en salaris tonen",
         "xAxisLabel": "Jaren Ervaring",
         "dataPointLabel": "Datapunt"
+      },
+      "experienceBoxPlot": {
+        "title": "Salarisverdeling per Ervaring",
+        "description": "Boxplot die de salarisverdeling toont voor elk ervaringsniveau",
+        "xAxisLabel": "Jaren Ervaring",
+        "yAxisLabel": "Salaris (€/maand)"
+      },
+      "taxRateAnalysis": {
+        "title": "Belastingtarief Analyse",
+        "description": "Effectieve belastingtarieven gebaseerd op bruto vs netto salarisgegevens",
+        "xAxisLabel": "Bruto Salaris (€/maand)",
+        "yAxisLabel": "Belastingpercentage (%)"
       },
       "yearOverYear": {
         "title": "Jaar-op-Jaar Salaristrends",
@@ -271,7 +284,14 @@
         "medianSalary": "Mediaan Salaris (€/maand)",
         "entries": "Inzendingen",
         "experience": "Ervaring",
-        "salary": "Salaris"
+        "salary": "Salaris",
+        "grossSalary": "Bruto Salaris (€/maand)",
+        "taxPercentage": "Belastingpercentage (%)",
+        "q1": "1e Kwartiel",
+        "median": "Mediaan",
+        "q3": "3e Kwartiel",
+        "min": "Minimum",
+        "max": "Maximum"
       }
     },
     "avgSalary": "Gem. Salaris (€/maand)",

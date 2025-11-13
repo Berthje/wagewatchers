@@ -240,13 +240,26 @@
       },
       "ageDemographics": {
         "title": "Altersdemografie",
-        "description": "Verteilung der Befragten nach Altersgruppe"
+        "description": "Verteilung der Befragten nach Altersgruppe",
+        "years": "Jahre"
       },
       "scatterPlot": {
         "title": "Streudiagramm Erfahrung vs. Gehalt",
         "description": "Einzelne Datenpunkte, die die Beziehung zwischen Erfahrung und Gehalt zeigen",
         "xAxisLabel": "Jahre Berufserfahrung",
         "dataPointLabel": "Datenpunkt"
+      },
+      "experienceBoxPlot": {
+        "title": "Gehaltsverteilung nach Erfahrung",
+        "description": "Boxplot der die Gehaltsverteilung für jedes Erfahrungsniveau zeigt (min. 5 Einträge)",
+        "xAxisLabel": "Jahre Berufserfahrung",
+        "yAxisLabel": "Gehalt (€/Monat)"
+      },
+      "taxRateAnalysis": {
+        "title": "Steuersatz-Analyse",
+        "description": "Effektive Steuersätze basierend auf Brutto- vs. Nettogehaltsdaten",
+        "xAxisLabel": "Bruttogehalt (€/Monat)",
+        "yAxisLabel": "Steuerprozentsatz (%)"
       },
       "yearOverYear": {
         "title": "Jährliche Gehaltstrends",
@@ -271,7 +284,14 @@
         "medianSalary": "Median Gehalt (€/Monat)",
         "entries": "Einträge",
         "experience": "Erfahrung",
-        "salary": "Gehalt"
+        "salary": "Gehalt",
+        "grossSalary": "Bruttogehalt (€/Monat)",
+        "taxPercentage": "Steuerprozentsatz (%)",
+        "q1": "1. Quartil",
+        "median": "Median",
+        "q3": "3. Quartil",
+        "min": "Minimum",
+        "max": "Maximum"
       }
     },
     "avgSalary": "Durchschn. Gehalt (€/Monat)",

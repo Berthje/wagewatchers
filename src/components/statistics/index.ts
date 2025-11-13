@@ -8,3 +8,5 @@ export { YearOverYearChart } from "./year-over-year-chart";
 export { LocationHeatmapChart } from "./location-heatmap-chart";
 export { CustomTooltip } from "./custom-tooltip";
 export { InteractiveWorldMap } from "./interactive-world-map";
+export { ExperienceBoxPlotChart } from "./experience-box-plot-chart";
+export { TaxRateAnalysisChart } from "./tax-rate-analysis-chart";
