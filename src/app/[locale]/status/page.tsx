@@ -32,12 +32,13 @@ export async function generateMetadata({
       type: "website",
     },
     alternates: {
-      canonical: `https://wagewatchers.com/${locale}/status`,
+      canonical: `https://wagewatchers.com/en/status`,
       languages: {
         en: "https://wagewatchers.com/en/status",
         nl: "https://wagewatchers.com/nl/status",
         fr: "https://wagewatchers.com/fr/status",
         de: "https://wagewatchers.com/de/status",
+        "x-default": "https://wagewatchers.com/en/status",
       },
     },
   };

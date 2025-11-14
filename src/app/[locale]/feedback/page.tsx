@@ -16,12 +16,13 @@ export async function generateMetadata({ params }: FeedbackPageProps): Promise<M
     title: t("title"),
     description: t("subtitle"),
     alternates: {
-      canonical: `https://wagewatchers.com/${locale}/feedback`,
+      canonical: `https://wagewatchers.com/en/feedback`,
       languages: {
         en: "https://wagewatchers.com/en/feedback",
         nl: "https://wagewatchers.com/nl/feedback",
         fr: "https://wagewatchers.com/fr/feedback",
         de: "https://wagewatchers.com/de/feedback",
+        "x-default": "https://wagewatchers.com/en/feedback",
       },
     },
   };

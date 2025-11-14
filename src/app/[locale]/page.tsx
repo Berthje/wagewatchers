@@ -50,12 +50,13 @@ export async function generateMetadata({
       images: ["/og-image.png"],
     },
     alternates: {
-      canonical: `https://wagewatchers.com/${locale}`,
+      canonical: `https://wagewatchers.com/en`,
       languages: {
         en: "https://wagewatchers.com/en",
         nl: "https://wagewatchers.com/nl",
         fr: "https://wagewatchers.com/fr",
         de: "https://wagewatchers.com/de",
+        "x-default": "https://wagewatchers.com/en",
       },
     },
   };

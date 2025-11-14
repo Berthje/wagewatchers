@@ -36,12 +36,13 @@ export async function generateMetadata({
       description,
     },
     alternates: {
-      canonical: `https://wagewatchers.com/${locale}/statistics`,
+      canonical: `https://wagewatchers.com/en/statistics`,
       languages: {
         en: "https://wagewatchers.com/en/statistics",
         nl: "https://wagewatchers.com/nl/statistics",
         fr: "https://wagewatchers.com/fr/statistics",
         de: "https://wagewatchers.com/de/statistics",
+        "x-default": "https://wagewatchers.com/en/statistics",
       },
     },
   };

@@ -64,7 +64,7 @@ export function TopSectorsChart({ data, loading = false }: TopSectorsChartProps)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full h-64 md:h-96 bg-stone-800 rounded p-4">
+          <div className="w-full h-72 md:h-96 bg-stone-800 rounded p-4">
             {/* Chart area with grid lines */}
             <div className="relative h-full">
               {/* Horizontal grid lines */}

@@ -21,12 +21,13 @@ export async function generateMetadata({ params }: EditEntryPageProps): Promise<
       follow: false,
     },
     alternates: {
-      canonical: `https://wagewatchers.com/${locale}/edit/${id}`,
+      canonical: `https://wagewatchers.com/en/edit/${id}`,
       languages: {
         en: `https://wagewatchers.com/en/edit/${id}`,
         nl: `https://wagewatchers.com/nl/edit/${id}`,
         fr: `https://wagewatchers.com/fr/edit/${id}`,
         de: `https://wagewatchers.com/de/edit/${id}`,
+        "x-default": `https://wagewatchers.com/en/edit/${id}`,
       },
     },
   };

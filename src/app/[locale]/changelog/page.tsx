@@ -37,12 +37,13 @@ export async function generateMetadata({
       description,
     },
     alternates: {
-      canonical: `https://wagewatchers.com/${locale}/changelog`,
+      canonical: `https://wagewatchers.com/en/changelog`,
       languages: {
         en: "https://wagewatchers.com/en/changelog",
         nl: "https://wagewatchers.com/nl/changelog",
         fr: "https://wagewatchers.com/fr/changelog",
         de: "https://wagewatchers.com/de/changelog",
+        "x-default": "https://wagewatchers.com/en/changelog",
       },
     },
   };
