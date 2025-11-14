@@ -194,10 +194,7 @@ export default function StatisticsClient() {
       expAgg[exp].avgSalary = mean(expAgg[exp].salaries) ?? 0;
       expAgg[exp].medianSalary = median(expAgg[exp].salaries) ?? 0;
     }
-    setExperienceData(
-      Object.values(expAgg)
-        .sort((a, b) => a.experience - b.experience)
-    );
+    setExperienceData(Object.values(expAgg).sort((a, b) => a.experience - b.experience));
 
     // Process experience box plot data
     const boxPlotData = Object.values(expAgg)
@@ -220,6 +217,7 @@ export default function StatisticsClient() {
           salaries: sortedSalaries,
         };
       })
+      .filter((item) => item.count >= 5)
       .sort((a, b) => a.experience - b.experience);
 
     setExperienceBoxPlotData(boxPlotData);
@@ -520,16 +518,12 @@ export default function StatisticsClient() {
                 </div>
 
                 {/* Experience Box Plot */}
-                <ExperienceBoxPlotChart
-                  data={experienceBoxPlotData}
-                  loading={false}
-                />
+                {experienceBoxPlotData.length > 0 && (
+                  <ExperienceBoxPlotChart data={experienceBoxPlotData} loading={false} />
+                )}
 
                 {/* Tax Rate Analysis */}
-                <TaxRateAnalysisChart
-                  data={taxRateData}
-                  loading={false}
-                />
+                <TaxRateAnalysisChart data={taxRateData} loading={false} />
 
                 {/* Interactive World Map with Drill-Down */}
                 <InteractiveWorldMap filters={filters} />

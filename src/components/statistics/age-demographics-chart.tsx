@@ -18,12 +18,12 @@ interface AgeDemographicsChartProps {
 
 const COLORS = {
   gradient: [
-    "#ea580c", // orange-600
-    "#fb923c", // orange-400
-    "#fdba74", // orange-300
-    "#fed7aa", // orange-200
-    "#ffedd5", // orange-100
-    "#fff7ed", // orange-50
+    "#ea580c", // orange-600 - deep orange
+    "#fb923c", // orange-400 - bright orange
+    "#f97316", // orange-500 - medium orange
+    "#f59e0b", // amber-500 - golden amber
+    "#d97706", // amber-600 - darker amber
+    "#92400e", // amber-800 - dark amber
   ],
 };
 
