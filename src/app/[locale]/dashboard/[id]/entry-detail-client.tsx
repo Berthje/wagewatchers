@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,7 @@ export function EntryDetailClient({
   locale: string;
 }>) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("entryDetail");
   const tAdd = useTranslations("add");
   const tNav = useTranslations("nav");
@@ -235,7 +236,10 @@ export function EntryDetailClient({
         <Button
           variant="ghost"
           className="mb-4 text-stone-300 hover:text-stone-100"
-          onClick={() => router.push(`/${locale}/dashboard`)}
+          onClick={() => {
+            const qs = searchParams.toString();
+            router.push(`/${locale}/dashboard${qs ? `?${qs}` : ""}`);
+          }}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t("backToDashboard")}
@@ -279,12 +283,10 @@ export function EntryDetailClient({
               {isReporting
                 ? t("reporting", { defaultValue: "Reporting..." })
                 : hasReported
-                ? t("reported", { defaultValue: "Reported" })
-                : t("reportEntry", { defaultValue: "Report Entry" })}
+                  ? t("reported", { defaultValue: "Reported" })
+                  : t("reportEntry", { defaultValue: "Report Entry" })}
             </Button>
-            {reportError && (
-              <p className="text-red-400 text-sm mt-2">{reportError}</p>
-            )}
+            {reportError && <p className="text-red-400 text-sm mt-2">{reportError}</p>}
           </div>
         </div>
 

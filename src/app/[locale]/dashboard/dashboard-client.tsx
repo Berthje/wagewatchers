@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { median } from "d3-array";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -122,6 +122,9 @@ export function DashboardClient({
   // Data fetching state
   const [entries, setEntries] = useState<SalaryEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Track whether filters are initialized to avoid resetting page on initial mount
+  const filtersMountedRef = useRef(false);
 
   // Use shared filters hook
   const {
@@ -383,6 +386,9 @@ export function DashboardClient({
 
   // Clear city selections when country filter changes
   useEffect(() => {
+    // Wait until entries are loaded to validate cities (avoids clearing when data isn't available yet)
+    if (entries.length === 0) return;
+
     // If cities are selected, check if they're still valid for the selected countries
     if (selectedCities.length > 0 && selectedCountries.length > 0) {
       const validCities = new Set(
@@ -400,8 +406,13 @@ export function DashboardClient({
     }
   }, [selectedCountries, entries, selectedCities, setSelectedCities]);
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 when filters change (skip on initial mount so returning preserves page)
   useEffect(() => {
+    if (!filtersMountedRef.current) {
+      filtersMountedRef.current = true;
+      return;
+    }
+
     setCurrentPage(1);
   }, [
     selectedCountries,
@@ -1072,7 +1083,10 @@ export function DashboardClient({
                       <TableRow
                         key={entry.id}
                         className="border-stone-700 cursor-pointer hover:bg-stone-800/50 transition-all duration-200 group"
-                        onClick={() => router.push(`/${locale}/dashboard/${entry.id}`)}
+                        onClick={() => {
+                          const qs = searchParams.toString();
+                          router.push(`${pathname}/${entry.id}${qs ? `?${qs}` : ""}`);
+                        }}
                       >
                         <TableCell className="text-stone-300">
                           <Badge
