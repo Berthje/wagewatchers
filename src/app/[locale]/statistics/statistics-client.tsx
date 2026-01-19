@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
 import { Navbar } from "@/components/navbar";
