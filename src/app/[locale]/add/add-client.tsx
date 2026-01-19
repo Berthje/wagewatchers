@@ -368,6 +368,7 @@ function AddEntryContent() {
         <Input
           type="number"
           min="0"
+          step="0.01"
           placeholder={config.placeholder}
           className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
           {...field}

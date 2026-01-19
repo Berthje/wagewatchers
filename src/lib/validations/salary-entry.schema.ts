@@ -111,11 +111,17 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
         // Benefits
         thirteenthMonth: z.string().min(1, { message: t("validation.thirteenthMonthRequired") }),
         mealVouchers: z.union([
-          z.number().max(12, { message: t("validation.mealVouchersMax") }),
+          z
+            .number()
+            .min(0)
+            .max(12, { message: t("validation.mealVouchersMax") }),
           z.string(),
         ]),
         ecoCheques: z.union([
-          z.number().max(10000, { message: t("validation.ecoChequesMax") }),
+          z
+            .number()
+            .min(0)
+            .max(10000, { message: t("validation.ecoChequesMax") }),
           z.string(),
         ]),
         groupInsurance: z.string().min(1, { message: t("validation.groupInsuranceRequired") }),
