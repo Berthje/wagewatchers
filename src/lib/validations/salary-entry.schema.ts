@@ -193,9 +193,9 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
       )
       .refine(
         (data) => {
-          // Work experience cannot exceed years since age 18
+          // Work experience cannot exceed years since age 16
           if (data.age && data.workExperience) {
-            const maxPossibleExperience = data.age - 18;
+            const maxPossibleExperience = data.age - 16;
             return data.workExperience <= maxPossibleExperience;
           }
           return true;
