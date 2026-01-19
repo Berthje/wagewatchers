@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,28 @@ export function AdminEntryDetailModal({
   isLoading,
   onClose,
 }: Readonly<AdminEntryDetailModalProps>) {
+  const [reports, setReports] = useState<any[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(false);
+
+  // Fetch reports when entry changes
+  useEffect(() => {
+    if (entry && entry.reportCount && entry.reportCount > 0) {
+      setReportsLoading(true);
+      fetch(`/api/entries/${entry.id}/report`)
+        .then((res) => res.json())
+        .then((data) => {
+          setReports(data.reports || []);
+        })
+        .catch((error) => {
+          console.error("Error fetching reports:", error);
+        })
+        .finally(() => {
+          setReportsLoading(false);
+        });
+    } else {
+      setReports([]);
+    }
+  }, [entry]);
   if (!entry && !isLoading) return null;
 
   const formatCurrency = (amount: number | null, currency: string | null = "EUR") => {
@@ -329,6 +352,48 @@ export function AdminEntryDetailModal({
                 </div>
               </CardContent>
             </Card>
+
+            {/* Reports */}
+            {entry.reportCount && entry.reportCount > 0 && (
+              <Card className="bg-stone-800 border-stone-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-stone-100 flex items-center">
+                    <AlertTriangle className="mr-2 h-5 w-5" />
+                    Reports ({entry.reportCount})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {reportsLoading ? (
+                    <p className="text-stone-400">Loading reports...</p>
+                  ) : reports.length > 0 ? (
+                    <div className="space-y-3">
+                      {reports.map((report, index) => (
+                        <div key={report.id} className="border border-stone-600 rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-stone-400">
+                              Report #{index + 1}
+                            </span>
+                            <span className="text-sm text-stone-400">
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          {report.reason ? (
+                            <p className="text-stone-100 text-sm">{report.reason}</p>
+                          ) : (
+                            <p className="text-stone-400 text-sm italic">No reason provided</p>
+                          )}
+                          <div className="mt-2 text-xs text-stone-500">
+                            IP: {report.ipAddress}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-stone-400">No reports found</p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Additional Notes */}
             {entry.extraNotes && (

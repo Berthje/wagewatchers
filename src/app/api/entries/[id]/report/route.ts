@@ -6,12 +6,43 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 
 export const dynamic = "force-dynamic";
 
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id: idParam } = await params;
+    const entryId = Number.parseInt(idParam);
+    if (Number.isNaN(entryId)) {
+      return NextResponse.json({ error: "Invalid entry ID" }, { status: 400 });
+    }
+
+    // Get all reports for this entry
+    const reports = await db
+      .select()
+      .from(entryReports)
+      .where(eq(entryReports.salaryEntryId, entryId))
+      .orderBy(entryReports.createdAt);
+
+    return NextResponse.json({ reports });
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    return NextResponse.json({ error: "Failed to fetch reports" }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: idParam } = await params;
     const entryId = Number.parseInt(idParam);
     if (Number.isNaN(entryId)) {
       return NextResponse.json({ error: "Invalid entry ID" }, { status: 400 });
+    }
+
+    // Parse request body for reason
+    let reason: string | undefined;
+    try {
+      const body = await request.json();
+      reason = body.reason;
+    } catch {
+      // Body is optional, continue without reason
     }
 
     // Check if entry exists
@@ -67,6 +98,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       salaryEntryId: entryId,
       ipAddress: clientIP,
       userAgent,
+      reason,
     });
 
     // Increment the report count on the entry

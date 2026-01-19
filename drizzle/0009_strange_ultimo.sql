@@ -1,0 +1,1 @@
+ALTER TABLE "EntryReport" ADD COLUMN "reason" text;

@@ -118,6 +118,7 @@ export const entryReports = pgTable(
     salaryEntryId: integer("salaryEntryId").notNull(),
     ipAddress: text("ipAddress").notNull(),
     userAgent: text("userAgent"),
+    reason: text("reason"),
     createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [

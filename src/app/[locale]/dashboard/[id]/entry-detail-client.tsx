@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/navbar";
 import { CommentSection } from "@/components/comment-thread";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { shouldDisplayField } from "@/lib/salary-config";
 import { createFieldConfigs } from "@/lib/field-configs";
 import {
@@ -71,6 +74,8 @@ export function EntryDetailClient({
   const [isReporting, setIsReporting] = useState(false);
   const [hasReported, setHasReported] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   const formatDate = (date: Date): string => {
     const dateObj = new Date(date);
@@ -155,12 +160,15 @@ export function EntryDetailClient({
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ reason: reportReason.trim() || undefined }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         setHasReported(true);
+        setReportModalOpen(false);
+        setReportReason("");
         // Save to localStorage to prevent future reports
         const reportedEntries = JSON.parse(
           localStorage.getItem("wagewatchers_reported_entries") || "[]"
@@ -272,20 +280,61 @@ export function EntryDetailClient({
             </div>
           </div>
           <div className="ml-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReport}
-              disabled={hasReported || isReporting}
-              className="border-stone-600 text-stone-300 hover:text-stone-100 hover:border-stone-500"
-            >
-              <Flag className="mr-2 h-4 w-4" />
-              {isReporting
-                ? t("reporting", { defaultValue: "Reporting..." })
-                : hasReported
-                  ? t("reported", { defaultValue: "Reported" })
-                  : t("reportEntry", { defaultValue: "Report Entry" })}
-            </Button>
+            <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={hasReported || isReporting}
+                  className="border-stone-600 text-stone-300 hover:text-stone-100 hover:border-stone-500"
+                >
+                  <Flag className="mr-2 h-4 w-4" />
+                  {isReporting
+                    ? t("reporting", { defaultValue: "Reporting..." })
+                    : hasReported
+                      ? t("reported", { defaultValue: "Reported" })
+                      : t("reportEntry", { defaultValue: "Report Entry" })}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-stone-900 border-stone-700">
+                <DialogHeader>
+                  <DialogTitle className="text-stone-100">
+                    {t("reportEntry", { defaultValue: "Report Entry" })}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="report-reason" className="text-stone-300">
+                      Reason for reporting (optional)
+                    </Label>
+                    <Textarea
+                      id="report-reason"
+                      placeholder="Please explain why you're reporting this entry..."
+                      value={reportReason}
+                      onChange={(e) => setReportReason(e.target.value)}
+                      className="mt-2 bg-stone-800 border-stone-600 text-stone-100"
+                      rows={4}
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setReportModalOpen(false)}
+                      className="border-stone-600 text-stone-300 hover:text-stone-100"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleReport}
+                      disabled={isReporting}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      {isReporting ? "Reporting..." : "Report"}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             {reportError && <p className="text-red-400 text-sm mt-2">{reportError}</p>}
           </div>
         </div>

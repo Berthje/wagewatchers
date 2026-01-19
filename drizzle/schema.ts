@@ -86,6 +86,7 @@ export const entryReport = pgTable("EntryReport", {
 	salaryEntryId: integer().notNull(),
 	ipAddress: text().notNull(),
 	userAgent: text(),
+	reason: text(),
 	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("entryReport_salaryEntryId_idx").using("btree", table.salaryEntryId.asc().nullsLast().op("int4_ops")),
