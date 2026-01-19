@@ -37,6 +37,11 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.8.1",
+    date: "2026-01-19",
+    changes: ["Added HR sector option with full localization support"],
+  },
+  {
     version: "1.8.0",
     date: "2025-11-13",
     changes: [
