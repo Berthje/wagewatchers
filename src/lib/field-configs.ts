@@ -116,6 +116,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
       { value: "Research", label: t("formOptions.sector.Research") },
       { value: "Retail", label: t("formOptions.sector.Retail") },
       { value: "Telecommunications", label: t("formOptions.sector.Telecommunications") },
+      { value: "Technology/SaaS", label: t("formOptions.sector.Technology/SaaS") },
       { value: "Transportation", label: t("formOptions.sector.Transportation") },
       { value: "Chemical", label: t("formOptions.sector.Chemical") },
       { value: "Logistics", label: t("formOptions.sector.Logistics") },

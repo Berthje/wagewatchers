@@ -39,7 +39,12 @@ export const changelogEntries: Array<{
   {
     version: "1.8.1",
     date: "2026-01-19",
-    changes: ["Added HR sector option with full localization support"],
+    changes: [
+      "Fixed meal voucher input to properly accept decimal values (e.g., 8.50) instead of restricting to whole numbers",
+      "Added HR sector option with full localization support",
+      "Added Technology/SaaS sector option with full localization support",
+      "Improved SEO with canonical URLs and x-default language tags for better search engine indexing",
+    ],
   },
   {
     version: "1.8.0",
