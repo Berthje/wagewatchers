@@ -44,6 +44,7 @@ export const changelogEntries: Array<{
       "Added HR sector option with full localization support",
       "Added Technology/SaaS sector option with full localization support",
       "Improved SEO with canonical URLs and x-default language tags for better search engine indexing",
+      "Fixed work experience validation to allow minimum age of 16 for more accurate data entry",
     ],
   },
   {
