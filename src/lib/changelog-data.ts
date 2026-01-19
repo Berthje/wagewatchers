@@ -37,6 +37,13 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.8.2",
+    date: "2026-01-20",
+    changes: [
+      "Added optional reason field when reporting salary entries for better feedback and clearer reporting",
+    ],
+  },
+  {
     version: "1.8.1",
     date: "2026-01-19",
     changes: [
