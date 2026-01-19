@@ -130,26 +130,16 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.employeeCount"),
     options: [
       { value: "1-10", label: t("formOptions.employeeCount.range1") },
-      {
-        value: "11-50",
-        label: t("formOptions.employeeCount.range2"),
-      },
-      {
-        value: "51-200",
-        label: t("formOptions.employeeCount.range3"),
-      },
-      {
-        value: "201-500",
-        label: t("formOptions.employeeCount.range4"),
-      },
-      {
-        value: "501-1000",
-        label: t("formOptions.employeeCount.range5"),
-      },
-      {
-        value: "1000+",
-        label: t("formOptions.employeeCount.range6"),
-      },
+      { value: "11-50", label: t("formOptions.employeeCount.range2") },
+      { value: "51-200", label: t("formOptions.employeeCount.range3") },
+      { value: "201-500", label: t("formOptions.employeeCount.range4") },
+      { value: "501-1k", label: t("formOptions.employeeCount.range5") },
+      { value: "1k-5k", label: t("formOptions.employeeCount.range6") },
+      { value: "5k-10k", label: t("formOptions.employeeCount.range7") },
+      { value: "10k-50k", label: t("formOptions.employeeCount.range8") },
+      { value: "50k-100k", label: t("formOptions.employeeCount.range9") },
+      { value: "100k-500k", label: t("formOptions.employeeCount.range10") },
+      { value: "500k+", label: t("formOptions.employeeCount.range11") },
     ],
     helpKey: "help.employeeCount",
     width: "half",

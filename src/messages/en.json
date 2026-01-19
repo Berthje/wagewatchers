@@ -533,8 +533,13 @@
         "range2": "11-50",
         "range3": "51-200",
         "range4": "201-500",
-        "range5": "501-1000",
-        "range6": "1000+"
+        "range5": "501-1k",
+        "range6": "1k-5k",
+        "range7": "5k-10k",
+        "range8": "10k-50k",
+        "range9": "50k-100k",
+        "range10": "100k-500k",
+        "range11": "500k+"
       },
       "thirteenthMonth": {
         "full": "Full",
