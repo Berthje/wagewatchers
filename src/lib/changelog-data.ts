@@ -45,6 +45,7 @@ export const changelogEntries: Array<{
       "Added Technology/SaaS sector option with full localization support",
       "Improved SEO with canonical URLs and x-default language tags for better search engine indexing",
       "Fixed work experience validation to allow minimum age of 16 for more accurate data entry",
+      "Fixed dashboard filters being lost when opening an entry — returning restores all filters and the same page",
     ],
   },
   {
