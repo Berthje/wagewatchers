@@ -5,6 +5,7 @@ import { eq, inArray, desc } from "drizzle-orm";
 import { generateOwnerToken, getEditableUntilDate } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
+import { toTitleCase } from "@/lib/utils/format.utils";
 
 export const dynamic = "force-dynamic";
 
@@ -103,7 +104,10 @@ export async function POST(request: NextRequest) {
     const bodyTyped: Omit<
       typeof salaryEntries.$inferInsert,
       "id" | "createdAt" | "ownerToken" | "editableUntil"
-    > = body;
+    > = {
+      ...body,
+      jobTitle: body.jobTitle ? toTitleCase(body.jobTitle) : body.jobTitle,
+    };
 
     // Generate ownership token and editable window
     const editableUntil = getEditableUntilDate();

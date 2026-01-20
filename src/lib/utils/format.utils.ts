@@ -179,3 +179,22 @@ export function createCityDisplayFormatter(tUi: (key: string) => string) {
     return `${country}, ${cityLabel}`;
   };
 }
+
+/**
+ * Convert a string to title case (capitalize first letter of each word)
+ */
+export function toTitleCase(str: string): string {
+  if (!str) return str;
+  return str
+    .split(' ')
+    .map(word => {
+      if (word.length === 0) return word;
+      const first = word.charAt(0);
+      if (first === first.toUpperCase()) {
+        return word; // already capitalized
+      } else {
+        return first.toUpperCase() + word.slice(1);
+      }
+    })
+    .join(' ');
+}

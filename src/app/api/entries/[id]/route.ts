@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
+import { toTitleCase } from "@/lib/utils/format.utils";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const body = await request.json();
     const { ownerToken, ...updateData } = body;
+
+    // Apply title case transformation to jobTitle if present
+    if (updateData.jobTitle) {
+      updateData.jobTitle = toTitleCase(updateData.jobTitle);
+    }
 
     // Verify the entry exists
     const existingEntry = await db
