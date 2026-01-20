@@ -40,6 +40,7 @@ export const changelogEntries: Array<{
     version: "1.8.2",
     date: "2026-01-20",
     changes: [
+      "Added Port sector option with full localization support",
       "Improved job title formatting to properly capitalize titles",
       "Removed year-over-year salary chart from statistics page due to insufficient historical data",
       "Added optional reason field when reporting salary entries for better feedback and clearer reporting",
