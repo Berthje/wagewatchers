@@ -40,6 +40,7 @@ export const changelogEntries: Array<{
     version: "1.8.2",
     date: "2026-01-20",
     changes: [
+      "Improved dashboard table with sticky headers so column titles remain visible while scrolling the entries list",
       "Improved input fields to accept decimal values for official hours, average hours, vacation days, and telework days for more precise data entry",
       "Added Port sector option with full localization support",
       "Improved job title formatting to properly capitalize titles",

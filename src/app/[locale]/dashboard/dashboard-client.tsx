@@ -974,21 +974,21 @@ export function DashboardClient({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin">
+            <div className="relative overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin">
               <Table>
-                <TableHeader className="sticky top-0 bg-stone-800 z-10">
+                <TableHeader className="sticky top-0 bg-stone-800 z-30">
                   <TableRow className="border-stone-700 bg-stone-800">
-                    <TableHead className="text-stone-300">
+                    <TableHead className="text-stone-300 sticky top-0 bg-stone-800 z-20">
                       <div className="flex items-center h-5">{t("table.location")}</div>
                     </TableHead>
-                    <TableHead className="text-stone-300">
+                    <TableHead className="text-stone-300 sticky top-0 bg-stone-800 z-20">
                       <div className="flex items-center h-5">{t("table.jobTitle")}</div>
                     </TableHead>
-                    <TableHead className="text-stone-300">
+                    <TableHead className="text-stone-300 sticky top-0 bg-stone-800 z-20">
                       <div className="flex items-center h-5">{t("table.sector")}</div>
                     </TableHead>
                     <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
+                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
                       onClick={() => handleSort("experience")}
                     >
                       <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
@@ -997,7 +997,7 @@ export function DashboardClient({
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
+                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
                       onClick={() => handleSort("age")}
                     >
                       <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
@@ -1006,7 +1006,7 @@ export function DashboardClient({
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
+                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
                       onClick={() => handleSort("grossSalary")}
                     >
                       <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
@@ -1015,7 +1015,7 @@ export function DashboardClient({
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
+                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
                       onClick={() => handleSort("netSalary")}
                     >
                       <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
@@ -1024,17 +1024,12 @@ export function DashboardClient({
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none"
+                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
                       onClick={() => handleSort("createdAt")}
                     >
                       <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
                         {t("table.submittedOn")}
                         {getSortIcon("createdAt")}
-                      </div>
-                    </TableHead>
-                    <TableHead className="w-16 text-stone-300">
-                      <div className="flex items-center justify-center h-5">
-                        {t("table.source")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -1139,22 +1134,6 @@ export function DashboardClient({
                         </TableCell>
                         <TableCell className="text-stone-300 text-sm whitespace-nowrap">
                           {formatDate(entry.createdAt)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="h-7 w-7 flex items-center m-auto">
-                            {entry.sourceUrl && (
-                              <a
-                                href={entry.sourceUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="inline-flex items-center justify-center p-2 hover:bg-stone-700 rounded transition-colors"
-                                title={t("table.viewSource")}
-                              >
-                                <ExternalLink className="h-4 w-4 text-stone-400" />
-                              </a>
-                            )}
-                          </div>
                         </TableCell>
                       </TableRow>
                     ))
