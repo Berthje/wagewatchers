@@ -99,6 +99,7 @@
     "stats": {
       "totalEntries": "Total des Entrées",
       "medianGrossSalary": "Salaire Brut Médian",
+      "medianNetSalary": "Salaire Net Médian",
       "avgNetSalary": "Salaire Net Moyen",
       "medianSalary": "Salaire Médian",
       "salaryRange": "Échelle Salariale",

@@ -691,16 +691,16 @@ export function DashboardClient({
             <Card className="bg-stone-800 border-stone-700">
               <CardHeader>
                 <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                  {t("stats.salaryRange")}
+                  {t("stats.medianNetSalary")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg font-bold text-stone-100">
+                <div className="text-xl font-bold text-stone-100">
                   {(() => {
                     if (filteredByFilters.length === 0) return "N/A";
                     const salariesWithCurrency = filteredByFilters
                       .map((e) => ({
-                        salary: e.grossSalary,
+                        salary: e.netSalary,
                         currency: e.currency,
                       }))
                       .filter(
@@ -713,26 +713,17 @@ export function DashboardClient({
                       );
                     if (salariesWithCurrency.length === 0) return "N/A";
 
-                    // Convert all salaries to display currency and period for accurate min/max
-                    const convertedSalaries = salariesWithCurrency
-                      .map((s) => {
-                        const currencyConverted = convertCurrency(
-                          s.salary,
-                          s.currency,
-                          preferences.currency
-                        );
-                        // Convert period (assuming source is monthly)
-                        return convertPeriod(currencyConverted, "monthly", preferences.period);
-                      })
-                      .filter((n) => !Number.isNaN(n));
+                    // Convert all salaries to the display currency and period
+                    const convertedSalaries = salariesWithCurrency.map((s) => {
+                      const converted = convertCurrency(s.salary, s.currency, preferences.currency);
+                      return convertPeriod(converted, "monthly", preferences.period);
+                    });
 
-                    if (convertedSalaries.length === 0) return "N/A";
+                    // Calculate median using d3-array
+                    const medianValue = median(convertedSalaries) ?? 0;
 
-                    const min = Math.min(...convertedSalaries);
-                    const max = Math.max(...convertedSalaries);
-
-                    const minFormatted = formatSalaryWithPreferences(
-                      min,
+                    return formatSalaryWithPreferences(
+                      Math.round(medianValue),
                       preferences.currency,
                       preferences.period === "annual",
                       preferences.currency,
@@ -740,17 +731,6 @@ export function DashboardClient({
                       locale,
                       isMobile
                     );
-                    const maxFormatted = formatSalaryWithPreferences(
-                      max,
-                      preferences.currency,
-                      preferences.period === "annual",
-                      preferences.currency,
-                      preferences.period,
-                      locale,
-                      isMobile
-                    );
-
-                    return `${minFormatted} - ${maxFormatted}`;
                   })()}
                 </div>
               </CardContent>

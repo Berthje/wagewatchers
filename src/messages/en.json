@@ -99,6 +99,7 @@
     "stats": {
       "totalEntries": "Total Entries",
       "medianGrossSalary": "Median Gross Salary",
+      "medianNetSalary": "Median Net Salary",
       "avgNetSalary": "Avg Net Salary",
       "medianSalary": "Median Salary",
       "salaryRange": "Salary Range",

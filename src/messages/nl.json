@@ -99,6 +99,7 @@
     "stats": {
       "totalEntries": "Totaal Aantal Inzendingen",
       "medianGrossSalary": "Mediane Bruto Salaris",
+      "medianNetSalary": "Mediaan Netto Salaris",
       "avgNetSalary": "Gemiddeld Netto Salaris",
       "medianSalary": "Mediaan Salaris",
       "salaryRange": "Salarisbereik",

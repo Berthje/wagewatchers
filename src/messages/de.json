@@ -99,6 +99,7 @@
     "stats": {
       "totalEntries": "Gesamtzahl der Einträge",
       "medianGrossSalary": "Median Bruttogehalt",
+      "medianNetSalary": "Median Nettogehalt",
       "avgNetSalary": "Durchschn. Nettogehalt",
       "medianSalary": "Median Gehalt",
       "salaryRange": "Gehaltsspanne",
