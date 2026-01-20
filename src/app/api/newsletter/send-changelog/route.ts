@@ -5,8 +5,6 @@ import { eq } from "drizzle-orm";
 import { Resend } from "resend";
 import { changelogEntries } from "@/lib/changelog-data";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 /**
  * Get changelog entries from the past week
  * @param daysBack - Number of days to look back (default: 7)
@@ -59,7 +57,7 @@ function generateChangelogEmail(entries: typeof changelogEntries, subscriberEmai
         <h1 style="margin: 0; font-size: 32px;">WageWatchers</h1>
         <p style="margin: 10px 0 0 0; font-size: 16px; color: #d1d5db;">Weekly Changelog Update</p>
     </div>
-    
+
     <div style="background-color: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
         <p style="font-size: 16px; color: #374151; margin-top: 0;">
             Hi there! 👋
@@ -67,27 +65,27 @@ function generateChangelogEmail(entries: typeof changelogEntries, subscriberEmai
         <p style="font-size: 16px; color: #374151;">
             Here's what's new at WageWatchers this week:
         </p>
-        
+
         ${changesHtml}
-        
+
         <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
             <p style="font-size: 14px; color: #6b7280; text-align: center;">
-                Want to explore the platform? 
+                Want to explore the platform?
                 <a href="https://wagewatchers.com/en/dashboard" style="color: #10b981; text-decoration: none; font-weight: 600;">Visit Dashboard</a>
             </p>
             <p style="font-size: 14px; color: #6b7280; text-align: center;">
-                View full changelog: 
+                View full changelog:
                 <a href="https://wagewatchers.com/en/changelog" style="color: #10b981; text-decoration: none; font-weight: 600;">See All Updates</a>
             </p>
         </div>
     </div>
-    
+
     <div style="background-color: #f9fafb; padding: 20px; border-radius: 0 0 8px 8px; text-align: center; font-size: 12px; color: #6b7280;">
         <p style="margin: 5px 0;">
             You're receiving this email because you subscribed to WageWatchers updates.
         </p>
         <p style="margin: 5px 0;">
-            <a href="https://wagewatchers.com/en" style="color: #10b981; text-decoration: none;">Visit Website</a> | 
+            <a href="https://wagewatchers.com/en" style="color: #10b981; text-decoration: none;">Visit Website</a> |
             <a href="https://wagewatchers.com/api/newsletter/unsubscribe?email=${encodeURIComponent(subscriberEmail)}" style="color: #6b7280; text-decoration: none;">Unsubscribe</a>
         </p>
     </div>
@@ -123,6 +121,8 @@ export async function POST(request: NextRequest) {
     if (!process.env.RESEND_API_KEY) {
       return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Get recent changelog entries (past 7 days)
     const recentEntries = getRecentChangelog(7);
