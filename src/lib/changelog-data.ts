@@ -40,6 +40,8 @@ export const changelogEntries: Array<{
     version: "1.8.2",
     date: "2026-01-20",
     changes: [
+      "Added salary validation alerts to help identify potential data entry issues when entering gross and net salary amounts",
+      "Made reports field optional in salary entry form for more flexible submissions",
       "Replaced Salary Range card with Median Net Salary (median calculated from net salary only; net compensation excluded)",
       "Improved dashboard table with sticky headers so column titles remain visible while scrolling the entries list",
       "Improved input fields to accept decimal values for official hours, average hours, vacation days, and telework days for more precise data entry",
