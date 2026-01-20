@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import type { Report } from "@/lib/db/schema";
 
-// Initialize Resend with API key from environment variables
-// Get your API key from https://resend.com/api-keys
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   try {
     const { report, emailType = "confirmation" } = (await request.json()) as {
@@ -47,6 +43,8 @@ export async function POST(request: NextRequest) {
         message: "Email logging (Resend not configured)",
       });
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Send email using Resend
     const data = await resend.emails.send({
