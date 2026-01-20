@@ -77,14 +77,14 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
         // Working Hours
         officialHours: z
           .number({ message: t("validation.numberExpected") })
-          .int({ message: t("validation.integerExpected") })
           .min(1, { message: t("validation.hoursMin") })
-          .max(80, { message: t("validation.hoursMax") }),
+          .max(80, { message: t("validation.hoursMax") })
+          .refine((val) => val % 0.5 === 0, { message: t("validation.hoursStep") }),
         averageHours: z
           .number({ message: t("validation.numberExpected") })
-          .int({ message: t("validation.integerExpected") })
           .min(1, { message: t("validation.hoursMin") })
-          .max(80, { message: t("validation.hoursMax") }),
+          .max(80, { message: t("validation.hoursMax") })
+          .refine((val) => val % 0.5 === 0, { message: t("validation.hoursStep") }),
         shiftDescription: noUrls("shift description")
           .max(1000, { message: t("validation.shiftDescriptionMax") })
           .optional(),
@@ -92,9 +92,9 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
         // Vacation
         vacationDays: z
           .number({ message: t("validation.numberExpected") })
-          .int({ message: t("validation.integerExpected") })
           .min(0)
-          .max(365, { message: t("validation.vacationDaysMax") }),
+          .max(365, { message: t("validation.vacationDaysMax") })
+          .refine((val) => val % 0.5 === 0, { message: t("validation.vacationDaysStep") }),
 
         // Salary & Currency
         currency: z.string().min(1, { message: t("validation.currencyRequired") }),

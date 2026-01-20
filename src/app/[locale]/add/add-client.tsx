@@ -380,6 +380,25 @@ function AddEntryContent() {
       );
     }
 
+    // Special handling for hours and vacation days with 0.5 step
+    const decimalFields = ["officialHours", "averageHours", "vacationDays"];
+    if (fieldName && decimalFields.includes(fieldName)) {
+      return (
+        <Input
+          type="number"
+          min="0"
+          step="0.5"
+          placeholder={config.placeholder}
+          className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
+          {...field}
+          value={field.value?.toString() || ""}
+          onChange={(e) =>
+            field.onChange(e.target.value ? Number.parseFloat(e.target.value) : undefined)
+          }
+        />
+      );
+    }
+
     switch (config.type) {
       case "text":
         return (
