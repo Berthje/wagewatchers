@@ -1,4 +1,4 @@
-import { pgTable, index, serial, timestamp, text, integer, boolean, real, unique } from "drizzle-orm/pg-core"
+import { pgTable, index, serial, timestamp, text, integer, boolean, real, unique, bigint } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
@@ -87,6 +87,31 @@ export const entryReport = pgTable("EntryReport", {
 	index("entryReport_salaryEntryId_idx").using("btree", table.salaryEntryId.asc().nullsLast().op("int4_ops")),
 ]);
 
+export const admin = pgTable("Admin", {
+	id: serial().primaryKey().notNull(),
+	email: text().notNull(),
+	password: text().notNull(),
+	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	unique("Admin_email_unique").on(table.email),
+]);
+
+export const comment = pgTable("Comment", {
+	id: serial().primaryKey().notNull(),
+	externalId: text(),
+	body: text().notNull(),
+	author: text(),
+	score: integer().default(0),
+	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	depth: integer().default(0).notNull(),
+	parentId: integer(),
+	salaryEntryId: integer().notNull(),
+}, (table) => [
+	index("parentId_idx").using("btree", table.parentId.asc().nullsLast().op("int4_ops")),
+	index("salaryEntryId_idx").using("btree", table.salaryEntryId.asc().nullsLast().op("int4_ops")),
+]);
+
 export const city = pgTable("City", {
 	id: serial().primaryKey().notNull(),
 	name: text().notNull(),
@@ -107,6 +132,24 @@ export const city = pgTable("City", {
 	index("country_idx").using("btree", table.country.asc().nullsLast().op("text_ops")),
 	index("name_country_idx").using("btree", table.name.asc().nullsLast().op("text_ops"), table.country.asc().nullsLast().op("text_ops")),
 ]);
+
+export const exchangeRate = pgTable("ExchangeRate", {
+	id: serial().primaryKey().notNull(),
+	currency: text().notNull(),
+	rate: real().notNull(),
+	updatedAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("currency_idx").using("btree", table.currency.asc().nullsLast().op("text_ops")),
+	unique("ExchangeRate_currency_unique").on(table.currency),
+]);
+
+export const drizzleMigrations = pgTable("__drizzle_migrations", {
+	id: serial().primaryKey().notNull(),
+	hash: text().notNull(),
+	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
+	createdAt: bigint("created_at", { mode: "number" }),
+});
 
 export const newsletterSubscriber = pgTable("NewsletterSubscriber", {
 	id: serial().primaryKey().notNull(),

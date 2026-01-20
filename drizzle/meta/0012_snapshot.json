@@ -1,0 +1,1028 @@
+{
+  "id": "57801ed8-c72a-4126-aeb3-6e5e5d587783",
+  "prevId": "ed0d0117-2803-442b-a1df-6871e961db09",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.Admin": {
+      "name": "Admin",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Admin_email_unique": {
+          "name": "Admin_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.City": {
+      "name": "City",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin1Code": {
+          "name": "admin1Code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin2Code": {
+          "name": "admin2Code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin3Code": {
+          "name": "admin3Code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin4Code": {
+          "name": "admin4Code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alternateNames": {
+          "name": "alternateNames",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "country_idx": {
+          "name": "country_idx",
+          "columns": [
+            {
+              "expression": "country",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "name_country_idx": {
+          "name": "name_country_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "country",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "admin1Code_idx": {
+          "name": "admin1Code_idx",
+          "columns": [
+            {
+              "expression": "admin1Code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "admin2Code_idx": {
+          "name": "admin2Code_idx",
+          "columns": [
+            {
+              "expression": "admin2Code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Comment": {
+      "name": "Comment",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "externalId": {
+          "name": "externalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "body": {
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author": {
+          "name": "author",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score": {
+          "name": "score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "depth": {
+          "name": "depth",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "parentId": {
+          "name": "parentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "salaryEntryId": {
+          "name": "salaryEntryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "salaryEntryId_idx": {
+          "name": "salaryEntryId_idx",
+          "columns": [
+            {
+              "expression": "salaryEntryId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "parentId_idx": {
+          "name": "parentId_idx",
+          "columns": [
+            {
+              "expression": "parentId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.EntryReport": {
+      "name": "EntryReport",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "salaryEntryId": {
+          "name": "salaryEntryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ipAddress": {
+          "name": "ipAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userAgent": {
+          "name": "userAgent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "entryReport_salaryEntryId_idx": {
+          "name": "entryReport_salaryEntryId_idx",
+          "columns": [
+            {
+              "expression": "salaryEntryId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "entryReport_ipAddress_salaryEntryId_idx": {
+          "name": "entryReport_ipAddress_salaryEntryId_idx",
+          "columns": [
+            {
+              "expression": "ipAddress",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "salaryEntryId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ExchangeRate": {
+      "name": "ExchangeRate",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rate": {
+          "name": "rate",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "currency_idx": {
+          "name": "currency_idx",
+          "columns": [
+            {
+              "expression": "currency",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ExchangeRate_currency_unique": {
+          "name": "ExchangeRate_currency_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "currency"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.NewsletterSubscriber": {
+      "name": "NewsletterSubscriber",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subscribedAt": {
+          "name": "subscribedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "NewsletterSubscriber_email_unique": {
+          "name": "NewsletterSubscriber_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Report": {
+      "name": "Report",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'TODO'"
+        },
+        "priority": {
+          "name": "priority",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'MEDIUM'"
+        },
+        "trackingId": {
+          "name": "trackingId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Report_trackingId_unique": {
+          "name": "Report_trackingId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "trackingId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.SalaryEntry": {
+      "name": "SalaryEntry",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subreddit": {
+          "name": "subreddit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "education": {
+          "name": "education",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "workExperience": {
+          "name": "workExperience",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civilStatus": {
+          "name": "civilStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dependents": {
+          "name": "dependents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sector": {
+          "name": "sector",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "employeeCount": {
+          "name": "employeeCount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "multinational": {
+          "name": "multinational",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "jobTitle": {
+          "name": "jobTitle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "jobDescription": {
+          "name": "jobDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "seniority": {
+          "name": "seniority",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "officialHours": {
+          "name": "officialHours",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "averageHours": {
+          "name": "averageHours",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shiftDescription": {
+          "name": "shiftDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "onCall": {
+          "name": "onCall",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vacationDays": {
+          "name": "vacationDays",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'EUR'"
+        },
+        "grossSalary": {
+          "name": "grossSalary",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "netSalary": {
+          "name": "netSalary",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "netCompensation": {
+          "name": "netCompensation",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bonusAmount": {
+          "name": "bonusAmount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bonusType": {
+          "name": "bonusType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bonusPercent": {
+          "name": "bonusPercent",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bonusFrequency": {
+          "name": "bonusFrequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bonusPaymentCountPerYear": {
+          "name": "bonusPaymentCountPerYear",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bonusCertainty": {
+          "name": "bonusCertainty",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thirteenthMonth": {
+          "name": "thirteenthMonth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mealVouchers": {
+          "name": "mealVouchers",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ecoCheques": {
+          "name": "ecoCheques",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "groupInsurance": {
+          "name": "groupInsurance",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "otherInsurances": {
+          "name": "otherInsurances",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "otherBenefits": {
+          "name": "otherBenefits",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "workCity": {
+          "name": "workCity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commuteDistance": {
+          "name": "commuteDistance",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commuteMethod": {
+          "name": "commuteMethod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commuteCompensation": {
+          "name": "commuteCompensation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "teleworkDays": {
+          "name": "teleworkDays",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dayOffEase": {
+          "name": "dayOffEase",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stressLevel": {
+          "name": "stressLevel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reports": {
+          "name": "reports",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extraNotes": {
+          "name": "extraNotes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isManualEntry": {
+          "name": "isManualEntry",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "lastCommentsFetch": {
+          "name": "lastCommentsFetch",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ownerToken": {
+          "name": "ownerToken",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "editableUntil": {
+          "name": "editableUntil",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewStatus": {
+          "name": "reviewStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'APPROVED'"
+        },
+        "anomalyScore": {
+          "name": "anomalyScore",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "anomalyReason": {
+          "name": "anomalyReason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewedBy": {
+          "name": "reviewedBy",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewedAt": {
+          "name": "reviewedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reportCount": {
+          "name": "reportCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "ownerToken_idx": {
+          "name": "ownerToken_idx",
+          "columns": [
+            {
+              "expression": "ownerToken",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "reviewStatus_idx": {
+          "name": "reviewStatus_idx",
+          "columns": [
+            {
+              "expression": "reviewStatus",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
