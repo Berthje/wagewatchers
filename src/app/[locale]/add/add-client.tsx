@@ -139,20 +139,7 @@ function AddEntryContent() {
 
       if (hasNet && hasGross && !isNaN(net) && !isNaN(gross) && net > gross) {
         alerts.push("netHigherThanGross");
-      }
-
-      if (
-        hasNet &&
-        hasGross &&
-        !isNaN(net) &&
-        !isNaN(gross) &&
-        gross > 0 &&
-        net / gross < netTooLowThreshold
-      ) {
-        alerts.push("netTooLow");
-      }
-
-      if (
+      } else if (
         hasNet &&
         hasGross &&
         !isNaN(net) &&
@@ -161,6 +148,15 @@ function AddEntryContent() {
         net / gross > netTooCloseThreshold
       ) {
         alerts.push("netTooCloseToGross");
+      } else if (
+        hasNet &&
+        hasGross &&
+        !isNaN(net) &&
+        !isNaN(gross) &&
+        gross > 0 &&
+        net / gross < netTooLowThreshold
+      ) {
+        alerts.push("netTooLow");
       }
 
       setDebouncedAlerts(alerts);
@@ -265,13 +261,6 @@ function AddEntryContent() {
   }, [searchParams, form, router, locale, t, tEdit]);
 
   const onSubmit = async (data: SalaryEntryFormData) => {
-    // Check for salary validation alerts
-    if (debouncedAlerts.length > 0) {
-      setError(t("salaryAlert.submitBlocked"));
-      setIsSubmitting(false);
-      return;
-    }
-
     setIsSubmitting(true);
     setError(null);
     setRetryAfter(null);
