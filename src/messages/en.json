@@ -500,7 +500,7 @@
       "onCall": "Frequency of on-call duties or availability requirements",
       "vacationDays": "Total paid vacation days per year",
       "grossSalary": "Monthly gross salary before taxes and deductions",
-      "netSalary": "Monthly take-home pay after taxes",
+      "netSalary": "Monthly take-home pay after taxes. Do not include mobility budget, net compensation, bonuses, or other benefits — enter the net amount derived from gross salary after taxes only.",
       "netCompensation": "Total monthly compensation including all benefits",
       "thirteenthMonth": "End-of-year bonus or 13th month payment",
       "mealVouchers": "Daily value of meal vouchers or lunch allowances",

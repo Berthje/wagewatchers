@@ -500,7 +500,7 @@
       "onCall": "Frequentie van wachtdiensten of bereikbaarheidsvereisten",
       "vacationDays": "Totaal aantal betaalde vakantiedagen per jaar",
       "grossSalary": "Maandelijks bruto salaris vóór belastingen en inhoudingen",
-      "netSalary": "Maandelijks netto salaris na belastingen",
+      "netSalary": "Maandelijks netto salaris na belastingen. Geef hier geen mobiliteitsbudget, netto vergoedingen, bonussen of andere voordelen op — voer alleen het netto-inkomen na belastingen in.",
       "netCompensation": "Totale maandelijkse vergoeding inclusief alle voordelen",
       "thirteenthMonth": "Eindejaarsbonus of 13e maand betaling",
       "mealVouchers": "Dagelijkse waarde van maaltijdcheques of lunchvergoedingen",

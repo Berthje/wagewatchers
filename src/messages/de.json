@@ -500,7 +500,7 @@
       "onCall": "Häufigkeit von Bereitschaftsdiensten oder Verfügbarkeitsanforderungen",
       "vacationDays": "Gesamte bezahlte Urlaubstage pro Jahr",
       "grossSalary": "Monatliches Bruttogehalt vor Steuern und Abzügen",
-      "netSalary": "Monatliches Nettogehalt nach Steuern",
+      "netSalary": "Monatliches Nettogehalt nach Steuern. Bitte geben Sie hier kein Mobilitätsbudget, keine Nettovergütungen, Boni oder sonstige Zusatzleistungen an — nur das Nettogehalt nach Abzug von Steuern.",
       "netCompensation": "Gesamte monatliche Vergütung einschließlich aller Vorteile",
       "thirteenthMonth": "Jahresendbonus oder 13. Monatsgehaltszahlung",
       "mealVouchers": "Täglicher Wert von Essensgutscheinen oder Mittagessenzuschüssen",

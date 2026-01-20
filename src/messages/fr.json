@@ -500,7 +500,7 @@
       "onCall": "Fréquence des astreintes ou des exigences de disponibilité",
       "vacationDays": "Total des jours de congé payés par an",
       "grossSalary": "Salaire brut mensuel avant impôts et déductions",
-      "netSalary": "Salaire net mensuel après impôts",
+      "netSalary": "Salaire net mensuel après impôts. N'incluez pas le budget mobilité, les rémunérations nettes, les primes ou autres avantages — indiquez uniquement le montant net résultant du brut après impôts.",
       "netCompensation": "Rémunération mensuelle totale incluant tous les avantages",
       "thirteenthMonth": "Prime de fin d'année ou paiement du 13ème mois",
       "mealVouchers": "Valeur quotidienne des titres-repas ou des allocations déjeuner",
