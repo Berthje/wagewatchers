@@ -380,8 +380,8 @@ function AddEntryContent() {
       );
     }
 
-    // Special handling for hours and vacation days with 0.5 step
-    const decimalFields = ["officialHours", "averageHours", "vacationDays"];
+    // Special handling for hours, vacation days and telework days with 0.5 step
+    const decimalFields = ["officialHours", "averageHours", "vacationDays", "teleworkDays"];
     if (fieldName && decimalFields.includes(fieldName)) {
       return (
         <Input

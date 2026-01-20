@@ -58,12 +58,6 @@ export const salaryEntry = pgTable("SalaryEntry", {
 }, (table) => [
 	index("ownerToken_idx").using("btree", table.ownerToken.asc().nullsLast().op("text_ops")),
 	index("reviewStatus_idx").using("btree", table.reviewStatus.asc().nullsLast().op("text_ops")),
-	index("salaryEntry_country_idx").using("btree", table.country.asc().nullsLast().op("text_ops")),
-	index("salaryEntry_country_workCity_idx").using("btree", table.country.asc().nullsLast().op("text_ops"), table.workCity.asc().nullsLast().op("text_ops")),
-	index("salaryEntry_grossSalary_idx").using("btree", table.grossSalary.asc().nullsLast().op("float4_ops")),
-	index("salaryEntry_reviewStatus_country_idx").using("btree", table.reviewStatus.asc().nullsLast().op("text_ops"), table.country.asc().nullsLast().op("text_ops")),
-	index("salaryEntry_sector_idx").using("btree", table.sector.asc().nullsLast().op("text_ops")),
-	index("salaryEntry_workCity_idx").using("btree", table.workCity.asc().nullsLast().op("text_ops")),
 ]);
 
 export const report = pgTable("Report", {
@@ -86,47 +80,11 @@ export const entryReport = pgTable("EntryReport", {
 	salaryEntryId: integer().notNull(),
 	ipAddress: text().notNull(),
 	userAgent: text(),
+	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	reason: text(),
-	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
+	index("entryReport_ipAddress_salaryEntryId_idx").using("btree", table.ipAddress.asc().nullsLast().op("int4_ops"), table.salaryEntryId.asc().nullsLast().op("int4_ops")),
 	index("entryReport_salaryEntryId_idx").using("btree", table.salaryEntryId.asc().nullsLast().op("int4_ops")),
-	index("entryReport_ipAddress_salaryEntryId_idx").using("btree", table.ipAddress.asc().nullsLast().op("text_ops"), table.salaryEntryId.asc().nullsLast().op("int4_ops")),
-]);
-
-export const exchangeRate = pgTable("ExchangeRate", {
-	id: serial().primaryKey().notNull(),
-	currency: text().notNull(),
-	rate: real().notNull(),
-	updatedAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("currency_idx").using("btree", table.currency.asc().nullsLast().op("text_ops")),
-	unique("ExchangeRate_currency_unique").on(table.currency),
-]);
-
-export const comment = pgTable("Comment", {
-	id: serial().primaryKey().notNull(),
-	externalId: text(),
-	body: text().notNull(),
-	author: text(),
-	score: integer().default(0),
-	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-	depth: integer().default(0).notNull(),
-	parentId: integer(),
-	salaryEntryId: integer().notNull(),
-}, (table) => [
-	index("parentId_idx").using("btree", table.parentId.asc().nullsLast().op("int4_ops")),
-	index("salaryEntryId_idx").using("btree", table.salaryEntryId.asc().nullsLast().op("int4_ops")),
-]);
-
-export const admin = pgTable("Admin", {
-	id: serial().primaryKey().notNull(),
-	email: text().notNull(),
-	password: text().notNull(),
-	createdAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	unique("Admin_email_unique").on(table.email),
 ]);
 
 export const city = pgTable("City", {
@@ -146,7 +104,6 @@ export const city = pgTable("City", {
 }, (table) => [
 	index("admin1Code_idx").using("btree", table.admin1Code.asc().nullsLast().op("text_ops")),
 	index("admin2Code_idx").using("btree", table.admin2Code.asc().nullsLast().op("text_ops")),
-	index("countryCode_admin1_idx").using("btree", table.countryCode.asc().nullsLast().op("text_ops"), table.admin1Code.asc().nullsLast().op("text_ops")),
 	index("country_idx").using("btree", table.country.asc().nullsLast().op("text_ops")),
 	index("name_country_idx").using("btree", table.name.asc().nullsLast().op("text_ops"), table.country.asc().nullsLast().op("text_ops")),
 ]);
