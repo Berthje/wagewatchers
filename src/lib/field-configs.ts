@@ -358,6 +358,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.reports"),
     helpKey: "help.reports",
     width: "half",
+    optional: true,
   },
   extraNotes: {
     labelKey: "sections.notes.extraNotes",
