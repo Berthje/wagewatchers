@@ -81,7 +81,7 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
       {
         title: "Job Profile",
         description: "Details about your job position",
-        fields: ["jobTitle", "seniority", "jobDescription"],
+        fields: ["jobTitle", "seniority", "reports", "jobDescription"],
       },
       {
         title: "Working Hours",
@@ -113,7 +113,7 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
       {
         title: "Work-Life Balance",
         description: "Work-life balance assessment",
-        fields: ["teleworkDays", "vacationDays", "reports", "dayOffEase", "stressLevel"],
+        fields: ["teleworkDays", "vacationDays", "dayOffEase", "stressLevel"],
       },
       {
         title: "Additional Notes",

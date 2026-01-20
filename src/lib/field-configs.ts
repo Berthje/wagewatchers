@@ -159,7 +159,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     type: "text",
     placeholder: t("placeholders.jobTitle"),
     helpKey: "help.jobTitle",
-    width: "half",
+    width: "full",
   },
   seniority: {
     labelKey: "sections.job.seniority",
@@ -210,7 +210,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     type: "number",
     placeholder: t("placeholders.vacationDays"),
     helpKey: "help.vacationDays",
-    width: "third",
+    width: "half",
   },
   grossSalary: {
     labelKey: "sections.salary.grossSalary",
@@ -318,7 +318,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     type: "number",
     placeholder: t("placeholders.teleworkDays"),
     helpKey: "help.teleworkDays",
-    width: "third",
+    width: "half",
   },
   dayOffEase: {
     labelKey: "sections.workLife.dayOffEase",
@@ -357,7 +357,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     type: "number",
     placeholder: t("placeholders.reports"),
     helpKey: "help.reports",
-    width: "third",
+    width: "half",
   },
   extraNotes: {
     labelKey: "sections.notes.extraNotes",
