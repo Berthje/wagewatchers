@@ -491,7 +491,7 @@ export default function StatisticsClient() {
             ) : (
               <>
                 {/* Year-over-Year Comparison */}
-                <YearOverYearChart data={yearlyData} loading={false} />
+                {/* <YearOverYearChart data={yearlyData} loading={false} /> */}
 
                 {/* Location-Based Heatmap */}
                 <LocationHeatmapChart data={locationHeatmap} loading={false} />
