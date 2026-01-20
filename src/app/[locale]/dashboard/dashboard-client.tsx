@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/table";
 import { Navbar } from "@/components/navbar";
 import {
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
   Eye,
