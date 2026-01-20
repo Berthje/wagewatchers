@@ -22,7 +22,6 @@ import {
   TopCountriesChart,
   SalaryDistributionChart,
   AgeDemographicsChart,
-  YearOverYearChart,
   LocationHeatmapChart,
   InteractiveWorldMap,
   ExperienceBoxPlotChart,
@@ -36,7 +35,6 @@ import {
   LocationHeatmapData,
   SalaryRangeData,
   SectorData,
-  YearlyData,
 } from "@/types";
 
 export default function StatisticsClient() {
@@ -90,7 +88,7 @@ export default function StatisticsClient() {
   const [experienceData, setExperienceData] = useState<ExperienceData[]>([]);
   const [salaryRangeData, setSalaryRangeData] = useState<SalaryRangeData[]>([]);
   const [ageData, setAgeData] = useState<AgeData[]>([]);
-  const [yearlyData, setYearlyData] = useState<YearlyData[]>([]);
+  //const [yearlyData, setYearlyData] = useState<YearlyData[]>([]);
   const [locationHeatmap, setLocationHeatmap] = useState<LocationHeatmapData[]>([]);
   const [experienceBoxPlotData, setExperienceBoxPlotData] = useState<any[]>([]);
   const [taxRateData, setTaxRateData] = useState<any[]>([]);
@@ -283,7 +281,7 @@ export default function StatisticsClient() {
         };
       })
       .sort((a, b) => a.year - b.year);
-    setYearlyData(yearlyStats);
+    //setYearlyData(yearlyStats);
 
     const industryAgg: Record<string, { salaries: number[]; experiences: number[] }> = {};
     for (const entry of entries) {

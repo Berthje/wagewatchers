@@ -669,6 +669,12 @@
       "contentContainsUrls": "URLs sind in diesem Feld nicht zulässig",
       "honestyRequired": "Sie müssen bestätigen, dass die bereitgestellten Informationen wahr und ehrlich sind"
     },
+    "salaryAlert": {
+      "netHigherThanGross": "Bitte überprüfen Sie Ihre Netto-Gehaltseingabe noch einmal. Geben Sie nur Ihren Nettoverdienst ein, der sich aus Ihrem Bruttogehalt abzüglich Steuern ergibt. Schließen Sie keine Boni, Zulagen oder andere Formen der Vergütung ein (z. B. Internetzuschuss, Essensgutscheine oder andere Vergünstigungen). Diese sollten separat gemeldet werden, falls zutreffend. Die Einbeziehung in Ihr Netto-Gehalt kann zu ungenauen Daten führen.",
+      "netTooLow": "Bitte überprüfen Sie Ihre Netto-Gehaltseingabe noch einmal. Ihr Netto-Gehalt erscheint im Vergleich zu Ihrem Brutto-Gehalt ungewöhnlich niedrig. Dies könnte auf einen Dateneingabefehler hinweisen. Das Netto-Gehalt beträgt typischerweise 60-85% des Brutto-Gehalts, abhängig von Steuern und Abzügen.",
+      "netTooCloseToGross": "Bitte überprüfen Sie Ihre Netto-Gehaltseingabe noch einmal. Ihr Netto-Gehalt erscheint ungewöhnlich nah an Ihrem Brutto-Gehalt. Dies könnte darauf hinweisen, dass Sie Boni, Zulagen oder andere steuerpflichtige Vergütungen in das Netto-Feld einbeziehen. Das Netto-Gehalt sollte nur den Auszahlungsbetrag nach Steuern und Abzügen enthalten.",
+      "submitBlocked": "Bitte beheben Sie die Gehaltsvalidierungsprobleme, bevor Sie absenden."
+    },
     "validationSummary": {
       "title": "Bitte beheben Sie die folgenden Fehler:",
       "errorCount": "{count, plural, =1 {1 Fehler gefunden} other {# Fehler gefunden}}"

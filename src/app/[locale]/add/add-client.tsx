@@ -8,6 +8,7 @@ import { HelpCircle, ArrowLeft, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -64,6 +65,7 @@ function AddEntryContent() {
   const [isLoadingEntry, setIsLoadingEntry] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryAfter, setRetryAfter] = useState<Date | null>(null);
+  const [debouncedAlerts, setDebouncedAlerts] = useState<string[]>([]);
   const t = useTranslations("add");
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
@@ -118,7 +120,55 @@ function AddEntryContent() {
 
   const selectedCountry = form.watch("country");
   const selectedCurrency = form.watch("currency");
+  const grossSalary = form.watch("grossSalary");
+  const netSalary = form.watch("netSalary");
   const formConfig = selectedCountry ? getFormConfigForCountry(selectedCountry) : null;
+
+  // Debounced alerts calculation
+  useEffect(() => {
+    const calculateAlerts = () => {
+      const alerts: string[] = [];
+      const net = parseFloat(String(netSalary || 0));
+      const gross = parseFloat(String(grossSalary || 0));
+
+      const hasNet = netSalary !== undefined && netSalary !== null && netSalary !== "";
+      const hasGross = grossSalary !== undefined && grossSalary !== null && grossSalary !== "";
+
+      const netTooLowThreshold = formConfig?.salaryValidation?.netTooLowThreshold ?? 0.4;
+      const netTooCloseThreshold = formConfig?.salaryValidation?.netTooCloseThreshold ?? 0.95;
+
+      if (hasNet && hasGross && !isNaN(net) && !isNaN(gross) && net > gross) {
+        alerts.push("netHigherThanGross");
+      }
+
+      if (
+        hasNet &&
+        hasGross &&
+        !isNaN(net) &&
+        !isNaN(gross) &&
+        gross > 0 &&
+        net / gross < netTooLowThreshold
+      ) {
+        alerts.push("netTooLow");
+      }
+
+      if (
+        hasNet &&
+        hasGross &&
+        !isNaN(net) &&
+        !isNaN(gross) &&
+        gross > 0 &&
+        net / gross > netTooCloseThreshold
+      ) {
+        alerts.push("netTooCloseToGross");
+      }
+
+      setDebouncedAlerts(alerts);
+    };
+
+    const timeoutId = setTimeout(calculateAlerts, 300);
+    return () => clearTimeout(timeoutId);
+  }, [netSalary, grossSalary, formConfig]);
 
   // Load entry data when in edit mode
   useEffect(() => {
@@ -215,6 +265,13 @@ function AddEntryContent() {
   }, [searchParams, form, router, locale, t, tEdit]);
 
   const onSubmit = async (data: SalaryEntryFormData) => {
+    // Check for salary validation alerts
+    if (debouncedAlerts.length > 0) {
+      setError(t("salaryAlert.submitBlocked"));
+      setIsSubmitting(false);
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
     setRetryAfter(null);
@@ -747,6 +804,18 @@ function AddEntryContent() {
                             {index + 1}. {t(`sections.${getSectionKey(section.title)}.title`)}
                           </CardTitle>
                         </CardHeader>
+                        {getSectionKey(section.title) === "salary" &&
+                          debouncedAlerts.length > 0 && (
+                            <div className="px-6 pb-4 space-y-4">
+                              {debouncedAlerts.map((alertKey) => (
+                                <Alert key={alertKey} variant="destructive">
+                                  <AlertDescription>
+                                    {t(`salaryAlert.${alertKey}`)}
+                                  </AlertDescription>
+                                </Alert>
+                              ))}
+                            </div>
+                          )}
                         {showSectionHelp === getSectionKey(section.title) && (
                           <div className="px-6 pb-4 my-4 border-stone-700">
                             <div className="bg-stone-800/50 rounded-lg p-4 border border-stone-600">

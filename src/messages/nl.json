@@ -669,6 +669,12 @@
       "contentContainsUrls": "URL's zijn niet toegestaan in dit veld",
       "honestyRequired": "U moet bevestigen dat de verstrekte informatie nauwkeurig en eerlijk is"
     },
+    "salaryAlert": {
+      "netHigherThanGross": "Controleer uw invoer van het nettoloon nogmaals. Voer alleen uw nettoloon in dat wordt berekend uit uw bruto salaris minus belastingen. Neem geen bonussen, toeslagen of andere vormen van vergoeding op (bijv. internettoeslag, maaltijdcheques of andere voordelen). Deze moeten indien van toepassing apart worden gemeld. Het opnemen ervan in uw nettoloon kan leiden tot onnauwkeurige gegevens.",
+      "netTooLow": "Controleer uw invoer van het nettoloon nogmaals. Uw nettoloon lijkt ongewoon laag in vergelijking met uw bruto salaris. Dit kan duiden op een fout bij het invoeren van gegevens. Nettoloon is doorgaans 65-85% van het bruto salaris, afhankelijk van belastingen en inhoudingen.",
+      "netTooCloseToGross": "Controleer uw invoer van het nettoloon nogmaals. Uw nettoloon lijkt ongewoon dicht bij uw bruto salaris te liggen. Dit kan erop duiden dat u bonussen, toeslagen of andere belastbare vergoedingen in het netto veld opneemt. Nettoloon mag alleen het uitbetaalde bedrag na belastingen en inhoudingen bevatten.",
+      "submitBlocked": "Los de salarisvalidatieproblemen op voordat u verzendt."
+    },
     "validationSummary": {
       "title": "Gelieve de volgende fouten te corrigeren:",
       "errorCount": "{count, plural, one {1 fout gevonden} other {# fouten gevonden}}"

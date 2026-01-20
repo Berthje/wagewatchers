@@ -669,6 +669,12 @@
       "contentContainsUrls": "Les URL ne sont pas autorisées dans ce champ",
       "honestyRequired": "Vous devez confirmer que les informations fournies sont exactes et honnêtes"
     },
+    "salaryAlert": {
+      "netHigherThanGross": "Veuillez vérifier à nouveau votre saisie de salaire net. Entrez uniquement votre salaire net calculé à partir de votre salaire brut moins les impôts. N'incluez pas de primes, d'indemnités ou toute autre forme de rémunération (par exemple, allocation internet, chèques-repas ou autres avantages). Ceux-ci doivent être déclarés séparément le cas échéant. Les inclure dans votre salaire net peut entraîner des données inexactes.",
+      "netTooLow": "Veuillez vérifier à nouveau votre saisie de salaire net. Votre salaire net semble anormalement bas par rapport à votre salaire brut. Cela pourrait indiquer une erreur de saisie de données. Le salaire net représente généralement 65-85% du salaire brut selon les impôts et déductions.",
+      "netTooCloseToGross": "Veuillez vérifier à nouveau votre saisie de salaire net. Votre salaire net semble anormalement proche de votre salaire brut. Cela pourrait indiquer que vous incluez des primes, des indemnités ou d'autres rémunérations imposables dans le champ net. Le salaire net ne devrait inclure que le salaire versé après impôts et déductions.",
+      "submitBlocked": "Veuillez résoudre les problèmes de validation du salaire avant de soumettre."
+    },
     "validationSummary": {
       "title": "Veuillez corriger les erreurs suivantes:",
       "errorCount": "{count, plural, =1 {1 erreur trouvée} other {# erreurs trouvées}}"

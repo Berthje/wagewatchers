@@ -669,6 +669,12 @@
       "contentContainsUrls": "URLs are not allowed in this field",
       "honestyRequired": "You must confirm that the information provided is accurate and honest"
     },
+    "salaryAlert": {
+      "netHigherThanGross": "Please double-check your net salary entry. Only enter your net pay calculated from your gross salary minus taxes. Do not include bonuses, allowances, or any other forms of compensation (e.g., internet allowance, meal vouchers, or other perks). These should be reported separately if applicable. Including them in your net salary can lead to inaccurate data.",
+      "netTooLow": "Please double-check your net salary entry. Your net salary appears unusually low compared to your gross salary. This might indicate a data entry error. Net salary is typically 60-85% of gross salary depending on taxes and deductions.",
+      "netTooCloseToGross": "Please double-check your net salary entry. Your net salary appears unusually close to your gross salary. This might indicate you're including bonuses, allowances, or other taxable compensation in the net field. Net salary should only include take-home pay after taxes and deductions.",
+      "submitBlocked": "Please resolve the salary validation issues before submitting."
+    },
     "validationSummary": {
       "title": "Please fix the following errors:",
       "errorCount": "{count, plural, =1 {1 error found} other {# errors found}}"

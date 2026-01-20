@@ -63,6 +63,10 @@ export interface FormSection {
 
 export interface CountryFormConfig {
   sections: FormSection[];
+  salaryValidation?: {
+    netTooLowThreshold: number;
+    netTooCloseThreshold: number;
+  };
 }
 
 export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
@@ -121,6 +125,10 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
         fields: ["extraNotes"],
       },
     ],
+    salaryValidation: {
+      netTooLowThreshold: 0.4,
+      netTooCloseThreshold: 0.95,
+    },
   },
 };
 
