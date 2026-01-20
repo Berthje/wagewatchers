@@ -269,18 +269,18 @@ export default function StatisticsClient() {
       }
     }
 
-    const yearlyStats = Object.entries(yearAgg)
-      .map(([year, data]) => {
-        const avgSalary = mean(data.salaries) ?? 0;
-        const medianSalary = median(data.salaries) ?? 0;
-        return {
-          year: Number.parseInt(year),
-          avgSalary,
-          count: data.count,
-          medianSalary,
-        };
-      })
-      .sort((a, b) => a.year - b.year);
+    // const yearlyStats = Object.entries(yearAgg)
+    //   .map(([year, data]) => {
+    //     const avgSalary = mean(data.salaries) ?? 0;
+    //     const medianSalary = median(data.salaries) ?? 0;
+    //     return {
+    //       year: Number.parseInt(year),
+    //       avgSalary,
+    //       count: data.count,
+    //       medianSalary,
+    //     };
+    //   })
+    //   .sort((a, b) => a.year - b.year);
     //setYearlyData(yearlyStats);
 
     const industryAgg: Record<string, { salaries: number[]; experiences: number[] }> = {};
