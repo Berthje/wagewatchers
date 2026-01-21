@@ -165,7 +165,8 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .number({ message: t("validation.numberExpected") })
           .int({ message: t("validation.integerExpected") })
           .min(0)
-          .max(1000, { message: t("validation.reportsMax") }),
+          .max(1000, { message: t("validation.reportsMax") })
+          .optional(),
 
         // Additional
         sourceUrl: z.string().optional(),
