@@ -178,12 +178,35 @@
       "grossSalary": "Gross Salary",
       "netSalary": "Net Salary",
       "submittedOn": "Submitted",
+      "education": "Education",
+      "workCity": "Work City",
+      "netCompensation": "Net Comp.",
+      "teleworkDays": "Telework Days",
+      "stressLevel": "Stress Level",
       "years": "years",
       "noResults": "No entries found matching your filters",
       "source": "Source",
       "viewSource": "View source",
       "clickToViewDetails": "Click any row to view full details",
-      "viewDetails": "View details"
+      "viewDetails": "View details",
+      "columns": {
+        "button": "Columns",
+        "title": "Select columns to display",
+        "selectedCount": "{count} selected",
+        "reset": "Reset to defaults",
+        "resetDisabledTitle": "Already using default columns",
+        "resetActiveLabel": "Reset columns",
+        "maxReachedHelper": "You can select up to {max} columns"
+      }
+    },
+    "columns": {
+      "button": "Columns",
+      "title": "Select columns to display",
+      "selectedCount": "{count} selected",
+      "reset": "Reset to defaults",
+      "resetDisabledTitle": "Already using default columns",
+      "resetActiveLabel": "Reset columns",
+      "maxReachedHelper": "You can select up to {max} columns"
     },
     "pagination": {
       "showing": "Showing",

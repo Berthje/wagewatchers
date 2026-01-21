@@ -14,9 +14,13 @@ interface SalaryDisplayContextType {
   preferences: SalaryDisplayPreferences;
   setCurrency: (currency: DisplayCurrency) => void;
   setPeriod: (period: SalaryPeriod) => void;
+  // Column visibility preferences
+  selectedColumns: string[];
+  setSelectedColumns: (cols: string[]) => void;
 }
 
 const STORAGE_KEY = "wagewatchers_display_preferences";
+const COLUMNS_STORAGE_KEY = "wagewatchers_visible_columns";
 
 const DEFAULT_PREFERENCES: SalaryDisplayPreferences = {
   currency: "EUR",
@@ -38,6 +42,22 @@ export function SalaryDisplayProvider({
   children: React.ReactNode;
 }>) {
   const [preferences, setPreferences] = useState<SalaryDisplayPreferences>(DEFAULT_PREFERENCES);
+  const [selectedColumns, setSelectedColumns] = React.useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem(COLUMNS_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch (error) {
+      // ignore
+    }
+    // lazy import default to avoid circular imports at module load
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { DEFAULT_SELECTED_COLUMNS } = require("@/lib/columns-config");
+      return DEFAULT_SELECTED_COLUMNS;
+    } catch (error) {
+      return ["location", "jobTitle", "sector", "experience", "age", "grossSalary", "netSalary", "submittedOn"];
+    }
+  });
 
   // Fetch exchange rates from API on mount with local cache (1 hour)
   useEffect(() => {
@@ -100,6 +120,15 @@ export function SalaryDisplayProvider({
     }
   }, [preferences]);
 
+  // Save selected columns to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(selectedColumns));
+    } catch (error) {
+      console.error("Failed to save selected columns:", error);
+    }
+  }, [selectedColumns]);
+
   const setCurrency = React.useCallback((currency: DisplayCurrency) => {
     setPreferences((prev) => ({ ...prev, currency }));
   }, []);
@@ -108,9 +137,13 @@ export function SalaryDisplayProvider({
     setPreferences((prev) => ({ ...prev, period }));
   }, []);
 
+  const setColumns = React.useCallback((cols: string[]) => {
+    setSelectedColumns(cols);
+  }, []);
+
   const value = React.useMemo(
-    () => ({ preferences, setCurrency, setPeriod }),
-    [preferences, setCurrency, setPeriod]
+    () => ({ preferences, setCurrency, setPeriod, selectedColumns, setSelectedColumns: setColumns }),
+    [preferences, setCurrency, setPeriod, selectedColumns, setColumns]
   );
 
   return <SalaryDisplayContext.Provider value={value}>{children}</SalaryDisplayContext.Provider>;

@@ -178,12 +178,26 @@
       "grossSalary": "Bruto Salaris",
       "netSalary": "Netto Salaris",
       "submittedOn": "Ingediend op",
+      "education": "Opleiding",
+      "workCity": "Werkplaats",
+      "netCompensation": "Netto Vergoeding",
+      "teleworkDays": "Thuiswerkdagen",
+      "stressLevel": "Stressniveau",
       "years": "jaar",
       "noResults": "Geen inzendingen gevonden die overeenkomen met uw filters",
       "source": "Bron",
       "viewSource": "Bekijk bron",
       "clickToViewDetails": "Klik op een rij om de volledige details te bekijken",
-      "viewDetails": "Bekijk details"
+      "viewDetails": "Bekijk details",
+      "columns": {
+        "button": "Kolommen",
+        "title": "Selecteer kolommen om weer te geven",
+        "selectedCount": "{count} geselecteerd",
+        "reset": "Terug naar standaard",
+        "resetDisabledTitle": "Al standaard kolommen in gebruik",
+        "resetActiveLabel": "Kolommen herstellen",
+        "maxReachedHelper": "U kunt maximaal {max} kolommen selecteren"
+      }
     },
     "pagination": {
       "showing": "Toont",
@@ -194,6 +208,15 @@
       "next": "Volgende",
       "page": "Pagina",
       "rowsPerPage": "Rijen per pagina"
+    },
+    "columns": {
+      "title": "Selecteer kolommen om weer te geven",
+      "button": "Kolommen",
+      "maxReachedHelper": "U kunt maximaal {max} kolommen selecteren",
+      "reset": "Resetten naar standaardwaarden",
+      "resetDisabledTitle": "Maakt al gebruik van standaardkolommen",
+      "resetActiveLabel": "Kolommen opnieuw instellen",
+      "selectedCount": "{count} geselecteerd"
     }
   },
   "statistics": {

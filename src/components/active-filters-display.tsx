@@ -8,8 +8,16 @@ interface ActiveFilter {
   id: string;
   label: string;
   value: string;
-  category: "country" | "city" | "sector" | "age" | "workExperience" | "grossSalary" | "netSalary";
-}
+  category:
+    | "country"
+    | "city"
+    | "sector"
+    | "age"
+    | "workExperience"
+    | "grossSalary"
+    | "netSalary"
+    | "columnsReset";
+} 
 
 interface ActiveFiltersDisplayProps {
   filters: ActiveFilter[];

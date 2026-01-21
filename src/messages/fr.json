@@ -178,12 +178,26 @@
       "grossSalary": "Salaire Brut",
       "netSalary": "Salaire Net",
       "submittedOn": "Soumis le",
+      "education": "Éducation",
+      "workCity": "Ville de travail",
+      "netCompensation": "Compensation nette",
+      "teleworkDays": "Jours de télétravail",
+      "stressLevel": "Niveau de stress",
       "years": "ans",
       "noResults": "Aucune entrée trouvée correspondant à vos filtres",
       "source": "Source",
       "viewSource": "Voir la source",
       "clickToViewDetails": "Cliquez sur n'importe quelle ligne pour voir tous les détails",
-      "viewDetails": "Voir les détails"
+      "viewDetails": "Voir les détails",
+      "columns": {
+        "button": "Colonnes",
+        "title": "Sélectionnez les colonnes à afficher",
+        "selectedCount": "{count} sélectionné(s)",
+        "reset": "Réinitialiser",
+        "resetDisabledTitle": "Déjà les colonnes par défaut",
+        "resetActiveLabel": "Réinitialiser les colonnes",
+        "maxReachedHelper": "Vous pouvez sélectionner jusqu'à {max} colonnes"
+      }
     },
     "pagination": {
       "showing": "Affichage de",
@@ -194,6 +208,15 @@
       "next": "Suivant",
       "page": "Page",
       "rowsPerPage": "Lignes par page"
+    },
+    "columns": {
+      "title": "Sélectionnez les colonnes à afficher",
+      "button": "Colonnes",
+      "maxReachedHelper": "Vous pouvez sélectionner jusqu'à {max} colonnes",
+      "reset": "Réinitialiser aux valeurs par défaut",
+      "resetDisabledTitle": "Vous utilisez déjà les colonnes par défaut",
+      "resetActiveLabel": "Réinitialiser les colonnes",
+      "selectedCount": "{count} sélectionnés"
     }
   },
   "statistics": {

@@ -36,8 +36,12 @@ import {
   Search,
 } from "lucide-react";
 import { FiltersModal } from "@/components/filters-modal";
+import { ColumnSelector } from "@/components/column-selector";
 import { ActiveFiltersDisplay } from "@/components/active-filters-display";
 import { useFilters } from "@/hooks/use-filters";
+import { DEFAULT_SELECTED_COLUMNS } from "@/lib/columns-config";
+import { createFieldConfigs } from "@/lib/field-configs";
+import { getFieldDisplayValue } from "@/lib/utils/format.utils";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import {
@@ -59,7 +63,14 @@ export function DashboardClient({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { preferences } = useSalaryDisplay();
+  const { preferences, selectedColumns, setSelectedColumns } = useSalaryDisplay();
+  const tAdd = useTranslations("add");
+  const fieldConfigs = createFieldConfigs(tAdd);
+
+  // Whether selected columns match the default order & set
+  const isDefaultColumns =
+    selectedColumns.length === DEFAULT_SELECTED_COLUMNS.length &&
+    selectedColumns.every((c, i) => c === DEFAULT_SELECTED_COLUMNS[i]);
   const formatCityDisplay = createCityDisplayFormatter(tUi);
 
   // Initialize filters from URL search params
@@ -535,6 +546,17 @@ export function DashboardClient({
     return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
   };
 
+  // Ensure "submittedOn" is always rendered at the far right if present
+  const visibleColumns = useMemo(() => {
+    const cols = [...selectedColumns];
+    if (cols.includes("submittedOn")) {
+      const filtered = cols.filter((c) => c !== "submittedOn");
+      filtered.push("submittedOn");
+      return filtered;
+    }
+    return cols;
+  }, [selectedColumns]);
+
   return (
     <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
       {/* Header */}
@@ -753,38 +775,43 @@ export function DashboardClient({
               {/* Filters and Search Row */}
               <div className="flex flex-col sm:flex-row gap-3">
                 {/* Filters Modal Button */}
-                <FiltersModal
-                  selectedCountries={selectedCountries}
-                  onCountriesChange={setSelectedCountries}
-                  availableCountries={options.countries}
-                  selectedCities={selectedCities}
-                  onCitiesChange={setSelectedCities}
-                  availableCities={options.cities}
-                  selectedSectors={selectedSectors}
-                  onSectorsChange={setSelectedSectors}
-                  availableSectors={options.sectors}
-                  minAge={minAge}
-                  maxAge={maxAge}
-                  onMinAgeChange={setMinAge}
-                  onMaxAgeChange={setMaxAge}
-                  maxAgeLimit={maxValues.maxAge}
-                  minWorkExperience={minWorkExperience}
-                  maxWorkExperience={maxWorkExperience}
-                  onMinWorkExperienceChange={setMinWorkExperience}
-                  onMaxWorkExperienceChange={setMaxWorkExperience}
-                  maxWorkExperienceLimit={maxValues.maxWorkExperience}
-                  minGrossSalary={minGrossSalary}
-                  maxGrossSalary={maxGrossSalary}
-                  onMinGrossSalaryChange={setMinGrossSalary}
-                  onMaxGrossSalaryChange={setMaxGrossSalary}
-                  maxGrossSalaryLimit={maxValues.maxGrossSalary}
-                  minNetSalary={minNetSalary}
-                  maxNetSalary={maxNetSalary}
-                  onMinNetSalaryChange={setMinNetSalary}
-                  onMaxNetSalaryChange={setMaxNetSalary}
-                  maxNetSalaryLimit={maxValues.maxNetSalary}
-                  activeFilterCount={activeFilterCount}
-                />
+                <div className="flex items-center gap-2">
+                  <FiltersModal
+                    selectedCountries={selectedCountries}
+                    onCountriesChange={setSelectedCountries}
+                    availableCountries={options.countries}
+                    selectedCities={selectedCities}
+                    onCitiesChange={setSelectedCities}
+                    availableCities={options.cities}
+                    selectedSectors={selectedSectors}
+                    onSectorsChange={setSelectedSectors}
+                    availableSectors={options.sectors}
+                    minAge={minAge}
+                    maxAge={maxAge}
+                    onMinAgeChange={setMinAge}
+                    onMaxAgeChange={setMaxAge}
+                    maxAgeLimit={maxValues.maxAge}
+                    minWorkExperience={minWorkExperience}
+                    maxWorkExperience={maxWorkExperience}
+                    onMinWorkExperienceChange={setMinWorkExperience}
+                    onMaxWorkExperienceChange={setMaxWorkExperience}
+                    maxWorkExperienceLimit={maxValues.maxWorkExperience}
+                    minGrossSalary={minGrossSalary}
+                    maxGrossSalary={maxGrossSalary}
+                    onMinGrossSalaryChange={setMinGrossSalary}
+                    onMaxGrossSalaryChange={setMaxGrossSalary}
+                    maxGrossSalaryLimit={maxValues.maxGrossSalary}
+                    minNetSalary={minNetSalary}
+                    maxNetSalary={maxNetSalary}
+                    onMinNetSalaryChange={setMinNetSalary}
+                    onMaxNetSalaryChange={setMaxNetSalary}
+                    maxNetSalaryLimit={maxValues.maxNetSalary}
+                    activeFilterCount={activeFilterCount}
+                  />
+
+                  {/* Column selector */}
+                  <ColumnSelector />
+                </div>
 
                 {/* Search Bar - Takes remaining space */}
                 <div className="relative flex-1">
@@ -899,6 +926,17 @@ export function DashboardClient({
                           category: "netSalary" as const,
                         },
                       ]),
+                  // Show reset columns action only when selection differs from defaults
+                  ...(!isDefaultColumns
+                    ? [
+                        {
+                          id: `columns-reset`,
+                          label: t("table.columns.resetActiveLabel", { defaultValue: t("table.columns.reset") }),
+                          value: "reset-columns",
+                          category: "columnsReset" as const,
+                        },
+                      ]
+                    : []),
                 ]}
                 onRemoveFilter={(value, category) => {
                   if (category === "country") {
@@ -934,6 +972,9 @@ export function DashboardClient({
                     } else if (maxNetSalary !== null && maxNetSalary.toString() === value) {
                       setMaxNetSalary(null);
                     }
+                  } else if (category === "columnsReset") {
+                    // Reset selected columns to defaults
+                    setSelectedColumns(DEFAULT_SELECTED_COLUMNS);
                   }
                 }}
                 onClearAll={() => {
@@ -957,98 +998,72 @@ export function DashboardClient({
               <Table>
                 <TableHeader className="sticky top-0 bg-stone-800 z-30">
                   <TableRow className="border-stone-700 bg-stone-800">
-                    <TableHead className="text-stone-300 sticky top-0 bg-stone-800 z-20">
-                      <div className="flex items-center h-5">{t("table.location")}</div>
-                    </TableHead>
-                    <TableHead className="text-stone-300 sticky top-0 bg-stone-800 z-20">
-                      <div className="flex items-center h-5">{t("table.jobTitle")}</div>
-                    </TableHead>
-                    <TableHead className="text-stone-300 sticky top-0 bg-stone-800 z-20">
-                      <div className="flex items-center h-5">{t("table.sector")}</div>
-                    </TableHead>
-                    <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
-                      onClick={() => handleSort("experience")}
-                    >
-                      <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
-                        {t("table.experience")}
-                        {getSortIcon("experience")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
-                      onClick={() => handleSort("age")}
-                    >
-                      <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
-                        {t("table.age")}
-                        {getSortIcon("age")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
-                      onClick={() => handleSort("grossSalary")}
-                    >
-                      <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
-                        {t("table.grossSalary")}
-                        {getSortIcon("grossSalary")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
-                      onClick={() => handleSort("netSalary")}
-                    >
-                      <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
-                        {t("table.netSalary")}
-                        {getSortIcon("netSalary")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="text-stone-300 cursor-pointer hover:bg-stone-800 select-none sticky top-0 bg-stone-800 z-20"
-                      onClick={() => handleSort("createdAt")}
-                    >
-                      <div className="flex items-center h-5 min-h-5 max-h-5 overflow-hidden">
-                        {t("table.submittedOn")}
-                        {getSortIcon("createdAt")}
-                      </div>
-                    </TableHead>
+                    {/** Render table headers dynamically based on user selected columns */}
+                    {(() => {
+                      // helper render function
+                      const renderHeaderCell = (key: string) => {
+                        const labelKeyMap: Record<string, string> = {
+                          location: "table.location",
+                          jobTitle: "table.jobTitle",
+                          sector: "table.sector",
+                          experience: "table.experience",
+                          age: "table.age",
+                          grossSalary: "table.grossSalary",
+                          netSalary: "table.netSalary",
+                          submittedOn: "table.submittedOn",
+                          education: "table.education",
+                          workCity: "table.workCity",
+                          netCompensation: "table.netCompensation",
+                          teleworkDays: "table.teleworkDays",
+                          stressLevel: "table.stressLevel",
+                        };
+
+                        const sortableFieldMap: Record<string, any> = {
+                          experience: "experience",
+                          age: "age",
+                          grossSalary: "grossSalary",
+                          netSalary: "netSalary",
+                          submittedOn: "createdAt",
+                        };
+
+                        const sortable = !!sortableFieldMap[key];
+
+                        const content = (
+                          <div className={`flex items-center h-5 min-h-5 max-h-5 overflow-hidden ${sortable ? "cursor-pointer select-none" : ""}`}>
+                            {t(labelKeyMap[key] || "")}
+                            {sortable && getSortIcon(sortableFieldMap[key])}
+                          </div>
+                        );
+
+                        return (
+                          <TableHead
+                            key={`header-${key}`}
+                            className={`text-stone-300 sticky top-0 bg-stone-800 z-20 ${sortable ? "cursor-pointer hover:bg-stone-800 select-none" : ""}`}
+                            onClick={sortable ? () => handleSort(sortableFieldMap[key]) : undefined}
+                          >
+                            {content}
+                          </TableHead>
+                        );
+                      };
+
+                      return visibleColumns.map((colKey) => renderHeaderCell(colKey));
+                    })()}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     Array.from({ length: rowsPerPage }).map((_, i) => (
                       <TableRow key={`skeleton-row-${i}`}>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                        </TableCell>
+                        {visibleColumns.map((c) => (
+                          <TableCell key={`skeleton-${c}-${i}`}>
+                            <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
+                          </TableCell>
+                        ))}
                       </TableRow>
                     ))
                   ) : filteredByFilters.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-8 text-stone-400">
+                      <TableCell colSpan={Math.max(1, selectedColumns.length)} className="text-center py-8 text-stone-400">
                         {t("table.noResults")}
                       </TableCell>
                     </TableRow>
@@ -1062,58 +1077,99 @@ export function DashboardClient({
                           router.push(`${pathname}/${entry.id}${qs ? `?${qs}` : ""}`);
                         }}
                       >
-                        <TableCell className="text-stone-300">
-                          <Badge
-                            variant="outline"
-                            className="border-stone-600 text-stone-300 w-fit"
-                          >
-                            {entry.country
-                              ? formatCityDisplay(entry.country, entry.workCity)
-                              : "N/A"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium text-stone-100 group-hover:text-orange-400 transition-colors">
-                          <div className="flex items-center gap-2">
-                            {entry.jobTitle}
-                            <Eye className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-stone-300">{entry.sector || "N/A"}</TableCell>
-                        <TableCell className="text-stone-300">
-                          {entry.workExperience !== null && entry.workExperience !== undefined
-                            ? `${entry.workExperience} ${t("table.years")}`
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell className="text-stone-300">
-                          {entry.age !== null && entry.age !== undefined
-                            ? `${entry.age} ${t("table.years")}`
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell className="font-semibold text-stone-100">
-                          {formatSalaryWithPreferences(
-                            entry.grossSalary,
-                            entry.currency,
-                            false, // Assuming monthly data
-                            preferences.currency,
-                            preferences.period,
-                            locale,
-                            isMobile
-                          )}
-                        </TableCell>
-                        <TableCell className="font-semibold text-stone-100">
-                          {formatSalaryWithPreferences(
-                            entry.netSalary,
-                            entry.currency,
-                            false, // Assuming monthly data
-                            preferences.currency,
-                            preferences.period,
-                            locale,
-                            isMobile
-                          )}
-                        </TableCell>
-                        <TableCell className="text-stone-300 text-sm whitespace-nowrap">
-                          {formatDate(entry.createdAt)}
-                        </TableCell>
+                        {visibleColumns.map((colKey) => {
+                          const renderCell = (key: string) => {
+                            switch (key) {
+                              case "location":
+                                return (
+                                  <Badge variant="outline" className="border-stone-600 text-stone-300 w-fit">
+                                    {entry.country ? formatCityDisplay(entry.country, entry.workCity) : "N/A"}
+                                  </Badge>
+                                );
+                              case "jobTitle":
+                                return (
+                                  <div className="font-medium text-stone-100 group-hover:text-orange-400 transition-colors">
+                                    <div className="flex items-center gap-2">
+                                      {entry.jobTitle}
+                                      <Eye className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                  </div>
+                                );
+                              case "sector":
+                                return <div className="text-stone-300">{entry.sector || "N/A"}</div>;
+                              case "experience":
+                                return (
+                                  <div className="text-stone-300">
+                                    {entry.workExperience !== null && entry.workExperience !== undefined
+                                      ? `${entry.workExperience} ${t("table.years")}`
+                                      : "N/A"}
+                                  </div>
+                                );
+                              case "age":
+                                return (
+                                  <div className="text-stone-300">
+                                    {entry.age !== null && entry.age !== undefined
+                                      ? `${entry.age} ${t("table.years")}`
+                                      : "N/A"}
+                                  </div>
+                                );
+                              case "grossSalary":
+                                return (
+                                  <div className="font-semibold text-stone-100">
+                                    {formatSalaryWithPreferences(
+                                      entry.grossSalary,
+                                      entry.currency,
+                                      false,
+                                      preferences.currency,
+                                      preferences.period,
+                                      locale,
+                                      isMobile
+                                    )}
+                                  </div>
+                                );
+                              case "netSalary":
+                                return (
+                                  <div className="font-semibold text-stone-100">
+                                    {formatSalaryWithPreferences(
+                                      entry.netSalary,
+                                      entry.currency,
+                                      false,
+                                      preferences.currency,
+                                      preferences.period,
+                                      locale,
+                                      isMobile
+                                    )}
+                                  </div>
+                                );
+                              case "submittedOn":
+                                return <div className="text-stone-300 text-sm whitespace-nowrap">{formatDate(entry.createdAt)}</div>;
+                              case "education":
+                                return (
+                                  <div className="text-stone-300">
+                                    {getFieldDisplayValue("education", entry.education, fieldConfigs, tAdd) || "N/A"}
+                                  </div>
+                                );
+                              case "workCity":
+                                return <div className="text-stone-300">{entry.workCity || "N/A"}</div>;
+                              case "netCompensation":
+                                return <div className="text-stone-300">{entry.netCompensation ?? "N/A"}</div>;
+                              case "teleworkDays":
+                                return <div className="text-stone-300">{entry.teleworkDays ?? "N/A"}</div>;
+                              case "stressLevel":
+                                return (
+                                  <div className="text-stone-300">
+                                    {getFieldDisplayValue("stressLevel", entry.stressLevel, fieldConfigs, tAdd) || "N/A"}
+                                  </div>
+                                );
+                              default:
+                                return <div className="text-stone-300">N/A</div>;
+                            }
+                          };
+
+                          return (
+                            <TableCell key={`cell-${colKey}-${entry.id}`}>{renderCell(colKey)}</TableCell>
+                          );
+                        })}
                       </TableRow>
                     ))
                   )}

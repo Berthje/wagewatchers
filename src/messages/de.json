@@ -178,12 +178,26 @@
       "grossSalary": "Bruttogehalt",
       "netSalary": "Nettogehalt",
       "submittedOn": "Eingereicht am",
+      "education": "Ausbildung",
+      "workCity": "Arbeitsstadt",
+      "netCompensation": "Netto Vergütung",
+      "teleworkDays": "Homeoffice Tage",
+      "stressLevel": "Stresslevel",
       "years": "Jahre",
       "noResults": "Keine Einträge gefunden, die Ihren Filtern entsprechen",
       "source": "Quelle",
       "viewSource": "Quelle anzeigen",
       "clickToViewDetails": "Klicken Sie auf eine Zeile, um alle Details anzuzeigen",
-      "viewDetails": "Details anzeigen"
+      "viewDetails": "Details anzeigen",
+      "columns": {
+        "button": "Spalten",
+        "title": "Anzuzeigende Spalten auswählen",
+        "selectedCount": "{count} ausgewählt",
+        "reset": "Auf Standard zurücksetzen",
+        "resetDisabledTitle": "Standardspalten bereits aktiv",
+        "resetActiveLabel": "Spalten zurücksetzen",
+        "maxReachedHelper": "Sie können bis zu {max} Spalten auswählen"
+      }
     },
     "pagination": {
       "showing": "Zeige",
@@ -194,6 +208,15 @@
       "next": "Weiter",
       "page": "Seite",
       "rowsPerPage": "Zeilen pro Seite"
+    },
+    "columns": {
+      "title": "Wählen Sie die anzuzeigenden Spalten aus",
+      "button": "Spalten",
+      "maxReachedHelper": "Sie können bis zu {max} Spalten auswählen",
+      "reset": "Auf Standardeinstellungen zurücksetzen",
+      "resetDisabledTitle": "Es werden bereits Standardspalten verwendet",
+      "resetActiveLabel": "Spalten zurücksetzen",
+      "selectedCount": "{count} ausgewählt"
     }
   },
   "statistics": {
