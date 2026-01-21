@@ -17,7 +17,7 @@ interface ActiveFilter {
     | "grossSalary"
     | "netSalary"
     | "columnsReset";
-} 
+}
 
 interface ActiveFiltersDisplayProps {
   filters: ActiveFilter[];
