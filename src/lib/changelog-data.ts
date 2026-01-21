@@ -37,6 +37,13 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.8.3",
+    date: "2026-01-21",
+    changes: [
+      "Added a Columns selector on the dashboard so users can choose which columns to display (max 10)",
+    ],
+  },
+  {
     version: "1.8.2",
     date: "2026-01-20",
     changes: [
