@@ -31,15 +31,7 @@ export function ColumnSelector() {
     selectedColumns.every((c, i) => c === DEFAULT_SELECTED_COLUMNS[i]);
 
   const resetToDefaults = () => {
-    try {
-      // dynamic import to avoid circular
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { DEFAULT_SELECTED_COLUMNS } = require("@/lib/columns-config");
-      setSelectedColumns(DEFAULT_SELECTED_COLUMNS);
-    } catch (error) {
-      // fallback
-      setSelectedColumns(["location", "jobTitle", "sector", "experience", "age", "grossSalary", "netSalary", "submittedOn"]);
-    }
+    setSelectedColumns(DEFAULT_SELECTED_COLUMNS);
   };
 
   return (

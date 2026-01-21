@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { DEFAULT_SELECTED_COLUMNS } from "@/lib/columns-config";
 
 export type SalaryPeriod = "monthly" | "annual";
 export type DisplayCurrency = "EUR" | "USD" | "GBP";
@@ -49,14 +50,9 @@ export function SalaryDisplayProvider({
     } catch (error) {
       // ignore
     }
-    // lazy import default to avoid circular imports at module load
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { DEFAULT_SELECTED_COLUMNS } = require("@/lib/columns-config");
-      return DEFAULT_SELECTED_COLUMNS;
-    } catch (error) {
-      return ["location", "jobTitle", "sector", "experience", "age", "grossSalary", "netSalary", "submittedOn"];
-    }
+
+    // Default to configured defaults
+    return DEFAULT_SELECTED_COLUMNS;
   });
 
   // Fetch exchange rates from API on mount with local cache (1 hour)
