@@ -76,21 +76,26 @@ export default function StatusClient() {
       // Don't set searched=true here, this is automatic loading
 
       try {
-        // Fetch all reports for the stored tracking IDs
-        const fetchPromises = trackingIds.map((id) =>
-          fetch(`/api/reports?trackingId=${encodeURIComponent(id)}`)
-            .then((res) => (res.ok ? res.json() : []))
-            .catch(() => [])
-        );
+        // Fetch all reports for the stored tracking IDs in a single batched request
+        const params = new URLSearchParams();
+        params.set("trackingIds", trackingIds.join(","));
+        const response = await fetch(`/api/reports?${params.toString()}`);
+        const allReports = response.ok ? await response.json() : [];
+        // If endpoint returned a single report per id as arrays previously, flatten defensively
+        const flattened =
+          Array.isArray(allReports) && allReports.length > 0 && Array.isArray(allReports[0])
+            ? allReports.flat()
+            : allReports;
+        // Use flattened result
 
-        const results = await Promise.all(fetchPromises);
-        const allReports = results.flat();
+        // Replace allReports variable with flattened
+        const finalReports = flattened as Report[];
 
-        if (allReports.length === 0) {
+        if (finalReports.length === 0) {
           setError(t("noResults"));
         } else {
           // Sort reports by createdAt descending (most recent first)
-          const sortedReports = allReports.toSorted(
+          const sortedReports = finalReports.toSorted(
             (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
           setReports(sortedReports);

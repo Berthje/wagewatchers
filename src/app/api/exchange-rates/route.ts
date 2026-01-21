@@ -45,11 +45,18 @@ export async function GET(request: Request) {
 
     // If no rates in database, return default hardcoded rates
     if (rates.length === 0) {
-      return NextResponse.json({
-        rates: FALLBACK_EXCHANGE_RATES,
-        source: "default",
-        lastUpdated: null,
-      });
+      return NextResponse.json(
+        {
+          rates: FALLBACK_EXCHANGE_RATES,
+          source: "default",
+          lastUpdated: null,
+        },
+        {
+          headers: {
+            "Cache-Control": "public, max-age=3600, stale-while-revalidate=60",
+          },
+        }
+      );
     }
 
     // Convert array to object format
@@ -66,11 +73,18 @@ export async function GET(request: Request) {
       return new Date(Math.max(latest.getTime(), rate.updatedAt.getTime()));
     }, rates[0].updatedAt);
 
-    return NextResponse.json({
-      rates: ratesObject,
-      source: "database",
-      lastUpdated: lastUpdated.toISOString(),
-    });
+    return NextResponse.json(
+      {
+        rates: ratesObject,
+        source: "database",
+        lastUpdated: lastUpdated.toISOString(),
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=60",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching exchange rates:", error);
 

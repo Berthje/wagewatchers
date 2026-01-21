@@ -87,11 +87,17 @@ export async function GET(request: NextRequest) {
 
     if (drillDown && country) {
       const provinceData = await fetchProvinceData(whereClause);
-      return NextResponse.json({ provinces: provinceData });
+      return NextResponse.json(
+        { provinces: provinceData },
+        { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=30" } }
+      );
     }
 
     const countryData = await fetchCountryData(whereClause);
-    return NextResponse.json({ countries: countryData });
+    return NextResponse.json(
+      { countries: countryData },
+      { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=30" } }
+    );
   } catch (error) {
     console.error("Error fetching map data:", error);
     return NextResponse.json({ error: "Failed to fetch map data" }, { status: 500 });

@@ -2,10 +2,18 @@
 
 import { useEffect, useState } from "react";
 
+let cachedWorldSvg: string | null = null;
+
 export function AnimatedWorldMap() {
   const [svgContent, setSvgContent] = useState<string>("");
 
   useEffect(() => {
+    // Use cached SVG if available (avoid repeated network requests on navigation)
+    if (cachedWorldSvg) {
+      setSvgContent(cachedWorldSvg);
+      return;
+    }
+
     // Fetch the SVG content
     fetch("/world.svg")
       .then((response) => response.text())
@@ -44,7 +52,8 @@ export function AnimatedWorldMap() {
                 `;
         newSvg.appendChild(style);
 
-        setSvgContent(newSvg.outerHTML);
+        cachedWorldSvg = newSvg.outerHTML;
+        setSvgContent(cachedWorldSvg);
       })
       .catch((error) => {
         console.error("Error loading world map:", error);

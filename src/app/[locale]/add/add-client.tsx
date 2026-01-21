@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -70,6 +70,14 @@ function AddEntryContent() {
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
   const tEdit = useTranslations("edit");
+  const confettiRef = useRef<number | null>(null);
+
+  // Ensure confetti interval cleared on unmount if navigation happens before animation ends
+  useEffect(() => {
+    return () => {
+      if (confettiRef.current) clearInterval(confettiRef.current);
+    };
+  }, []);
 
   const getSectionHelpContent = (sectionKey: string, sectionFields: string[]) => {
     // Dynamically generate help content based on the section's fields
@@ -316,11 +324,11 @@ function AddEntryContent() {
           return Math.random() * (max - min) + min;
         }
 
-        const interval: any = setInterval(function () {
+        const intervalId = window.setInterval(function () {
           const timeLeft = animationEnd - Date.now();
 
           if (timeLeft <= 0) {
-            return clearInterval(interval);
+            return clearInterval(intervalId);
           }
 
           const particleCount = 50 * (timeLeft / duration);
@@ -341,6 +349,11 @@ function AddEntryContent() {
             },
           });
         }, 250);
+
+        confettiRef.current = intervalId;
+
+        // Ensure interval cleared on unmount (in case navigation happens before animation ends)
+        // We use a ref-based cleanup effect declared once at component top-level (see addition above).
 
         form.reset();
         const successMessage = isEditMode ? "updated=true" : "success=true";

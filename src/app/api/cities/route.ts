@@ -19,10 +19,7 @@ export async function GET(request: NextRequest) {
       search && search.length >= 3
         ? and(
             eq(cities.country, country),
-            or(
-              ilike(cities.name, `%${search}%`),
-              ilike(cities.alternateNames, `%${search}%`)
-            )
+            or(ilike(cities.name, `%${search}%`), ilike(cities.alternateNames, `%${search}%`))
           )
         : eq(cities.country, country);
 
@@ -33,7 +30,11 @@ export async function GET(request: NextRequest) {
       .orderBy(cities.name)
       .limit(15);
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: {
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=60",
+      },
+    });
   } catch (error) {
     console.error("Error fetching cities:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

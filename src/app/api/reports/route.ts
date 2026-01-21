@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { reports } from "@/lib/db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
@@ -48,7 +48,25 @@ export async function GET(request: NextRequest) {
     const trackingId = searchParams.get("trackingId");
     const email = searchParams.get("email");
 
-    // Public search by tracking ID or email
+    // Public search by tracking ID, multiple tracking IDs, or email
+    const trackingIdsParam = searchParams.get("trackingIds");
+
+    if (trackingIdsParam) {
+      const ids = trackingIdsParam
+        .split(",")
+        .map((s) => s.trim().toUpperCase())
+        .filter(Boolean);
+      if (ids.length === 0) {
+        return NextResponse.json([]);
+      }
+      const reportList = await db
+        .select()
+        .from(reports)
+        .where(inArray(reports.trackingId, ids))
+        .orderBy(desc(reports.createdAt));
+      return NextResponse.json(reportList);
+    }
+
     if (trackingId) {
       const report = await db
         .select()

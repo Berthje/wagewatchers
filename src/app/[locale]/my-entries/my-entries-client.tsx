@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
@@ -87,11 +87,11 @@ function MyEntriesContent() {
         return Math.random() * (max - min) + min;
       }
 
-      const interval: any = setInterval(function () {
+      const intervalId = window.setInterval(function () {
         const timeLeft = animationEnd - Date.now();
 
         if (timeLeft <= 0) {
-          return clearInterval(interval);
+          return clearInterval(intervalId);
         }
 
         const particleCount = 50 * (timeLeft / duration);
@@ -116,6 +116,11 @@ function MyEntriesContent() {
       // Clean up URL parameter
       const newUrl = `/${locale}/my-entries`;
       router.replace(newUrl);
+
+      // Cleanup on unmount
+      return () => {
+        if (typeof intervalId === "number") clearInterval(intervalId);
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

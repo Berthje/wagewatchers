@@ -39,15 +39,31 @@ export function SalaryDisplayProvider({
 }>) {
   const [preferences, setPreferences] = useState<SalaryDisplayPreferences>(DEFAULT_PREFERENCES);
 
-  // Fetch exchange rates from API on mount
+  // Fetch exchange rates from API on mount with local cache (1 hour)
   useEffect(() => {
+    const CACHE_KEY = "wagewatchers_exchange_rates";
+    const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
     const fetchExchangeRates = async () => {
       try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed.timestamp && Date.now() - parsed.timestamp < CACHE_TTL && parsed.rates) {
+            EXCHANGE_RATES = parsed.rates;
+            return;
+          }
+        }
+
         const response = await fetch("/api/exchange-rates");
         if (response.ok) {
           const data = await response.json();
           if (data.rates) {
             EXCHANGE_RATES = data.rates;
+            localStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ rates: data.rates, timestamp: Date.now() })
+            );
           }
         }
       } catch (error) {
