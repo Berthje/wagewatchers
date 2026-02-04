@@ -21,8 +21,6 @@ interface CommentThreadProps {
 }
 
 function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
-  // Top-level comments (depth === 0) start expanded
-  // All child comments (depth > 0) start collapsed
   const [isCollapsed, setIsCollapsed] = useState(depth > 0);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
