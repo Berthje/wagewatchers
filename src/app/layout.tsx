@@ -127,6 +127,8 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <OpenPanelComponent
+          apiUrl="/api/op"
+          cdnUrl="/api/op/op1.js"
           clientId="2b4449fb-b1c5-4694-9496-bf50048d810f"
           trackScreenViews={true}
           trackOutgoingLinks={true}
