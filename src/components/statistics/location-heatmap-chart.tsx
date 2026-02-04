@@ -133,8 +133,9 @@ export function LocationHeatmapChart({ data, loading = false }: LocationHeatmapC
                   <CustomTooltip chartType="location" colors={COLORS.gradient} data={data} />
                 }
                 cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
-                labelFormatter={(label: string) => {
-                  const location = data.find((l) => l.city === label);
+                labelFormatter={(label: any) => {
+                  const labelStr = typeof label === "string" ? label : String(label ?? "");
+                  const location = data.find((l) => l.city === labelStr);
                   return location ? `${location.city} (${location.count} entries)` : label;
                 }}
               />
