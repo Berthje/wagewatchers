@@ -9,6 +9,7 @@ import { LanguageToggle } from "@/components/language-toggle";
 import { SalaryDisplaySelector } from "@/components/salary-display-selector";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useOpenPanel } from "@openpanel/nextjs";
 
 interface NavbarProps {
   locale: string;
@@ -26,6 +27,7 @@ interface NavbarProps {
 export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const op = useOpenPanel();
 
   const isActiveRoute = (href: string) => {
     // Exact match for dashboard
@@ -79,6 +81,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                       : "text-stone-300 hover:text-stone-100"
                   )}
                   aria-current={isActive ? "page" : undefined}
+                  onClick={() => op.track('nav_link_clicked', { link: link.label, location: 'desktop' })}
                 >
                   {link.label}
                   {isActive && (
@@ -96,6 +99,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                 "px-4 transition-colors bg-stone-100 hover:bg-stone-200 text-stone-900"
               )}
               aria-current={isActiveRoute(`/${locale}/add`) ? "page" : undefined}
+              onClick={() => op.track('add_entry_clicked', { location: 'desktop' })}
             >
               {translations.addEntry}
             </Button>
@@ -118,6 +122,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                 size="icon"
                 className="text-stone-100"
                 aria-label="Toggle menu"
+                onClick={() => op.track('menu_toggle_clicked', { action: isOpen ? 'close' : 'open' })}
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
@@ -130,7 +135,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                 {navLinks.map((link) => {
                   const isActive = isActiveRoute(link.href);
                   return (
-                    <Link key={link.href} href={link.href} onClick={() => setIsOpen(false)}>
+                    <Link key={link.href} href={link.href} onClick={() => { setIsOpen(false); op.track('nav_link_clicked', { link: link.label, location: 'mobile' }); }}>
                       <Button
                         variant="ghost"
                         className={cn(
@@ -146,7 +151,7 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                     </Link>
                   );
                 })}
-                <Link href={`/${locale}/add`} onClick={() => setIsOpen(false)} className="pt-2">
+                <Link href={`/${locale}/add`} onClick={() => { setIsOpen(false); op.track('add_entry_clicked', { location: 'mobile' }); }} className="pt-2">
                   <Button
                     className={cn(
                       "w-full text-base font-medium",
