@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
+import { db } from "@/lib/db";
+import { sql } from 'drizzle-orm';
 
 export async function GET() {
   try {
-    // Import your database client
-    const { db } = await import('@/lib/db');
-
-    // Test database connection
-    await db.$queryRaw`SELECT 1`;
+    await db.execute(sql`SELECT 1`);
 
     return NextResponse.json({
       status: 'ok',
@@ -17,7 +15,7 @@ export async function GET() {
     return NextResponse.json({
       status: 'error',
       database: 'disconnected',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 503 });
   }
 }
