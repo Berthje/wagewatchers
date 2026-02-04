@@ -4,10 +4,10 @@ export async function GET() {
   try {
     // Import your database client
     const { db } = await import('@/lib/db');
-    
+
     // Test database connection
     await db.$queryRaw`SELECT 1`;
-    
+
     return NextResponse.json({
       status: 'ok',
       database: 'connected',
