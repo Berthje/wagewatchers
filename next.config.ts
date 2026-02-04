@@ -13,6 +13,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        // Proxy the OpenPanel script from your self-hosted Dashboard
+        source: "/op1.js",
+        destination: "https://analytics.laytonberth.com/op1.js",
+      },
+      {
+        // Proxy events to your self-hosted OpenPanel API
+        source: "/api/op/:path*",
+        destination: "https://analytics-api.laytonberth.com/:path*",
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
