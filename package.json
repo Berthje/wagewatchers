@@ -89,6 +89,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/canvas-confetti": "^1.9.0",
+    "@types/d3-array": "^3.2.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19.2.2",
