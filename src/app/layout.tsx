@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { OpenPanelComponent } from '@openpanel/nextjs';
+import OpenPanelClient from "../components/openpanel-client";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -125,13 +125,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <OpenPanelComponent
-        clientId="2b4449fb-b1c5-4694-9496-bf50048d810f"
-        trackScreenViews={true}
-        trackAttributes={true}
-        trackOutgoingLinks={true}
-      />
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <OpenPanelClient />
+        {children}
+      </body>
     </html>
   );
 }
