@@ -40,7 +40,6 @@ coverage
 # Misc
 *.log
 .turbo
-.vercel
 
 # Lock files
 package-lock.json

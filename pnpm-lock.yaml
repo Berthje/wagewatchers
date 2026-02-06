@@ -2774,7 +2774,6 @@ packages:
       '@types/pg': '*'
       '@types/sql.js': '*'
       '@upstash/redis': '>=1.34.7'
-      '@vercel/postgres': '>=0.8.0'
       '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
@@ -2818,8 +2817,6 @@ packages:
       '@types/sql.js':
         optional: true
       '@upstash/redis':
-        optional: true
-      '@vercel/postgres':
         optional: true
       '@xata.io/client':
         optional: true
