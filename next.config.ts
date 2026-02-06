@@ -20,8 +20,11 @@ const nextConfig: NextConfig = {
         source: "/op1.js",
         destination: "https://analytics.laytonberth.com/op1.js",
       },
-      // Note: /api/op/* is now handled by src/app/api/op/[...path]/route.ts
-      // to properly forward client IP headers for geolocation
+      {
+        // Proxy events to your self-hosted OpenPanel API
+        source: "/api/op/:path*",
+        destination: "https://analytics-api.laytonberth.com/:path*",
+      },
     ];
   },
 };
