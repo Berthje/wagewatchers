@@ -43,6 +43,7 @@ import { useFilters } from "@/hooks/use-filters";
 import { DEFAULT_SELECTED_COLUMNS } from "@/lib/columns-config";
 import { createFieldConfigs } from "@/lib/field-configs";
 import { getFieldDisplayValue } from "@/lib/utils/format.utils";
+import { getPrimaryComp } from "@/lib/utils/compensation.utils";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import {
@@ -152,6 +153,9 @@ export function DashboardClient({
     selectedCountries,
     selectedSectors,
     selectedCities,
+    selectedWorkerTypes,
+    hasCompanyCar,
+    hasEquity,
     minAge,
     maxAge,
     minWorkExperience,
@@ -168,6 +172,9 @@ export function DashboardClient({
     setSelectedCountries,
     setSelectedSectors,
     setSelectedCities,
+    setSelectedWorkerTypes,
+    setHasCompanyCar,
+    setHasEquity,
     setMinAge,
     setMaxAge,
     setMinWorkExperience,
@@ -536,16 +543,26 @@ export function DashboardClient({
   // Render sort icon helper
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
+      return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 shrink-0 opacity-40" />;
     }
     if (sortDirection === "asc") {
-      return <ArrowUp className="ml-2 h-4 w-4 shrink-0" />;
+      return <ArrowUp className="ml-1.5 h-3.5 w-3.5 shrink-0 text-brand" />;
     }
     if (sortDirection === "desc") {
-      return <ArrowDown className="ml-2 h-4 w-4 shrink-0" />;
+      return <ArrowDown className="ml-1.5 h-3.5 w-3.5 shrink-0 text-brand" />;
     }
-    return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
+    return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 shrink-0 opacity-40" />;
   };
+
+  // Numeric columns are right-aligned for easy comparison/scanning
+  const NUMERIC_COLUMNS = new Set([
+    "grossSalary",
+    "netSalary",
+    "netCompensation",
+    "age",
+    "experience",
+    "teleworkDays",
+  ]);
 
   // Ensure "submittedOn" is always rendered at the far right if present
   const visibleColumns = useMemo(() => {
@@ -769,6 +786,13 @@ export function DashboardClient({
                   selectedSectors={selectedSectors}
                   onSectorsChange={setSelectedSectors}
                   availableSectors={options.sectors}
+                  selectedWorkerTypes={selectedWorkerTypes}
+                  onWorkerTypesChange={setSelectedWorkerTypes}
+                  availableWorkerTypes={options.workerTypes}
+                  hasCompanyCar={hasCompanyCar}
+                  onHasCompanyCarChange={setHasCompanyCar}
+                  hasEquity={hasEquity}
+                  onHasEquityChange={setHasEquity}
                   minAge={minAge}
                   maxAge={maxAge}
                   onMinAgeChange={setMinAge}
@@ -829,6 +853,32 @@ export function DashboardClient({
                   value: sector,
                   category: "sector" as const,
                 })),
+                ...selectedWorkerTypes.map((wt) => ({
+                  id: `workerType-${wt}`,
+                  label: tAdd(`formOptions.workerType.${wt}`),
+                  value: wt,
+                  category: "workerType" as const,
+                })),
+                ...(hasCompanyCar === null
+                  ? []
+                  : [
+                      {
+                        id: `company-car-${hasCompanyCar}`,
+                        label: `${t("filters.companyCar")}: ${hasCompanyCar ? t("filters.yes") : t("filters.no")}`,
+                        value: String(hasCompanyCar),
+                        category: "companyCar" as const,
+                      },
+                    ]),
+                ...(hasEquity === null
+                  ? []
+                  : [
+                      {
+                        id: `equity-${hasEquity}`,
+                        label: `${t("filters.equity")}: ${hasEquity ? t("filters.yes") : t("filters.no")}`,
+                        value: String(hasEquity),
+                        category: "equity" as const,
+                      },
+                    ]),
                 ...(minAge === null
                   ? []
                   : [
@@ -930,6 +980,12 @@ export function DashboardClient({
                   setSelectedCities(selectedCities.filter((c) => c !== value));
                 } else if (category === "sector") {
                   setSelectedSectors(selectedSectors.filter((s) => s !== value));
+                } else if (category === "workerType") {
+                  setSelectedWorkerTypes(selectedWorkerTypes.filter((w) => w !== value));
+                } else if (category === "companyCar") {
+                  setHasCompanyCar(null);
+                } else if (category === "equity") {
+                  setHasEquity(null);
                 } else if (category === "age") {
                   if (minAge !== null && minAge.toString() === value) {
                     setMinAge(null);
@@ -963,6 +1019,9 @@ export function DashboardClient({
                 setSelectedCountries([]);
                 setSelectedCities([]);
                 setSelectedSectors([]);
+                setSelectedWorkerTypes([]);
+                setHasCompanyCar(null);
+                setHasEquity(null);
                 setMinAge(null);
                 setMaxAge(null);
                 setMinWorkExperience(null);
@@ -1009,10 +1068,12 @@ export function DashboardClient({
                       };
 
                       const sortable = !!sortableFieldMap[key];
+                      const isNumeric = NUMERIC_COLUMNS.has(key);
+                      const isActiveSort = sortable && sortField === sortableFieldMap[key];
 
                       const content = (
                         <div
-                          className={`flex items-center h-5 min-h-5 max-h-5 overflow-hidden text-xs font-medium uppercase tracking-wide ${sortable ? "cursor-pointer select-none" : ""}`}
+                          className={`flex items-center h-5 min-h-5 max-h-5 overflow-hidden font-mono text-[11px] font-medium uppercase tracking-wider ${isNumeric ? "justify-end" : ""} ${sortable ? "cursor-pointer select-none" : ""}`}
                         >
                           {t(labelKeyMap[key] || "")}
                           {sortable && getSortIcon(sortableFieldMap[key])}
@@ -1022,7 +1083,7 @@ export function DashboardClient({
                       return (
                         <TableHead
                           key={`header-${key}`}
-                          className={`text-muted-foreground sticky top-0 bg-card z-20 ${sortable ? "cursor-pointer hover:text-foreground select-none" : ""}`}
+                          className={`sticky top-0 bg-card z-20 ${isNumeric ? "text-right" : ""} ${isActiveSort ? "text-foreground" : "text-muted-foreground"} ${sortable ? "cursor-pointer hover:text-foreground select-none" : ""}`}
                           onClick={sortable ? () => handleSort(sortableFieldMap[key]) : undefined}
                         >
                           {content}
@@ -1058,7 +1119,7 @@ export function DashboardClient({
                   paginatedEntries.map((entry) => (
                     <TableRow
                       key={entry.id}
-                      className="border-border cursor-pointer hover:bg-accent transition-all duration-200 group"
+                      className="border-border group cursor-pointer transition-colors duration-150 even:bg-muted/20 hover:bg-accent"
                       onClick={() => {
                         const qs = searchParams.toString();
                         router.push(`${pathname}/${entry.id}${qs ? `?${qs}` : ""}`);
@@ -1105,7 +1166,36 @@ export function DashboardClient({
                                     : "N/A"}
                                 </div>
                               );
-                            case "grossSalary":
+                            case "grossSalary": {
+                              // Non-salaried workers have no gross — show their
+                              // primary rate (day/hour) or bursary instead of N/A.
+                              if (entry.grossSalary == null) {
+                                const pc = getPrimaryComp(entry);
+                                if (pc) {
+                                  const valueStr =
+                                    pc.kind === "rate"
+                                      ? `${getCurrencySymbol()}${Math.round(pc.amount).toLocaleString()}`
+                                      : formatSalaryWithPreferences(
+                                          pc.amount,
+                                          entry.currency,
+                                          false,
+                                          preferences.currency,
+                                          preferences.period,
+                                          locale,
+                                          isMobile
+                                        );
+                                  return (
+                                    <div className="font-mono font-semibold text-foreground">
+                                      {valueStr}
+                                      {pc.kind === "rate" && (
+                                        <span className="ml-0.5 text-xs font-normal text-muted-foreground">
+                                          {tAdd(`benefitUnits.${pc.unitKey}`)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                }
+                              }
                               return (
                                 <div className="font-mono font-semibold text-foreground">
                                   {formatSalaryWithPreferences(
@@ -1119,6 +1209,7 @@ export function DashboardClient({
                                   )}
                                 </div>
                               );
+                            }
                             case "netSalary":
                               return (
                                 <div className="font-mono font-semibold text-foreground">
@@ -1185,7 +1276,10 @@ export function DashboardClient({
                         };
 
                         return (
-                          <TableCell key={`cell-${colKey}-${entry.id}`}>
+                          <TableCell
+                            key={`cell-${colKey}-${entry.id}`}
+                            className={NUMERIC_COLUMNS.has(colKey) ? "text-right" : ""}
+                          >
                             {renderCell(colKey)}
                           </TableCell>
                         );

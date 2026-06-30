@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq, inArray, desc } from "drizzle-orm";
+import { persistEntryBenefits } from "@/lib/entry-benefits";
 import { generateOwnerToken, getEditableUntilDate } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
@@ -102,12 +103,16 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // `benefits` is an array persisted to EntryBenefit, not a column — strip it
+    // out of the values spread into the salaryEntries insert.
+    const { benefits: submittedBenefits, ...entryBody } = body;
+
     const bodyTyped: Omit<
       typeof salaryEntries.$inferInsert,
       "id" | "createdAt" | "ownerToken" | "editableUntil"
     > = {
-      ...body,
-      jobTitle: body.jobTitle ? toTitleCase(body.jobTitle) : body.jobTitle,
+      ...entryBody,
+      jobTitle: entryBody.jobTitle ? toTitleCase(entryBody.jobTitle) : entryBody.jobTitle,
     };
 
     // Generate ownership token and editable window
@@ -117,6 +122,9 @@ export async function POST(request: NextRequest) {
       .insert(salaryEntries)
       .values({
         ...bodyTyped,
+        // Stamp the structure version server-side so it can't be spoofed by the
+        // client. New entries are v2; legacy rows stay null (v1).
+        entryVersion: 2,
         ownerToken: "", // Temporary, will update after getting ID
         editableUntil,
       })
@@ -139,6 +147,10 @@ export async function POST(request: NextRequest) {
       })
       .where(eq(salaryEntries.id, entry[0].id))
       .returning();
+
+    // Persist catalog benefits (Layer C) + dual-write the column-backed core
+    // benefits as catalog rows so the EntryBenefit table is a complete view.
+    await persistEntryBenefits(entry[0].id, submittedBenefits, entry[0]);
 
     // Return entry with the owner token (client will store it)
     return NextResponse.json({

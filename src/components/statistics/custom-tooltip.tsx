@@ -22,7 +22,6 @@ interface CustomTooltipProps {
 }
 
 export function CustomTooltip({
-  active,
   payload,
   label,
   chartType = "default",
@@ -195,6 +194,41 @@ export function CustomTooltip({
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Box plot: the bar segments carry internal delta keys (_whiskerLow, _boxLow, …),
+  // so render the absolute five-number summary straight from the datum instead.
+  if (chartType === "experience") {
+    const datum = payload?.[0]?.payload;
+    if (!datum) return null;
+    const rows: Array<["max" | "q3" | "median" | "q1" | "min", number]> = [
+      ["max", datum.max],
+      ["q3", datum.q3],
+      ["median", datum.median],
+      ["q1", datum.q1],
+      ["min", datum.min],
+    ];
+    return (
+      <div className="bg-card border border-border rounded-lg shadow-lg p-3 min-w-[200px]">
+        <div className="text-foreground font-medium text-sm mb-2 border-b border-border pb-1">
+          {formatLabel(label)}
+        </div>
+        <div className="space-y-1">
+          {rows.map(([key, value]) => (
+            <div key={key} className="flex items-center justify-between gap-4">
+              <span className="text-muted-foreground text-sm">{getLabelText(key)}</span>
+              <span className="text-foreground font-medium text-sm">{formatValue(value, key)}</span>
+            </div>
+          ))}
+          {typeof datum.count === "number" && (
+            <div className="flex items-center justify-between gap-4 border-t border-border pt-1 mt-1">
+              <span className="text-muted-foreground text-sm">{getLabelText("count")}</span>
+              <span className="text-foreground font-medium text-sm">{datum.count}</span>
+            </div>
+          )}
         </div>
       </div>
     );

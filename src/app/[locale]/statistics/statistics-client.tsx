@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileDown, FileSpreadsheet } from "lucide-react";
 import { FiltersModal } from "@/components/filters-modal";
+import { PeerComparison } from "@/components/statistics/peer-comparison";
 import { useFilters } from "@/hooks/use-filters";
 import { mean, median, quantile } from "d3-array";
 import {
@@ -56,6 +57,9 @@ export default function StatisticsClient() {
     selectedCountries,
     selectedSectors,
     selectedCities,
+    selectedWorkerTypes,
+    hasCompanyCar,
+    hasEquity,
     minAge,
     maxAge,
     minWorkExperience,
@@ -71,6 +75,9 @@ export default function StatisticsClient() {
     setSelectedCountries,
     setSelectedSectors,
     setSelectedCities,
+    setSelectedWorkerTypes,
+    setHasCompanyCar,
+    setHasEquity,
     setMinAge,
     setMaxAge,
     setMinWorkExperience,
@@ -396,6 +403,13 @@ export default function StatisticsClient() {
               selectedSectors={selectedSectors}
               onSectorsChange={setSelectedSectors}
               availableSectors={options.sectors}
+              selectedWorkerTypes={selectedWorkerTypes}
+              onWorkerTypesChange={setSelectedWorkerTypes}
+              availableWorkerTypes={options.workerTypes}
+              hasCompanyCar={hasCompanyCar}
+              onHasCompanyCarChange={setHasCompanyCar}
+              hasEquity={hasEquity}
+              onHasEquityChange={setHasEquity}
               minAge={minAge}
               maxAge={maxAge}
               onMinAgeChange={setMinAge}
@@ -437,6 +451,17 @@ export default function StatisticsClient() {
           </div>
         }
       />
+
+      {!loading && filteredEntries.length > 0 && (
+        <div className="mb-6 md:mb-8">
+          <PeerComparison
+            entries={filteredEntries}
+            currencySymbol={
+              preferences.currency === "USD" ? "$" : preferences.currency === "GBP" ? "£" : "€"
+            }
+          />
+        </div>
+      )}
 
       {loading ? (
         <div className="grid gap-4 md:gap-8">

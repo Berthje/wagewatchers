@@ -29,7 +29,11 @@
     "db:introspect": "drizzle-kit introspect",
     "studio": "npx drizzle-kit studio",
     "create-admin": "tsx scripts/create-admin.ts",
-    "update-cities": "tsx scripts/update-cities.ts"
+    "update-cities": "tsx scripts/update-cities.ts",
+    "seed-benefits": "tsx scripts/seed-benefits.ts",
+    "seed-benefits:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/seed-benefits.ts",
+    "seed-degrees": "tsx scripts/seed-degrees.ts",
+    "seed-degrees:dev": "tsx scripts/run-with-dev-db.ts tsx scripts/seed-degrees.ts"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.14.4",

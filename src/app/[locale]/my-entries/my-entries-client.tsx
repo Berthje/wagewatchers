@@ -29,7 +29,7 @@ import {
 import {
   getOwnedEntryIds,
   getEntryToken,
-  isEntryEditable,
+  getEditTimeRemaining,
   removeEntryToken,
 } from "@/lib/entry-ownership";
 import { useSalaryDisplay, formatSalaryWithPreferences } from "@/contexts/salary-display-context";
@@ -229,16 +229,7 @@ function MyEntriesContent() {
     );
   };
 
-  const getEditStatus = (entry: SalaryEntry) => {
-    const editable = isEntryEditable(entry.editableUntil);
-    if (editable) {
-      const hoursLeft = Math.ceil(
-        (new Date(entry.editableUntil!).getTime() - Date.now()) / (1000 * 60 * 60)
-      );
-      return { editable: true, hoursLeft };
-    }
-    return { editable: false, hoursLeft: 0 };
-  };
+  const getEditStatus = (entry: SalaryEntry) => getEditTimeRemaining(entry.editableUntil);
 
   const getReviewStatusBadge = (reviewStatus: string | null) => {
     if (!reviewStatus) {
@@ -400,9 +391,9 @@ function MyEntriesContent() {
                           {editStatus.editable ? (
                             <Badge variant="default" className="bg-orange-300">
                               <Calendar className="w-3 h-3 mr-1" />
-                              {t("table.editableFor", {
-                                hours: editStatus.hoursLeft,
-                              })}
+                              {editStatus.hoursLeft > 24
+                                ? t("table.editableForDays", { days: editStatus.daysLeft })
+                                : t("table.editableFor", { hours: editStatus.hoursLeft })}
                             </Badge>
                           ) : (
                             <Badge variant="secondary">{t("table.readonly")}</Badge>

@@ -10,7 +10,7 @@ import jwt from "jsonwebtoken";
 import { logError } from "@/lib/logger";
 
 const STORAGE_KEY = "wagewatchers_entry_tokens";
-const EDIT_WINDOW_DAYS = 1; // Users can edit entries for 1 day
+export const EDIT_WINDOW_DAYS = 7; // Users can edit entries for 7 days after submission
 
 // JWT secret from env
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -30,7 +30,7 @@ export function generateOwnerToken(entryId: number): string {
 }
 
 /**
- * Calculate the editableUntil timestamp (1 days from now)
+ * Calculate the editableUntil timestamp (EDIT_WINDOW_DAYS from now)
  */
 export function getEditableUntilDate(): Date {
   const date = new Date();
@@ -44,6 +44,27 @@ export function getEditableUntilDate(): Date {
 export function isEntryEditable(editableUntil: Date | null): boolean {
   if (!editableUntil) return false;
   return new Date() < new Date(editableUntil);
+}
+
+/**
+ * Compute how much of the edit window is left for an entry. Shared by the
+ * my-entries badge and the edit-form banner so the countdown stays consistent.
+ */
+export function getEditTimeRemaining(editableUntil: Date | null): {
+  editable: boolean;
+  msLeft: number;
+  hoursLeft: number;
+  daysLeft: number;
+} {
+  if (!editableUntil) return { editable: false, msLeft: 0, hoursLeft: 0, daysLeft: 0 };
+  const msLeft = new Date(editableUntil).getTime() - Date.now();
+  if (msLeft <= 0) return { editable: false, msLeft: 0, hoursLeft: 0, daysLeft: 0 };
+  return {
+    editable: true,
+    msLeft,
+    hoursLeft: Math.ceil(msLeft / (1000 * 60 * 60)),
+    daysLeft: Math.ceil(msLeft / (1000 * 60 * 60 * 24)),
+  };
 }
 
 /**

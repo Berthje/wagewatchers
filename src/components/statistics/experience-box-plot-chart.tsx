@@ -35,6 +35,20 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
   const t = useTranslations("statistics");
   const { preferences } = useSalaryDisplay();
 
+  // Recharts stacks bar values by summing them, so each segment must be the DELTA
+  // between consecutive quartiles — not the absolute quartile value. Stacking the
+  // absolute min/q1/median/q3 (the previous bug) produced bars ~3–4× too tall that
+  // never aligned with the absolute median line. Absolute stats are preserved on the
+  // datum for the tooltip and the median line.
+  const chartData = data.map((d) => ({
+    ...d,
+    _base: d.min,
+    _whiskerLow: Math.max(d.q1 - d.min, 0),
+    _boxLow: Math.max(d.median - d.q1, 0),
+    _boxHigh: Math.max(d.q3 - d.median, 0),
+    _whiskerHigh: Math.max(d.max - d.q3, 0),
+  }));
+
   if (loading) {
     return (
       <Card className="border-border bg-card space-y-3">
@@ -97,7 +111,7 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
             minWidth={undefined}
           >
             <ComposedChart
-              data={data}
+              data={chartData}
               margin={{
                 top: 15,
                 right: 30,
@@ -127,19 +141,26 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
               />
               <Tooltip content={<CustomTooltip chartType="experience" />} />
 
-              {/* Min to Q1 range (bottom whisker) */}
-              <Bar dataKey="min" stackId="a" fill="transparent" />
+              {/* Stacked segments are DELTAS, not absolute values: each bar's height is the
+                  gap to the next quartile, so the stack reconstructs a true box-and-whisker.
+                  The transparent base lifts the box up to `min`. */}
 
-              {/* Q1 to Median range */}
-              <Bar dataKey="q1" stackId="a" fill="#fed7aa80" />
+              {/* Invisible base: 0 → min */}
+              <Bar dataKey="_base" stackId="a" fill="transparent" />
 
-              {/* Median to Q3 range */}
-              <Bar dataKey="median" stackId="a" fill="#fb923c60" />
+              {/* Lower whisker: min → Q1 */}
+              <Bar dataKey="_whiskerLow" stackId="a" fill="#fed7aa80" />
 
-              {/* Q3 to Max range (top whisker) */}
-              <Bar dataKey="q3" stackId="a" fill="#fed7aa80" />
+              {/* Box lower half: Q1 → median */}
+              <Bar dataKey="_boxLow" stackId="a" fill="#fb923c60" />
 
-              {/* Median line */}
+              {/* Box upper half: median → Q3 */}
+              <Bar dataKey="_boxHigh" stackId="a" fill="#fb923c60" />
+
+              {/* Upper whisker: Q3 → max */}
+              <Bar dataKey="_whiskerHigh" stackId="a" fill="#fed7aa80" />
+
+              {/* Median line (absolute value — aligns with the Q1↔Q3 box boundary) */}
               <Line type="monotone" dataKey="median" stroke="#ea580c" strokeWidth={3} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>

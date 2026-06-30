@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HelpCircle, ArrowLeft, Lock, MapPin } from "lucide-react";
+import { HelpCircle, ArrowLeft, Lock, MapPin, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
@@ -44,8 +44,45 @@ import {
   createSalaryEntrySchema,
   SalaryEntryFormData,
 } from "@/lib/validations/salary-entry.schema";
-import { getEntryToken, isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
+import {
+  getEntryToken,
+  isEntryEditable,
+  verifyOwnerToken,
+  getEditTimeRemaining,
+} from "@/lib/entry-ownership";
 import { logError, logWarning } from "@/lib/logger";
+import { BenefitsSelector, type EntryBenefitValue } from "@/components/benefits-selector";
+import { getDegreesFor } from "@/lib/degrees-catalog";
+
+// Fields that render with a currency prefix and store a float.
+const MONEY_FIELDS = [
+  "grossSalary",
+  "netSalary",
+  "netCompensation",
+  "mealVouchers",
+  "ecoCheques",
+  "fixedGrossSalary",
+  "variableGrossSalary",
+  "hourlyRate",
+  "dayRate",
+  "clientDayBudget",
+  "bursaryAmount",
+  "virtualGrossSalary",
+];
+
+// Company-car detail fields only shown once "has company car" is selected.
+const COMPANY_CAR_DETAIL_FIELDS = ["companyCarModel", "companyCarFuelType", "companyCarCardScope"];
+
+// Contract types that make sense per worker type (Belgian context): freelancers
+// work under a freelance agreement, interns under an internship, employees under
+// permanent/fixed-term/interim, and PhD researchers under fixed-term mandates.
+const CONTRACT_TYPES_BY_WORKER: Record<string, string[]> = {
+  whiteCollar: ["permanent", "fixedTerm", "interim"],
+  blueCollar: ["permanent", "fixedTerm", "interim"],
+  freelancer: ["freelance"],
+  intern: ["internship"],
+  phdResearcher: ["fixedTerm", "permanent"],
+};
 
 // Utility function to clean commute distance by keeping only numbers and dashes
 const cleanCommuteDistance = (value: string): string => {
@@ -73,6 +110,7 @@ function AddEntryContent() {
   const [showDiscard, setShowDiscard] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editEntryId, setEditEntryId] = useState<number | null>(null);
+  const [editableUntil, setEditableUntil] = useState<string | null>(null);
   const [isLoadingEntry, setIsLoadingEntry] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryAfter, setRetryAfter] = useState<Date | null>(null);
@@ -107,11 +145,16 @@ function AddEntryContent() {
     defaultValues: {
       multinational: false,
       currency: "EUR",
+      workerType: "whiteCollar",
+      benefits: [],
     },
   });
 
   const selectedCountry = form.watch("country");
   const selectedCurrency = form.watch("currency");
+  const selectedWorkerType = (form.watch("workerType") as string) || "whiteCollar";
+  const selectedContractType = form.watch("contractType") as string | undefined;
+  const hasCompanyCar = form.watch("hasCompanyCar");
   const grossSalary = form.watch("grossSalary");
   const netSalary = form.watch("netSalary");
   const formConfig = selectedCountry ? getFormConfigForCountry(selectedCountry) : null;
@@ -241,17 +284,47 @@ function AddEntryContent() {
             return;
           }
 
+          setEditableUntil(data.editableUntil);
+
           // Populate the form with the entry data
           form.reset({
             country: data.country || undefined,
+            // v2 worker-type + compensation model
+            workerType: data.workerType || "whiteCollar",
+            contractType: data.contractType || undefined,
+            contractDurationMonths: data.contractDurationMonths ?? undefined,
+            salaryBasis: data.salaryBasis || undefined,
+            fixedGrossSalary: data.fixedGrossSalary ?? undefined,
+            variableGrossSalary: data.variableGrossSalary ?? undefined,
+            hourlyRate: data.hourlyRate ?? undefined,
+            dayRate: data.dayRate ?? undefined,
+            agencyCutPercent: data.agencyCutPercent ?? undefined,
+            clientDayBudget: data.clientDayBudget ?? undefined,
+            bursaryAmount: data.bursaryAmount ?? undefined,
+            virtualGrossSalary: data.virtualGrossSalary ?? undefined,
+            hasCompanyCar: data.hasCompanyCar ?? undefined,
+            companyCarModel: data.companyCarModel || undefined,
+            companyCarFuelType: data.companyCarFuelType || undefined,
+            companyCarCardScope: data.companyCarCardScope || undefined,
+            hasEquity: data.hasEquity ?? undefined,
+            benefits: Array.isArray(data.benefits)
+              ? data.benefits.map((b: any) => ({
+                  benefitKey: b.benefitKey,
+                  valueNumeric: b.valueNumeric ?? undefined,
+                  valueText: b.valueText ?? undefined,
+                  currency: b.currency ?? undefined,
+                }))
+              : [],
             age: data.age || undefined,
             education: data.education || undefined,
+            degreeId: data.degreeId ?? undefined,
             workExperience: data.workExperience ?? undefined,
             civilStatus: data.civilStatus || undefined,
             dependents: data.dependents ?? undefined,
             sector: data.sector || undefined,
             employeeCount: data.employeeCount || undefined,
             multinational: data.multinational || false,
+            publiclyListed: data.publiclyListed ?? undefined,
             jobTitle: data.jobTitle || undefined,
             jobDescription: data.jobDescription || undefined,
             seniority: data.seniority ?? undefined,
@@ -270,15 +343,21 @@ function AddEntryContent() {
             groupInsurance: data.groupInsurance || undefined,
             otherInsurances: data.otherInsurances || undefined,
             otherBenefits: data.otherBenefits || undefined,
+            locationGranularity: data.locationGranularity || undefined,
+            workProvince: data.workProvince || undefined,
+            residenceCountry: data.residenceCountry || undefined,
+            commuteUnit: data.commuteUnit || undefined,
             workCity: data.workCity || undefined,
             commuteDistance: data.commuteDistance
               ? cleanCommuteDistance(data.commuteDistance.toString())
               : undefined,
+            commuteTimeMinutes: data.commuteTimeMinutes ?? undefined,
             commuteMethod: data.commuteMethod || undefined,
             commuteCompensation: data.commuteCompensation || undefined,
             teleworkDays: data.teleworkDays ?? undefined,
             dayOffEase: data.dayOffEase || undefined,
             stressLevel: data.stressLevel || undefined,
+            jobSatisfaction: data.jobSatisfaction ?? undefined,
             reports: data.reports ?? undefined,
             extraNotes: data.extraNotes || undefined,
           });
@@ -412,6 +491,7 @@ function AddEntryContent() {
 
   const getSectionKey = (title: string): string => {
     const sectionMappings: Record<string, string> = {
+      "Employment Type": "employment",
       "Personal Information": "personal",
       "Employer Profile": "employer",
       "Job Profile": "job",
@@ -426,6 +506,45 @@ function AddEntryContent() {
   };
 
   const getFieldElement = (config: any, field: any, fieldName?: string) => {
+    // Degree picker: combobox over the curated catalog, storing the numeric id.
+    if (fieldName === "degreeId") {
+      const degreeOptions = getDegreesFor(selectedCountry).map((d) => ({
+        value: String(d.id),
+        label: d.name,
+      }));
+      return (
+        <Combobox
+          options={degreeOptions}
+          value={field.value != null ? String(field.value) : undefined}
+          onValueChange={(v: string) => field.onChange(v ? Number(v) : undefined)}
+          placeholder={config.placeholder}
+          allowCustom={false}
+        />
+      );
+    }
+
+    // Contract-type options depend on the selected worker type.
+    if (fieldName === "contractType") {
+      const allowed =
+        CONTRACT_TYPES_BY_WORKER[selectedWorkerType] ??
+        (config.options || []).map((o: any) => o.value);
+      const opts = (config.options || []).filter((o: any) => allowed.includes(o.value));
+      return (
+        <Select onValueChange={field.onChange} value={field.value?.toString() || undefined}>
+          <SelectTrigger>
+            <SelectValue placeholder={config.placeholder || "Select option"} />
+          </SelectTrigger>
+          <SelectContent>
+            {opts.map((option: any) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    }
+
     // Special handling for workCity field with city combobox
     if (fieldName === "workCity") {
       return (
@@ -439,14 +558,7 @@ function AddEntryContent() {
     }
 
     // Special handling for money fields with currency selector
-    const moneyFields = [
-      "grossSalary",
-      "netSalary",
-      "netCompensation",
-      "mealVouchers",
-      "ecoCheques",
-    ];
-    if (fieldName && moneyFields.includes(fieldName)) {
+    if (fieldName && MONEY_FIELDS.includes(fieldName)) {
       return (
         <div className="relative">
           <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
@@ -606,21 +718,9 @@ function AddEntryContent() {
           <FormItem className={cn(widthClass, "space-y-2")}>
             <FormLabel className="flex items-center gap-1.5 text-foreground">
               <span>
-                {(() => {
-                  const moneyFields = [
-                    "grossSalary",
-                    "netSalary",
-                    "netCompensation",
-                    "mealVouchers",
-                    "ecoCheques",
-                  ];
-
-                  if (moneyFields.includes(fieldName)) {
-                    return t(config.labelKey, { symbol: getCurrencySymbol(selectedCurrency) });
-                  }
-
-                  return t(config.labelKey);
-                })()}
+                {MONEY_FIELDS.includes(fieldName)
+                  ? t(config.labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
+                  : t(config.labelKey)}
               </span>
               {config.optional && (
                 <span className="text-xs font-normal text-muted-foreground">
@@ -659,6 +759,24 @@ function AddEntryContent() {
         )}
       />
     );
+  };
+
+  // Worker-type-aware visibility: hide fields not applicable to the selected
+  // worker type, and hide company-car detail fields until "has company car".
+  const isFieldVisible = (fieldName: string): boolean => {
+    const config = fieldConfigs[fieldName];
+    if (!config) return false;
+    if (config.workerTypes && !config.workerTypes.includes(selectedWorkerType)) return false;
+    if (COMPANY_CAR_DETAIL_FIELDS.includes(fieldName) && hasCompanyCar !== true) return false;
+    // Contract duration only matters for non-permanent contracts (fixed-term,
+    // interim, internship, freelance). Hidden for permanent / unspecified.
+    if (
+      fieldName === "contractDurationMonths" &&
+      (!selectedContractType || selectedContractType === "permanent")
+    ) {
+      return false;
+    }
+    return true;
   };
 
   const navSections = selectedCountry && formConfig ? formConfig.sections : [];
@@ -753,6 +871,33 @@ function AddEntryContent() {
             title={isEditMode ? t("editTitle") : t("title")}
             subtitle={isEditMode ? t("editSubtitle") : t("subtitle")}
           />
+          {isEditMode &&
+            editableUntil &&
+            (() => {
+              const remaining = getEditTimeRemaining(new Date(editableUntil));
+              if (!remaining.editable) return null;
+              const untilDate = new Date(editableUntil).toLocaleDateString(locale, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const remainingLabel =
+                remaining.hoursLeft > 24
+                  ? tEdit("window.remainingDays", { days: remaining.daysLeft })
+                  : tEdit("window.remainingHours", { hours: remaining.hoursLeft });
+              return (
+                <Alert className="mb-6 border-brand/30 bg-brand/5">
+                  <CalendarClock className="h-4 w-4 text-brand" />
+                  <AlertDescription className="text-foreground">
+                    <span className="font-medium">{remainingLabel}</span>{" "}
+                    {tEdit("window.until", { date: untilDate })}{" "}
+                    <span className="text-muted-foreground">{tEdit("window.lockNote")}</span>
+                  </AlertDescription>
+                </Alert>
+              );
+            })()}
         </>
       )}
 
@@ -823,7 +968,7 @@ function AddEntryContent() {
                         {t("sections.location.title")}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-6">
                       <div className="grid grid-cols-6 gap-4">
                         <FormField
                           control={form.control}
@@ -925,10 +1070,32 @@ function AddEntryContent() {
                                 ))}
                               </div>
                             )}
-                            <CardContent>
+                            <CardContent className="pt-6">
                               <div className="grid grid-cols-6 gap-x-4 gap-y-5">
-                                {section.fields.map((fieldName) => renderField(fieldName))}
+                                {section.fields
+                                  .filter((fieldName) => isFieldVisible(fieldName))
+                                  .map((fieldName) => renderField(fieldName))}
                               </div>
+                              {sectionKey === "benefits" && (
+                                <div className="mt-6 border-t border-border pt-6">
+                                  <FormField
+                                    control={form.control}
+                                    name="benefits"
+                                    render={({ field }) => (
+                                      <BenefitsSelector
+                                        country={selectedCountry}
+                                        workerType={selectedWorkerType}
+                                        currency={selectedCurrency}
+                                        currencySymbol={getCurrencySymbol(selectedCurrency)}
+                                        value={(field.value as EntryBenefitValue[]) || []}
+                                        onChange={(next) =>
+                                          field.onChange(next as EntryBenefitValue[])
+                                        }
+                                      />
+                                    )}
+                                  />
+                                </div>
+                              )}
                             </CardContent>
                           </Card>
                         );

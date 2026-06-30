@@ -22,27 +22,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { shouldDisplayField } from "@/lib/salary-config";
 import { createFieldConfigs } from "@/lib/field-configs";
+import { BENEFIT_DEFINITIONS } from "@/lib/benefits-catalog";
+import { DEGREE_DEFINITIONS } from "@/lib/degrees-catalog";
+import { getPrimaryComp } from "@/lib/utils/compensation.utils";
 import {
   getFieldDisplayValue,
   getCurrencySymbol,
   createCityDisplayFormatter,
 } from "@/lib/utils/format.utils";
 import { useSalaryDisplay, formatSalaryWithPreferences } from "@/contexts/salary-display-context";
+import { cn } from "@/lib/utils";
 import { logError } from "@/lib/logger";
 import {
   ArrowLeft,
   User,
   Briefcase,
-  Coins,
   MapPin,
   Calendar,
   Clock,
-  Building,
-  TrendingUp,
   Gift,
   FileText,
   ShieldCheck,
   Flag,
+  Car,
+  PlugZap,
+  Fuel,
+  Sparkles,
+  Globe,
+  Smile,
 } from "lucide-react";
 
 interface Comment {
@@ -57,11 +64,23 @@ interface Comment {
   replies: Comment[];
 }
 
+interface EntryBenefitRow {
+  benefitKey: string;
+  valueNumeric: number | null;
+  valueText: string | null;
+  currency: string | null;
+}
+
+const BENEFIT_DEF_BY_KEY = new Map(BENEFIT_DEFINITIONS.map((d) => [d.key, d]));
+const CATEGORY_ORDER = ["cash", "insurance", "retirement", "mobility", "timeOff", "other"] as const;
+
 export function EntryDetailClient({
   entry,
+  benefits = [],
   locale,
 }: Readonly<{
   entry: SalaryEntry;
+  benefits?: EntryBenefitRow[];
   locale: string;
 }>) {
   const router = useRouter();
@@ -84,105 +103,85 @@ export function EntryDetailClient({
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
 
+  const fieldConfigs = createFieldConfigs(tAdd);
+  const workerType = entry.workerType ?? "whiteCollar";
+
+  // Money formatter honouring display currency + period (monthly source amounts).
+  const money = (amount: number | null | undefined) =>
+    formatSalaryWithPreferences(
+      amount ?? null,
+      entry.currency,
+      false,
+      preferences.currency,
+      preferences.period,
+      locale,
+      false
+    );
+  // Plain currency amount that should NOT be period-converted (rates, vouchers).
+  const flat = (amount: number) => `${symbol}${Math.round(amount).toLocaleString()}`;
+
   const formatDate = (date: Date): string => {
     const dateObj = new Date(date);
-    const dateStr = dateObj.toLocaleDateString("en-US", {
+    return `${dateObj.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
-    const timeStr = dateObj.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    return `${dateStr} at ${timeStr}`;
+    })} at ${dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
   };
 
-  // Helper to check if field should be displayed for this entry's country
-  const shouldShow = (fieldName: string): boolean => {
-    if (!entry.country) return true; // Show all fields if country is unknown
-    return shouldDisplayField(entry.country, fieldName);
-  };
+  const shouldShow = (fieldName: string): boolean =>
+    !entry.country || shouldDisplayField(entry.country, fieldName);
 
-  // Get field configurations for display labels
-  const fieldConfigs = createFieldConfigs(tAdd);
+  const degreeName = entry.degreeId
+    ? (DEGREE_DEFINITIONS.find((d) => d.id === entry.degreeId)?.name ?? null)
+    : null;
 
-  // Helper to get review status badge props
   const getReviewStatusBadge = () => {
     if (!entry.reviewStatus) return null;
-
     const statusMap = {
-      APPROVED: {
-        variant: "default" as const,
-        text: t("reviewStatus.approved"),
-        tooltip: t("reviewStatus.tooltip.approved"),
-      },
-      PENDING: {
-        variant: "secondary" as const,
-        text: t("reviewStatus.pendingReview"),
-        tooltip: t("reviewStatus.tooltip.pendingReview"),
-      },
-      NEEDS_REVIEW: {
-        variant: "destructive" as const,
-        text: t("reviewStatus.needsReview"),
-        tooltip: t("reviewStatus.tooltip.needsReview"),
-      },
-      REJECTED: {
-        variant: "destructive" as const,
-        text: t("reviewStatus.rejected"),
-        tooltip: t("reviewStatus.tooltip.rejected"),
-      },
+      APPROVED: { variant: "default" as const, key: "approved" },
+      PENDING: { variant: "secondary" as const, key: "pendingReview" },
+      NEEDS_REVIEW: { variant: "destructive" as const, key: "needsReview" },
+      REJECTED: { variant: "destructive" as const, key: "rejected" },
     };
-
     const status = statusMap[entry.reviewStatus as keyof typeof statusMap];
     if (!status) return null;
-
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Badge variant={status.variant} className="cursor-help">
               <ShieldCheck className="mr-1 h-3 w-3" />
-              {status.text}
+              {t(`reviewStatus.${status.key}`)}
             </Badge>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{status.tooltip}</p>
+            <p>{t(`reviewStatus.tooltip.${status.key}`)}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
   };
 
-  // Handle reporting an entry
   const handleReport = async () => {
     if (hasReported || isReporting) return;
-
     setIsReporting(true);
     setReportError(null);
-
     try {
       const response = await fetch(`/api/entries/${entry.id}/report`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason: reportReason.trim() || undefined }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setHasReported(true);
         setReportModalOpen(false);
         setReportReason("");
-        // Save to localStorage to prevent future reports
-        const reportedEntries = JSON.parse(
-          localStorage.getItem("wagewatchers_reported_entries") || "[]"
-        );
-        if (!reportedEntries.includes(entry.id)) {
-          reportedEntries.push(entry.id);
-          localStorage.setItem("wagewatchers_reported_entries", JSON.stringify(reportedEntries));
+        const reported = JSON.parse(localStorage.getItem("wagewatchers_reported_entries") || "[]");
+        if (!reported.includes(entry.id)) {
+          reported.push(entry.id);
+          localStorage.setItem("wagewatchers_reported_entries", JSON.stringify(reported));
         }
       } else {
         setReportError(data.error || "Failed to report entry");
@@ -195,7 +194,6 @@ export function EntryDetailClient({
     }
   };
 
-  // Fetch comments if entry has a source (external scrape)
   useEffect(() => {
     const fetchComments = async () => {
       if (!entry.isManualEntry && entry.source) {
@@ -214,71 +212,95 @@ export function EntryDetailClient({
         }
       }
     };
-
     fetchComments();
   }, [entry.id, entry.isManualEntry, entry.source]);
 
-  // Check if user has already reported this entry
   useEffect(() => {
-    const reportedEntries = JSON.parse(
-      localStorage.getItem("wagewatchers_reported_entries") || "[]"
-    );
-    if (reportedEntries.includes(entry.id)) {
-      setHasReported(true);
-    }
+    const reported = JSON.parse(localStorage.getItem("wagewatchers_reported_entries") || "[]");
+    if (reported.includes(entry.id)) setHasReported(true);
   }, [entry.id]);
 
+  // ── Benefits formatting ────────────────────────────────────────────────────
+  const formatBenefitValue = (b: EntryBenefitRow): string | null => {
+    const def = BENEFIT_DEF_BY_KEY.get(b.benefitKey);
+    if (!def) return b.valueText ?? (b.valueNumeric != null ? String(b.valueNumeric) : null);
+    if (def.valueType === "boolean") return null;
+    if (def.valueType === "percent") return b.valueNumeric != null ? `${b.valueNumeric}%` : null;
+    if (def.valueType === "enum") return b.valueText ?? null;
+    if (def.valueType === "text") return b.valueText ?? null;
+    // amount
+    if (b.valueNumeric == null) return null;
+    if (def.unit === "days") return `${b.valueNumeric} ${tAdd("benefitUnits.days")}`;
+    const m = money(b.valueNumeric);
+    return def.unit ? `${m} ${tAdd(`benefitUnits.${def.unit}`)}` : m;
+  };
+  const benefitLabel = (key: string) => {
+    const k = `benefitsCatalog.${key}`;
+    const label = tAdd(k);
+    return label === k ? key : label;
+  };
+
+  const equityBenefit = benefits.find((b) => b.benefitKey === "equity");
+  const showEquity = entry.hasEquity === true || !!equityBenefit;
+  const pillBenefits = benefits.filter((b) => b.benefitKey !== "equity");
+  const groupedBenefits = CATEGORY_ORDER.map((cat) => ({
+    cat,
+    items: pillBenefits.filter(
+      (b) => (BENEFIT_DEF_BY_KEY.get(b.benefitKey)?.category ?? "other") === cat
+    ),
+  })).filter((g) => g.items.length > 0);
+  const hasPackage = entry.hasCompanyCar === true || showEquity || pillBenefits.length > 0;
+
+  const primary = getPrimaryComp(entry);
+  const carFuelIcon =
+    entry.companyCarFuelType === "electric"
+      ? PlugZap
+      : entry.companyCarFuelType === "hybrid"
+        ? PlugZap
+        : Fuel;
+
   const reportAction = (
-    <div className="flex flex-col items-start gap-2 sm:items-end">
-      <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" size="sm" disabled={hasReported || isReporting}>
-            <Flag className="mr-2 h-4 w-4" />
-            {isReporting
-              ? t("reporting", { defaultValue: "Reporting..." })
-              : hasReported
-                ? t("reported", { defaultValue: "Reported" })
-                : t("reportEntry", { defaultValue: "Report Entry" })}
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="border-border bg-card">
-          <DialogHeader>
-            <DialogTitle className="text-foreground">
-              {t("reportEntry", { defaultValue: "Report Entry" })}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="report-reason" className="text-muted-foreground">
-                Reason for reporting (optional)
-              </Label>
-              <Textarea
-                id="report-reason"
-                placeholder="Please explain why you're reporting this entry..."
-                value={reportReason}
-                onChange={(e) => setReportReason(e.target.value)}
-                className="mt-2"
-                rows={4}
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setReportModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleReport} disabled={isReporting}>
-                {isReporting ? "Reporting..." : "Report"}
-              </Button>
-            </div>
+    <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" disabled={hasReported || isReporting}>
+          <Flag className="mr-2 h-4 w-4" />
+          {isReporting ? t("reporting") : hasReported ? t("reported") : t("reportEntry")}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="border-border bg-card">
+        <DialogHeader>
+          <DialogTitle className="text-foreground">{t("reportEntry")}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="report-reason" className="text-muted-foreground">
+              {t("reportReasonLabel")}
+            </Label>
+            <Textarea
+              id="report-reason"
+              placeholder={t("reportReasonPlaceholder")}
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              className="mt-2"
+              rows={4}
+            />
           </div>
-        </DialogContent>
-      </Dialog>
-      {reportError && <p className="mt-2 text-sm text-destructive">{reportError}</p>}
-    </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setReportModalOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button variant="destructive" onClick={handleReport} disabled={isReporting}>
+              {isReporting ? t("reporting") : t("reportEntry")}
+            </Button>
+          </div>
+          {reportError && <p className="text-sm text-destructive">{reportError}</p>}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 
   return (
     <PageShell width="lg">
-      {/* Back Button */}
       <Button
         variant="ghost"
         className="mb-4 text-muted-foreground hover:text-foreground"
@@ -291,14 +313,19 @@ export function EntryDetailClient({
         {t("backToDashboard")}
       </Button>
 
-      <PageHeader
-        title={entry.jobTitle || t("untitled")}
-        actions={reportAction}
-        className="mb-6 md:mb-6"
-      />
+      <PageHeader title={entry.jobTitle || t("untitled")} actions={reportAction} className="mb-5" />
 
-      {/* Entry meta badges */}
-      <div className="mb-6 flex flex-wrap gap-2">
+      {/* Identity band — worker type drives the whole record */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <Badge className="bg-brand text-brand-foreground hover:bg-brand">
+          {tAdd(`formOptions.workerType.${workerType}`)}
+        </Badge>
+        {entry.contractType && (
+          <Badge variant="outline" className="border-border text-muted-foreground">
+            {tAdd(`formOptions.contractType.${entry.contractType}`)}
+            {entry.contractDurationMonths ? ` · ${entry.contractDurationMonths}m` : ""}
+          </Badge>
+        )}
         {entry.country && (
           <Badge variant="outline" className="border-border text-muted-foreground">
             <MapPin className="mr-1 h-3 w-3" />
@@ -308,7 +335,7 @@ export function EntryDetailClient({
         {entry.sector && (
           <Badge variant="outline" className="border-border text-muted-foreground">
             <Briefcase className="mr-1 h-3 w-3" />
-            {entry.sector}
+            {getFieldDisplayValue("sector", entry.sector, fieldConfigs, tAdd)}
           </Badge>
         )}
         <Badge variant="outline" className="border-border text-muted-foreground">
@@ -318,74 +345,194 @@ export function EntryDetailClient({
         {getReviewStatusBadge()}
       </div>
 
-      {/* Salary Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card className="border-border bg-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center text-sm font-medium text-muted-foreground">
-              <Coins className="mr-2 h-4 w-4" />
-              {t("grossSalary", { symbol })}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="font-mono text-2xl font-bold text-foreground">
-              {formatSalaryWithPreferences(
-                entry.grossSalary,
-                entry.currency,
-                false,
-                preferences.currency,
-                preferences.period,
-                locale,
-                false
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border bg-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center text-sm font-medium text-muted-foreground">
-              <Coins className="mr-2 h-4 w-4" />
-              {t("netSalary", { symbol })}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="font-mono text-2xl font-bold text-foreground">
-              {formatSalaryWithPreferences(
-                entry.netSalary,
-                entry.currency,
-                false,
-                preferences.currency,
-                preferences.period,
-                locale,
-                false
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border bg-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center text-sm font-medium text-muted-foreground">
-              <TrendingUp className="mr-2 h-4 w-4" />
-              {t("netCompensation", { symbol })}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="font-mono text-2xl font-bold text-foreground">
-              {formatSalaryWithPreferences(
-                entry.netCompensation,
-                entry.currency,
-                false,
-                preferences.currency,
-                preferences.period,
-                locale,
-                false
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* ── Compensation statement (worker-type aware) ── */}
+      <Card className="mb-6 overflow-hidden border-border bg-card">
+        <div className="border-b border-dashed border-border bg-muted/30 px-6 py-3">
+          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            {t("compensation")}
+            {entry.salaryBasis ? ` · ${tAdd(`formOptions.salaryBasis.${entry.salaryBasis}`)}` : ""}
+          </span>
+        </div>
+        <CardContent className="pt-6">
+          {primary ? (
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <p className="mb-1 text-sm text-muted-foreground">
+                  {t(`headline.${primary.labelKey}`)}
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="font-mono text-4xl font-bold tracking-tight text-foreground">
+                    {primary.kind === "rate" ? flat(primary.amount) : money(primary.amount)}
+                  </span>
+                  {primary.kind === "rate" && (
+                    <span className="font-mono text-base text-muted-foreground">
+                      {tAdd(`benefitUnits.${primary.unitKey}`)}
+                    </span>
+                  )}
+                </div>
+              </div>
 
-      {/* Personal Information */}
+              {/* Secondary figures per worker type */}
+              <div className="flex flex-wrap gap-x-8 gap-y-2">
+                {workerType === "freelancer" && (
+                  <>
+                    {entry.clientDayBudget != null && (
+                      <MiniStat
+                        label={t("headline.clientBudget")}
+                        value={`${flat(entry.clientDayBudget)} ${tAdd("benefitUnits.perDay")}`}
+                      />
+                    )}
+                    {entry.agencyCutPercent != null && (
+                      <MiniStat
+                        label={t("headline.agencyCut")}
+                        value={`${entry.agencyCutPercent}%`}
+                      />
+                    )}
+                  </>
+                )}
+                {(workerType === "whiteCollar" ||
+                  workerType === "intern" ||
+                  workerType === "blueCollar") && (
+                  <>
+                    {entry.netSalary != null && primary.labelKey !== "netSalary" && (
+                      <MiniStat label={t("netSalary", { symbol })} value={money(entry.netSalary)} />
+                    )}
+                    {entry.netCompensation != null && entry.netCompensation > 0 && (
+                      <MiniStat
+                        label={t("netCompensation", { symbol })}
+                        value={money(entry.netCompensation)}
+                      />
+                    )}
+                  </>
+                )}
+                {workerType === "phdResearcher" &&
+                  entry.virtualGrossSalary != null &&
+                  primary.labelKey !== "virtualGross" && (
+                    <MiniStat
+                      label={t("headline.virtualGross")}
+                      value={money(entry.virtualGrossSalary)}
+                    />
+                  )}
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">{t("noCompensation")}</p>
+          )}
+
+          {/* Fixed vs variable split bar (salaried) */}
+          {entry.fixedGrossSalary != null &&
+            entry.variableGrossSalary != null &&
+            entry.fixedGrossSalary + entry.variableGrossSalary > 0 && (
+              <div className="mt-6">
+                <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
+                  <span>
+                    {tAdd("sections.salary.fixedGrossSalary", { symbol })}:{" "}
+                    {money(entry.fixedGrossSalary)}
+                  </span>
+                  <span>
+                    {tAdd("sections.salary.variableGrossSalary", { symbol })}:{" "}
+                    {money(entry.variableGrossSalary)}
+                  </span>
+                </div>
+                <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full bg-brand"
+                    style={{
+                      width: `${(entry.fixedGrossSalary / (entry.fixedGrossSalary + entry.variableGrossSalary)) * 100}%`,
+                    }}
+                  />
+                  <div className="h-full bg-brand/40" style={{ flex: 1 }} />
+                </div>
+              </div>
+            )}
+        </CardContent>
+      </Card>
+
+      {/* ── The package: car, equity, benefits ── */}
+      <Card className="mb-6 border-border bg-card">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center text-foreground">
+            <Gift className="mr-2 h-5 w-5" />
+            {t("packageTitle")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Company car callout */}
+          {entry.hasCompanyCar === true && (
+            <Callout icon={Car} title={tAdd("sections.benefits.hasCompanyCar")}>
+              <span className="font-medium text-foreground">
+                {entry.companyCarModel || tAdd("sections.benefits.hasCompanyCar")}
+              </span>
+              {entry.companyCarFuelType && (
+                <Chip icon={carFuelIcon}>
+                  {tAdd(`formOptions.carFuelType.${entry.companyCarFuelType}`)}
+                </Chip>
+              )}
+              {entry.companyCarCardScope && (
+                <Chip icon={Globe}>
+                  {tAdd(`formOptions.carCardScope.${entry.companyCarCardScope}`)}
+                </Chip>
+              )}
+            </Callout>
+          )}
+
+          {/* Equity callout */}
+          {showEquity && (
+            <Callout icon={Sparkles} title={tAdd("sections.benefits.hasEquity")}>
+              {equityBenefit?.valueNumeric != null && (
+                <span className="font-mono font-medium text-foreground">
+                  {money(equityBenefit.valueNumeric)} {tAdd("benefitUnits.perYear")}
+                </span>
+              )}
+              {equityBenefit?.valueText && <Chip>{equityBenefit.valueText}</Chip>}
+            </Callout>
+          )}
+
+          {/* Catalog benefit pills, grouped by category */}
+          {groupedBenefits.map((g) => (
+            <div key={g.cat}>
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                {tAdd(`benefitCategories.${g.cat}`)}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {g.items.map((b) => {
+                  const val = formatBenefitValue(b);
+                  return (
+                    <span
+                      key={b.benefitKey}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-sm"
+                    >
+                      <span className="text-foreground">{benefitLabel(b.benefitKey)}</span>
+                      {val && <span className="font-mono text-xs text-brand">{val}</span>}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {shouldShow("otherBenefits") && entry.otherBenefits && (
+            <div className="border-t border-border pt-3">
+              <p className="mb-1 text-sm font-medium text-muted-foreground">{t("otherBenefits")}</p>
+              <p className="text-foreground">{entry.otherBenefits}</p>
+            </div>
+          )}
+          {shouldShow("otherInsurances") && entry.otherInsurances && (
+            <div className={cn(entry.otherBenefits ? "" : "border-t border-border pt-3")}>
+              <p className="mb-1 text-sm font-medium text-muted-foreground">
+                {t("otherInsurances")}
+              </p>
+              <p className="text-foreground">{entry.otherInsurances}</p>
+            </div>
+          )}
+
+          {!hasPackage && !entry.otherBenefits && !entry.otherInsurances && (
+            <p className="text-sm text-muted-foreground">{t("noBenefits")}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ── Profile (personal + employer) ── */}
       <Card className="mb-6 border-border bg-card">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-foreground">
@@ -394,59 +541,27 @@ export function EntryDetailClient({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <InfoItem
               label={t("age")}
+              value={entry.age != null ? `${entry.age} ${t("years")}` : undefined}
+            />
+            <InfoItem
+              label={t("workExperience")}
               value={
-                entry.age !== null && entry.age !== undefined
-                  ? `${entry.age} ${t("years")}`
-                  : undefined
+                entry.workExperience != null ? `${entry.workExperience} ${t("years")}` : undefined
               }
             />
             <InfoItem
               label={t("education")}
               value={getFieldDisplayValue("education", entry.education, fieldConfigs, tAdd)}
             />
-            <InfoItem
-              label={t("workExperience")}
-              value={
-                entry.workExperience !== null && entry.workExperience !== undefined
-                  ? `${entry.workExperience} ${t("years")}`
-                  : undefined
-              }
-            />
+            {degreeName && <InfoItem label={tAdd("sections.personal.degree")} value={degreeName} />}
             <InfoItem
               label={t("civilStatus")}
               value={getFieldDisplayValue("civilStatus", entry.civilStatus, fieldConfigs, tAdd)}
             />
             <InfoItem label={t("dependents")} value={entry.dependents?.toString()} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Job Information */}
-      <Card className="mb-6 border-border bg-card">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-foreground">
-            <Briefcase className="mr-2 h-5 w-5" />
-            {t("jobInfo")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InfoItem label={t("jobTitle")} value={entry.jobTitle} />
-            <InfoItem
-              label={t("sector")}
-              value={getFieldDisplayValue("sector", entry.sector, fieldConfigs, tAdd)}
-            />
-            <InfoItem
-              label={t("seniority")}
-              value={
-                entry.seniority !== null && entry.seniority !== undefined
-                  ? `${entry.seniority} ${t("years")}`
-                  : undefined
-              }
-            />
             <InfoItem
               label={t("employeeCount")}
               value={getFieldDisplayValue("employeeCount", entry.employeeCount, fieldConfigs, tAdd)}
@@ -454,12 +569,22 @@ export function EntryDetailClient({
             <InfoItem
               label={t("multinational")}
               value={
-                entry.multinational !== null
-                  ? entry.multinational
+                entry.multinational != null ? (entry.multinational ? t("yes") : t("no")) : undefined
+              }
+            />
+            <InfoItem
+              label={tAdd("sections.employer.publiclyListed")}
+              value={
+                entry.publiclyListed != null
+                  ? entry.publiclyListed
                     ? t("yes")
                     : t("no")
                   : undefined
               }
+            />
+            <InfoItem
+              label={t("seniority")}
+              value={entry.seniority != null ? `${entry.seniority} ${t("years")}` : undefined}
             />
           </div>
           {entry.jobDescription && (
@@ -473,7 +598,7 @@ export function EntryDetailClient({
         </CardContent>
       </Card>
 
-      {/* Work Schedule */}
+      {/* ── Work & schedule ── */}
       <Card className="mb-6 border-border bg-card">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-foreground">
@@ -482,11 +607,11 @@ export function EntryDetailClient({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <InfoItem
               label={t("officialHours")}
               value={
-                entry.officialHours !== null && entry.officialHours !== undefined
+                entry.officialHours != null
                   ? `${entry.officialHours} ${t("hoursPerWeek")}`
                   : undefined
               }
@@ -494,141 +619,23 @@ export function EntryDetailClient({
             <InfoItem
               label={t("averageHours")}
               value={
-                entry.averageHours !== null && entry.averageHours !== undefined
+                entry.averageHours != null
                   ? `${entry.averageHours} ${t("hoursPerWeek")}`
                   : undefined
               }
             />
             <InfoItem
               label={t("vacationDays")}
-              value={
-                entry.vacationDays !== null && entry.vacationDays !== undefined
-                  ? `${entry.vacationDays} ${t("days")}`
-                  : undefined
-              }
+              value={entry.vacationDays != null ? `${entry.vacationDays} ${t("days")}` : undefined}
             />
             <InfoItem
               label={t("teleworkDays")}
               value={
-                entry.teleworkDays !== null && entry.teleworkDays !== undefined
-                  ? `${entry.teleworkDays} ${t("daysPerWeek")}`
-                  : undefined
+                entry.teleworkDays != null ? `${entry.teleworkDays} ${t("daysPerWeek")}` : undefined
               }
             />
             <InfoItem label={t("shiftDescription")} value={entry.shiftDescription} />
             <InfoItem label={t("onCall")} value={entry.onCall} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Benefits */}
-      <Card className="mb-6 border-border bg-card">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-foreground">
-            <Gift className="mr-2 h-5 w-5" />
-            {t("benefits")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {shouldShow("thirteenthMonth") && (
-              <InfoItem
-                label={t("thirteenthMonth")}
-                value={getFieldDisplayValue(
-                  "thirteenthMonth",
-                  entry.thirteenthMonth,
-                  fieldConfigs,
-                  tAdd
-                )}
-              />
-            )}
-            {shouldShow("mealVouchers") && (
-              <InfoItem
-                label={t("mealVouchers", { symbol })}
-                value={
-                  entry.mealVouchers !== null && entry.mealVouchers !== undefined
-                    ? formatSalaryWithPreferences(
-                        entry.mealVouchers,
-                        entry.currency,
-                        false,
-                        preferences.currency,
-                        preferences.period,
-                        locale,
-                        false
-                      )
-                    : undefined
-                }
-              />
-            )}
-            {shouldShow("ecoCheques") && (
-              <InfoItem
-                label={t("ecoCheques", { symbol })}
-                value={
-                  entry.ecoCheques !== null && entry.ecoCheques !== undefined
-                    ? formatSalaryWithPreferences(
-                        entry.ecoCheques,
-                        entry.currency,
-                        false,
-                        preferences.currency,
-                        preferences.period,
-                        locale,
-                        false
-                      )
-                    : undefined
-                }
-              />
-            )}
-            {shouldShow("groupInsurance") && (
-              <InfoItem label={t("groupInsurance")} value={entry.groupInsurance} />
-            )}
-            {shouldShow("otherInsurances") && (
-              <InfoItem label={t("otherInsurances")} value={entry.otherInsurances} />
-            )}
-          </div>
-          {shouldShow("otherBenefits") && entry.otherBenefits && (
-            <div className="mt-4 border-t border-border pt-4">
-              <p className="mb-2 text-sm font-medium text-muted-foreground">{t("otherBenefits")}</p>
-              <p className="text-foreground">{entry.otherBenefits}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Location & Commute */}
-      <Card className="mb-6 border-border bg-card">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-foreground">
-            <MapPin className="mr-2 h-5 w-5" />
-            {t("locationCommute")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InfoItem label={t("workCity")} value={entry.workCity} />
-            <InfoItem
-              label={t("commuteDistance")}
-              value={
-                entry.commuteDistance !== null && entry.commuteDistance !== undefined
-                  ? `${entry.commuteDistance} km`
-                  : undefined
-              }
-            />
-            <InfoItem label={t("commuteMethod")} value={entry.commuteMethod} />
-            <InfoItem label={t("commuteCompensation")} value={entry.commuteCompensation} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Work Environment */}
-      <Card className="mb-6 border-border bg-card">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-foreground">
-            <Building className="mr-2 h-5 w-5" />
-            {t("workEnvironment")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InfoItem
               label={t("dayOffEase")}
               value={getFieldDisplayValue("dayOffEase", entry.dayOffEase, fieldConfigs, tAdd)}
@@ -639,10 +646,70 @@ export function EntryDetailClient({
             />
             <InfoItem label={t("reports")} value={entry.reports?.toString()} />
           </div>
+          {entry.jobSatisfaction != null && (
+            <div className="mt-5 border-t border-border pt-4">
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+                  <Smile className="h-4 w-4" />
+                  {tAdd("sections.workLife.jobSatisfaction")}
+                </span>
+                <span className="font-mono text-sm text-foreground">
+                  {entry.jobSatisfaction}/10
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-brand"
+                  style={{ width: `${(entry.jobSatisfaction / 10) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Additional Notes */}
+      {/* ── Location & commute ── */}
+      <Card className="mb-6 border-border bg-card">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center text-foreground">
+            <MapPin className="mr-2 h-5 w-5" />
+            {t("locationCommute")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {entry.residenceCountry && entry.residenceCountry !== entry.country && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 text-sm">
+              <Globe className="h-4 w-4 text-brand" />
+              <span className="text-foreground">
+                {t("crossBorder", { residence: entry.residenceCountry, work: entry.country ?? "" })}
+              </span>
+            </div>
+          )}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <InfoItem label={t("workCity")} value={entry.workCity} />
+            {entry.workProvince && (
+              <InfoItem label={tAdd("sections.commute.workProvince")} value={entry.workProvince} />
+            )}
+            <InfoItem
+              label={t("commuteDistance")}
+              value={
+                entry.commuteDistance != null
+                  ? `${entry.commuteDistance} ${entry.commuteUnit === "minutes" ? "min" : "km"}`
+                  : undefined
+              }
+            />
+            {entry.commuteTimeMinutes != null && (
+              <InfoItem
+                label={tAdd("sections.commute.commuteTimeMinutes")}
+                value={`${entry.commuteTimeMinutes} min`}
+              />
+            )}
+            <InfoItem label={t("commuteMethod")} value={entry.commuteMethod} />
+            <InfoItem label={t("commuteCompensation")} value={entry.commuteCompensation} />
+          </div>
+        </CardContent>
+      </Card>
+
       {entry.extraNotes && (
         <Card className="mb-6 border-border bg-card">
           <CardHeader className="pb-2">
@@ -654,15 +721,12 @@ export function EntryDetailClient({
           <CardContent>
             <div
               className="prose max-w-none text-foreground dark:prose-invert"
-              dangerouslySetInnerHTML={{
-                __html: entry.extraNotes,
-              }}
+              dangerouslySetInnerHTML={{ __html: entry.extraNotes }}
             />
           </CardContent>
         </Card>
       )}
 
-      {/* Comments Section - Only for external sources */}
       {!entry.isManualEntry && entry.source && (
         <div className="mb-6">
           <CommentSection
@@ -678,18 +742,51 @@ export function EntryDetailClient({
   );
 }
 
+function MiniStat({ label, value }: Readonly<{ label: string; value: string }>) {
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="font-mono text-lg font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function Callout({
+  icon: Icon,
+  title,
+  children,
+}: Readonly<{ icon: React.ElementType; title: string; children: React.ReactNode }>) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/30 px-4 py-3">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="mr-1 text-sm font-medium text-muted-foreground">{title}</span>
+      {children}
+    </div>
+  );
+}
+
+function Chip({
+  icon: Icon,
+  children,
+}: Readonly<{ icon?: React.ElementType; children: React.ReactNode }>) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-foreground">
+      {Icon && <Icon className="h-3 w-3 text-muted-foreground" />}
+      {children}
+    </span>
+  );
+}
+
 function InfoItem({
   label,
   value,
-}: Readonly<{
-  label: string;
-  value: string | number | null | undefined;
-}>) {
-  const displayValue = value == null || value === "" ? "/" : value;
+}: Readonly<{ label: string; value: string | number | null | undefined }>) {
   return (
     <div>
       <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
-      <p className="text-foreground">{displayValue}</p>
+      <p className="text-foreground">{value == null || value === "" ? "/" : value}</p>
     </div>
   );
 }

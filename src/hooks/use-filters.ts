@@ -13,6 +13,9 @@ export interface FilterState {
   selectedCountries: string[];
   selectedSectors: string[];
   selectedCities: string[];
+  selectedWorkerTypes: string[];
+  hasCompanyCar: boolean | null; // null = any
+  hasEquity: boolean | null; // null = any
   minAge: number | null;
   maxAge: number | null;
   minWorkExperience: number | null;
@@ -24,10 +27,17 @@ export interface FilterState {
   searchQuery: string;
 }
 
+// Legacy (v1) rows have no workerType; per product decision they count as
+// white-collar for filtering and comparison.
+const effectiveWorkerType = (wt: string | null | undefined) => wt ?? "whiteCollar";
+
 export interface FilterActions {
   setSelectedCountries: (countries: string[]) => void;
   setSelectedSectors: (sectors: string[]) => void;
   setSelectedCities: (cities: string[]) => void;
+  setSelectedWorkerTypes: (workerTypes: string[]) => void;
+  setHasCompanyCar: (value: boolean | null) => void;
+  setHasEquity: (value: boolean | null) => void;
   setMinAge: (age: number | null) => void;
   setMaxAge: (age: number | null) => void;
   setMinWorkExperience: (experience: number | null) => void;
@@ -44,7 +54,16 @@ export interface FilterOptions {
   countries: { value: string; label: string }[];
   sectors: { value: string; label: string }[];
   cities: { value: string; label: string }[];
+  workerTypes: { value: string; label: string }[];
 }
+
+export const WORKER_TYPE_VALUES = [
+  "whiteCollar",
+  "blueCollar",
+  "freelancer",
+  "intern",
+  "phdResearcher",
+] as const;
 
 export interface MaxFilterValues {
   maxAge: number;
@@ -83,6 +102,13 @@ export function useFilters(
   const [selectedCities, setSelectedCities] = useState<string[]>(
     initialFilters?.selectedCities || []
   );
+  const [selectedWorkerTypes, setSelectedWorkerTypes] = useState<string[]>(
+    initialFilters?.selectedWorkerTypes || []
+  );
+  const [hasCompanyCar, setHasCompanyCar] = useState<boolean | null>(
+    initialFilters?.hasCompanyCar ?? null
+  );
+  const [hasEquity, setHasEquity] = useState<boolean | null>(initialFilters?.hasEquity ?? null);
   const [minAge, setMinAge] = useState<number | null>(initialFilters?.minAge || null);
   const [maxAge, setMaxAge] = useState<number | null>(initialFilters?.maxAge || null);
   const [minWorkExperience, setMinWorkExperience] = useState<number | null>(
@@ -187,8 +213,15 @@ export function useFilters(
       new Set(allEntries.map((entry) => entry.sector).filter(Boolean))
     ).sort((a, b) => (a as string).localeCompare(b as string));
 
+    // City options follow the selected countries: if a country is chosen, only
+    // offer cities that actually occur in those countries (e.g. picking Belgium
+    // shouldn't still list Amsterdam).
+    const cityScope =
+      selectedCountries.length > 0
+        ? allEntries.filter((entry) => selectedCountries.includes(entry.country || ""))
+        : allEntries;
     const uniqueCities = Array.from(
-      new Set(allEntries.map((entry) => entry.workCity).filter(Boolean))
+      new Set(cityScope.map((entry) => entry.workCity).filter(Boolean))
     ).sort((a, b) => (a as string).localeCompare(b as string));
 
     return {
@@ -204,8 +237,10 @@ export function useFilters(
         value: city as string,
         label: city as string,
       })),
+      // Worker types are a fixed enum; labels are localized in the UI layer.
+      workerTypes: WORKER_TYPE_VALUES.map((wt) => ({ value: wt, label: wt })),
     };
-  }, [allEntries]);
+  }, [allEntries, selectedCountries]);
 
   // Filter entries based on all criteria
   const filteredEntries = useMemo(() => {
@@ -224,6 +259,28 @@ export function useFilters(
     // City filter
     if (selectedCities.length > 0) {
       filtered = filtered.filter((entry) => selectedCities.includes(entry.workCity || ""));
+    }
+
+    // Worker type filter (legacy rows count as white-collar)
+    if (selectedWorkerTypes.length > 0) {
+      filtered = filtered.filter((entry) =>
+        selectedWorkerTypes.includes(effectiveWorkerType(entry.workerType))
+      );
+    }
+
+    // Company car filter — legacy rows (null) are excluded from both yes/no
+    // because they never captured this; we don't infer it.
+    if (hasCompanyCar !== null) {
+      filtered = filtered.filter((entry) =>
+        hasCompanyCar ? entry.hasCompanyCar === true : entry.hasCompanyCar === false
+      );
+    }
+
+    // Equity filter — same null-exclusion rationale as company car.
+    if (hasEquity !== null) {
+      filtered = filtered.filter((entry) =>
+        hasEquity ? entry.hasEquity === true : entry.hasEquity === false
+      );
     }
 
     // Age range filter
@@ -326,6 +383,9 @@ export function useFilters(
     selectedCountries,
     selectedSectors,
     selectedCities,
+    selectedWorkerTypes,
+    hasCompanyCar,
+    hasEquity,
     minAge,
     maxAge,
     minWorkExperience,
@@ -345,6 +405,9 @@ export function useFilters(
       selectedCountries.length +
       selectedSectors.length +
       selectedCities.length +
+      selectedWorkerTypes.length +
+      (hasCompanyCar === null ? 0 : 1) +
+      (hasEquity === null ? 0 : 1) +
       (minAge === null ? 0 : 1) +
       (maxAge === null ? 0 : 1) +
       (minWorkExperience === null ? 0 : 1) +
@@ -359,6 +422,9 @@ export function useFilters(
     selectedCountries.length,
     selectedSectors.length,
     selectedCities.length,
+    selectedWorkerTypes.length,
+    hasCompanyCar,
+    hasEquity,
     minAge,
     maxAge,
     minWorkExperience,
@@ -416,6 +482,9 @@ export function useFilters(
     setSelectedCountries([]);
     setSelectedSectors([]);
     setSelectedCities([]);
+    setSelectedWorkerTypes([]);
+    setHasCompanyCar(null);
+    setHasEquity(null);
     setMinAge(null);
     setMaxAge(null);
     setMinWorkExperience(null);
@@ -431,6 +500,9 @@ export function useFilters(
     selectedCountries,
     selectedSectors,
     selectedCities,
+    selectedWorkerTypes,
+    hasCompanyCar,
+    hasEquity,
     minAge,
     maxAge,
     minWorkExperience,
@@ -446,6 +518,9 @@ export function useFilters(
     setSelectedCountries,
     setSelectedSectors,
     setSelectedCities,
+    setSelectedWorkerTypes,
+    setHasCompanyCar,
+    setHasEquity,
     setMinAge,
     setMaxAge,
     setMinWorkExperience,

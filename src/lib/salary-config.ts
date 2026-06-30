@@ -51,8 +51,9 @@ export const SUBREDDIT_CONFIGS: Record<string, any> = {
   },
 };
 
+// Countries a user can submit an entry for = countries that have a form config.
 export const getAllCountries = (): string[] => {
-  return Array.from(new Set(Object.values(SUBREDDIT_CONFIGS).map((config) => config.country)));
+  return Object.keys(COUNTRY_FORM_CONFIGS);
 };
 
 export interface FormSection {
@@ -73,14 +74,19 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
   Belgium: {
     sections: [
       {
+        title: "Employment Type",
+        description: "How you are employed — this tailors the rest of the form",
+        fields: ["workerType", "contractType", "contractDurationMonths"],
+      },
+      {
         title: "Personal Information",
         description: "Basic personal details",
-        fields: ["age", "education", "workExperience", "civilStatus", "dependents"],
+        fields: ["age", "education", "degreeId", "workExperience", "civilStatus", "dependents"],
       },
       {
         title: "Employer Profile",
         description: "Information about your employer",
-        fields: ["sector", "employeeCount", "multinational"],
+        fields: ["sector", "employeeCount", "multinational", "publiclyListed"],
       },
       {
         title: "Job Profile",
@@ -95,7 +101,20 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
       {
         title: "Salary",
         description: "Your compensation details",
-        fields: ["grossSalary", "netSalary", "netCompensation"],
+        fields: [
+          "salaryBasis",
+          "grossSalary",
+          "netSalary",
+          "netCompensation",
+          "fixedGrossSalary",
+          "variableGrossSalary",
+          "hourlyRate",
+          "dayRate",
+          "agencyCutPercent",
+          "clientDayBudget",
+          "bursaryAmount",
+          "virtualGrossSalary",
+        ],
       },
       {
         title: "Benefits",
@@ -105,6 +124,11 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
           "mealVouchers",
           "ecoCheques",
           "groupInsurance",
+          "hasCompanyCar",
+          "companyCarModel",
+          "companyCarFuelType",
+          "companyCarCardScope",
+          "hasEquity",
           "otherInsurances",
           "otherBenefits",
         ],
@@ -112,12 +136,112 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
       {
         title: "Commute",
         description: "Your daily commute details",
-        fields: ["workCity", "commuteDistance", "commuteMethod", "commuteCompensation"],
+        fields: [
+          "locationGranularity",
+          "workProvince",
+          "residenceCountry",
+          "workCity",
+          "commuteUnit",
+          "commuteDistance",
+          "commuteTimeMinutes",
+          "commuteMethod",
+          "commuteCompensation",
+        ],
       },
       {
         title: "Work-Life Balance",
         description: "Work-life balance assessment",
-        fields: ["teleworkDays", "vacationDays", "dayOffEase", "stressLevel"],
+        fields: ["teleworkDays", "vacationDays", "dayOffEase", "stressLevel", "jobSatisfaction"],
+      },
+      {
+        title: "Additional Notes",
+        description: "Optional notes for this entry",
+        fields: ["extraNotes"],
+      },
+    ],
+    salaryValidation: {
+      netTooLowThreshold: 0.4,
+      netTooCloseThreshold: 0.95,
+    },
+  },
+  Netherlands: {
+    sections: [
+      {
+        title: "Employment Type",
+        description: "How you are employed — this tailors the rest of the form",
+        fields: ["workerType", "contractType", "contractDurationMonths"],
+      },
+      {
+        title: "Personal Information",
+        description: "Basic personal details",
+        fields: ["age", "education", "degreeId", "workExperience", "civilStatus", "dependents"],
+      },
+      {
+        title: "Employer Profile",
+        description: "Information about your employer",
+        fields: ["sector", "employeeCount", "multinational", "publiclyListed"],
+      },
+      {
+        title: "Job Profile",
+        description: "Details about your job position",
+        fields: ["jobTitle", "seniority", "reports", "jobDescription"],
+      },
+      {
+        title: "Working Hours",
+        description: "Your working schedule and hours",
+        fields: ["officialHours", "averageHours", "shiftDescription", "onCall"],
+      },
+      {
+        title: "Salary",
+        description: "Your compensation details",
+        fields: [
+          "salaryBasis",
+          "grossSalary",
+          "netSalary",
+          "netCompensation",
+          "fixedGrossSalary",
+          "variableGrossSalary",
+          "hourlyRate",
+          "dayRate",
+          "agencyCutPercent",
+          "clientDayBudget",
+          "bursaryAmount",
+          "virtualGrossSalary",
+        ],
+      },
+      {
+        // NL benefits come from the catalog (vakantiegeld, 30%-ruling, pension,
+        // travel/home-work allowance, …) — no Belgian meal-voucher/eco-cheque columns.
+        title: "Benefits",
+        description: "Additional benefits and perks",
+        fields: [
+          "hasCompanyCar",
+          "companyCarModel",
+          "companyCarFuelType",
+          "companyCarCardScope",
+          "hasEquity",
+          "otherInsurances",
+          "otherBenefits",
+        ],
+      },
+      {
+        title: "Commute",
+        description: "Your daily commute details",
+        fields: [
+          "locationGranularity",
+          "residenceCountry",
+          "workCity",
+          "commuteUnit",
+          "commuteDistance",
+          "commuteTimeMinutes",
+          "commuteMethod",
+          "commuteCompensation",
+        ],
+      },
+      {
+        title: "Work-Life Balance",
+        description: "Work-life balance assessment",
+        fields: ["teleworkDays", "vacationDays", "dayOffEase", "stressLevel", "jobSatisfaction"],
       },
       {
         title: "Additional Notes",

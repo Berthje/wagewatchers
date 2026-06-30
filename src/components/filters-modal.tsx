@@ -16,6 +16,47 @@ import { Slider } from "@/components/ui/slider";
 import { Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSalaryDisplay } from "@/contexts/salary-display-context";
+import { cn } from "@/lib/utils";
+
+// Any / Yes / No toggle for nullable boolean filters (null = any).
+function TriStateToggle({
+  value,
+  onChange,
+  labels,
+}: {
+  readonly value: boolean | null;
+  readonly onChange: (value: boolean | null) => void;
+  readonly labels: { any: string; yes: string; no: string };
+}) {
+  const options: { v: boolean | null; label: string }[] = [
+    { v: null, label: labels.any },
+    { v: true, label: labels.yes },
+    { v: false, label: labels.no },
+  ];
+  return (
+    <div className="inline-flex w-full rounded-lg border border-input p-0.5">
+      {options.map((opt) => {
+        const selected = value === opt.v;
+        return (
+          <button
+            key={String(opt.v)}
+            type="button"
+            onClick={() => onChange(opt.v)}
+            aria-pressed={selected}
+            className={cn(
+              "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+              selected
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 interface FiltersModalProps {
   // Country filters
@@ -32,6 +73,15 @@ interface FiltersModalProps {
   selectedSectors: string[];
   onSectorsChange: (sectors: string[]) => void;
   availableSectors: { value: string; label: string }[];
+
+  // Worker type + package filters (v2)
+  selectedWorkerTypes?: string[];
+  onWorkerTypesChange?: (workerTypes: string[]) => void;
+  availableWorkerTypes?: { value: string; label: string }[];
+  hasCompanyCar?: boolean | null;
+  onHasCompanyCarChange?: (value: boolean | null) => void;
+  hasEquity?: boolean | null;
+  onHasEquityChange?: (value: boolean | null) => void;
 
   // Age filters
   minAge?: number | null;
@@ -75,6 +125,13 @@ export function FiltersModal({
   selectedSectors,
   onSectorsChange,
   availableSectors,
+  selectedWorkerTypes,
+  onWorkerTypesChange,
+  availableWorkerTypes,
+  hasCompanyCar,
+  onHasCompanyCarChange,
+  hasEquity,
+  onHasEquityChange,
   minAge,
   maxAge,
   onMinAgeChange,
@@ -98,8 +155,18 @@ export function FiltersModal({
   activeFilterCount,
 }: Readonly<FiltersModalProps>) {
   const t = useTranslations("dashboard");
+  const tAdd = useTranslations("add");
   const { preferences } = useSalaryDisplay();
   const [open, setOpen] = useState(false);
+
+  // Localize worker-type option labels (values come from the filter hook).
+  const workerTypeOptions = (availableWorkerTypes ?? []).map((o) => ({
+    value: o.value,
+    label: tAdd(`formOptions.workerType.${o.value}`),
+  }));
+
+  const showCompensationSection =
+    !!onWorkerTypesChange || !!onHasCompanyCarChange || !!onHasEquityChange;
 
   // Helper function to get currency symbol
   const getCurrencySymbol = () => {
@@ -177,6 +244,9 @@ export function FiltersModal({
     onCountriesChange([]);
     onCitiesChange([]);
     onSectorsChange([]);
+    onWorkerTypesChange?.([]);
+    onHasCompanyCarChange?.(null);
+    onHasEquityChange?.(null);
     setLocalMinAge(18);
     setLocalMaxAge(maxAgeLimit);
     setLocalMinWorkExp(0);
@@ -293,6 +363,68 @@ export function FiltersModal({
               />
             </div>
           </div>
+
+          {/* Compensation Section (worker type + package flags) */}
+          {showCompensationSection && (
+            <>
+              <div className="border-t border-border" />
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+                  {t("filters.compensationSection")}
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 pl-0">
+                  {onWorkerTypesChange && (
+                    <div className="space-y-2">
+                      <label className="text-sm block font-medium text-foreground">
+                        {t("filters.workerType")}
+                      </label>
+                      <MultiSelect
+                        selectedValues={selectedWorkerTypes ?? []}
+                        onValuesChange={onWorkerTypesChange}
+                        options={workerTypeOptions}
+                        placeholder={t("filters.allWorkerTypes")}
+                        searchPlaceholder={t("filters.search")}
+                        emptyMessage={t("table.noResults")}
+                        selectedLabel={t("filters.workerTypesSelected")}
+                      />
+                    </div>
+                  )}
+                  {onHasCompanyCarChange && (
+                    <div className="space-y-2">
+                      <label className="text-sm block font-medium text-foreground">
+                        {t("filters.companyCar")}
+                      </label>
+                      <TriStateToggle
+                        value={hasCompanyCar ?? null}
+                        onChange={onHasCompanyCarChange}
+                        labels={{
+                          any: t("filters.any"),
+                          yes: t("filters.yes"),
+                          no: t("filters.no"),
+                        }}
+                      />
+                    </div>
+                  )}
+                  {onHasEquityChange && (
+                    <div className="space-y-2">
+                      <label className="text-sm block font-medium text-foreground">
+                        {t("filters.equity")}
+                      </label>
+                      <TriStateToggle
+                        value={hasEquity ?? null}
+                        onChange={onHasEquityChange}
+                        labels={{
+                          any: t("filters.any"),
+                          yes: t("filters.yes"),
+                          no: t("filters.no"),
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Age & Work Experience Section */}
           {minAge !== undefined &&
