@@ -6,6 +6,7 @@ import { generateOwnerToken, getEditableUntilDate } from "@/lib/entry-ownership"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
 import { toTitleCase } from "@/lib/utils/format.utils";
+import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
           }
         }
       } catch (e) {
-        console.error("Token parsing error:", e);
+        logError("Token parsing error", e);
         return NextResponse.json({ error: "Invalid tokens format" }, { status: 400 });
       }
 
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(salaryEntries.createdAt));
     return NextResponse.json(entries);
   } catch (error) {
-    console.error(error);
+    logError("Failed to fetch entries", error);
     return NextResponse.json(
       { error: "Failed to fetch entries" },
       {
@@ -145,7 +146,7 @@ export async function POST(request: NextRequest) {
       ownerToken, // Include token in response for client storage
     });
   } catch (error) {
-    console.error("Failed to create entry:", error);
+    logError("Failed to create entry", error);
 
     // Always return detailed error for debugging
     return NextResponse.json(

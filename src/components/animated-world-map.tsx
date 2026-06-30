@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+import { logError } from "@/lib/logger";
+
 let cachedWorldSvg: string | null = null;
 
-export function AnimatedWorldMap() {
+export function AnimatedWorldMap({
+  colorClassName = "text-muted-foreground",
+}: Readonly<{ colorClassName?: string }>) {
   const [svgContent, setSvgContent] = useState<string>("");
 
   useEffect(() => {
@@ -13,6 +17,10 @@ export function AnimatedWorldMap() {
       setSvgContent(cachedWorldSvg);
       return;
     }
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Fetch the SVG content
     fetch("/world.svg")
@@ -28,17 +36,22 @@ export function AnimatedWorldMap() {
         newSvg.setAttribute("viewBox", "0 0 2000 857");
         newSvg.setAttribute("class", "w-full h-full");
 
-        // Add paths with animation classes
+        // Add paths with a quick staggered draw-on (~3s total for 470 paths)
         paths.forEach((path, index) => {
           const newPath = path.cloneNode(true) as SVGPathElement;
           newPath.setAttribute("class", `world-path path-${index}`);
           newPath.style.stroke = "currentColor";
-          newPath.style.strokeWidth = "0.3";
+          newPath.style.strokeWidth = "0.5";
           newPath.style.fill = "none";
-          newPath.style.strokeDasharray = "1000";
-          newPath.style.strokeDashoffset = "1000";
-          newPath.style.animationDelay = `${index * 0.85}s`;
-          newPath.style.animation = "drawPath 2.5s ease-in-out forwards";
+          if (prefersReducedMotion) {
+            newPath.style.strokeDasharray = "none";
+            newPath.style.strokeDashoffset = "0";
+          } else {
+            newPath.style.strokeDasharray = "1000";
+            newPath.style.strokeDashoffset = "1000";
+            newPath.style.animationDelay = `${index * 0.004}s`;
+            newPath.style.animation = "drawPath 1.6s ease-in-out forwards";
+          }
           newSvg.appendChild(newPath);
         });
 
@@ -56,17 +69,15 @@ export function AnimatedWorldMap() {
         setSvgContent(cachedWorldSvg);
       })
       .catch((error) => {
-        console.error("Error loading world map:", error);
+        logError("Error loading world map:", error);
       });
   }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="w-full h-full text-stone-600">
-        {svgContent ? (
+      <div className={`w-full h-full ${colorClassName}`}>
+        {svgContent && (
           <div dangerouslySetInnerHTML={{ __html: svgContent }} className="w-full h-full" />
-        ) : (
-          <div className="w-full h-full bg-stone-800 animate-pulse" />
         )}
       </div>
     </div>

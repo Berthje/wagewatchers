@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { SalaryEntry } from "@/lib/db/schema";
+import { logError } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,7 @@ export function AdminEntryDetailModal({
           setReports(data.reports || []);
         })
         .catch((error) => {
-          console.error("Error fetching reports:", error);
+          logError("Error fetching reports:", error, { entryId: entry.id });
         })
         .finally(() => {
           setReportsLoading(false);
@@ -370,9 +371,7 @@ export function AdminEntryDetailModal({
                       {reports.map((report, index) => (
                         <div key={report.id} className="border border-stone-600 rounded-lg p-3">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm text-stone-400">
-                              Report #{index + 1}
-                            </span>
+                            <span className="text-sm text-stone-400">Report #{index + 1}</span>
                             <span className="text-sm text-stone-400">
                               {new Date(report.createdAt).toLocaleDateString()}
                             </span>
@@ -382,9 +381,7 @@ export function AdminEntryDetailModal({
                           ) : (
                             <p className="text-stone-400 text-sm italic">No reason provided</p>
                           )}
-                          <div className="mt-2 text-xs text-stone-500">
-                            IP: {report.ipAddress}
-                          </div>
+                          <div className="mt-2 text-xs text-stone-500">IP: {report.ipAddress}</div>
                         </div>
                       ))}
                     </div>

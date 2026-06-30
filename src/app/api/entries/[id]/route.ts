@@ -6,6 +6,7 @@ import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
 import { toTitleCase } from "@/lib/utils/format.utils";
+import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(entry[0]);
   } catch (error) {
-    console.error(error);
+    logError("Failed to fetch entry", error);
     return NextResponse.json({ error: "Failed to fetch entry" }, { status: 500 });
   }
 }
@@ -123,7 +124,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(updatedEntry[0]);
   } catch (error) {
-    console.error("Failed to update entry:", error);
+    logError("Failed to update entry", error);
 
     // Always return detailed error for debugging
     return NextResponse.json(
@@ -186,7 +187,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: "Entry deleted" });
   } catch (error) {
-    console.error(error);
+    logError("Failed to delete entry", error);
     return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
   }
 }

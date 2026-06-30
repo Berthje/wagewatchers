@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { exchangeRates } from "@/lib/db/schema";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { FALLBACK_EXCHANGE_RATES } from "@/lib/config";
+import { logError } from "@/lib/logger";
 
 // Cache rates for 1 hour to avoid frequent DB queries
 export const revalidate = 3600;
@@ -86,7 +87,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    console.error("Error fetching exchange rates:", error);
+    logError("Error fetching exchange rates", error);
 
     // Fallback to default rates on error
     return NextResponse.json({

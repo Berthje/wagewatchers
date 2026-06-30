@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { salaryEntries, entryReports } from "@/lib/db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
+import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ reports });
   } catch (error) {
-    console.error("Error fetching reports:", error);
+    logError("Error fetching reports:", error);
     return NextResponse.json({ error: "Failed to fetch reports" }, { status: 500 });
   }
 }
@@ -63,19 +64,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const existingReport = await db
       .select()
       .from(entryReports)
-      .where(
-        and(
-          eq(entryReports.salaryEntryId, entryId),
-          eq(entryReports.ipAddress, clientIP)
-        )
-      )
+      .where(and(eq(entryReports.salaryEntryId, entryId), eq(entryReports.ipAddress, clientIP)))
       .limit(1);
 
     if (existingReport[0]) {
-      return NextResponse.json(
-        { error: "You have already reported this entry" },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "You have already reported this entry" }, { status: 409 });
     }
 
     // Rate limiting: 30 reports per day per IP
@@ -123,7 +116,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error reporting entry:", error);
+    logError("Error reporting entry:", error);
     return NextResponse.json({ error: "Failed to report entry" }, { status: 500 });
   }
 }

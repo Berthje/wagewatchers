@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { OpenPanelComponent } from '@openpanel/nextjs';
+import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
+import { OpenPanelComponent } from "@openpanel/nextjs";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,6 +14,13 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -125,7 +133,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
+      >
         <OpenPanelComponent
           apiUrl="/api/op"
           cdnUrl="/op1.js"
@@ -134,7 +144,14 @@ export default function RootLayout({
           trackOutgoingLinks={true}
           trackAttributes={true}
         />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

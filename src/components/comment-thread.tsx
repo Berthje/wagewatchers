@@ -31,7 +31,7 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
   return (
     <div className="relative" style={{ marginLeft: depth > 0 ? `${marginLeft}px` : "0" }}>
       {/* Vertical line for nested comments */}
-      {depth > 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-stone-700" />}
+      {depth > 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-border" />}
 
       <div className="mb-3">
         {/* Comment Header */}
@@ -40,7 +40,7 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 w-6 hover:bg-stone-700"
+              className="h-6 w-6 hover:bg-accent"
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
               {isCollapsed ? (
@@ -51,7 +51,7 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
             </Button>
           )}
           {!hasReplies && <div className="w-6" />}
-          <div className="flex items-center gap-2 text-xs text-stone-400">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <User className="h-3 w-3" />
             <span className="font-medium">{comment.author || "Anonymous"}</span>
             <span>•</span>
@@ -69,7 +69,7 @@ function CommentItem({ comment, depth = 0 }: Readonly<CommentThreadProps>) {
         </div>
 
         {/* Comment Body - Always show the comment itself */}
-        <div className="text-sm text-stone-100 whitespace-pre-wrap break-words pl-8 mb-2">
+        <div className="mb-2 whitespace-pre-wrap break-words pl-8 text-sm text-foreground">
           {comment.body}
         </div>
 
@@ -103,10 +103,10 @@ export function CommentSection({
 }: Readonly<CommentSectionProps>) {
   if (isLoading) {
     return (
-      <Card className="bg-stone-800 border-stone-700">
+      <Card className="border-border bg-card">
         <CardContent className="pt-6">
           <div className="flex items-center justify-center py-8">
-            <div className="animate-pulse text-stone-400">Loading comments...</div>
+            <div className="animate-pulse text-muted-foreground">Loading comments...</div>
           </div>
         </CardContent>
       </Card>
@@ -115,9 +115,9 @@ export function CommentSection({
 
   if (!comments || comments.length === 0) {
     return (
-      <Card className="bg-stone-800 border-stone-700">
+      <Card className="border-border bg-card">
         <CardContent className="pt-6">
-          <div className="flex flex-col items-center justify-center py-8 text-stone-400">
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
             <MessageSquare className="h-12 w-12 mb-3 opacity-50" />
             <p>No comments available</p>
           </div>
@@ -127,14 +127,14 @@ export function CommentSection({
   }
 
   return (
-    <Card className="bg-stone-800 border-stone-700">
+    <Card className="border-border bg-card">
       <CardContent>
         {/* Comment Count Header */}
-        <div className="mb-4 pb-4 border-b border-stone-700">
+        <div className="mb-4 border-b border-border pb-4">
           <div className="flex items-center gap-2 mb-2">
-            <MessageSquare className="h-5 w-5 text-stone-400" />
-            <h3 className="text-lg font-semibold text-stone-100">Comments</h3>
-            <Badge variant="outline" className="border-stone-600 text-stone-300">
+            <MessageSquare className="h-5 w-5 text-muted-foreground" />
+            <h3 className="text-lg font-semibold text-foreground">Comments</h3>
+            <Badge variant="outline" className="border-border text-muted-foreground">
               {totalCount}
             </Badge>
           </div>
@@ -146,13 +146,15 @@ export function CommentSection({
                   href={sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-stone-400 hover:text-stone-100 transition-colors w-fit"
+                  className="inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   <span className="underline">
                     {source?.includes("reddit") ? "View Reddit Post" : "View Source"}
                   </span>
-                  {source && <span className="text-xs text-stone-500">Source: {source}</span>}
+                  {source && (
+                    <span className="text-xs text-muted-foreground">Source: {source}</span>
+                  )}
                 </a>
               )}
             </div>

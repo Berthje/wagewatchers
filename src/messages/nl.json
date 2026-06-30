@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "Amerikaanse Dollar ($)",
       "GBP": "Britse Pond (£)"
-    }
+    },
+    "toggleTheme": "Thema wisselen"
   },
   "ui": {
     "commandPalette": "Commando Palet",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Ondersteuning Meerdere Landen",
-        "description": "Salarisgegevens van Belgische gemeenschappen met gelokaliseerde compensatie-inzichten."
+        "description": "Salarisgegevens van Belgische gemeenschappen met gelokaliseerde compensatie-inzichten.",
+        "label": "Dekking"
       },
       "privacy": {
         "title": "Privacygericht",
-        "description": "Anoniem salaris delen met uitgebreide gegevensbescherming. Community-gedreven transparantie."
+        "description": "Anoniem salaris delen met uitgebreide gegevensbescherming. Community-gedreven transparantie.",
+        "label": "Privacy"
       },
       "analysis": {
         "title": "Uitgebreide Analyse",
-        "description": "Gedetailleerde uitsplitsing van vergoedingspakketten, voordelen, werkuren en werk-privé balans."
-      }
+        "description": "Gedetailleerde uitsplitsing van vergoedingspakketten, voordelen, werkuren en werk-privé balans.",
+        "label": "Diepgang"
+      },
+      "eyebrow": "Gemaakt voor eerlijk loon"
     },
-    "footer": "🧡 Community-gedreven salaristransparantie"
+    "footer": "🧡 Community-gedreven salaristransparantie",
+    "eyebrow": "Het cijfer waar niemand over praat",
+    "trust": {
+      "anonymous": "100% anoniem",
+      "free": "Gratis & open source",
+      "community": "Door de community"
+    },
+    "sample": {
+      "title": "Zo ziet de data eruit",
+      "caption": "Voorbeeld ter illustratie"
+    },
+    "cta": {
+      "title": "Ken je waarde. Help anderen die van hen te kennen.",
+      "subtitle": "Voeg je salaris in twee minuten toe — anoniem."
+    }
   },
   "dashboard": {
     "title": "Salaris Dashboard",
@@ -217,7 +236,8 @@
       "resetDisabledTitle": "Maakt al gebruik van standaardkolommen",
       "resetActiveLabel": "Kolommen opnieuw instellen",
       "selectedCount": "{count} geselecteerd"
-    }
+    },
+    "eyebrow": "Verken de data"
   },
   "statistics": {
     "title": "Salaris Statistieken",
@@ -326,6 +346,8 @@
     "worldMapDescription": "Klik op een land met gegevens om de regionale uitsplitsing te zien",
     "provinceMapDescription": "Regionale salarisverdeling over provincies/staten",
     "backToWorld": "Terug naar Wereldweergave",
+    "mapError": "Kon de kaart niet laden. Probeer het opnieuw.",
+    "retry": "Opnieuw proberen",
     "countries": {
       "belgium": "België",
       "netherlands": "Nederland",
@@ -333,7 +355,8 @@
       "france": "Frankrijk"
     },
     "noDataAvailable": "Geen gegevens beschikbaar",
-    "loading": "Laden"
+    "loading": "Laden",
+    "eyebrow": "Geaggregeerde salarisdata"
   },
   "add": {
     "title": "Deel Uw Salaris",
@@ -701,7 +724,13 @@
     "validationSummary": {
       "title": "Gelieve de volgende fouten te corrigeren:",
       "errorCount": "{count, plural, one {1 fout gevonden} other {# fouten gevonden}}"
-    }
+    },
+    "eyebrow": "Voeg je salaris toe, anoniem",
+    "countryFirst": "Selecteer hierboven je land om de salarisvelden voor jouw regio te laden.",
+    "discardTitle": "Wijzigingen verwijderen?",
+    "discardMessage": "Je hebt niet-opgeslagen wijzigingen. Als je nu weggaat, gaan ze verloren.",
+    "discardKeep": "Blijf bewerken",
+    "discardConfirm": "Verwijderen"
   },
   "common": {
     "loading": "Laden...",
@@ -811,7 +840,8 @@
       "instruction": "Bewaar dit ID om de status van uw melding op elk moment te volgen."
     },
     "emailSent": "We hebben een bevestigingsmail naar {email} gestuurd met uw tracking ID en meldingsdetails.",
-    "noEmail": "Gebruik uw tracking ID om de status van uw melding te controleren op de Statuspagina."
+    "noEmail": "Gebruik uw tracking ID om de status van uw melding te controleren op de Statuspagina.",
+    "eyebrow": "Bugs, ideeën & verbeteringen"
   },
   "status": {
     "title": "Rapport Status Controleren",
@@ -866,7 +896,8 @@
     "errors": {
       "empty": "Voer een reporter ID of e-mailadres in",
       "network": "Zoeken naar meldingen mislukt. Probeer het opnieuw."
-    }
+    },
+    "eyebrow": "Volg je melding"
   },
   "donate": {
     "goBack": "Teruggaan",
@@ -931,7 +962,8 @@
     "shareText": "Bekijk WageWatchers - Community-gedreven salaristransparantie in Europese markten!",
     "footerCommunity": "🧡 Community-gedreven salaristransparantie",
     "footerMadeWith": "Gemaakt met ❤️ voor de community •",
-    "footerViewOnGithub": "Bekijk op GitHub"
+    "footerViewOnGithub": "Bekijk op GitHub",
+    "eyebrow": "Steun het project"
   },
   "entryDetail": {
     "backToDashboard": "Terug naar Dashboard",
@@ -1056,7 +1088,8 @@
       "cancel": "Annuleren",
       "confirmDelete": "Ja, Verwijder Inzending",
       "deleting": "Verwijderen..."
-    }
+    },
+    "eyebrow": "Jouw bijdragen"
   },
   "edit": {
     "meta": {
@@ -1093,7 +1126,8 @@
       "success": "Succesvol geabonneerd op de nieuwsbrief!",
       "error": "Abonneren mislukt",
       "networkError": "Netwerkfout. Probeer het opnieuw."
-    }
+    },
+    "eyebrow": "Wat is er nieuw"
   },
   "adminReview": {
     "title": "Wachtrij voor Inzending Review",

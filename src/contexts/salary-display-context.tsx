@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { DEFAULT_SELECTED_COLUMNS } from "@/lib/columns-config";
+import { logError } from "@/lib/logger";
 
 export type SalaryPeriod = "monthly" | "annual";
 export type DisplayCurrency = "EUR" | "USD" | "GBP";
@@ -83,7 +84,7 @@ export function SalaryDisplayProvider({
           }
         }
       } catch (error) {
-        console.error("Failed to fetch exchange rates:", error);
+        logError("Failed to fetch exchange rates", error);
         // Will use default fallback rates
       }
     };
@@ -103,7 +104,7 @@ export function SalaryDisplayProvider({
         });
       }
     } catch (error) {
-      console.error("Failed to load display preferences:", error);
+      logError("Failed to load display preferences", error);
     }
   }, []);
 
@@ -112,7 +113,7 @@ export function SalaryDisplayProvider({
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
     } catch (error) {
-      console.error("Failed to save display preferences:", error);
+      logError("Failed to save display preferences", error);
     }
   }, [preferences]);
 
@@ -121,7 +122,7 @@ export function SalaryDisplayProvider({
     try {
       localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(selectedColumns));
     } catch (error) {
-      console.error("Failed to save selected columns:", error);
+      logError("Failed to save selected columns", error);
     }
   }, [selectedColumns]);
 
@@ -138,7 +139,13 @@ export function SalaryDisplayProvider({
   }, []);
 
   const value = React.useMemo(
-    () => ({ preferences, setCurrency, setPeriod, selectedColumns, setSelectedColumns: setColumns }),
+    () => ({
+      preferences,
+      setCurrency,
+      setPeriod,
+      selectedColumns,
+      setSelectedColumns: setColumns,
+    }),
     [preferences, setCurrency, setPeriod, selectedColumns, setColumns]
   );
 

@@ -5,6 +5,7 @@ import { eq, desc, and, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
+import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(reportList);
     }
   } catch (error) {
-    console.error("Error fetching reports:", error);
+    logError("Error fetching reports", error);
     return NextResponse.json({ error: "Failed to fetch reports" }, { status: 500 });
   }
 }
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({ report: report[0] }),
         });
       } catch (emailError) {
-        console.error("Failed to send confirmation email:", emailError);
+        logError("Failed to send confirmation email", emailError);
         // Don't fail the whole request if email fails
       }
     }
@@ -198,7 +199,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Error creating report:", error);
+    logError("Error creating report", error);
     return NextResponse.json({ error: "Failed to create report" }, { status: 500 });
   }
 }
@@ -246,14 +247,14 @@ export async function PATCH(request: NextRequest) {
           }),
         });
       } catch (emailError) {
-        console.error("Failed to send status update email:", emailError);
+        logError("Failed to send status update email", emailError);
         // Don't fail the whole request if email fails
       }
     }
 
     return NextResponse.json(report[0]);
   } catch (error) {
-    console.error("Error updating report:", error);
+    logError("Error updating report", error);
     return NextResponse.json({ error: "Failed to update report" }, { status: 500 });
   }
 }
@@ -272,7 +273,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting report:", error);
+    logError("Error deleting report", error);
     return NextResponse.json({ error: "Failed to delete report" }, { status: 500 });
   }
 }

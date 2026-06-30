@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileDown, FileSpreadsheet } from "lucide-react";
@@ -38,10 +38,7 @@ import {
 } from "@/types";
 
 export default function StatisticsClient() {
-  const params = useParams();
-  const locale = params.locale as string;
   const t = useTranslations("statistics");
-  const tNav = useTranslations("nav");
   const { preferences } = useSalaryDisplay();
   const [allEntries, setAllEntries] = useState<SalaryEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -382,154 +379,136 @@ export default function StatisticsClient() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
-        <Navbar
-          locale={locale}
-          translations={{
-            dashboard: tNav("dashboard"),
-            statistics: tNav("statistics"),
-            feedback: tNav("feedback"),
-            status: tNav("status"),
-            donate: tNav("donate"),
-            addEntry: tNav("addEntry"),
-            changelog: tNav("changelog"),
-          }}
-        />
-      </div>
-
-      <main className="container mx-auto px-4 py-6 md:py-8">
-        <div className="mb-6 md:mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-stone-100">{t("title")}</h1>
-            {/* Filters and Export Buttons */}
-            <div className="flex flex-wrap gap-3">
-              <FiltersModal
-                selectedCountries={selectedCountries}
-                onCountriesChange={setSelectedCountries}
-                availableCountries={options.countries}
-                selectedCities={selectedCities}
-                onCitiesChange={setSelectedCities}
-                availableCities={options.cities}
-                selectedSectors={selectedSectors}
-                onSectorsChange={setSelectedSectors}
-                availableSectors={options.sectors}
-                minAge={minAge}
-                maxAge={maxAge}
-                onMinAgeChange={setMinAge}
-                onMaxAgeChange={setMaxAge}
-                maxAgeLimit={maxValues.maxAge}
-                minWorkExperience={minWorkExperience}
-                maxWorkExperience={maxWorkExperience}
-                onMinWorkExperienceChange={setMinWorkExperience}
-                onMaxWorkExperienceChange={setMaxWorkExperience}
-                maxWorkExperienceLimit={maxValues.maxWorkExperience}
-                minGrossSalary={minGrossSalary}
-                maxGrossSalary={maxGrossSalary}
-                onMinGrossSalaryChange={setMinGrossSalary}
-                onMaxGrossSalaryChange={setMaxGrossSalary}
-                maxGrossSalaryLimit={maxValues.maxGrossSalary}
-                minNetSalary={minNetSalary}
-                maxNetSalary={maxNetSalary}
-                onMinNetSalaryChange={setMinNetSalary}
-                onMaxNetSalaryChange={setMaxNetSalary}
-                maxNetSalaryLimit={maxValues.maxNetSalary}
-                activeFilterCount={activeFilterCount}
-              />
-              <Button
-                onClick={handleExportToCSV}
-                variant="outline"
-                className="flex items-center gap-2 bg-stone-800 border-stone-600 text-stone-100 hover:bg-stone-700"
-              >
-                <FileSpreadsheet className="w-4 h-4" />
-                {t("export.csv")}
-              </Button>
-              <Button
-                onClick={handleExportToPDF}
-                variant="outline"
-                className="flex items-center gap-2 bg-stone-800 border-stone-600 text-stone-100 hover:bg-stone-700"
-              >
-                <FileDown className="w-4 h-4" />
-                {t("export.pdf")}
-              </Button>
-            </div>
+    <PageShell width="xl">
+      <PageHeader
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle")}
+        actions={
+          <div className="flex flex-wrap gap-3">
+            <FiltersModal
+              selectedCountries={selectedCountries}
+              onCountriesChange={setSelectedCountries}
+              availableCountries={options.countries}
+              selectedCities={selectedCities}
+              onCitiesChange={setSelectedCities}
+              availableCities={options.cities}
+              selectedSectors={selectedSectors}
+              onSectorsChange={setSelectedSectors}
+              availableSectors={options.sectors}
+              minAge={minAge}
+              maxAge={maxAge}
+              onMinAgeChange={setMinAge}
+              onMaxAgeChange={setMaxAge}
+              maxAgeLimit={maxValues.maxAge}
+              minWorkExperience={minWorkExperience}
+              maxWorkExperience={maxWorkExperience}
+              onMinWorkExperienceChange={setMinWorkExperience}
+              onMaxWorkExperienceChange={setMaxWorkExperience}
+              maxWorkExperienceLimit={maxValues.maxWorkExperience}
+              minGrossSalary={minGrossSalary}
+              maxGrossSalary={maxGrossSalary}
+              onMinGrossSalaryChange={setMinGrossSalary}
+              onMaxGrossSalaryChange={setMaxGrossSalary}
+              maxGrossSalaryLimit={maxValues.maxGrossSalary}
+              minNetSalary={minNetSalary}
+              maxNetSalary={maxNetSalary}
+              onMinNetSalaryChange={setMinNetSalary}
+              onMaxNetSalaryChange={setMaxNetSalary}
+              maxNetSalaryLimit={maxValues.maxNetSalary}
+              activeFilterCount={activeFilterCount}
+            />
+            <Button
+              onClick={handleExportToCSV}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              {t("export.csv")}
+            </Button>
+            <Button
+              onClick={handleExportToPDF}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              {t("export.pdf")}
+            </Button>
           </div>
-          <p className="text-sm md:text-base text-stone-400">{t("subtitle")}</p>
+        }
+      />
+
+      {loading ? (
+        <div className="grid gap-4 md:gap-8">
+          <TopSectorsChart data={[]} loading={true} />
+
+          {/* 2x2 Grid: Experience Growth, Top Countries, Salary Distribution, Age Demographics */}
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+            {/* Experience Growth Skeleton */}
+            <ExperienceGrowthChart data={[]} loading={true} />
+
+            {/* Top Countries Skeleton */}
+            <TopCountriesChart data={[]} loading={true} />
+
+            {/* Salary Distribution Skeleton */}
+            <SalaryDistributionChart data={[]} loading={true} />
+
+            {/* Age Demographics Skeleton */}
+            <AgeDemographicsChart data={[]} loading={true} />
+          </div>
         </div>
+      ) : (
+        <div className="grid gap-4 md:gap-8">
+          {filteredEntries.length === 0 ? (
+            <Card className="border-border bg-card">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <p className="text-xl text-foreground mb-2">{t("noEntriesFound")}</p>
+                <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* Year-over-Year Comparison */}
+              {/* <YearOverYearChart data={yearlyData} loading={false} /> */}
 
-        {loading ? (
-          <div className="grid gap-4 md:gap-8">
-            <TopSectorsChart data={[]} loading={true} />
+              {/* Location-Based Heatmap */}
+              <LocationHeatmapChart data={locationHeatmap} loading={false} />
 
-            {/* 2x2 Grid: Experience Growth, Top Countries, Salary Distribution, Age Demographics */}
-            <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-              {/* Experience Growth Skeleton */}
-              <ExperienceGrowthChart data={[]} loading={true} />
+              {/* Top Paying Sectors */}
+              <TopSectorsChart data={sectorData} loading={false} />
 
-              {/* Top Countries Skeleton */}
-              <TopCountriesChart data={[]} loading={true} />
+              {/* Salary by Experience & Country Comparison */}
+              <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                {/* Experience vs Salary */}
+                <ExperienceGrowthChart data={experienceData} loading={false} />
 
-              {/* Salary Distribution Skeleton */}
-              <SalaryDistributionChart data={[]} loading={true} />
+                {/* Country Comparison */}
+                <TopCountriesChart data={countryData} loading={false} />
+              </div>
 
-              {/* Age Demographics Skeleton */}
-              <AgeDemographicsChart data={[]} loading={true} />
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-4 md:gap-8">
-            {filteredEntries.length === 0 ? (
-              <Card className="bg-stone-800 border-stone-700">
-                <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                  <p className="text-xl text-stone-300 mb-2">{t("noEntriesFound")}</p>
-                  <p className="text-sm text-stone-400">{t("subtitle")}</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                {/* Year-over-Year Comparison */}
-                {/* <YearOverYearChart data={yearlyData} loading={false} /> */}
+              {/* Salary Distribution & Age Demographics */}
+              <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                {/* Salary Distribution */}
+                <SalaryDistributionChart data={salaryRangeData} loading={false} />
 
-                {/* Location-Based Heatmap */}
-                <LocationHeatmapChart data={locationHeatmap} loading={false} />
+                {/* Age Demographics */}
+                <AgeDemographicsChart data={ageData} loading={false} />
+              </div>
 
-                {/* Top Paying Sectors */}
-                <TopSectorsChart data={sectorData} loading={false} />
+              {/* Experience Box Plot */}
+              {experienceBoxPlotData.length > 0 && (
+                <ExperienceBoxPlotChart data={experienceBoxPlotData} loading={false} />
+              )}
 
-                {/* Salary by Experience & Country Comparison */}
-                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  {/* Experience vs Salary */}
-                  <ExperienceGrowthChart data={experienceData} loading={false} />
+              {/* Tax Rate Analysis */}
+              <TaxRateAnalysisChart data={taxRateData} loading={false} />
 
-                  {/* Country Comparison */}
-                  <TopCountriesChart data={countryData} loading={false} />
-                </div>
-
-                {/* Salary Distribution & Age Demographics */}
-                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  {/* Salary Distribution */}
-                  <SalaryDistributionChart data={salaryRangeData} loading={false} />
-
-                  {/* Age Demographics */}
-                  <AgeDemographicsChart data={ageData} loading={false} />
-                </div>
-
-                {/* Experience Box Plot */}
-                {experienceBoxPlotData.length > 0 && (
-                  <ExperienceBoxPlotChart data={experienceBoxPlotData} loading={false} />
-                )}
-
-                {/* Tax Rate Analysis */}
-                <TaxRateAnalysisChart data={taxRateData} loading={false} />
-
-                {/* Interactive World Map with Drill-Down */}
-                <InteractiveWorldMap filters={filters} />
-              </>
-            )}
-          </div>
-        )}
-      </main>
-    </div>
+              {/* Interactive World Map with Drill-Down */}
+              <InteractiveWorldMap filters={filters} />
+            </>
+          )}
+        </div>
+      )}
+    </PageShell>
   );
 }

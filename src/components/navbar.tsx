@@ -3,70 +3,80 @@
 import Link from "next/link";
 import { useState, Suspense } from "react";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/language-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { SalaryDisplaySelector } from "@/components/salary-display-selector";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useOpenPanel } from "@openpanel/nextjs";
 
-interface NavbarProps {
-  locale: string;
-  translations: {
-    dashboard: string;
-    statistics?: string;
-    feedback: string;
-    status: string;
-    donate: string;
-    addEntry: string;
-    changelog: string;
-  };
+interface NavbarTranslations {
+  dashboard: string;
+  statistics?: string;
+  feedback: string;
+  status: string;
+  donate: string;
+  addEntry: string;
+  changelog: string;
 }
 
-export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
+interface NavbarProps {
+  locale?: string;
+  translations?: NavbarTranslations;
+}
+
+export function Navbar({ locale: localeProp, translations }: Readonly<NavbarProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const op = useOpenPanel();
 
+  // Self-source locale + nav translations so callers can just render <Navbar />.
+  // Props remain supported for backward compatibility (e.g. admin screens).
+  const localeFromHook = useLocale();
+  const t = useTranslations("nav");
+  const locale = localeProp ?? localeFromHook;
+  const tr: NavbarTranslations = translations ?? {
+    dashboard: t("dashboard"),
+    statistics: t("statistics"),
+    feedback: t("feedback"),
+    status: t("status"),
+    donate: t("donate"),
+    addEntry: t("addEntry"),
+    changelog: t("changelog"),
+  };
+
   const isActiveRoute = (href: string) => {
-    // Exact match for dashboard
     if (href === `/${locale}/dashboard`) {
       return pathname === `/${locale}/dashboard`;
     }
-    // For other routes, check if pathname starts with the href
     return pathname.startsWith(href);
   };
 
   const navLinks = [
-    { href: `/${locale}/dashboard`, label: translations.dashboard },
-    ...(translations.statistics
-      ? [
-          {
-            href: `/${locale}/statistics`,
-            label: translations.statistics,
-          },
-        ]
-      : []),
-    { href: `/${locale}/feedback`, label: translations.feedback },
-    { href: `/${locale}/status`, label: translations.status },
-    { href: `/${locale}/changelog`, label: translations.changelog },
-    { href: `/${locale}/donate`, label: translations.donate },
+    { href: `/${locale}/dashboard`, label: tr.dashboard },
+    ...(tr.statistics ? [{ href: `/${locale}/statistics`, label: tr.statistics }] : []),
+    { href: `/${locale}/feedback`, label: tr.feedback },
+    { href: `/${locale}/status`, label: tr.status },
+    { href: `/${locale}/changelog`, label: tr.changelog },
+    { href: `/${locale}/donate`, label: tr.donate },
   ];
 
   return (
-    <header className="relative z-10 container mx-auto px-4 py-4">
+    <header className="relative z-20 mx-auto max-w-6xl px-6 py-4">
       <nav className="flex items-center justify-between">
         {/* Logo */}
         <Link href={`/${locale}`} className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-stone-100 rounded-lg flex items-center justify-center">
-            <span className="text-stone-900 font-bold text-sm">WW</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
+            <span className="text-sm font-bold text-background">WW</span>
           </div>
-          <span className="text-lg md:text-xl font-bold text-stone-100">WageWatchers</span>
+          <span className="text-lg font-bold text-foreground md:text-xl">WageWatchers</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-1 lg:space-x-4">
+        <div className="hidden items-center space-x-1 md:flex lg:space-x-2">
           {navLinks.map((link) => {
             const isActive = isActiveRoute(link.href);
             return (
@@ -77,15 +87,17 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                   className={cn(
                     "relative transition-colors",
                     isActive
-                      ? "text-stone-100 font-semibold bg-stone-800"
-                      : "text-stone-300 hover:text-stone-100"
+                      ? "bg-accent font-semibold text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                   aria-current={isActive ? "page" : undefined}
-                  onClick={() => op.track('nav_link_clicked', { link: link.label, location: 'desktop' })}
+                  onClick={() =>
+                    op.track("nav_link_clicked", { link: link.label, location: "desktop" })
+                  }
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-0.5 bg-stone-100 rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 h-0.5 w-4/5 -translate-x-1/2 rounded-full bg-brand" />
                   )}
                 </Button>
               </Link>
@@ -95,23 +107,23 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
           <Link href={`/${locale}/add`}>
             <Button
               size="sm"
-              className={cn(
-                "px-4 transition-colors bg-stone-100 hover:bg-stone-200 text-stone-900"
-              )}
+              className="px-4"
               aria-current={isActiveRoute(`/${locale}/add`) ? "page" : undefined}
-              onClick={() => op.track('add_entry_clicked', { location: 'desktop' })}
+              onClick={() => op.track("add_entry_clicked", { location: "desktop" })}
             >
-              {translations.addEntry}
+              {tr.addEntry}
             </Button>
           </Link>
           <Suspense fallback={null}>
             <LanguageToggle />
           </Suspense>
+          <ThemeToggle />
         </div>
 
         {/* Mobile Navigation */}
-        <div className="flex md:hidden items-center space-x-2">
+        <div className="flex items-center space-x-1 md:hidden">
           <SalaryDisplaySelector />
+          <ThemeToggle />
           <Suspense fallback={null}>
             <LanguageToggle />
           </Suspense>
@@ -120,9 +132,11 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-stone-100"
+                className="text-foreground"
                 aria-label="Toggle menu"
-                onClick={() => op.track('menu_toggle_clicked', { action: isOpen ? 'close' : 'open' })}
+                onClick={() =>
+                  op.track("menu_toggle_clicked", { action: isOpen ? "close" : "open" })
+                }
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
@@ -131,18 +145,25 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
               <SheetHeader>
                 <SheetTitle className="text-left">Menu</SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col space-y-3 mt-6">
+              <div className="mt-6 flex flex-col space-y-3">
                 {navLinks.map((link) => {
                   const isActive = isActiveRoute(link.href);
                   return (
-                    <Link key={link.href} href={link.href} onClick={() => { setIsOpen(false); op.track('nav_link_clicked', { link: link.label, location: 'mobile' }); }}>
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => {
+                        setIsOpen(false);
+                        op.track("nav_link_clicked", { link: link.label, location: "mobile" });
+                      }}
+                    >
                       <Button
                         variant="ghost"
                         className={cn(
                           "w-full justify-start text-left text-base font-medium",
                           isActive
-                            ? "text-stone-100 bg-stone-800 font-bold"
-                            : "text-stone-300 hover:text-stone-100 hover:bg-stone-800"
+                            ? "bg-accent font-semibold text-foreground"
+                            : "text-muted-foreground hover:bg-accent hover:text-foreground"
                         )}
                         aria-current={isActive ? "page" : undefined}
                       >
@@ -151,17 +172,19 @@ export function Navbar({ locale, translations }: Readonly<NavbarProps>) {
                     </Link>
                   );
                 })}
-                <Link href={`/${locale}/add`} onClick={() => { setIsOpen(false); op.track('add_entry_clicked', { location: 'mobile' }); }} className="pt-2">
+                <Link
+                  href={`/${locale}/add`}
+                  onClick={() => {
+                    setIsOpen(false);
+                    op.track("add_entry_clicked", { location: "mobile" });
+                  }}
+                  className="pt-2"
+                >
                   <Button
-                    className={cn(
-                      "w-full text-base font-medium",
-                      isActiveRoute(`/${locale}/add`)
-                        ? "bg-stone-200 text-stone-900 ring-2 ring-stone-100"
-                        : "bg-stone-100 hover:bg-stone-200 text-stone-900"
-                    )}
+                    className="w-full text-base font-medium"
                     aria-current={isActiveRoute(`/${locale}/add`) ? "page" : undefined}
                   >
-                    {translations.addEntry}
+                    {tr.addEntry}
                   </Button>
                 </Link>
               </div>

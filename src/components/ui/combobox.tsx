@@ -101,11 +101,11 @@ export function Combobox({
             onClick={handleClear}
           />
         )}
-        <PopoverContent className="w-(--radix-popover-trigger-width) p-0 bg-stone-700 border-stone-600">
-          <Command className="bg-stone-700" shouldFilter={false}>
+        <PopoverContent className="w-(--radix-popover-trigger-width) p-0 bg-popover border-border">
+          <Command shouldFilter={false}>
             <CommandInput
               placeholder={commandInputPlaceholder || t("searchOptions")}
-              className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
+              className="text-foreground placeholder:text-muted-foreground"
               value={inputValue}
               onValueChange={handleInputChange}
             />
@@ -117,7 +117,7 @@ export function Combobox({
                     key={option.value}
                     value={option.label}
                     onSelect={() => handleSelect(option.value)}
-                    className="text-stone-100 hover:bg-stone-600"
+                    className="text-foreground hover:bg-accent"
                   >
                     <Check
                       className={cn(

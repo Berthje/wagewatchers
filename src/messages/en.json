@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "US Dollar ($)",
       "GBP": "British Pound (£)"
-    }
+    },
+    "toggleTheme": "Toggle theme"
   },
   "ui": {
     "commandPalette": "Command Palette",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Multi-Country Support",
-        "description": "Salary data from Belgian communities with localized compensation insights."
+        "description": "Salary data from Belgian communities with localized compensation insights.",
+        "label": "Coverage"
       },
       "privacy": {
         "title": "Privacy Focused",
-        "description": "Anonymous salary sharing with comprehensive data protection. Community-driven transparency."
+        "description": "Anonymous salary sharing with comprehensive data protection. Community-driven transparency.",
+        "label": "Privacy"
       },
       "analysis": {
         "title": "Comprehensive Analysis",
-        "description": "Detailed breakdowns of compensation packages, benefits, work hours, and work-life balance."
-      }
+        "description": "Detailed breakdowns of compensation packages, benefits, work hours, and work-life balance.",
+        "label": "Depth"
+      },
+      "eyebrow": "Built for honest pay"
     },
-    "footer": "🧡 Community-driven salary transparency"
+    "footer": "🧡 Community-driven salary transparency",
+    "eyebrow": "The number no one talks about",
+    "trust": {
+      "anonymous": "100% anonymous",
+      "free": "Free & open source",
+      "community": "Community-powered"
+    },
+    "sample": {
+      "title": "What the data looks like",
+      "caption": "Illustrative sample"
+    },
+    "cta": {
+      "title": "Know your worth. Help others know theirs.",
+      "subtitle": "Add your salary in two minutes — anonymously."
+    }
   },
   "dashboard": {
     "title": "Salary Dashboard",
@@ -217,7 +236,8 @@
       "next": "Next",
       "page": "Page",
       "rowsPerPage": "Rows per page"
-    }
+    },
+    "eyebrow": "Explore the data"
   },
   "statistics": {
     "title": "Salary Statistics",
@@ -326,6 +346,8 @@
     "worldMapDescription": "Click on a country with data to see regional breakdown",
     "provinceMapDescription": "Regional salary distribution across provinces/states",
     "backToWorld": "Back to World View",
+    "mapError": "Couldn't load the map. Please try again.",
+    "retry": "Retry",
     "countries": {
       "belgium": "Belgium",
       "netherlands": "Netherlands",
@@ -333,7 +355,8 @@
       "france": "France"
     },
     "noDataAvailable": "No data available",
-    "loading": "Loading"
+    "loading": "Loading",
+    "eyebrow": "Aggregate salary data"
   },
   "add": {
     "title": "Share Your Salary",
@@ -701,7 +724,13 @@
     "validationSummary": {
       "title": "Please fix the following errors:",
       "errorCount": "{count, plural, =1 {1 error found} other {# errors found}}"
-    }
+    },
+    "eyebrow": "Add your salary, anonymously",
+    "countryFirst": "Select your country above to load the salary fields for your region.",
+    "discardTitle": "Discard your changes?",
+    "discardMessage": "You have unsaved changes. If you leave now, they will be lost.",
+    "discardKeep": "Keep editing",
+    "discardConfirm": "Discard"
   },
   "common": {
     "loading": "Loading...",
@@ -811,7 +840,8 @@
       "instruction": "Save this ID to track your report status at any time."
     },
     "emailSent": "We've sent a confirmation email to {email} with your tracking ID and report details.",
-    "noEmail": "Use your tracking ID to check the status of your report on the Status page."
+    "noEmail": "Use your tracking ID to check the status of your report on the Status page.",
+    "eyebrow": "Bugs, ideas & improvements"
   },
   "status": {
     "title": "Check Report Status",
@@ -866,7 +896,8 @@
     "errors": {
       "empty": "Please enter a reporter ID or email address",
       "network": "Failed to search reports. Please try again."
-    }
+    },
+    "eyebrow": "Track your report"
   },
   "donate": {
     "goBack": "Go Back",
@@ -931,7 +962,8 @@
     "shareText": "Check out WageWatchers - Community-driven salary transparency across European markets!",
     "footerCommunity": "🧡 Community-driven salary transparency",
     "footerMadeWith": "Made with ❤️ for the community •",
-    "footerViewOnGithub": "View on GitHub"
+    "footerViewOnGithub": "View on GitHub",
+    "eyebrow": "Support the project"
   },
   "entryDetail": {
     "backToDashboard": "Go Back",
@@ -1056,7 +1088,8 @@
       "cancel": "Cancel",
       "confirmDelete": "Yes, Delete Entry",
       "deleting": "Deleting..."
-    }
+    },
+    "eyebrow": "Your contributions"
   },
   "edit": {
     "meta": {
@@ -1093,7 +1126,8 @@
       "success": "Successfully subscribed to newsletter!",
       "error": "Failed to subscribe",
       "networkError": "Network error. Please try again."
-    }
+    },
+    "eyebrow": "What's new"
   },
   "adminReview": {
     "title": "Entry Review Queue",

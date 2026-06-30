@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "Dollar Américain ($)",
       "GBP": "Livre Sterling (£)"
-    }
+    },
+    "toggleTheme": "Changer de thème"
   },
   "ui": {
     "commandPalette": "Palette de Commandes",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Prise en Charge Multi-Pays",
-        "description": "Données salariales des communautés belges avec des aperçus de rémunération localisés."
+        "description": "Données salariales des communautés belges avec des aperçus de rémunération localisés.",
+        "label": "Couverture"
       },
       "privacy": {
         "title": "Axé sur la Confidentialité",
-        "description": "Partage de salaire anonyme avec une protection complète des données. Transparence communautaire."
+        "description": "Partage de salaire anonyme avec une protection complète des données. Transparence communautaire.",
+        "label": "Confidentialité"
       },
       "analysis": {
         "title": "Analyse Complète",
-        "description": "Ventilations détaillées des ensembles de rémunération, des avantages, des heures de travail et de l'équilibre vie pro-vie perso."
-      }
+        "description": "Ventilations détaillées des ensembles de rémunération, des avantages, des heures de travail et de l'équilibre vie pro-vie perso.",
+        "label": "Profondeur"
+      },
+      "eyebrow": "Pensé pour des salaires justes"
     },
-    "footer": "🧡 Transparence salariale communautaire"
+    "footer": "🧡 Transparence salariale communautaire",
+    "eyebrow": "Le chiffre dont personne ne parle",
+    "trust": {
+      "anonymous": "100 % anonyme",
+      "free": "Gratuit et open source",
+      "community": "Porté par la communauté"
+    },
+    "sample": {
+      "title": "À quoi ressemblent les données",
+      "caption": "Exemple à titre indicatif"
+    },
+    "cta": {
+      "title": "Connaissez votre valeur. Aidez les autres à connaître la leur.",
+      "subtitle": "Ajoutez votre salaire en deux minutes — anonymement."
+    }
   },
   "dashboard": {
     "title": "Tableau de Bord des Salaires",
@@ -217,7 +236,8 @@
       "resetDisabledTitle": "Vous utilisez déjà les colonnes par défaut",
       "resetActiveLabel": "Réinitialiser les colonnes",
       "selectedCount": "{count} sélectionnés"
-    }
+    },
+    "eyebrow": "Explorez les données"
   },
   "statistics": {
     "title": "Statistiques Salariales",
@@ -326,6 +346,8 @@
     "worldMapDescription": "Cliquez sur un pays avec des données pour voir la répartition régionale",
     "provinceMapDescription": "Distribution salariale régionale par provinces/états",
     "backToWorld": "Retour à la Vue Mondiale",
+    "mapError": "Impossible de charger la carte. Veuillez réessayer.",
+    "retry": "Réessayer",
     "countries": {
       "belgium": "Belgique",
       "netherlands": "Pays-Bas",
@@ -333,7 +355,8 @@
       "france": "France"
     },
     "noDataAvailable": "Aucune donnée disponible",
-    "loading": "Chargement"
+    "loading": "Chargement",
+    "eyebrow": "Données salariales agrégées"
   },
   "add": {
     "title": "Partagez Votre Salaire",
@@ -701,7 +724,13 @@
     "validationSummary": {
       "title": "Veuillez corriger les erreurs suivantes:",
       "errorCount": "{count, plural, =1 {1 erreur trouvée} other {# erreurs trouvées}}"
-    }
+    },
+    "eyebrow": "Ajoutez votre salaire, anonymement",
+    "countryFirst": "Sélectionnez votre pays ci-dessus pour charger les champs adaptés à votre région.",
+    "discardTitle": "Abandonner vos modifications ?",
+    "discardMessage": "Vous avez des modifications non enregistrées. Si vous partez maintenant, elles seront perdues.",
+    "discardKeep": "Continuer la modification",
+    "discardConfirm": "Abandonner"
   },
   "common": {
     "loading": "Chargement...",
@@ -811,7 +840,8 @@
       "instruction": "Enregistrez cet ID pour suivre le statut de votre rapport à tout moment."
     },
     "emailSent": "Nous avons envoyé un email de confirmation à {email} avec votre ID de suivi et les détails du rapport.",
-    "noEmail": "Utilisez votre ID de suivi pour vérifier le statut de votre rapport sur la page Statut."
+    "noEmail": "Utilisez votre ID de suivi pour vérifier le statut de votre rapport sur la page Statut.",
+    "eyebrow": "Bugs, idées et améliorations"
   },
   "status": {
     "title": "Vérifier le Statut du Rapport",
@@ -866,7 +896,8 @@
     "errors": {
       "empty": "Veuillez entrer un ID de rapporteur ou un email",
       "network": "Échec de la recherche de rapports. Veuillez réessayer."
-    }
+    },
+    "eyebrow": "Suivez votre signalement"
   },
   "donate": {
     "goBack": "Retourner",
@@ -931,7 +962,8 @@
     "shareText": "Découvrez WageWatchers - Transparence salariale communautaire sur les marchés européens!",
     "footerCommunity": "🧡 Transparence salariale communautaire",
     "footerMadeWith": "Fait avec ❤️ pour la communauté •",
-    "footerViewOnGithub": "Voir sur GitHub"
+    "footerViewOnGithub": "Voir sur GitHub",
+    "eyebrow": "Soutenez le projet"
   },
   "entryDetail": {
     "backToDashboard": "Retour au Tableau de Bord",
@@ -1056,7 +1088,8 @@
       "cancel": "Annuler",
       "confirmDelete": "Oui, Supprimer l'Entrée",
       "deleting": "Suppression..."
-    }
+    },
+    "eyebrow": "Vos contributions"
   },
   "edit": {
     "meta": {
@@ -1093,7 +1126,8 @@
       "success": "Abonnement réussi à la newsletter!",
       "error": "Échec de l'abonnement",
       "networkError": "Erreur réseau. Veuillez réessayer."
-    }
+    },
+    "eyebrow": "Nouveautés"
   },
   "adminReview": {
     "title": "File d'Attente de Révision des Entrées",

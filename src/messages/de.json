@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "US-Dollar ($)",
       "GBP": "Britisches Pfund (£)"
-    }
+    },
+    "toggleTheme": "Thema wechseln"
   },
   "ui": {
     "commandPalette": "Befehlspalette",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Länderübergreifende Unterstützung",
-        "description": "Gehaltsdaten von belgischen Gemeinschaften mit lokalisierten Vergütungseinblicken."
+        "description": "Gehaltsdaten von belgischen Gemeinschaften mit lokalisierten Vergütungseinblicken.",
+        "label": "Abdeckung"
       },
       "privacy": {
         "title": "Datenschutzfokus",
-        "description": "Anonymes Gehaltsteilen mit umfassendem Datenschutz. Gemeinschaftsgesteuerte Transparenz."
+        "description": "Anonymes Gehaltsteilen mit umfassendem Datenschutz. Gemeinschaftsgesteuerte Transparenz.",
+        "label": "Privatsphäre"
       },
       "analysis": {
         "title": "Umfassende Analyse",
-        "description": "Detaillierte Aufschlüsselungen von Vergütungspaketen, Zusatzleistungen, Arbeitszeiten und Work-Life-Balance."
-      }
+        "description": "Detaillierte Aufschlüsselungen von Vergütungspaketen, Zusatzleistungen, Arbeitszeiten und Work-Life-Balance.",
+        "label": "Tiefe"
+      },
+      "eyebrow": "Für faire Bezahlung gemacht"
     },
-    "footer": "🧡 Gemeinschaftsgesteuerte Gehaltstransparenz"
+    "footer": "🧡 Gemeinschaftsgesteuerte Gehaltstransparenz",
+    "eyebrow": "Die Zahl, über die niemand spricht",
+    "trust": {
+      "anonymous": "100 % anonym",
+      "free": "Kostenlos & Open Source",
+      "community": "Von der Community"
+    },
+    "sample": {
+      "title": "So sehen die Daten aus",
+      "caption": "Beispielhafte Darstellung"
+    },
+    "cta": {
+      "title": "Kenne deinen Wert. Hilf anderen, ihren zu kennen.",
+      "subtitle": "Füge dein Gehalt in zwei Minuten hinzu — anonym."
+    }
   },
   "dashboard": {
     "title": "Gehalts-Dashboard",
@@ -217,7 +236,8 @@
       "resetDisabledTitle": "Es werden bereits Standardspalten verwendet",
       "resetActiveLabel": "Spalten zurücksetzen",
       "selectedCount": "{count} ausgewählt"
-    }
+    },
+    "eyebrow": "Daten erkunden"
   },
   "statistics": {
     "title": "Gehaltsstatistiken",
@@ -326,6 +346,8 @@
     "worldMapDescription": "Klicken Sie auf ein Land mit Daten, um die regionale Aufschlüsselung zu sehen",
     "provinceMapDescription": "Regionale Gehaltsverteilung nach Provinzen/Bundesländern",
     "backToWorld": "Zurück zur Weltansicht",
+    "mapError": "Die Karte konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
     "countries": {
       "belgium": "Belgien",
       "netherlands": "Niederlande",
@@ -333,7 +355,8 @@
       "france": "Frankreich"
     },
     "noDataAvailable": "Keine Daten verfügbar",
-    "loading": "Wird geladen"
+    "loading": "Wird geladen",
+    "eyebrow": "Aggregierte Gehaltsdaten"
   },
   "add": {
     "title": "Teilen Sie Ihr Gehalt",
@@ -701,7 +724,13 @@
     "validationSummary": {
       "title": "Bitte beheben Sie die folgenden Fehler:",
       "errorCount": "{count, plural, =1 {1 Fehler gefunden} other {# Fehler gefunden}}"
-    }
+    },
+    "eyebrow": "Füge dein Gehalt hinzu, anonym",
+    "countryFirst": "Wähle oben dein Land, um die Gehaltsfelder für deine Region zu laden.",
+    "discardTitle": "Änderungen verwerfen?",
+    "discardMessage": "Du hast nicht gespeicherte Änderungen. Wenn du jetzt gehst, gehen sie verloren.",
+    "discardKeep": "Weiter bearbeiten",
+    "discardConfirm": "Verwerfen"
   },
   "common": {
     "loading": "Wird geladen...",
@@ -811,7 +840,8 @@
       "instruction": "Speichern Sie diese ID, um den Status Ihres Berichts jederzeit zu verfolgen."
     },
     "emailSent": "Wir haben eine Bestätigungs-E-Mail an {email} mit Ihrer Tracking ID und den Berichtsdetails gesendet.",
-    "noEmail": "Verwenden Sie Ihre Tracking ID, um den Status Ihres Berichts auf der Statusseite zu überprüfen."
+    "noEmail": "Verwenden Sie Ihre Tracking ID, um den Status Ihres Berichts auf der Statusseite zu überprüfen.",
+    "eyebrow": "Bugs, Ideen & Verbesserungen"
   },
   "status": {
     "title": "Berichtsstatus Überprüfen",
@@ -866,7 +896,8 @@
     "errors": {
       "empty": "Bitte geben Sie eine Reporter-ID oder E-Mail-Adresse ein",
       "network": "Fehler beim Suchen von Berichten. Bitte versuchen Sie es erneut."
-    }
+    },
+    "eyebrow": "Verfolge deine Meldung"
   },
   "donate": {
     "goBack": "Zurück",
@@ -931,7 +962,8 @@
     "shareText": "Schauen Sie sich WageWatchers an - Gemeinschaftsgesteuerte Gehaltstransparenz in europäischen Märkten!",
     "footerCommunity": "🧡 Gemeinschaftsgesteuerte Gehaltstransparenz",
     "footerMadeWith": "Mit ❤️ für die Gemeinschaft gemacht •",
-    "footerViewOnGithub": "Auf GitHub anzeigen"
+    "footerViewOnGithub": "Auf GitHub anzeigen",
+    "eyebrow": "Unterstütze das Projekt"
   },
   "entryDetail": {
     "backToDashboard": "Zurück zum Dashboard",
@@ -1056,7 +1088,8 @@
       "cancel": "Abbrechen",
       "confirmDelete": "Ja, Eintrag Löschen",
       "deleting": "Wird gelöscht..."
-    }
+    },
+    "eyebrow": "Deine Beiträge"
   },
   "edit": {
     "meta": {
@@ -1093,7 +1126,8 @@
       "success": "Erfolgreich den Newsletter abonniert!",
       "error": "Fehler beim Abonnieren",
       "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
-    }
+    },
+    "eyebrow": "Was ist neu"
   },
   "adminReview": {
     "title": "Warteschlange für die Eintragsüberprüfung",

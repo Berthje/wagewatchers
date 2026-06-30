@@ -186,8 +186,8 @@ export function createCityDisplayFormatter(tUi: (key: string) => string) {
 export function toTitleCase(str: string): string {
   if (!str) return str;
   return str
-    .split(' ')
-    .map(word => {
+    .split(" ")
+    .map((word) => {
       if (word.length === 0) return word;
       const first = word.charAt(0);
       if (first === first.toUpperCase()) {
@@ -196,5 +196,5 @@ export function toTitleCase(str: string): string {
         return first.toUpperCase() + word.slice(1);
       }
     })
-    .join(' ');
+    .join(" ");
 }

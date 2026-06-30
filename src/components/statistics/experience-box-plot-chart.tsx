@@ -37,28 +37,28 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
 
   if (loading) {
     return (
-      <Card className="bg-stone-800 border-stone-700 space-y-3">
+      <Card className="border-border bg-card space-y-3">
         <CardHeader>
-          <CardTitle className="text-stone-100">{t("charts.experienceBoxPlot.title")}</CardTitle>
-          <CardDescription className="text-stone-400">
+          <CardTitle className="text-foreground">{t("charts.experienceBoxPlot.title")}</CardTitle>
+          <CardDescription className="text-muted-foreground">
             {t("charts.experienceBoxPlot.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full h-64 md:h-96 bg-stone-800 rounded p-4">
+          <div className="w-full h-64 md:h-96 bg-muted rounded p-4">
             <div className="relative h-full">
               {/* Grid lines */}
               {[0, 1, 2, 3, 4].map((i) => (
                 <div
                   key={`box-grid-h-${i}`}
-                  className="absolute w-full h-px bg-stone-700"
+                  className="absolute w-full h-px bg-muted"
                   style={{ top: `${20 + i * 15}%` }}
                 ></div>
               ))}
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={`box-grid-v-${i}`}
-                  className="absolute h-full w-px bg-stone-700"
+                  className="absolute h-full w-px bg-muted"
                   style={{ left: `${15 + i * 14}%` }}
                 ></div>
               ))}
@@ -66,7 +66,7 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={`box-placeholder-${i}`}
-                  className="absolute bottom-8 w-6 bg-stone-600 rounded"
+                  className="absolute bottom-8 w-6 bg-muted rounded"
                   style={{
                     left: `${15 + i * 14}%`,
                     height: `${40 + Math.random() * 30}%`,
@@ -81,15 +81,15 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
   }
 
   return (
-    <Card className="bg-stone-800 border-stone-700 space-y-3">
+    <Card className="border-border bg-card space-y-3">
       <CardHeader>
-        <CardTitle className="text-stone-100">{t("charts.experienceBoxPlot.title")}</CardTitle>
-        <CardDescription className="text-stone-400">
+        <CardTitle className="text-foreground">{t("charts.experienceBoxPlot.title")}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {t("charts.experienceBoxPlot.description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="w-full h-64 md:h-96">
+        <div className="w-full h-64 md:h-96 text-muted-foreground">
           <ResponsiveContainer
             key={`${preferences.currency}-${preferences.period}`}
             width="100%"
@@ -105,14 +105,16 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
                 bottom: 25,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#44403c" />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.15} />
               <XAxis
                 dataKey="experience"
-                stroke="#78716c"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
                 axisLine={false}
               />
               <YAxis
-                stroke="#78716c"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
                 tickFormatter={(value) =>
                   formatSalaryWithPreferences(
                     value,
@@ -138,13 +140,7 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
               <Bar dataKey="q3" stackId="a" fill="#fed7aa80" />
 
               {/* Median line */}
-              <Line
-                type="monotone"
-                dataKey="median"
-                stroke="#ea580c"
-                strokeWidth={3}
-                dot={false}
-              />
+              <Line type="monotone" dataKey="median" stroke="#ea580c" strokeWidth={3} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

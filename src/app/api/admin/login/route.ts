@@ -4,6 +4,7 @@ import { admins } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Admin login error:", error);
+    logError("Admin login error", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

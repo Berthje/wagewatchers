@@ -7,6 +7,8 @@
 
 import jwt from "jsonwebtoken";
 
+import { logError } from "@/lib/logger";
+
 const STORAGE_KEY = "wagewatchers_entry_tokens";
 const EDIT_WINDOW_DAYS = 1; // Users can edit entries for 1 day
 
@@ -56,7 +58,7 @@ export function storeEntryToken(entryId: number, token: string): void {
     tokens[entryId.toString()] = token;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tokens));
   } catch (error) {
-    console.error("Failed to store entry token:", error);
+    logError("Failed to store entry token", error);
   }
 }
 
@@ -72,7 +74,7 @@ export function getEntryToken(entryId: number): string | null {
     const tokens: Record<string, string> = JSON.parse(stored);
     return tokens[entryId.toString()] || null;
   } catch (error) {
-    console.error("Failed to retrieve entry token:", error);
+    logError("Failed to retrieve entry token", error);
     return null;
   }
 }
@@ -87,7 +89,7 @@ export function getAllEntryTokens(): Record<string, string> {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : {};
   } catch (error) {
-    console.error("Failed to retrieve entry tokens:", error);
+    logError("Failed to retrieve entry tokens", error);
     return {};
   }
 }
@@ -113,7 +115,7 @@ export function removeEntryToken(entryId: number): void {
     delete tokens[entryId.toString()];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tokens));
   } catch (error) {
-    console.error("Failed to remove entry token:", error);
+    logError("Failed to remove entry token", error);
   }
 }
 
@@ -125,7 +127,7 @@ export function clearAllEntryTokens(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.error("Failed to clear entry tokens:", error);
+    logError("Failed to clear entry tokens", error);
   }
 }
 

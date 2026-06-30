@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import type { Report } from "@/lib/db/schema";
+import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
       data: data.data,
     });
   } catch (error) {
-    console.error("Error sending email:", error);
+    logError("Error sending email:", error);
     return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }

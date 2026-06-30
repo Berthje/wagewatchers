@@ -61,21 +61,21 @@ export function TopCountriesChart({ data, loading = false }: TopCountriesChartPr
 
   if (loading) {
     return (
-      <Card className="bg-stone-800 border-stone-700 space-y-3">
+      <Card className="border-border bg-card space-y-3">
         <CardHeader>
-          <CardTitle className="text-stone-100">{t("charts.topCountries.title")}</CardTitle>
-          <CardDescription className="text-stone-400">
+          <CardTitle className="text-foreground">{t("charts.topCountries.title")}</CardTitle>
+          <CardDescription className="text-muted-foreground">
             {t("charts.topCountries.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full h-64 md:h-96 bg-stone-800 rounded p-4">
+          <div className="w-full h-64 md:h-96 bg-muted rounded p-4">
             <div className="relative h-full">
               {/* Horizontal grid lines */}
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={`countries-grid-${i}`}
-                  className="absolute w-full h-px bg-stone-700"
+                  className="absolute w-full h-px bg-muted"
                   style={{ top: `${20 + i * 20}%` }}
                 ></div>
               ))}
@@ -83,7 +83,7 @@ export function TopCountriesChart({ data, loading = false }: TopCountriesChartPr
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={`countries-bar-${i}`}
-                  className="absolute bottom-8 w-6 md:w-8 bg-stone-600 rounded-t animate-pulse"
+                  className="absolute bottom-8 w-6 md:w-8 bg-muted rounded-t animate-pulse"
                   style={{
                     left: `${15 + i * 12}%`,
                     height: `${25 + Math.random() * 45}%`,
@@ -96,7 +96,7 @@ export function TopCountriesChart({ data, loading = false }: TopCountriesChartPr
                 {[0, 1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={`countries-label-${i}`}
-                    className="h-3 bg-stone-700 rounded animate-pulse w-6 md:w-8"
+                    className="h-3 bg-muted rounded animate-pulse w-6 md:w-8"
                   ></div>
                 ))}
               </div>
@@ -108,15 +108,15 @@ export function TopCountriesChart({ data, loading = false }: TopCountriesChartPr
   }
 
   return (
-    <Card className="bg-stone-800 border-stone-700 space-y-3">
+    <Card className="border-border bg-card space-y-3">
       <CardHeader>
-        <CardTitle className="text-stone-100">{t("charts.topCountries.title")}</CardTitle>
-        <CardDescription className="text-stone-400">
+        <CardTitle className="text-foreground">{t("charts.topCountries.title")}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {t("charts.topCountries.description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="w-full h-64 md:h-96">
+        <div className="w-full h-64 md:h-96 text-muted-foreground">
           <ResponsiveContainer
             key={`${preferences.currency}-${preferences.period}`}
             width="100%"
@@ -129,11 +129,12 @@ export function TopCountriesChart({ data, loading = false }: TopCountriesChartPr
                 top: 15,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#44403c" />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.15} />
               {/* hide X axis ticks/labels, country names are rendered inside the bars */}
               <XAxis dataKey="country" tick={false} axisLine={false} height={0} />
               <YAxis
-                stroke="#78716c"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
                 axisLine={false}
                 tickFormatter={(value) =>
                   formatSalaryWithPreferences(

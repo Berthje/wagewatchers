@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logError } from "@/lib/logger";
 
 const OPENPANEL_API_URL = "https://analytics-api.laytonberth.com";
 
@@ -44,8 +45,7 @@ export async function POST(
     const response = await fetch(`${OPENPANEL_API_URL}/${pathname}`, {
       method: "POST",
       headers: {
-        "Content-Type":
-          request.headers.get("content-type") || "application/json",
+        "Content-Type": request.headers.get("content-type") || "application/json",
         // Forward the real client IP to OpenPanel
         "X-Forwarded-For": clientIp,
         "X-Real-IP": clientIp,
@@ -63,16 +63,12 @@ export async function POST(
     return new NextResponse(responseData, {
       status: response.status,
       headers: {
-        "Content-Type":
-          response.headers.get("content-type") || "application/json",
+        "Content-Type": response.headers.get("content-type") || "application/json",
       },
     });
   } catch (error) {
-    console.error("OpenPanel proxy error:", error);
-    return NextResponse.json(
-      { error: "Failed to proxy request" },
-      { status: 500 }
-    );
+    logError("OpenPanel proxy error:", error, { pathname, method: "POST" });
+    return NextResponse.json({ error: "Failed to proxy request" }, { status: 500 });
   }
 }
 
@@ -101,15 +97,11 @@ export async function GET(
     return new NextResponse(responseData, {
       status: response.status,
       headers: {
-        "Content-Type":
-          response.headers.get("content-type") || "application/json",
+        "Content-Type": response.headers.get("content-type") || "application/json",
       },
     });
   } catch (error) {
-    console.error("OpenPanel proxy error:", error);
-    return NextResponse.json(
-      { error: "Failed to proxy request" },
-      { status: 500 }
-    );
+    logError("OpenPanel proxy error:", error, { pathname, method: "GET" });
+    return NextResponse.json({ error: "Failed to proxy request" }, { status: 500 });
   }
 }

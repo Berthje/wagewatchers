@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { cities } from "@/lib/db/schema";
 import { eq, ilike, and, or } from "drizzle-orm";
+import { logError } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching cities:", error);
+    logError("Error fetching cities:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { newsletterSubscribers } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { logError } from "@/lib/logger";
 
 const subscribeSchema = z.object({
   email: z.email(),
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Newsletter subscription error:", error);
+    logError("Newsletter subscription error", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

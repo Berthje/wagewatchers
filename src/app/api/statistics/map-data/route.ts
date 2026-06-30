@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { logError } from "@/lib/logger";
 import { salaryEntries, cities } from "@/lib/db/schema";
 import { eq, sql, and, isNotNull } from "drizzle-orm";
 import { getProvinceName, getISO3166Code } from "@/lib/utils/admin-divisions";
@@ -99,8 +100,23 @@ export async function GET(request: NextRequest) {
       { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=30" } }
     );
   } catch (error) {
-    console.error("Error fetching map data:", error);
-    return NextResponse.json({ error: "Failed to fetch map data" }, { status: 500 });
+    // Report the actual cause with request context so intermittent 500s are
+    // diagnosable in Sentry + server logs (the client otherwise shows only a
+    // blank map).
+    const { searchParams } = new URL(request.url);
+    logError("[map-data] Failed to fetch map data", error, {
+      params: Object.fromEntries(searchParams.entries()),
+    });
+    return NextResponse.json(
+      {
+        error: "Failed to fetch map data",
+        // Surface the cause in non-production only; never leak internals publicly.
+        ...(process.env.NODE_ENV !== "production" && error instanceof Error
+          ? { detail: error.message }
+          : {}),
+      },
+      { status: 500 }
+    );
   }
 }
 
