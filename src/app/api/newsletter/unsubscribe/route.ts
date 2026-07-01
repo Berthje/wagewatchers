@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { newsletterSubscribers } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { logError } from "@/lib/logger";
 
 /**
  * GET /api/newsletter/unsubscribe
@@ -218,7 +219,7 @@ export async function GET(request: NextRequest) {
       }
     );
   } catch (error) {
-    console.error("Unsubscribe error:", error);
+    logError("Unsubscribe error:", error);
     return new Response(
       `
 <!DOCTYPE html>

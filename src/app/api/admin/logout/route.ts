@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logError } from "@/lib/logger";
 
 export async function POST() {
   try {
@@ -17,7 +18,7 @@ export async function POST() {
 
     return response;
   } catch (error) {
-    console.error("Logout error:", error);
+    logError("Logout error", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

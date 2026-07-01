@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { exchangeRates } from "@/lib/db/schema";
 import { getSupportedCurrencyCodes } from "@/lib/config";
+import { logError, logWarning } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
     const apiKey = process.env.CURRENCY_CONVERSION_API;
 
     if (!apiKey) {
-      console.error("CURRENCY_CONVERSION_API environment variable not set");
+      logWarning("CURRENCY_CONVERSION_API environment variable not set");
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
@@ -45,7 +46,7 @@ export async function GET(request: Request) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Failed to fetch exchange rates:", errorText);
+      logWarning("Failed to fetch exchange rates", { errorText, status: response.status });
       return NextResponse.json(
         { error: "Failed to fetch exchange rates" },
         { status: response.status }
@@ -58,7 +59,7 @@ export async function GET(request: Request) {
     const rates = data.data;
 
     if (!rates) {
-      console.error("Invalid API response format:", data);
+      logWarning("Invalid API response format", { data });
       return NextResponse.json({ error: "Invalid API response" }, { status: 500 });
     }
 
@@ -86,7 +87,7 @@ export async function GET(request: Request) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Error updating exchange rates:", error);
+    logError("Error updating exchange rates", error);
     return NextResponse.json(
       {
         error: "Internal server error",

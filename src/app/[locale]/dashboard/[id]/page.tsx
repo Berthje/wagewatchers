@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { getEntryBenefits } from "@/lib/entry-benefits";
 import { EntryDetailClient } from "./entry-detail-client";
 import { Metadata } from "next";
 
@@ -103,5 +104,7 @@ export default async function EntryDetailPage({
     notFound();
   }
 
-  return <EntryDetailClient entry={entry[0]} locale={locale} />;
+  const benefits = await getEntryBenefits(entry[0].id);
+
+  return <EntryDetailClient entry={entry[0]} benefits={benefits} locale={locale} />;
 }

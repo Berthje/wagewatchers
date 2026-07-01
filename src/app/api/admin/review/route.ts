@@ -4,6 +4,7 @@ import { salaryEntries } from "@/lib/db/schema";
 import { eq, or, desc } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
+import { logError } from "@/lib/logger";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
 
@@ -80,7 +81,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(entries);
   } catch (error) {
-    console.error("Failed to fetch pending entries:", error);
+    logError("Failed to fetch pending entries", error);
     return NextResponse.json({ error: "Failed to fetch entries" }, { status: 500 });
   }
 }
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
       entry: updatedEntry[0],
     });
   } catch (error) {
-    console.error("Failed to update entry:", error);
+    logError("Failed to update entry", error);
     return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
   }
 }

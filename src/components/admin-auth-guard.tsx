@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface AdminAuthGuardProps {
   children: React.ReactNode;
@@ -30,7 +31,7 @@ export function AdminAuthGuard({ children }: Readonly<AdminAuthGuardProps>) {
 
         setIsAuthenticated(true);
       } catch (error) {
-        console.error("Auth check failed:", error);
+        logError("Auth check failed:", error);
         router.push("/admin/login");
       } finally {
         setIsLoading(false);

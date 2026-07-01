@@ -24,20 +24,20 @@ export function ErrorPage({
   const t = useTranslations("add");
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-md bg-stone-800 border-stone-700">
+    <div className="flex min-h-screen items-center justify-center px-6">
+      <Card className="w-full max-w-md border-border bg-card">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-red-400" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+              <AlertCircle className="h-6 w-6 text-destructive" />
             </div>
-            <CardTitle className="text-xl font-semibold text-stone-100">{title}</CardTitle>
+            <CardTitle className="text-xl font-semibold text-foreground">{title}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-stone-400">{message}</p>
+          <p className="text-muted-foreground">{message}</p>
           {retryAfter && (
-            <p className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded-md border border-amber-800/30">
+            <p className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-600 dark:text-amber-400">
               {t("rateLimitRetry", { time: formatTimeUntilRetry(retryAfter) })}
             </p>
           )}

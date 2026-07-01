@@ -3,6 +3,7 @@ import * as React from "react";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "use-debounce";
 import { Combobox } from "@/components/ui/combobox";
+import { logError } from "@/lib/logger";
 import type { CityOption } from "@/types";
 
 interface CityComboboxProps {
@@ -79,7 +80,7 @@ export function CityCombobox({
           setCities([]);
         }
       } catch (error) {
-        console.error("Error fetching cities:", error);
+        logError("Error fetching cities:", error, { location, search: debouncedSearch });
         setCities([]);
       } finally {
         setIsLoading(false);

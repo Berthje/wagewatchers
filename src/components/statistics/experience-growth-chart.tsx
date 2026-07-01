@@ -32,38 +32,38 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
 
   if (loading) {
     return (
-      <Card className="bg-stone-800 border-stone-700 space-y-3">
+      <Card className="border-border bg-card space-y-3">
         <CardHeader>
-          <CardTitle className="text-stone-100">{t("charts.experienceGrowth.title")}</CardTitle>
-          <CardDescription className="text-stone-400">
+          <CardTitle className="text-foreground">{t("charts.experienceGrowth.title")}</CardTitle>
+          <CardDescription className="text-muted-foreground">
             {t("charts.experienceGrowth.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full h-64 md:h-96 bg-stone-800 rounded p-4">
+          <div className="w-full h-64 md:h-96 bg-muted rounded p-4 text-muted-foreground">
             <div className="relative h-full">
               {/* Grid lines */}
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={`exp-grid-h-${i}`}
-                  className="absolute w-full h-px bg-stone-700"
+                  className="absolute w-full h-px bg-muted"
                   style={{ top: `${20 + i * 20}%` }}
                 ></div>
               ))}
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={`exp-grid-v-${i}`}
-                  className="absolute h-full w-px bg-stone-700"
+                  className="absolute h-full w-px bg-muted"
                   style={{ left: `${15 + i * 14}%` }}
                 ></div>
               ))}
               {/* Area fill */}
-              <div className="absolute bottom-8 left-4 right-4 h-32 bg-linear-to-t from-stone-600/50 to-transparent rounded-t animate-pulse"></div>
+              <div className="absolute bottom-8 left-4 right-4 h-32 bg-linear-to-t from-muted to-transparent rounded-t animate-pulse"></div>
               {/* Wavy line */}
               <svg className="absolute bottom-8 left-4 right-4 h-32" viewBox="0 0 350 80">
                 <path
                   d="M0,60 Q25,30 50,50 T100,40 T150,25 T200,35 T250,45 T300,30 T350,40"
-                  stroke="rgb(120 113 108)"
+                  stroke="currentColor"
                   strokeWidth="2"
                   fill="none"
                   className="animate-pulse"
@@ -74,7 +74,7 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
                 {[0, 1, 2, 3, 4].map((i) => (
                   <div
                     key={`exp-x-label-${i}`}
-                    className="h-3 bg-stone-700 rounded animate-pulse w-4 md:w-6"
+                    className="h-3 bg-muted rounded animate-pulse w-4 md:w-6"
                   ></div>
                 ))}
               </div>
@@ -86,15 +86,15 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
   }
 
   return (
-    <Card className="bg-stone-800 border-stone-700 space-y-3">
+    <Card className="border-border bg-card space-y-3">
       <CardHeader>
-        <CardTitle className="text-stone-100">{t("charts.experienceGrowth.title")}</CardTitle>
-        <CardDescription className="text-stone-400">
+        <CardTitle className="text-foreground">{t("charts.experienceGrowth.title")}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {t("charts.experienceGrowth.description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="w-full h-64 md:h-96">
+        <div className="w-full h-64 md:h-96 text-muted-foreground">
           <ResponsiveContainer
             key={`${preferences.currency}-${preferences.period}`}
             width="100%"
@@ -113,10 +113,16 @@ export function ExperienceGrowthChart({ data, loading = false }: ExperienceGrowt
                   <stop offset="95%" stopColor="#ea580c" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#44403c" />
-              <XAxis dataKey="experience" stroke="#78716c" axisLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.15} />
+              <XAxis
+                dataKey="experience"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
+                axisLine={false}
+              />
               <YAxis
-                stroke="#78716c"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
                 tickFormatter={(value) =>
                   formatSalaryWithPreferences(
                     value,

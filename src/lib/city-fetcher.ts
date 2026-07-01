@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { cities } from "@/lib/db/schema";
+import { logError } from "@/lib/logger";
 import fs from "node:fs";
 
 interface CityData {
@@ -139,7 +140,7 @@ export async function updateCitiesFromCSV(csvPath: string) {
       await db.insert(cities).values(batch);
     }
   } catch (error) {
-    console.error("Error updating cities from CSV:", error);
+    logError("Error updating cities from CSV", error);
     throw error;
   }
 }

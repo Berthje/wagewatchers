@@ -5,6 +5,32 @@ import { z } from "zod";
  * Comprehensive validation for manual salary entry submissions
  */
 
+// v2 enum values — duplicated locally (not imported from db/schema) so this
+// client-bundled schema never pulls Drizzle/pg-core into the browser bundle.
+// Keep in sync with the enums in src/lib/db/schema.ts.
+const WORKER_TYPES = [
+  "whiteCollar",
+  "blueCollar",
+  "freelancer",
+  "intern",
+  "phdResearcher",
+] as const;
+const SALARY_BASIS = ["gross", "net", "both"] as const;
+const CONTRACT_TYPES = ["permanent", "fixedTerm", "interim", "internship", "freelance"] as const;
+const CAR_FUEL_TYPES = ["electric", "hybrid", "fuel"] as const;
+const CAR_CARD_SCOPES = ["belgium", "benelux", "europe"] as const;
+const LOCATION_GRANULARITY = ["country", "province", "city"] as const;
+const COMMUTE_UNITS = ["km", "minutes"] as const;
+
+// Worker types that follow the classic salaried model (salary required, BE
+// employee benefits like 13th month / group insurance apply).
+const SALARIED_WORKER_TYPES = new Set<string>(["whiteCollar", "intern"]);
+
+// Optional money field: a positive number or an (empty) string passthrough,
+// mirroring how grossSalary/netSalary are modelled.
+const optionalMoney = z.union([z.number().positive(), z.string()]).optional();
+const hasValue = (v: unknown) => v !== undefined && v !== null && v !== "";
+
 // Custom URL validation - checks for common URL patterns
 const noUrls = (fieldName: string) =>
   z.string().refine(
@@ -34,6 +60,10 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
         // Country (Required)
         country: z.string().min(1, { message: t("validation.countryRequired") }),
 
+        // Worker type (v2 discriminator). Defaults to whiteCollar so existing
+        // payloads that omit it behave exactly as before.
+        workerType: z.enum(WORKER_TYPES).optional().default("whiteCollar"),
+
         // Personal Information
         age: z
           .number({ message: t("validation.numberExpected") })
@@ -44,6 +74,9 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .string()
           .min(1, { message: t("validation.educationRequired") })
           .max(200),
+        // Canonical degree from the curated list (v2, optional). Loosely references
+        // Degree.id; complements the free-text `education` level.
+        degreeId: z.number().int().positive().optional(),
         workExperience: z
           .number({ message: t("validation.numberExpected") })
           .int({ message: t("validation.integerExpected") })
@@ -60,6 +93,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
         sector: z.string().min(1, { message: t("validation.sectorRequired") }),
         employeeCount: z.string().min(1, { message: t("validation.employeeCountRequired") }),
         multinational: z.boolean(),
+        publiclyListed: z.boolean().optional(), // Beursgenoteerd bedrijf?
 
         // Job Profile
         jobTitle: noUrls("job title")
@@ -98,33 +132,76 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
 
         // Salary & Currency
         currency: z.string().min(1, { message: t("validation.currencyRequired") }),
-        grossSalary: z.union([
-          z.number().positive({ message: t("validation.grossSalaryPositive") }),
-          z.string(),
-        ]),
-        netSalary: z.union([
-          z.number().positive({ message: t("validation.grossSalaryPositive") }),
-          z.string(),
-        ]),
-        netCompensation: z.union([z.number().min(0), z.string()]),
+        // Optional at base so non-salaried worker-type forms (which don't render
+        // these inputs) validate; the "at least one salary" rule for salaried
+        // types is enforced in superRefine below.
+        grossSalary: z
+          .union([
+            z.number().positive({ message: t("validation.grossSalaryPositive") }),
+            z.string(),
+          ])
+          .optional(),
+        netSalary: z
+          .union([
+            z.number().positive({ message: t("validation.grossSalaryPositive") }),
+            z.string(),
+          ])
+          .optional(),
+        netCompensation: z.union([z.number().min(0), z.string()]).optional(),
 
-        // Benefits
-        thirteenthMonth: z.string().min(1, { message: t("validation.thirteenthMonthRequired") }),
-        mealVouchers: z.union([
-          z
-            .number()
-            .min(0)
-            .max(12, { message: t("validation.mealVouchersMax") }),
-          z.string(),
-        ]),
-        ecoCheques: z.union([
-          z
-            .number()
-            .min(0)
-            .max(10000, { message: t("validation.ecoChequesMax") }),
-          z.string(),
-        ]),
-        groupInsurance: z.string().min(1, { message: t("validation.groupInsuranceRequired") }),
+        // Salary semantics + fixed/variable split (v2, optional)
+        salaryBasis: z.enum(SALARY_BASIS).optional(),
+        fixedGrossSalary: z.union([z.number().min(0), z.string()]).optional(),
+        variableGrossSalary: z.union([z.number().min(0), z.string()]).optional(),
+
+        // Worker-type-specific compensation (v2, optional; required-ness enforced
+        // per workerType in superRefine below)
+        hourlyRate: optionalMoney, // blue-collar
+        dayRate: optionalMoney, // freelancer
+        agencyCutPercent: z.union([z.number().min(0).max(100), z.string()]).optional(), // freelancer
+        clientDayBudget: optionalMoney, // freelancer
+        bursaryAmount: optionalMoney, // PhD
+        virtualGrossSalary: optionalMoney, // PhD
+
+        // Contract context (v2, optional)
+        contractType: z.enum(CONTRACT_TYPES).optional(),
+        contractDurationMonths: z.union([z.number().int().min(0).max(600), z.string()]).optional(),
+
+        // Structured company car + equity (v2, optional)
+        hasCompanyCar: z.boolean().optional(),
+        companyCarModel: z.string().max(120).optional(),
+        companyCarFuelType: z.enum(CAR_FUEL_TYPES).optional(),
+        companyCarCardScope: z.enum(CAR_CARD_SCOPES).optional(),
+        hasEquity: z.boolean().optional(),
+
+        // Location granularity + cross-border (v2, optional)
+        locationGranularity: z.enum(LOCATION_GRANULARITY).optional(),
+        workProvince: z.string().max(200).optional(),
+        residenceCountry: z.string().max(200).optional(),
+        commuteUnit: z.enum(COMMUTE_UNITS).optional(),
+
+        // Benefits — thirteenthMonth/groupInsurance are optional at the base level
+        // and required only for salaried worker types (see superRefine).
+        thirteenthMonth: z.string().optional(),
+        mealVouchers: z
+          .union([
+            z
+              .number()
+              .min(0)
+              .max(12, { message: t("validation.mealVouchersMax") }),
+            z.string(),
+          ])
+          .optional(),
+        ecoCheques: z
+          .union([
+            z
+              .number()
+              .min(0)
+              .max(10000, { message: t("validation.ecoChequesMax") }),
+            z.string(),
+          ])
+          .optional(),
+        groupInsurance: z.string().optional(),
         otherInsurances: noUrls("other insurances")
           .max(2000, { message: t("validation.otherInsurancesMax") })
           .optional(),
@@ -161,6 +238,9 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .refine((val) => val % 0.5 === 0, { message: t("validation.hoursStep") }),
         dayOffEase: z.string().min(1, { message: t("validation.dayOffEaseRequired") }),
         stressLevel: z.string().min(1, { message: t("validation.stressLevelRequired") }),
+        // 0–10 "how much do you enjoy your job" (NLSalaris); optional, applies everywhere.
+        jobSatisfaction: z.number().int().min(0).max(10).optional(),
+        commuteTimeMinutes: z.union([z.number().int().min(0).max(600), z.string()]).optional(),
         reports: z
           .number({ message: t("validation.numberExpected") })
           .int({ message: t("validation.integerExpected") })
@@ -174,24 +254,86 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .max(5000, { message: t("validation.extraNotesMax") })
           .optional(),
 
+        // Catalog benefits (v2) — one entry per selected benefit. Persisted as
+        // EntryBenefit rows server-side; not a column on SalaryEntry.
+        benefits: z
+          .array(
+            z.object({
+              benefitKey: z.string().min(1),
+              valueNumeric: z.number().optional(),
+              valueText: z.string().max(500).optional(),
+              currency: z.string().optional(),
+            })
+          )
+          .optional(),
+
         // Validation
         honestyConfirmation: z.boolean().refine((val) => val === true, {
           message: t("validation.honestyRequired"),
         }),
       })
-      .refine(
-        (data) => {
-          // At least one salary field is required
-          const hasGross = data.grossSalary !== undefined && data.grossSalary !== "";
-          const hasNet = data.netSalary !== undefined && data.netSalary !== "";
-          const hasNetComp = data.netCompensation !== undefined && data.netCompensation !== "";
-          return hasGross || hasNet || hasNetComp;
-        },
-        {
-          message: t("validation.atLeastOneSalary"),
-          path: ["grossSalary"], // Show error on first salary field
+      .superRefine((data, ctx) => {
+        const workerType = data.workerType ?? "whiteCollar";
+        const hasAnySalary =
+          hasValue(data.grossSalary) || hasValue(data.netSalary) || hasValue(data.netCompensation);
+
+        // Worker-type-specific compensation requirement.
+        if (workerType === "freelancer") {
+          if (!hasValue(data.dayRate)) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.dayRateRequired"),
+              path: ["dayRate"],
+            });
+          }
+        } else if (workerType === "blueCollar") {
+          if (!hasValue(data.hourlyRate) && !hasAnySalary) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.hourlyRateRequired"),
+              path: ["hourlyRate"],
+            });
+          }
+        } else if (workerType === "phdResearcher") {
+          if (
+            !hasValue(data.bursaryAmount) &&
+            !hasValue(data.virtualGrossSalary) &&
+            !hasAnySalary
+          ) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.bursaryRequired"),
+              path: ["bursaryAmount"],
+            });
+          }
+        } else if (!hasAnySalary) {
+          // whiteCollar | intern — classic salaried model
+          ctx.addIssue({
+            code: "custom",
+            message: t("validation.atLeastOneSalary"),
+            path: ["grossSalary"],
+          });
         }
-      )
+
+        // 13th month + group insurance are only required for salaried worker types
+        // (preserves the original white-collar requirement exactly).
+        if (SALARIED_WORKER_TYPES.has(workerType)) {
+          if (!hasValue(data.thirteenthMonth)) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.thirteenthMonthRequired"),
+              path: ["thirteenthMonth"],
+            });
+          }
+          if (!hasValue(data.groupInsurance)) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.groupInsuranceRequired"),
+              path: ["groupInsurance"],
+            });
+          }
+        }
+      })
       .refine(
         (data) => {
           // Work experience cannot exceed years since age 16

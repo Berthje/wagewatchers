@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import { Bug, Lightbulb, TrendingUp, Search, AlertCircle, Loader2 } from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface Report {
   id: number;
@@ -51,7 +53,6 @@ export default function StatusClient() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations("status");
-  const tNav = useTranslations("nav");
 
   const statusLabels = {
     TODO: t("statuses.TODO"),
@@ -124,7 +125,7 @@ export default function StatusClient() {
           setLoading(false);
         }
       } catch (e) {
-        console.error("Failed to parse stored tracking IDs", e);
+        logError("Failed to parse stored tracking IDs", e);
         setLoading(false);
       }
     } else {
@@ -219,7 +220,7 @@ export default function StatusClient() {
         setMyTrackingIds(updatedIds);
       }
     } catch (e) {
-      console.error("Failed to save tracking ID to localStorage", e);
+      logError("Failed to save tracking ID to localStorage", e);
     }
   };
 
@@ -281,203 +282,176 @@ export default function StatusClient() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <Navbar
-        locale={locale}
-        translations={{
-          dashboard: tNav("dashboard"),
-          statistics: tNav("statistics"),
-          feedback: tNav("feedback"),
-          status: tNav("status"),
-          donate: tNav("donate"),
-          addEntry: tNav("addEntry"),
-          changelog: tNav("changelog"),
-        }}
-      />
+    <PageShell width="md">
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} />
 
-      <div className="container mx-auto p-6 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-stone-100">{t("title")}</h1>
-          <p className="text-stone-400">{t("subtitle")}</p>
-        </div>
+      {/* Search Form */}
+      <Card className="mb-6 border-border bg-card/80 backdrop-blur-sm">
+        <CardHeader className="mb-2">
+          <CardTitle className="text-foreground">
+            {myTrackingIds.length > 0 ? t("search.searchAnother") : t("search.searchTitle")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Search Type Toggle */}
+          <div className="mb-4 flex gap-2">
+            <Button
+              type="button"
+              variant={searchType === "trackingId" ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                setSearchType("trackingId");
+                setSearchTerm("");
+                setValidationError("");
+              }}
+            >
+              {t("search.searchType.trackingId")}
+            </Button>
+            <Button
+              type="button"
+              variant={searchType === "email" ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                setSearchType("email");
+                setSearchTerm("");
+                setValidationError("");
+              }}
+            >
+              {t("search.searchType.email")}
+            </Button>
+          </div>
 
-        {/* Search Form */}
-        <Card className="mb-6 border-stone-800 bg-stone-900/60 backdrop-blur-sm">
-          <CardHeader className="mb-2">
-            <CardTitle className="text-stone-100">
-              {myTrackingIds.length > 0 ? t("search.searchAnother") : t("search.searchTitle")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Search Type Toggle */}
-            <div className="flex gap-2 mb-4">
-              <Button
-                type="button"
-                variant={searchType === "trackingId" ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSearchType("trackingId");
-                  setSearchTerm("");
-                  setValidationError("");
-                }}
-                className={searchType === "trackingId" ? "" : "text-stone-400"}
-              >
-                {t("search.searchType.trackingId")}
-              </Button>
-              <Button
-                type="button"
-                variant={searchType === "email" ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSearchType("email");
-                  setSearchTerm("");
-                  setValidationError("");
-                }}
-                className={searchType === "email" ? "" : "text-stone-400"}
-              >
-                {t("search.searchType.email")}
-              </Button>
-            </div>
-
-            <div className="flex gap-4 items-start">
-              <div className="flex-1">
-                {searchType === "trackingId" ? (
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-stone-100 font-mono font-semibold">TRK-</span>
-                    </div>
-                    <Input
-                      id="search"
-                      type="text"
-                      placeholder={t("search.placeholder")}
-                      value={searchTerm}
-                      onChange={(e) => handleSearchInputChange(e.target.value)}
-                      onKeyUp={handleKeyPress}
-                      className="pl-16 font-mono text-stone-100 tracking-wider"
-                      maxLength={9}
-                    />
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              {searchType === "trackingId" ? (
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span className="font-mono font-semibold text-foreground">TRK-</span>
                   </div>
-                ) : (
                   <Input
                     id="search"
-                    type="email"
-                    placeholder={t("search.placeholderEmail")}
+                    type="text"
+                    placeholder={t("search.placeholder")}
                     value={searchTerm}
                     onChange={(e) => handleSearchInputChange(e.target.value)}
                     onKeyUp={handleKeyPress}
+                    className="pl-16 font-mono tracking-wider"
+                    maxLength={9}
                   />
-                )}
-
-                <p className="text-xs text-stone-400 mt-2">{t("search.hint")}</p>
-              </div>
-              <div className="flex items-end">
-                <Button onClick={searchReports} disabled={loading}>
-                  <Search className="w-4 h-4 mr-2" />
-                  {loading ? t("search.searching") : t("search.button")}
-                </Button>
-              </div>
-            </div>
-
-            {validationError && (
-              <Alert className="mt-4 border-amber-800 bg-amber-950/50">
-                <AlertCircle className="h-4 w-4 text-amber-400" />
-                <AlertDescription className="text-amber-200">{validationError}</AlertDescription>
-              </Alert>
-            )}
-
-            {error && !validationError && (
-              <Alert className="mt-4 border-red-800 bg-red-950/50">
-                <AlertCircle className="h-4 w-4 text-red-400" />
-                <AlertDescription className="text-red-200">{error}</AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="flex flex-col items-center gap-3">
-              <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
-              <p className="text-sm text-stone-400">{t("loading")}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Results */}
-        {!loading && reports.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-stone-100">
-                {getResultsTitle(reports, myTrackingIds, searched)}
-              </h2>
-              {reports.length > 2 && (
-                <Link href={`/${locale}/status/all`}>
-                  <Button variant="outline" size="sm" className="text-stone-400">
-                    {t("results.viewAll")}
-                  </Button>
-                </Link>
+                </div>
+              ) : (
+                <Input
+                  id="search"
+                  type="email"
+                  placeholder={t("search.placeholderEmail")}
+                  value={searchTerm}
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
+                  onKeyUp={handleKeyPress}
+                />
               )}
+
+              <p className="mt-2 text-xs text-muted-foreground">{t("search.hint")}</p>
             </div>
-            <div className="space-y-4">
-              {reports.slice(0, 2).map((report) => {
-                const TypeIcon = typeIcons[report.type];
-                return (
-                  <Card
-                    key={report.id}
-                    className="border-stone-800 bg-stone-900/60 backdrop-blur-sm"
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <TypeIcon className="w-5 h-5 text-stone-400" />
-                          <div>
-                            <CardTitle className="text-stone-100 text-lg">{report.title}</CardTitle>
-                            <p className="text-sm text-stone-400 mt-1">
-                              {t("results.submittedOn")}{" "}
-                              {new Date(report.createdAt).toLocaleDateString()}{" "}
-                              {new Date(report.createdAt).toLocaleTimeString(undefined, {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge className={priorityColors[report.priority]}>
-                            {report.priority}
-                          </Badge>
-                          <Badge className={statusColors[report.status]}>
-                            {statusLabels[report.status]}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-stone-300 mb-4">{report.description}</p>
-                      <div className="text-sm text-stone-400 space-y-1">
-                        <div>
-                          <span className="font-medium">{t("results.trackingId")}</span>{" "}
-                          <span className="font-mono text-stone-100">{report.trackingId}</span>
-                        </div>
-                        <div>
-                          {t("results.lastUpdated")}{" "}
-                          {new Date(report.updatedAt).toLocaleDateString()}{" "}
-                          {new Date(report.updatedAt).toLocaleTimeString(undefined, {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <div className="flex items-end">
+              <Button onClick={searchReports} disabled={loading}>
+                <Search className="mr-2 h-4 w-4" />
+                {loading ? t("search.searching") : t("search.button")}
+              </Button>
             </div>
           </div>
-        )}
-      </div>
-    </div>
+
+          {validationError && (
+            <Alert className="mt-4 border-amber-500/30 bg-amber-500/10">
+              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-foreground">{validationError}</AlertDescription>
+            </Alert>
+          )}
+
+          {error && !validationError && (
+            <Alert className="mt-4 border-destructive/40 bg-destructive/10">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <AlertDescription className="text-foreground">{error}</AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-brand" />
+            <p className="text-sm text-muted-foreground">{t("loading")}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Results */}
+      {!loading && reports.length > 0 && (
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">
+              {getResultsTitle(reports, myTrackingIds, searched)}
+            </h2>
+            {reports.length > 2 && (
+              <Link href={`/${locale}/status/all`}>
+                <Button variant="outline" size="sm">
+                  {t("results.viewAll")}
+                </Button>
+              </Link>
+            )}
+          </div>
+          <div className="space-y-4">
+            {reports.slice(0, 2).map((report) => {
+              const TypeIcon = typeIcons[report.type];
+              return (
+                <Card key={report.id} className="border-border bg-card/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <TypeIcon className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <CardTitle className="text-lg text-foreground">{report.title}</CardTitle>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {t("results.submittedOn")}{" "}
+                            {new Date(report.createdAt).toLocaleDateString()}{" "}
+                            {new Date(report.createdAt).toLocaleTimeString(undefined, {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Badge className={priorityColors[report.priority]}>{report.priority}</Badge>
+                        <Badge className={statusColors[report.status]}>
+                          {statusLabels[report.status]}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-4 text-foreground/90">{report.description}</p>
+                    <div className="space-y-1 text-sm text-muted-foreground">
+                      <div>
+                        <span className="font-medium">{t("results.trackingId")}</span>{" "}
+                        <span className="font-mono text-foreground">{report.trackingId}</span>
+                      </div>
+                      <div>
+                        {t("results.lastUpdated")} {new Date(report.updatedAt).toLocaleDateString()}{" "}
+                        {new Date(report.updatedAt).toLocaleTimeString(undefined, {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </PageShell>
   );
 }

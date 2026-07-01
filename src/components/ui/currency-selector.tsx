@@ -28,9 +28,7 @@ export function CurrencySelector({
 
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-      <SelectTrigger
-        className={`bg-stone-700 border-stone-600 text-stone-100 ${disabled ? "opacity-50" : ""} ${className}`}
-      >
+      <SelectTrigger className={`${disabled ? "opacity-50" : ""} ${className}`}>
         <SelectValue placeholder={placeholder}>
           {showFullLabel ? (
             t(selectedCurrency.labelKey)
@@ -39,13 +37,9 @@ export function CurrencySelector({
           )}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="bg-stone-700 border-stone-600">
+      <SelectContent>
         {SUPPORTED_CURRENCIES.map((curr) => (
-          <SelectItem
-            key={curr.code}
-            value={curr.code}
-            className="text-stone-100 focus:bg-stone-600"
-          >
+          <SelectItem key={curr.code} value={curr.code}>
             {t(curr.labelKey)}
           </SelectItem>
         ))}

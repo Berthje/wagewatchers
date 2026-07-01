@@ -20,13 +20,13 @@ export function LoadingSpinner({
   const content = (
     <div className="flex flex-col items-center justify-center gap-3">
       <Loader2 className={`${sizeClasses[size]} animate-spin text-amber-400`} />
-      {message && <p className="text-sm text-stone-400">{message}</p>}
+      {message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         {content}
       </div>
     );

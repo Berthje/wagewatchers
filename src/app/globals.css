@@ -5,6 +5,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, system-ui,
+    sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -34,19 +36,63 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Light theme (default — also what a system-light visitor sees) */
 :root {
   --radius: 0.625rem;
+  --background: oklch(0.98 0.003 75); /* warm cream, ~stone-50 */
+  --foreground: oklch(0.24 0.006 56); /* warm near-black, ~stone-900 */
+  --card: oklch(1 0 0); /* white panels */
+  --card-foreground: oklch(0.24 0.006 56);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.006 56);
+  --primary: oklch(0.24 0.006 56); /* dark buttons on light */
+  --primary-foreground: oklch(0.99 0.002 75);
+  --secondary: oklch(0.95 0.004 75);
+  --secondary-foreground: oklch(0.24 0.006 56);
+  --muted: oklch(0.95 0.004 75);
+  --muted-foreground: oklch(0.49 0.006 56); /* ~stone-500 */
+  --accent: oklch(0.95 0.004 75);
+  --accent-foreground: oklch(0.24 0.006 56);
+  --destructive: oklch(0.58 0.21 27);
+  --border: oklch(0.21 0.006 56 / 12%); /* warm hairline */
+  --input: oklch(0.21 0.006 56 / 16%);
+  --ring: oklch(0.55 0.013 58);
+  --chart-1: oklch(0.55 0.2 264);
+  --chart-2: oklch(0.6 0.13 162);
+  --chart-3: oklch(0.6 0.16 70);
+  --chart-4: oklch(0.62 0.2 304);
+  --chart-5: oklch(0.62 0.22 16);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.24 0.006 56);
+  --sidebar-primary: oklch(0.24 0.006 56);
+  --sidebar-primary-foreground: oklch(0.99 0.002 75);
+  --sidebar-accent: oklch(0.95 0.004 75);
+  --sidebar-accent-foreground: oklch(0.24 0.006 56);
+  --sidebar-border: oklch(0.21 0.006 56 / 12%);
+  --sidebar-ring: oklch(0.55 0.013 58);
+
+  /* brand + signature tokens (light) */
+  --brand: #ea580c; /* orange-600 — reads on white */
+  --brand-foreground: #ffffff;
+  --ink: #1c1917; /* redaction bar: dark on light = real redacted doc */
+  --ledger-line: rgba(28, 25, 23, 0.07);
+}
+
+/* Dark theme */
+.dark {
   --background: oklch(0.147 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
-  --card: oklch(0.216 0.006 56.043);
+  --card: oklch(0.2 0.005 56); /* tuned ~stone-900 for panel separation */
   --card-foreground: oklch(0.985 0.001 106.423);
-  --popover: oklch(0.216 0.006 56.043);
+  --popover: oklch(0.2 0.005 56);
   --popover-foreground: oklch(0.985 0.001 106.423);
   --primary: oklch(0.923 0.003 48.717);
   --primary-foreground: oklch(0.216 0.006 56.043);
@@ -73,6 +119,12 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
+
+  /* brand + signature tokens (dark) */
+  --brand: #f97316; /* orange-500 */
+  --brand-foreground: #0c0a09;
+  --ink: #0c0a09;
+  --ledger-line: rgba(250, 250, 249, 0.05);
 }
 
 @layer base {
@@ -84,6 +136,111 @@
   }
   a {
     @apply cursor-pointer;
+  }
+}
+
+/* ============================================================
+   Landing page — "redaction / payslip" signature
+   ============================================================ */
+
+/* Ledger-ruled paper texture for the hero ground */
+.lp-ledger {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 39px,
+    var(--ledger-line) 39px,
+    var(--ledger-line) 40px
+  );
+}
+
+/* A censor bar that wipes away to reveal the figure beneath it */
+.lp-reveal {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  overflow: hidden;
+}
+.lp-reveal__bar {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-origin: right center;
+  background: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(250, 250, 249, 0.06);
+  animation: lp-wipe 0.7s cubic-bezier(0.66, 0, 0.2, 1) both;
+}
+/* trailing highlighter edge that flashes as the bar clears */
+.lp-reveal__bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -2px;
+  width: 2px;
+  background: var(--brand);
+  box-shadow: 0 0 12px 1px color-mix(in srgb, var(--brand) 60%, transparent);
+}
+
+/* Highlighter marker drawn under the hero word */
+.lp-marker {
+  position: absolute;
+  left: -0.06em;
+  right: -0.06em;
+  bottom: 0.08em;
+  height: 0.36em;
+  z-index: -1;
+  transform-origin: left center;
+  background: var(--brand);
+  transform: rotate(-1.2deg);
+  animation: lp-marker 0.55s cubic-bezier(0.66, 0, 0.2, 1) 0.45s both;
+}
+
+/* Generic rise-in for staggered entrance */
+.lp-rise {
+  animation: lp-rise 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes lp-wipe {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes lp-marker {
+  from {
+    transform: rotate(-1.2deg) scaleX(0);
+  }
+  to {
+    transform: rotate(-1.2deg) scaleX(1);
+  }
+}
+@keyframes lp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal__bar {
+    animation: none;
+    transform: scaleX(0);
+  }
+  .lp-marker {
+    animation: none;
+    transform: rotate(-1.2deg) scaleX(1);
+  }
+  .lp-rise {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 

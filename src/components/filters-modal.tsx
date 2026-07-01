@@ -16,6 +16,47 @@ import { Slider } from "@/components/ui/slider";
 import { Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSalaryDisplay } from "@/contexts/salary-display-context";
+import { cn } from "@/lib/utils";
+
+// Any / Yes / No toggle for nullable boolean filters (null = any).
+function TriStateToggle({
+  value,
+  onChange,
+  labels,
+}: {
+  readonly value: boolean | null;
+  readonly onChange: (value: boolean | null) => void;
+  readonly labels: { any: string; yes: string; no: string };
+}) {
+  const options: { v: boolean | null; label: string }[] = [
+    { v: null, label: labels.any },
+    { v: true, label: labels.yes },
+    { v: false, label: labels.no },
+  ];
+  return (
+    <div className="inline-flex w-full rounded-lg border border-input p-0.5">
+      {options.map((opt) => {
+        const selected = value === opt.v;
+        return (
+          <button
+            key={String(opt.v)}
+            type="button"
+            onClick={() => onChange(opt.v)}
+            aria-pressed={selected}
+            className={cn(
+              "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+              selected
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 interface FiltersModalProps {
   // Country filters
@@ -32,6 +73,15 @@ interface FiltersModalProps {
   selectedSectors: string[];
   onSectorsChange: (sectors: string[]) => void;
   availableSectors: { value: string; label: string }[];
+
+  // Worker type + package filters (v2)
+  selectedWorkerTypes?: string[];
+  onWorkerTypesChange?: (workerTypes: string[]) => void;
+  availableWorkerTypes?: { value: string; label: string }[];
+  hasCompanyCar?: boolean | null;
+  onHasCompanyCarChange?: (value: boolean | null) => void;
+  hasEquity?: boolean | null;
+  onHasEquityChange?: (value: boolean | null) => void;
 
   // Age filters
   minAge?: number | null;
@@ -75,6 +125,13 @@ export function FiltersModal({
   selectedSectors,
   onSectorsChange,
   availableSectors,
+  selectedWorkerTypes,
+  onWorkerTypesChange,
+  availableWorkerTypes,
+  hasCompanyCar,
+  onHasCompanyCarChange,
+  hasEquity,
+  onHasEquityChange,
   minAge,
   maxAge,
   onMinAgeChange,
@@ -98,8 +155,18 @@ export function FiltersModal({
   activeFilterCount,
 }: Readonly<FiltersModalProps>) {
   const t = useTranslations("dashboard");
+  const tAdd = useTranslations("add");
   const { preferences } = useSalaryDisplay();
   const [open, setOpen] = useState(false);
+
+  // Localize worker-type option labels (values come from the filter hook).
+  const workerTypeOptions = (availableWorkerTypes ?? []).map((o) => ({
+    value: o.value,
+    label: tAdd(`formOptions.workerType.${o.value}`),
+  }));
+
+  const showCompensationSection =
+    !!onWorkerTypesChange || !!onHasCompanyCarChange || !!onHasEquityChange;
 
   // Helper function to get currency symbol
   const getCurrencySymbol = () => {
@@ -177,6 +244,9 @@ export function FiltersModal({
     onCountriesChange([]);
     onCitiesChange([]);
     onSectorsChange([]);
+    onWorkerTypesChange?.([]);
+    onHasCompanyCarChange?.(null);
+    onHasEquityChange?.(null);
     setLocalMinAge(18);
     setLocalMaxAge(maxAgeLimit);
     setLocalMinWorkExp(0);
@@ -200,26 +270,23 @@ export function FiltersModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="relative bg-stone-800 border-stone-600 text-stone-100 hover:bg-stone-700"
-        >
+        <Button variant="outline" className="relative">
           <Filter className="h-4 w-4 mr-2" />
           {t("filters.filters")}
           {hasActiveFilters && (
             <Badge
               variant="secondary"
-              className="ml-2 px-1.5 py-0 h-5 min-w-5 text-xs font-semibold bg-stone-700 text-stone-100"
+              className="ml-2 px-1.5 py-0 h-5 min-w-5 text-xs font-semibold bg-brand text-brand-foreground"
             >
               {activeFilterCount}
             </Badge>
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-full max-h-min md:max-h-[75vh] w-full md:w-[80vw] md:max-w-5xl overflow-y-auto bg-stone-800 border-0 rounded-none p-0">
-        <DialogHeader className="sticky top-0 bg-stone-800 border-b border-stone-700 px-6 py-4 w-auto z-10">
+      <DialogContent className="h-full max-h-min md:max-h-[75vh] w-full md:w-[80vw] md:max-w-5xl overflow-y-auto bg-popover border-0 rounded-none p-0">
+        <DialogHeader className="sticky top-0 bg-popover border-b border-border px-6 py-4 w-auto z-10">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-semibold text-stone-100">
+            <DialogTitle className="text-lg font-semibold text-foreground">
               {t("filters.filters")}
             </DialogTitle>
             {hasActiveFilters && (
@@ -227,7 +294,7 @@ export function FiltersModal({
                 variant="ghost"
                 size="sm"
                 onClick={handleClearAll}
-                className="text-stone-400 hover:text-stone-100"
+                className="text-muted-foreground hover:text-foreground"
               >
                 {t("filters.clearAll")}
               </Button>
@@ -238,12 +305,12 @@ export function FiltersModal({
         <div className="space-y-4 px-6 py-4">
           {/* Location Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
               {t("filters.locationSection")}
             </h3>
             <div className="grid grid-cols-2 gap-4 pl-0">
               <div className="space-y-2">
-                <label className="text-sm block font-medium text-stone-300">
+                <label className="text-sm block font-medium text-foreground">
                   {t("filters.countries")}
                 </label>
                 <MultiSelect
@@ -257,7 +324,7 @@ export function FiltersModal({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm block font-medium text-stone-300">
+                <label className="text-sm block font-medium text-foreground">
                   {t("filters.cities")}
                 </label>
                 <MultiSelect
@@ -274,15 +341,15 @@ export function FiltersModal({
           </div>
 
           {/* Divider */}
-          <div className="border-t border-stone-700" />
+          <div className="border-t border-border" />
 
           {/* Work Details Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
               {t("filters.workSection")}
             </h3>
             <div className="space-y-2 pl-0">
-              <label className="text-sm block font-medium text-stone-300">
+              <label className="text-sm block font-medium text-foreground">
                 {t("filters.sectors")}
               </label>
               <MultiSelect
@@ -297,6 +364,68 @@ export function FiltersModal({
             </div>
           </div>
 
+          {/* Compensation Section (worker type + package flags) */}
+          {showCompensationSection && (
+            <>
+              <div className="border-t border-border" />
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+                  {t("filters.compensationSection")}
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 pl-0">
+                  {onWorkerTypesChange && (
+                    <div className="space-y-2">
+                      <label className="text-sm block font-medium text-foreground">
+                        {t("filters.workerType")}
+                      </label>
+                      <MultiSelect
+                        selectedValues={selectedWorkerTypes ?? []}
+                        onValuesChange={onWorkerTypesChange}
+                        options={workerTypeOptions}
+                        placeholder={t("filters.allWorkerTypes")}
+                        searchPlaceholder={t("filters.search")}
+                        emptyMessage={t("table.noResults")}
+                        selectedLabel={t("filters.workerTypesSelected")}
+                      />
+                    </div>
+                  )}
+                  {onHasCompanyCarChange && (
+                    <div className="space-y-2">
+                      <label className="text-sm block font-medium text-foreground">
+                        {t("filters.companyCar")}
+                      </label>
+                      <TriStateToggle
+                        value={hasCompanyCar ?? null}
+                        onChange={onHasCompanyCarChange}
+                        labels={{
+                          any: t("filters.any"),
+                          yes: t("filters.yes"),
+                          no: t("filters.no"),
+                        }}
+                      />
+                    </div>
+                  )}
+                  {onHasEquityChange && (
+                    <div className="space-y-2">
+                      <label className="text-sm block font-medium text-foreground">
+                        {t("filters.equity")}
+                      </label>
+                      <TriStateToggle
+                        value={hasEquity ?? null}
+                        onChange={onHasEquityChange}
+                        labels={{
+                          any: t("filters.any"),
+                          yes: t("filters.yes"),
+                          no: t("filters.no"),
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Age & Work Experience Section */}
           {minAge !== undefined &&
             maxAge !== undefined &&
@@ -308,20 +437,20 @@ export function FiltersModal({
             onMaxWorkExperienceChange && (
               <>
                 {/* Divider */}
-                <div className="border-t border-stone-700" />
+                <div className="border-t border-border" />
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {/* Age Section */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
                       {t("filters.ageSection")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-stone-300">
+                        <label className="text-sm font-medium text-foreground">
                           {t("filters.ageRange")}
                         </label>
-                        <span className="text-sm text-stone-400">
+                        <span className="text-sm text-muted-foreground">
                           {localMinAge} - {localMaxAge} {t("table.years")}
                         </span>
                       </div>
@@ -342,15 +471,15 @@ export function FiltersModal({
 
                   {/* Work Experience Section */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
                       {t("filters.workExperienceSection")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-stone-300">
+                        <label className="text-sm font-medium text-foreground">
                           {t("filters.workExperienceRange")}
                         </label>
-                        <span className="text-sm text-stone-400">
+                        <span className="text-sm text-muted-foreground">
                           {localMinWorkExp} - {localMaxWorkExp} {t("table.years")}
                         </span>
                       </div>
@@ -383,20 +512,20 @@ export function FiltersModal({
             onMaxNetSalaryChange && (
               <>
                 {/* Divider */}
-                <div className="border-t border-stone-700" />
+                <div className="border-t border-border" />
 
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
                     {t("filters.salarySection")}
                   </h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pl-0">
                     {/* Gross Salary Range */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-stone-300">
+                        <label className="text-sm font-medium text-foreground">
                           {t("filters.grossSalaryRange")}
                         </label>
-                        <span className="text-sm text-stone-400">
+                        <span className="text-sm text-muted-foreground">
                           {getCurrencySymbol()}
                           {localMinGrossSalary.toLocaleString()} - {getCurrencySymbol()}
                           {localMaxGrossSalary.toLocaleString()}
@@ -419,10 +548,10 @@ export function FiltersModal({
                     {/* Net Salary Range */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-stone-300">
+                        <label className="text-sm font-medium text-foreground">
                           {t("filters.netSalaryRange")}
                         </label>
-                        <span className="text-sm text-stone-400">
+                        <span className="text-sm text-muted-foreground">
                           {getCurrencySymbol()}
                           {localMinNetSalary.toLocaleString()} - {getCurrencySymbol()}
                           {localMaxNetSalary.toLocaleString()}
@@ -448,9 +577,9 @@ export function FiltersModal({
         </div>
 
         {/* Footer with summary */}
-        <div className="sticky bottom-0 bg-stone-800 pt-4 border-t border-stone-700 px-6 pb-4 z-10">
+        <div className="sticky bottom-0 bg-popover pt-4 border-t border-border px-6 pb-4 z-10">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-stone-400">
+            <p className="text-sm text-muted-foreground">
               {hasActiveFilters ? (
                 <>
                   {activeFilterCount}{" "}

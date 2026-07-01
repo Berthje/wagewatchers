@@ -37,7 +37,7 @@ export function CurrencyInput({
         type="number"
         min="0"
         placeholder={placeholder}
-        className={`flex-1 bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400 ${className}`}
+        className={`flex-1 ${className}`}
         value={value?.toString() || ""}
         onChange={(e) => onChange(e.target.value ? Number.parseFloat(e.target.value) : undefined)}
         disabled={disabled}

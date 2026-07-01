@@ -21,5 +21,5 @@ export const COUNTRY_TRANSLATION_KEYS: Record<string, string> = {
   FR: "france",
 } as const;
 
-export type SupportedCountryCode = typeof SUPPORTED_COUNTRIES[number];
-export type CountryName = typeof COUNTRY_NAMES[keyof typeof COUNTRY_NAMES];
+export type SupportedCountryCode = (typeof SUPPORTED_COUNTRIES)[number];
+export type CountryName = (typeof COUNTRY_NAMES)[keyof typeof COUNTRY_NAMES];

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft, AlertCircle, Shield } from "lucide-react";
 import Link from "next/link";
+import { logError } from "@/lib/logger";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function AdminLoginPage() {
           router.push("/admin/reports");
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        logError("Auth check error", error);
       }
     };
 
@@ -62,7 +63,7 @@ export default function AdminLoginPage() {
         setError(data.error || "Login failed");
       }
     } catch (error) {
-      console.error("Login error:", error);
+      logError("Login error", error);
       setError("An error occurred during login");
     } finally {
       setIsLoading(false);

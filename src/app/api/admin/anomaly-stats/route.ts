@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAnomalyStats } from "@/lib/anomaly-detector";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
+import { logError } from "@/lib/logger";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
 
@@ -36,7 +37,7 @@ export async function GET() {
     const stats = await getAnomalyStats();
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Failed to fetch anomaly stats:", error);
+    logError("Failed to fetch anomaly stats", error);
     return NextResponse.json({ error: "Failed to fetch statistics" }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { DEFAULT_SELECTED_COLUMNS } from "@/lib/columns-config";
+import { logError } from "@/lib/logger";
 
 export type SalaryPeriod = "monthly" | "annual";
 export type DisplayCurrency = "EUR" | "USD" | "GBP";
@@ -43,17 +44,10 @@ export function SalaryDisplayProvider({
   children: React.ReactNode;
 }>) {
   const [preferences, setPreferences] = useState<SalaryDisplayPreferences>(DEFAULT_PREFERENCES);
-  const [selectedColumns, setSelectedColumns] = React.useState<string[]>(() => {
-    try {
-      const stored = localStorage.getItem(COLUMNS_STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
-    } catch (error) {
-      // ignore
-    }
-
-    // Default to configured defaults
-    return DEFAULT_SELECTED_COLUMNS;
-  });
+  // Start from defaults on both server and client (no localStorage during the
+  // initial render) to avoid a hydration mismatch; stored columns are loaded in
+  // the effect below after mount.
+  const [selectedColumns, setSelectedColumns] = React.useState<string[]>(DEFAULT_SELECTED_COLUMNS);
 
   // Fetch exchange rates from API on mount with local cache (1 hour)
   useEffect(() => {
@@ -83,7 +77,7 @@ export function SalaryDisplayProvider({
           }
         }
       } catch (error) {
-        console.error("Failed to fetch exchange rates:", error);
+        logError("Failed to fetch exchange rates", error);
         // Will use default fallback rates
       }
     };
@@ -91,7 +85,7 @@ export function SalaryDisplayProvider({
     fetchExchangeRates();
   }, []);
 
-  // Load preferences from localStorage on mount
+  // Load preferences + selected columns from localStorage on mount (client only).
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -103,7 +97,13 @@ export function SalaryDisplayProvider({
         });
       }
     } catch (error) {
-      console.error("Failed to load display preferences:", error);
+      logError("Failed to load display preferences", error);
+    }
+    try {
+      const storedColumns = localStorage.getItem(COLUMNS_STORAGE_KEY);
+      if (storedColumns) setSelectedColumns(JSON.parse(storedColumns));
+    } catch (error) {
+      logError("Failed to load selected columns", error);
     }
   }, []);
 
@@ -112,7 +112,7 @@ export function SalaryDisplayProvider({
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
     } catch (error) {
-      console.error("Failed to save display preferences:", error);
+      logError("Failed to save display preferences", error);
     }
   }, [preferences]);
 
@@ -121,7 +121,7 @@ export function SalaryDisplayProvider({
     try {
       localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(selectedColumns));
     } catch (error) {
-      console.error("Failed to save selected columns:", error);
+      logError("Failed to save selected columns", error);
     }
   }, [selectedColumns]);
 
@@ -138,7 +138,13 @@ export function SalaryDisplayProvider({
   }, []);
 
   const value = React.useMemo(
-    () => ({ preferences, setCurrency, setPeriod, selectedColumns, setSelectedColumns: setColumns }),
+    () => ({
+      preferences,
+      setCurrency,
+      setPeriod,
+      selectedColumns,
+      setSelectedColumns: setColumns,
+    }),
     [preferences, setCurrency, setPeriod, selectedColumns, setColumns]
   );
 

@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "US-Dollar ($)",
       "GBP": "Britisches Pfund (£)"
-    }
+    },
+    "toggleTheme": "Thema wechseln"
   },
   "ui": {
     "commandPalette": "Befehlspalette",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Länderübergreifende Unterstützung",
-        "description": "Gehaltsdaten von belgischen Gemeinschaften mit lokalisierten Vergütungseinblicken."
+        "description": "Gehaltsdaten von belgischen Gemeinschaften mit lokalisierten Vergütungseinblicken.",
+        "label": "Abdeckung"
       },
       "privacy": {
         "title": "Datenschutzfokus",
-        "description": "Anonymes Gehaltsteilen mit umfassendem Datenschutz. Gemeinschaftsgesteuerte Transparenz."
+        "description": "Anonymes Gehaltsteilen mit umfassendem Datenschutz. Gemeinschaftsgesteuerte Transparenz.",
+        "label": "Privatsphäre"
       },
       "analysis": {
         "title": "Umfassende Analyse",
-        "description": "Detaillierte Aufschlüsselungen von Vergütungspaketen, Zusatzleistungen, Arbeitszeiten und Work-Life-Balance."
-      }
+        "description": "Detaillierte Aufschlüsselungen von Vergütungspaketen, Zusatzleistungen, Arbeitszeiten und Work-Life-Balance.",
+        "label": "Tiefe"
+      },
+      "eyebrow": "Für faire Bezahlung gemacht"
     },
-    "footer": "🧡 Gemeinschaftsgesteuerte Gehaltstransparenz"
+    "footer": "🧡 Gemeinschaftsgesteuerte Gehaltstransparenz",
+    "eyebrow": "Die Zahl, über die niemand spricht",
+    "trust": {
+      "anonymous": "100 % anonym",
+      "free": "Kostenlos & Open Source",
+      "community": "Von der Community"
+    },
+    "sample": {
+      "title": "So sehen die Daten aus",
+      "caption": "Beispielhafte Darstellung"
+    },
+    "cta": {
+      "title": "Kenne deinen Wert. Hilf anderen, ihren zu kennen.",
+      "subtitle": "Füge dein Gehalt in zwei Minuten hinzu — anonym."
+    }
   },
   "dashboard": {
     "title": "Gehalts-Dashboard",
@@ -163,7 +182,16 @@
       "countriesSelected": "Länder ausgewählt",
       "locationsSelected": "Standorte ausgewählt",
       "citiesSelected": "Städte ausgewählt",
-      "sectorsSelected": "Sektoren ausgewählt"
+      "sectorsSelected": "Sektoren ausgewählt",
+      "compensationSection": "Vergütung",
+      "workerType": "Beschäftigungsart",
+      "allWorkerTypes": "Alle Arten",
+      "workerTypesSelected": "Arten ausgewählt",
+      "companyCar": "Firmenwagen",
+      "equity": "Beteiligung",
+      "any": "Alle",
+      "yes": "Ja",
+      "no": "Nein"
     },
     "table": {
       "title": "Gehaltseinträge",
@@ -217,7 +245,8 @@
       "resetDisabledTitle": "Es werden bereits Standardspalten verwendet",
       "resetActiveLabel": "Spalten zurücksetzen",
       "selectedCount": "{count} ausgewählt"
-    }
+    },
+    "eyebrow": "Daten erkunden"
   },
   "statistics": {
     "title": "Gehaltsstatistiken",
@@ -326,6 +355,8 @@
     "worldMapDescription": "Klicken Sie auf ein Land mit Daten, um die regionale Aufschlüsselung zu sehen",
     "provinceMapDescription": "Regionale Gehaltsverteilung nach Provinzen/Bundesländern",
     "backToWorld": "Zurück zur Weltansicht",
+    "mapError": "Die Karte konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
     "countries": {
       "belgium": "Belgien",
       "netherlands": "Niederlande",
@@ -333,7 +364,38 @@
       "france": "Frankreich"
     },
     "noDataAvailable": "Keine Daten verfügbar",
-    "loading": "Wird geladen"
+    "loading": "Wird geladen",
+    "eyebrow": "Aggregierte Gehaltsdaten",
+    "peerComparison": {
+      "title": "Wie schneide ich ab?",
+      "description": "Geben Sie Ihr Gehalt ein, um zu sehen, wo Sie unter den zu den aktuellen Filtern passenden Profilen stehen.",
+      "yourSalary": "Ihr Monatsgehalt",
+      "placeholder": "z. B. 3500",
+      "gross": "Brutto",
+      "net": "Netto",
+      "percentileLabel": "Perzentil",
+      "summary": "Ihr Paket ist höher als {percent}% von {count} vergleichbaren Profilen.",
+      "noPeers": "Noch keine passenden Profile — passen Sie die Filter oben an.",
+      "p25": "25. Perz.",
+      "median": "Median",
+      "p75": "75. Perz.",
+      "loading": "Vergleich wird geladen…",
+      "ctaTitle": "Sehen Sie, wie Ihr Gehalt abschneidet",
+      "ctaBody": "Teilen Sie einmal Ihr Gehalt und wir zeigen, wo Ihr Gesamtpaket im Vergleich zu ähnlichen Profilen liegt — anonym.",
+      "ctaButton": "Gehalt teilen",
+      "basisNote": "Verglichen anhand Ihres geschätzten Jahrespakets (Basis + 13. Monat + Essensgutscheine + Öko-Schecks), gegenüber gleicher Beschäftigungsart.",
+      "yourPackage": "Ihr Jahrespaket",
+      "perYear": "/ Jahr",
+      "notEnough": "Noch nicht genug vergleichbare Profile (mindestens {min}). Erweitern Sie die Filter oben.",
+      "packageIncludes": "Schätzung basierend auf geteilten Feldern; Leistungen ohne Wert werden nicht gezählt.",
+      "workerType": {
+        "whiteCollar": "Angestellte(r)",
+        "blueCollar": "Arbeiter(in)",
+        "freelancer": "Freelancer",
+        "intern": "Praktikant(in)",
+        "phdResearcher": "Doktorand(in)"
+      }
+    }
   },
   "add": {
     "title": "Teilen Sie Ihr Gehalt",
@@ -374,14 +436,16 @@
         "education": "Ausbildung",
         "workExperience": "Berufserfahrung",
         "civilStatus": "Zivilstand",
-        "dependents": "Unterhaltsberechtigte"
+        "dependents": "Unterhaltsberechtigte",
+        "degree": "Abschluss"
       },
       "employer": {
         "title": "Arbeitgeberprofil",
         "description": "Informationen über Ihren Arbeitgeber",
         "sector": "Sektor",
         "employeeCount": "Anzahl der Mitarbeiter",
-        "multinational": "Multinational"
+        "multinational": "Multinational",
+        "publiclyListed": "Börsennotiertes Unternehmen"
       },
       "job": {
         "title": "Berufsprofil",
@@ -395,7 +459,16 @@
         "description": "Ihre Vergütungsdetails",
         "grossSalary": "Bruttogehalt ({symbol}/Monat)",
         "netSalary": "Nettogehalt ({symbol}/Monat)",
-        "netCompensation": "Nettovergütung ({symbol}/Monat)"
+        "netCompensation": "Nettovergütung ({symbol}/Monat)",
+        "salaryBasis": "Gehaltsbasis",
+        "fixedGrossSalary": "Fixes Brutto ({symbol}/Monat)",
+        "variableGrossSalary": "Variables/Bonus-Brutto ({symbol}/Monat)",
+        "hourlyRate": "Stundenlohn ({symbol}/Stunde)",
+        "dayRate": "Tagessatz ({symbol}/Tag)",
+        "agencyCutPercent": "Agenturmarge (%)",
+        "clientDayBudget": "Kunden-Tagesbudget ({symbol}/Tag)",
+        "bursaryAmount": "Stipendium ({symbol}/Monat)",
+        "virtualGrossSalary": "Virtuelles Brutto ({symbol}/Monat)"
       },
       "benefits": {
         "title": "Zusatzleistungen",
@@ -406,7 +479,12 @@
         "groupInsurance": "Gruppenversicherung",
         "otherInsurances": "Andere Versicherungen",
         "otherBenefits": "Andere Vorteile",
-        "otherBenefitsPlaceholder": "z.B. Firmenwagen, Schulungsbudget, etc."
+        "otherBenefitsPlaceholder": "z.B. Firmenwagen, Schulungsbudget, etc.",
+        "hasCompanyCar": "Firmenwagen",
+        "companyCarModel": "Automodell",
+        "companyCarFuelType": "Kraftstoff- / Ladeart",
+        "companyCarCardScope": "Reichweite der Tank-/Ladekarte",
+        "hasEquity": "Beteiligung (Aktien / RSUs / Optionen)"
       },
       "workLife": {
         "title": "Work-Life-Balance",
@@ -414,7 +492,8 @@
         "teleworkDays": "Tage Telearbeit pro Woche",
         "dayOffEase": "Einfachheit der Urlaubsannahme",
         "stressLevel": "Stresslevel",
-        "reports": "Berichte"
+        "reports": "Berichte",
+        "jobSatisfaction": "Arbeitszufriedenheit (0–10)"
       },
       "workingHours": {
         "title": "Arbeitszeiten",
@@ -435,12 +514,23 @@
         "workCity": "Arbeitsort",
         "commuteDistance": "Pendelstrecke (einfache Fahrt)",
         "commuteMethod": "Pendelmethode",
-        "commuteCompensation": "Pendlerentschädigung"
+        "commuteCompensation": "Pendlerentschädigung",
+        "locationGranularity": "Standortdetail",
+        "workProvince": "Arbeitsprovinz",
+        "residenceCountry": "Wohnsitzland",
+        "commuteUnit": "Entfernungseinheit",
+        "commuteTimeMinutes": "Pendelzeit (Minuten)"
       },
       "notes": {
         "title": "Zusätzliche Anmerkungen",
         "description": "Optionale Anmerkungen zu diesem Eintrag",
         "extraNotes": "Zusätzliche Anmerkungen"
+      },
+      "employment": {
+        "title": "Beschäftigungsart",
+        "workerType": "Art des Beschäftigten",
+        "contractType": "Vertragsart",
+        "contractDurationMonths": "Vertragsdauer (Monate)"
       }
     },
     "options": {
@@ -503,7 +593,29 @@
       "dayOffEase": "Einfachheit der Urlaubsannahme auswählen",
       "stressLevel": "Stresslevel auswählen",
       "reports": "z.B. 5",
-      "extraNotes": "Fügen Sie zusätzliche Anmerkungen zu diesem Gehaltseintrag hinzu..."
+      "extraNotes": "Fügen Sie zusätzliche Anmerkungen zu diesem Gehaltseintrag hinzu...",
+      "workerType": "Art des Beschäftigten wählen",
+      "contractType": "Vertragsart wählen",
+      "contractDurationMonths": "z. B. 12",
+      "salaryBasis": "Brutto, netto oder beides",
+      "fixedGrossSalary": "z. B. 3500",
+      "variableGrossSalary": "z. B. 500",
+      "hourlyRate": "z. B. 22,5",
+      "dayRate": "z. B. 500",
+      "agencyCutPercent": "z. B. 15",
+      "clientDayBudget": "z. B. 650",
+      "bursaryAmount": "z. B. 2200",
+      "virtualGrossSalary": "z. B. 2800",
+      "companyCarModel": "z. B. BMW 320e",
+      "companyCarFuelType": "Art wählen",
+      "companyCarCardScope": "Reichweite wählen",
+      "locationGranularity": "Wie genau?",
+      "workProvince": "Provinz wählen",
+      "residenceCountry": "Land wählen",
+      "commuteUnit": "km oder Minuten",
+      "degree": "Abschluss suchen…",
+      "jobSatisfaction": "z. B. 8",
+      "commuteTimeMinutes": "z. B. 35"
     },
     "help": {
       "age": "Ihr aktuelles Alter in Jahren",
@@ -539,7 +651,32 @@
       "dayOffEase": "Wie einfach es ist, ungeplanten Urlaub zu nehmen",
       "stressLevel": "Ihr allgemeines berufsbedingtes Stresslevel",
       "reports": "Anzahl der Personen, die direkt an Sie berichten",
-      "extraNotes": "Zusätzliche Anmerkungen oder Kontext zu diesem Gehaltseintrag"
+      "extraNotes": "Zusätzliche Anmerkungen oder Kontext zu diesem Gehaltseintrag",
+      "workerType": "Wie Sie beschäftigt sind. Dies passt die angezeigten Vergütungsfelder an.",
+      "contractType": "Die Vertragsart, unter der Sie arbeiten.",
+      "contractDurationMonths": "Bei befristeten, Interim- oder Praktikumsverträgen: Dauer in Monaten.",
+      "salaryBasis": "Geben Sie an, ob die eingegebenen Beträge brutto, netto oder beides sind.",
+      "fixedGrossSalary": "Der fixe Teil Ihres monatlichen Bruttogehalts.",
+      "variableGrossSalary": "Der variable/Bonus-Teil Ihres Bruttos (Vertrieb, Ziele usw.).",
+      "hourlyRate": "Ihr Brutto-Stundenlohn.",
+      "dayRate": "Ihr Tagessatz als Freelancer.",
+      "agencyCutPercent": "Der Prozentsatz, den die Agentur/Vermittler vom Kundenbudget einbehält.",
+      "clientDayBudget": "Der Gesamtbetrag, den der Kunde pro Tag zahlt (vor der Agenturmarge).",
+      "bursaryAmount": "Das Stipendium, das Sie tatsächlich erhalten (Doktoranden).",
+      "virtualGrossSalary": "Das 'virtuelle' Brutto, mit dem das Institut das Stipendium berechnet.",
+      "hasCompanyCar": "Ob Ihr Paket einen Firmenwagen umfasst.",
+      "companyCarModel": "Marke und Modell des Wagens.",
+      "companyCarFuelType": "Elektrisch, Hybrid oder Verbrenner (Kraftstoff).",
+      "companyCarCardScope": "Reichweite Ihrer Tank-/Ladekarte: Belgien, Benelux oder Europa.",
+      "hasEquity": "Ob Sie eine Beteiligung erhalten — Aktien, RSUs, Warrants oder Optionen.",
+      "locationGranularity": "Wählen Sie, wie genau Sie Ihren Standort teilen — Land, Provinz oder Stadt.",
+      "workProvince": "Die Provinz, in der Sie arbeiten (falls Sie Ihre Stadt nicht teilen möchten).",
+      "residenceCountry": "Wenn Sie in einem anderen Land wohnen als Sie arbeiten (Grenzgänger).",
+      "commuteUnit": "Ob Ihre Pendeldistanz in Kilometern oder Minuten gemessen wird.",
+      "degree": "Wählen Sie Ihren konkreten Abschluss aus der Liste, damit Ihr Gehalt mit demselben Abschluss verglichen werden kann.",
+      "publiclyListed": "Ist Ihr Arbeitgeber börsennotiert? (oft relevant für Beteiligungen).",
+      "jobSatisfaction": "Wie sehr Sie Ihren Job mögen, von 0 (hasse ihn) bis 10 (liebe ihn).",
+      "commuteTimeMinutes": "Pendelzeit einfache Strecke in Minuten."
     },
     "formOptions": {
       "education": {
@@ -633,6 +770,64 @@
         "veryHard": "Sehr Schwer",
         "situational": "Situationsabhängig",
         "impossible": "Nahezu Unmöglich"
+      },
+      "workerType": {
+        "whiteCollar": "Angestellte(r) (Gehalt)",
+        "blueCollar": "Arbeiter(in) (Stundenlohn)",
+        "freelancer": "Freelancer",
+        "intern": "Praktikant(in)",
+        "phdResearcher": "Doktorand(in)"
+      },
+      "contractType": {
+        "permanent": "Unbefristet",
+        "fixedTerm": "Befristet",
+        "interim": "Interim",
+        "internship": "Praktikum",
+        "freelance": "Freelance"
+      },
+      "salaryBasis": {
+        "gross": "Brutto",
+        "net": "Netto",
+        "both": "Beides"
+      },
+      "carFuelType": {
+        "electric": "Elektrisch",
+        "hybrid": "Hybrid",
+        "fuel": "Kraftstoff (Benzin/Diesel)"
+      },
+      "carCardScope": {
+        "belgium": "Belgien",
+        "benelux": "Benelux",
+        "europe": "Europa"
+      },
+      "locationGranularity": {
+        "country": "Nur Land",
+        "province": "Provinz",
+        "city": "Stadt"
+      },
+      "commuteUnit": {
+        "km": "Kilometer",
+        "minutes": "Minuten"
+      },
+      "beProvince": {
+        "antwerp": "Antwerpen",
+        "eastFlanders": "Ostflandern",
+        "flemishBrabant": "Flämisch-Brabant",
+        "limburg": "Limburg",
+        "westFlanders": "Westflandern",
+        "hainaut": "Hennegau",
+        "liege": "Lüttich",
+        "luxembourg": "Luxemburg",
+        "namur": "Namur",
+        "walloonBrabant": "Wallonisch-Brabant",
+        "brussels": "Brüssel-Hauptstadt"
+      },
+      "residenceCountry": {
+        "belgium": "Belgien",
+        "netherlands": "Niederlande",
+        "germany": "Deutschland",
+        "france": "Frankreich",
+        "luxembourg": "Luxemburg"
       }
     },
     "validation": {
@@ -690,7 +885,10 @@
       "netSalaryVsGross": "Nettogehalt sollte das Bruttogehalt nicht überschreiten",
       "contentContainsBadWords": "Inhalt enthält unangemessene Sprache",
       "contentContainsUrls": "URLs sind in diesem Feld nicht zulässig",
-      "honestyRequired": "Sie müssen bestätigen, dass die bereitgestellten Informationen wahr und ehrlich sind"
+      "honestyRequired": "Sie müssen bestätigen, dass die bereitgestellten Informationen wahr und ehrlich sind",
+      "dayRateRequired": "Bitte geben Sie Ihren Tagessatz an",
+      "hourlyRateRequired": "Bitte geben Sie Ihren Stundenlohn an (oder ein Gehalt)",
+      "bursaryRequired": "Bitte geben Sie Ihr Stipendium oder virtuelles Brutto an"
     },
     "salaryAlert": {
       "netHigherThanGross": "Bitte überprüfen Sie Ihre Netto-Gehaltseingabe noch einmal. Geben Sie nur Ihren Nettoverdienst ein, der sich aus Ihrem Bruttogehalt abzüglich Steuern ergibt. Schließen Sie keine Boni, Zulagen oder andere Formen der Vergütung ein (z. B. Internetzuschuss, Essensgutscheine oder andere Vergünstigungen). Diese sollten separat gemeldet werden, falls zutreffend. Die Einbeziehung in Ihr Netto-Gehalt kann zu ungenauen Daten führen.",
@@ -701,6 +899,87 @@
     "validationSummary": {
       "title": "Bitte beheben Sie die folgenden Fehler:",
       "errorCount": "{count, plural, =1 {1 Fehler gefunden} other {# Fehler gefunden}}"
+    },
+    "eyebrow": "Füge dein Gehalt hinzu, anonym",
+    "countryFirst": "Wähle oben dein Land, um die Gehaltsfelder für deine Region zu laden.",
+    "discardTitle": "Änderungen verwerfen?",
+    "discardMessage": "Du hast nicht gespeicherte Änderungen. Wenn du jetzt gehst, gehen sie verloren.",
+    "discardKeep": "Weiter bearbeiten",
+    "discardConfirm": "Verwerfen",
+    "benefitsSelector": {
+      "description": "Wählen Sie zusätzliche Leistungen aus und geben Sie nach Möglichkeit einen Wert an.",
+      "amountPlaceholder": "Betrag",
+      "selectOption": "Wählen"
+    },
+    "benefitCategories": {
+      "cash": "Bar & Zulagen",
+      "equity": "Beteiligung",
+      "insurance": "Versicherungen",
+      "retirement": "Altersvorsorge & Sparen",
+      "mobility": "Mobilität",
+      "timeOff": "Freizeit",
+      "other": "Sonstiges"
+    },
+    "benefitUnits": {
+      "perMonth": "pro Monat",
+      "perYear": "pro Jahr",
+      "perDay": "pro Tag",
+      "oneOff": "Tage",
+      "days": "Tage",
+      "perHour": "pro Stunde"
+    },
+    "benefitOptions": {
+      "salaryIncreaseFrequency": {
+        "none": "Keine",
+        "yearly": "Jährlich",
+        "everyTwoYears": "Alle zwei Jahre",
+        "adHoc": "Ad hoc"
+      },
+      "eindejaarsuitkering": {
+        "full": "Voll",
+        "partial": "Teilweise",
+        "none": "Keine"
+      }
+    },
+    "benefitDetails": {
+      "bonus": "Häufigkeit / Art (z. B. jährlich, leistungsabhängig)",
+      "equity": "Instrument + Vesting (z. B. RSU, 4 Jahre)",
+      "pensionPlan": "Plantyp / Arbeitgeberbeitrag",
+      "other": "Leistung beschreiben"
+    },
+    "benefitsCatalog": {
+      "bonus": "Bonus",
+      "thirteenthMonth": "13. Monatsgehalt",
+      "salaryIncreaseFrequency": "Häufigkeit der Gehaltserhöhung",
+      "equity": "Beteiligung (Aktien / RSUs / Optionen)",
+      "hospitalizationInsurance": "Krankenhausversicherung",
+      "dentalInsurance": "Zahnversicherung",
+      "ambulatoryInsurance": "Ambulante Versicherung",
+      "guaranteedIncomeInsurance": "Versicherung für garantiertes Einkommen",
+      "pensionPlan": "Pensionsplan",
+      "phone": "Telefon",
+      "laptop": "Laptop",
+      "internetAllowance": "Internetzulage",
+      "homeworkingAllowance": "Homeoffice-Zulage",
+      "extraLeaveDays": "Zusätzliche Urlaubstage",
+      "other": "Sonstiges",
+      "mealVouchers": "Essensgutscheine",
+      "ecoCheques": "Öko-Schecks",
+      "groupInsurance": "Gruppenversicherung",
+      "cafeteriaPlan": "Cafeteria-Plan",
+      "bikeLease": "Fahrrad-Leasing",
+      "mobilityBudget": "Mobilitätsbudget",
+      "netExpenseAllowance": "Netto-Spesenpauschale",
+      "ipCopyrightRemuneration": "Urheberrechtsvergütung",
+      "advDays": "ADV-Tage",
+      "publicTransportReimbursement": "Erstattung öffentlicher Verkehrsmittel",
+      "vakantiegeld8pct": "Urlaubsgeld (8%)",
+      "eindejaarsuitkering": "13. Monat / Jahresendprämie",
+      "thirtyPercentRuling": "30%-Regelung",
+      "pensioenregeling": "Rentenregelung",
+      "reiskostenvergoeding": "Reisekostenzuschuss",
+      "thuiswerkvergoeding": "Homeoffice-Zuschuss",
+      "trainingBudget": "Weiterbildungsbudget"
     }
   },
   "common": {
@@ -811,7 +1090,8 @@
       "instruction": "Speichern Sie diese ID, um den Status Ihres Berichts jederzeit zu verfolgen."
     },
     "emailSent": "Wir haben eine Bestätigungs-E-Mail an {email} mit Ihrer Tracking ID und den Berichtsdetails gesendet.",
-    "noEmail": "Verwenden Sie Ihre Tracking ID, um den Status Ihres Berichts auf der Statusseite zu überprüfen."
+    "noEmail": "Verwenden Sie Ihre Tracking ID, um den Status Ihres Berichts auf der Statusseite zu überprüfen.",
+    "eyebrow": "Bugs, Ideen & Verbesserungen"
   },
   "status": {
     "title": "Berichtsstatus Überprüfen",
@@ -866,7 +1146,8 @@
     "errors": {
       "empty": "Bitte geben Sie eine Reporter-ID oder E-Mail-Adresse ein",
       "network": "Fehler beim Suchen von Berichten. Bitte versuchen Sie es erneut."
-    }
+    },
+    "eyebrow": "Verfolge deine Meldung"
   },
   "donate": {
     "goBack": "Zurück",
@@ -931,7 +1212,8 @@
     "shareText": "Schauen Sie sich WageWatchers an - Gemeinschaftsgesteuerte Gehaltstransparenz in europäischen Märkten!",
     "footerCommunity": "🧡 Gemeinschaftsgesteuerte Gehaltstransparenz",
     "footerMadeWith": "Mit ❤️ für die Gemeinschaft gemacht •",
-    "footerViewOnGithub": "Auf GitHub anzeigen"
+    "footerViewOnGithub": "Auf GitHub anzeigen",
+    "eyebrow": "Unterstütze das Projekt"
   },
   "entryDetail": {
     "backToDashboard": "Zurück zum Dashboard",
@@ -1002,6 +1284,25 @@
         "needsReview": "Dieser Eintrag wurde markiert und muss überprüft werden",
         "rejected": "Dieser Eintrag wurde abgelehnt und ist öffentlich nicht sichtbar"
       }
+    },
+    "compensation": "Vergütung",
+    "noCompensation": "Keine Vergütung angegeben",
+    "packageTitle": "Paket & Zusatzleistungen",
+    "noBenefits": "Keine zusätzlichen Leistungen angegeben",
+    "reportReasonLabel": "Grund für die Meldung (optional)",
+    "reportReasonPlaceholder": "Bitte erläutern Sie, warum Sie diesen Eintrag melden…",
+    "cancel": "Abbrechen",
+    "crossBorder": "Grenzgänger — wohnt in {residence}, arbeitet in {work}",
+    "headline": {
+      "grossSalary": "Brutto / Monat",
+      "netSalary": "Netto / Monat",
+      "netCompensation": "Nettovergütung / Monat",
+      "dayRate": "Tagessatz",
+      "hourlyRate": "Stundenlohn",
+      "bursary": "Stipendium / Monat",
+      "virtualGross": "Virtuelles Brutto / Monat",
+      "clientBudget": "Kundenbudget",
+      "agencyCut": "Agenturmarge"
     }
   },
   "comments": {
@@ -1034,6 +1335,7 @@
       "actions": "Aktionen",
       "noTitle": "Kein Titel angegeben",
       "editableFor": "Noch {hours}h",
+      "editableForDays": "Noch {days}T",
       "readonly": "Schreibgeschützt",
       "pending": "Ausstehend"
     },
@@ -1041,7 +1343,7 @@
     "deleteError": "Löschen des Eintrags fehlgeschlagen",
     "infoTitle": "ℹ️ Wie funktioniert das?",
     "info1": "Ihre Einträge werden anonym in Ihrem Browser mithilfe sicherer Token gespeichert",
-    "info2": "Sie können Einträge 1 Tag nach dem Absenden bearbeiten oder löschen",
+    "info2": "Sie können Einträge 7 Tage nach dem Absenden bearbeiten oder löschen",
     "info3": "Nach dem Bearbeitungsfenster werden Einträge schreibgeschützt, bleiben aber sichtbar",
     "info4": "Das Löschen von Browserdaten entfernt Ihren Zugriff zur Verwaltung dieser Einträge",
     "deleteDialog": {
@@ -1056,7 +1358,8 @@
       "cancel": "Abbrechen",
       "confirmDelete": "Ja, Eintrag Löschen",
       "deleting": "Wird gelöscht..."
-    }
+    },
+    "eyebrow": "Deine Beiträge"
   },
   "edit": {
     "meta": {
@@ -1074,8 +1377,14 @@
       "noToken": "Sie haben keine Berechtigung, diesen Eintrag zu bearbeiten. Er wurde möglicherweise von einem anderen Browser gesendet.",
       "notFound": "Eintrag nicht gefunden. Er wurde möglicherweise gelöscht.",
       "notOwner": "Sie haben keine Berechtigung, diesen Eintrag zu bearbeiten.",
-      "expired": "Das Bearbeitungsfenster für diesen Eintrag ist abgelaufen (1 Tag nach dem Absenden).",
+      "expired": "Das Bearbeitungsfenster für diesen Eintrag ist abgelaufen (7 Tage nach dem Absenden).",
       "generic": "Laden des Eintrags fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "window": {
+      "remainingDays": "Noch etwa {days} Tage zum Bearbeiten",
+      "remainingHours": "Noch etwa {hours}h zum Bearbeiten",
+      "until": "Sie können Änderungen bis {date} vornehmen.",
+      "lockNote": "Danach wird der Eintrag schreibgeschützt, bleibt aber sichtbar."
     }
   },
   "changelog": {
@@ -1093,7 +1402,8 @@
       "success": "Erfolgreich den Newsletter abonniert!",
       "error": "Fehler beim Abonnieren",
       "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
-    }
+    },
+    "eyebrow": "Was ist neu"
   },
   "adminReview": {
     "title": "Warteschlange für die Eintragsüberprüfung",

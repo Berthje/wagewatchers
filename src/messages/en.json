@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "US Dollar ($)",
       "GBP": "British Pound (£)"
-    }
+    },
+    "toggleTheme": "Toggle theme"
   },
   "ui": {
     "commandPalette": "Command Palette",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Multi-Country Support",
-        "description": "Salary data from Belgian communities with localized compensation insights."
+        "description": "Salary data from Belgian communities with localized compensation insights.",
+        "label": "Coverage"
       },
       "privacy": {
         "title": "Privacy Focused",
-        "description": "Anonymous salary sharing with comprehensive data protection. Community-driven transparency."
+        "description": "Anonymous salary sharing with comprehensive data protection. Community-driven transparency.",
+        "label": "Privacy"
       },
       "analysis": {
         "title": "Comprehensive Analysis",
-        "description": "Detailed breakdowns of compensation packages, benefits, work hours, and work-life balance."
-      }
+        "description": "Detailed breakdowns of compensation packages, benefits, work hours, and work-life balance.",
+        "label": "Depth"
+      },
+      "eyebrow": "Built for honest pay"
     },
-    "footer": "🧡 Community-driven salary transparency"
+    "footer": "🧡 Community-driven salary transparency",
+    "eyebrow": "The number no one talks about",
+    "trust": {
+      "anonymous": "100% anonymous",
+      "free": "Free & open source",
+      "community": "Community-powered"
+    },
+    "sample": {
+      "title": "What the data looks like",
+      "caption": "Illustrative sample"
+    },
+    "cta": {
+      "title": "Know your worth. Help others know theirs.",
+      "subtitle": "Add your salary in two minutes — anonymously."
+    }
   },
   "dashboard": {
     "title": "Salary Dashboard",
@@ -163,7 +182,16 @@
       "countriesSelected": "countries selected",
       "locationsSelected": "locations selected",
       "citiesSelected": "cities selected",
-      "sectorsSelected": "sectors selected"
+      "sectorsSelected": "sectors selected",
+      "compensationSection": "Compensation",
+      "workerType": "Worker type",
+      "allWorkerTypes": "All worker types",
+      "workerTypesSelected": "worker types selected",
+      "companyCar": "Company car",
+      "equity": "Equity",
+      "any": "Any",
+      "yes": "Yes",
+      "no": "No"
     },
     "table": {
       "title": "Salary Entries",
@@ -217,7 +245,8 @@
       "next": "Next",
       "page": "Page",
       "rowsPerPage": "Rows per page"
-    }
+    },
+    "eyebrow": "Explore the data"
   },
   "statistics": {
     "title": "Salary Statistics",
@@ -326,6 +355,8 @@
     "worldMapDescription": "Click on a country with data to see regional breakdown",
     "provinceMapDescription": "Regional salary distribution across provinces/states",
     "backToWorld": "Back to World View",
+    "mapError": "Couldn't load the map. Please try again.",
+    "retry": "Retry",
     "countries": {
       "belgium": "Belgium",
       "netherlands": "Netherlands",
@@ -333,7 +364,38 @@
       "france": "France"
     },
     "noDataAvailable": "No data available",
-    "loading": "Loading"
+    "loading": "Loading",
+    "eyebrow": "Aggregate salary data",
+    "peerComparison": {
+      "title": "How do I compare?",
+      "description": "Enter your salary to see where you land within the peers matching the current filters.",
+      "yourSalary": "Your monthly salary",
+      "placeholder": "e.g. 3500",
+      "gross": "Gross",
+      "net": "Net",
+      "percentileLabel": "percentile",
+      "summary": "Your package is higher than {percent}% of {count} comparable peers.",
+      "noPeers": "No peers match the current filters yet — adjust the filters above.",
+      "p25": "25th pct",
+      "median": "Median",
+      "p75": "75th pct",
+      "loading": "Loading your comparison…",
+      "ctaTitle": "See how your pay compares",
+      "ctaBody": "Share your salary once and we'll show where your full package lands against people with the same kind of job — anonymously.",
+      "ctaButton": "Share your salary",
+      "basisNote": "Compared on your estimated annual package (base + 13th month + meal vouchers + eco-cheques), against people with the same worker type.",
+      "yourPackage": "Your annual package",
+      "perYear": "/ year",
+      "notEnough": "Not enough comparable peers yet (need at least {min}). Try widening the filters above.",
+      "packageIncludes": "Estimate based on shared fields; benefits without a value aren't counted.",
+      "workerType": {
+        "whiteCollar": "White-collar",
+        "blueCollar": "Blue-collar",
+        "freelancer": "Freelancer",
+        "intern": "Intern",
+        "phdResearcher": "PhD researcher"
+      }
+    }
   },
   "add": {
     "title": "Share Your Salary",
@@ -374,14 +436,16 @@
         "education": "Education",
         "workExperience": "Work Experience",
         "civilStatus": "Civil Status",
-        "dependents": "Dependents"
+        "dependents": "Dependents",
+        "degree": "Degree"
       },
       "employer": {
         "title": "Employer Profile",
         "description": "Information about your employer",
         "sector": "Sector",
         "employeeCount": "Employee Count",
-        "multinational": "Multinational"
+        "multinational": "Multinational",
+        "publiclyListed": "Publicly listed company"
       },
       "job": {
         "title": "Job Profile",
@@ -395,7 +459,16 @@
         "description": "Your compensation details",
         "grossSalary": "Gross Salary ({symbol}/month)",
         "netSalary": "Net Salary ({symbol}/month)",
-        "netCompensation": "Net Compensation ({symbol}/month)"
+        "netCompensation": "Net Compensation ({symbol}/month)",
+        "salaryBasis": "Salary basis",
+        "fixedGrossSalary": "Fixed gross ({symbol}/month)",
+        "variableGrossSalary": "Variable/bonus gross ({symbol}/month)",
+        "hourlyRate": "Hourly rate ({symbol}/hour)",
+        "dayRate": "Day rate ({symbol}/day)",
+        "agencyCutPercent": "Agency cut (%)",
+        "clientDayBudget": "Client day budget ({symbol}/day)",
+        "bursaryAmount": "Bursary ({symbol}/month)",
+        "virtualGrossSalary": "Virtual gross ({symbol}/month)"
       },
       "benefits": {
         "title": "Benefits",
@@ -406,7 +479,12 @@
         "groupInsurance": "Group Insurance",
         "otherInsurances": "Other Insurances",
         "otherBenefits": "Other Benefits",
-        "otherBenefitsPlaceholder": "e.g. Company car, training budget, etc."
+        "otherBenefitsPlaceholder": "e.g. Company car, training budget, etc.",
+        "hasCompanyCar": "Company car",
+        "companyCarModel": "Car model",
+        "companyCarFuelType": "Fuel / charge type",
+        "companyCarCardScope": "Fuel/charge card scope",
+        "hasEquity": "Equity (stocks / RSUs / options)"
       },
       "workLife": {
         "title": "Work-Life Balance",
@@ -414,7 +492,8 @@
         "teleworkDays": "Telework Days per Week",
         "dayOffEase": "Ease of Taking a Day Off",
         "stressLevel": "Stress Level",
-        "reports": "Reports"
+        "reports": "Reports",
+        "jobSatisfaction": "Job satisfaction (0–10)"
       },
       "workingHours": {
         "title": "Working Hours",
@@ -435,12 +514,23 @@
         "workCity": "Work City",
         "commuteDistance": "Commute Distance (one way)",
         "commuteMethod": "Commute Method",
-        "commuteCompensation": "Commute Compensation"
+        "commuteCompensation": "Commute Compensation",
+        "locationGranularity": "Location detail",
+        "workProvince": "Work province",
+        "residenceCountry": "Country of residence",
+        "commuteUnit": "Distance unit",
+        "commuteTimeMinutes": "Commute time (minutes)"
       },
       "notes": {
         "title": "Additional Notes",
         "description": "Optional notes for this entry",
         "extraNotes": "Additional Notes"
+      },
+      "employment": {
+        "title": "Employment Type",
+        "workerType": "Worker type",
+        "contractType": "Contract type",
+        "contractDurationMonths": "Contract duration (months)"
       }
     },
     "options": {
@@ -503,7 +593,29 @@
       "dayOffEase": "Select ease of taking a day off",
       "stressLevel": "Select stress level",
       "reports": "e.g. 5",
-      "extraNotes": "Add any additional notes about this salary entry..."
+      "extraNotes": "Add any additional notes about this salary entry...",
+      "workerType": "Select worker type",
+      "contractType": "Select contract type",
+      "contractDurationMonths": "e.g. 12",
+      "salaryBasis": "Gross, net or both",
+      "fixedGrossSalary": "e.g. 3500",
+      "variableGrossSalary": "e.g. 500",
+      "hourlyRate": "e.g. 22.5",
+      "dayRate": "e.g. 500",
+      "agencyCutPercent": "e.g. 15",
+      "clientDayBudget": "e.g. 650",
+      "bursaryAmount": "e.g. 2200",
+      "virtualGrossSalary": "e.g. 2800",
+      "companyCarModel": "e.g. BMW 320e",
+      "companyCarFuelType": "Select type",
+      "companyCarCardScope": "Select scope",
+      "locationGranularity": "How precise?",
+      "workProvince": "Select province",
+      "residenceCountry": "Select country",
+      "commuteUnit": "km or minutes",
+      "degree": "Search your degree…",
+      "jobSatisfaction": "e.g. 8",
+      "commuteTimeMinutes": "e.g. 35"
     },
     "help": {
       "age": "Your current age in years",
@@ -539,7 +651,32 @@
       "dayOffEase": "How easy it is to take unplanned time off",
       "stressLevel": "Your overall work-related stress level",
       "reports": "Number of people who report directly to you",
-      "extraNotes": "Additional notes or context about this salary entry"
+      "extraNotes": "Additional notes or context about this salary entry",
+      "workerType": "How you are employed. This tailors which compensation fields you see.",
+      "contractType": "The type of contract you work under.",
+      "contractDurationMonths": "For temporary, interim or internship contracts: how many months it lasts.",
+      "salaryBasis": "Clarify whether the salary figures you enter are gross, net, or both.",
+      "fixedGrossSalary": "The fixed part of your monthly gross salary.",
+      "variableGrossSalary": "The variable/bonus part of your monthly gross (sales, targets, etc.).",
+      "hourlyRate": "Your gross hourly rate.",
+      "dayRate": "Your day rate as a freelancer.",
+      "agencyCutPercent": "The percentage the agency/middleman keeps from the client budget.",
+      "clientDayBudget": "The total amount the client pays per day (before the agency cut).",
+      "bursaryAmount": "The bursary you actually receive (PhD researchers).",
+      "virtualGrossSalary": "The 'virtual' gross the institute uses to calculate the bursary.",
+      "hasCompanyCar": "Whether your package includes a company car.",
+      "companyCarModel": "The make and model of the car.",
+      "companyCarFuelType": "Electric, hybrid or combustion (fuel).",
+      "companyCarCardScope": "How far your fuel/charge card works: Belgium, Benelux or Europe.",
+      "hasEquity": "Whether you receive equity — stocks, RSUs, warrants or options.",
+      "locationGranularity": "Choose how precisely you want to share your location — country, province, or city.",
+      "workProvince": "The province where you work (if you'd rather not share your city).",
+      "residenceCountry": "If you live in a different country than where you work (cross-border worker).",
+      "commuteUnit": "Whether your commute distance is measured in kilometres or minutes.",
+      "degree": "Choose your specific degree from the list so your pay can be compared against the same qualification.",
+      "publiclyListed": "Is your employer listed on a stock exchange? (often relevant for equity).",
+      "jobSatisfaction": "How much you enjoy your job, from 0 (hate it) to 10 (love it).",
+      "commuteTimeMinutes": "One-way commute time in minutes."
     },
     "formOptions": {
       "education": {
@@ -633,6 +770,64 @@
         "veryHard": "Very Hard",
         "situational": "Depends on situation",
         "impossible": "Nearly Impossible"
+      },
+      "workerType": {
+        "whiteCollar": "White-collar (salaried)",
+        "blueCollar": "Blue-collar (hourly)",
+        "freelancer": "Freelancer",
+        "intern": "Intern",
+        "phdResearcher": "PhD researcher"
+      },
+      "contractType": {
+        "permanent": "Permanent",
+        "fixedTerm": "Fixed-term",
+        "interim": "Interim",
+        "internship": "Internship",
+        "freelance": "Freelance"
+      },
+      "salaryBasis": {
+        "gross": "Gross",
+        "net": "Net",
+        "both": "Both"
+      },
+      "carFuelType": {
+        "electric": "Electric",
+        "hybrid": "Hybrid",
+        "fuel": "Fuel (petrol/diesel)"
+      },
+      "carCardScope": {
+        "belgium": "Belgium",
+        "benelux": "Benelux",
+        "europe": "Europe"
+      },
+      "locationGranularity": {
+        "country": "Country only",
+        "province": "Province",
+        "city": "City"
+      },
+      "commuteUnit": {
+        "km": "Kilometres",
+        "minutes": "Minutes"
+      },
+      "beProvince": {
+        "antwerp": "Antwerp",
+        "eastFlanders": "East Flanders",
+        "flemishBrabant": "Flemish Brabant",
+        "limburg": "Limburg",
+        "westFlanders": "West Flanders",
+        "hainaut": "Hainaut",
+        "liege": "Liège",
+        "luxembourg": "Luxembourg",
+        "namur": "Namur",
+        "walloonBrabant": "Walloon Brabant",
+        "brussels": "Brussels-Capital"
+      },
+      "residenceCountry": {
+        "belgium": "Belgium",
+        "netherlands": "Netherlands",
+        "germany": "Germany",
+        "france": "France",
+        "luxembourg": "Luxembourg"
       }
     },
     "validation": {
@@ -690,7 +885,10 @@
       "netSalaryVsGross": "Net salary should not exceed gross salary",
       "contentContainsBadWords": "Content contains inappropriate language",
       "contentContainsUrls": "URLs are not allowed in this field",
-      "honestyRequired": "You must confirm that the information provided is accurate and honest"
+      "honestyRequired": "You must confirm that the information provided is accurate and honest",
+      "dayRateRequired": "Please enter your day rate",
+      "hourlyRateRequired": "Please enter your hourly rate (or a salary)",
+      "bursaryRequired": "Please enter your bursary or virtual gross"
     },
     "salaryAlert": {
       "netHigherThanGross": "Please double-check your net salary entry. Only enter your net pay calculated from your gross salary minus taxes. Do not include bonuses, allowances, or any other forms of compensation (e.g., internet allowance, meal vouchers, or other perks). These should be reported separately if applicable. Including them in your net salary can lead to inaccurate data.",
@@ -701,6 +899,87 @@
     "validationSummary": {
       "title": "Please fix the following errors:",
       "errorCount": "{count, plural, =1 {1 error found} other {# errors found}}"
+    },
+    "eyebrow": "Add your salary, anonymously",
+    "countryFirst": "Select your country above to load the salary fields for your region.",
+    "discardTitle": "Discard your changes?",
+    "discardMessage": "You have unsaved changes. If you leave now, they will be lost.",
+    "discardKeep": "Keep editing",
+    "discardConfirm": "Discard",
+    "benefitsSelector": {
+      "description": "Select any additional benefits you receive and add a value where you can.",
+      "amountPlaceholder": "Amount",
+      "selectOption": "Select"
+    },
+    "benefitCategories": {
+      "cash": "Cash & allowances",
+      "equity": "Equity",
+      "insurance": "Insurance",
+      "retirement": "Retirement & savings",
+      "mobility": "Mobility",
+      "timeOff": "Time off",
+      "other": "Other"
+    },
+    "benefitUnits": {
+      "perMonth": "per month",
+      "perYear": "per year",
+      "perDay": "per day",
+      "oneOff": "days",
+      "days": "days",
+      "perHour": "per hour"
+    },
+    "benefitOptions": {
+      "salaryIncreaseFrequency": {
+        "none": "None",
+        "yearly": "Yearly",
+        "everyTwoYears": "Every two years",
+        "adHoc": "Ad hoc"
+      },
+      "eindejaarsuitkering": {
+        "full": "Full",
+        "partial": "Partial",
+        "none": "None"
+      }
+    },
+    "benefitDetails": {
+      "bonus": "Frequency / type (e.g. annual, performance)",
+      "equity": "Instrument + vesting (e.g. RSU, 4-year vest)",
+      "pensionPlan": "Plan type / employer contribution",
+      "other": "Describe the benefit"
+    },
+    "benefitsCatalog": {
+      "bonus": "Bonus",
+      "thirteenthMonth": "13th month",
+      "salaryIncreaseFrequency": "Salary increase frequency",
+      "equity": "Equity (stocks / RSUs / options)",
+      "hospitalizationInsurance": "Hospitalization insurance",
+      "dentalInsurance": "Dental insurance",
+      "ambulatoryInsurance": "Ambulatory insurance",
+      "guaranteedIncomeInsurance": "Guaranteed income (salary-loss) insurance",
+      "pensionPlan": "Pension plan",
+      "phone": "Phone",
+      "laptop": "Laptop",
+      "internetAllowance": "Internet allowance",
+      "homeworkingAllowance": "Homeworking allowance",
+      "extraLeaveDays": "Extra leave days",
+      "other": "Other",
+      "mealVouchers": "Meal vouchers",
+      "ecoCheques": "Eco-cheques",
+      "groupInsurance": "Group insurance",
+      "cafeteriaPlan": "Cafeteria plan",
+      "bikeLease": "Bike lease",
+      "mobilityBudget": "Mobility budget",
+      "netExpenseAllowance": "Net expense allowance",
+      "ipCopyrightRemuneration": "IP / copyright remuneration",
+      "advDays": "ADV days",
+      "publicTransportReimbursement": "Public transport reimbursement",
+      "vakantiegeld8pct": "Holiday allowance (8%)",
+      "eindejaarsuitkering": "13th month / end-of-year bonus",
+      "thirtyPercentRuling": "30%-ruling",
+      "pensioenregeling": "Pension scheme",
+      "reiskostenvergoeding": "Travel allowance",
+      "thuiswerkvergoeding": "Home-work allowance",
+      "trainingBudget": "Training / development budget"
     }
   },
   "common": {
@@ -811,7 +1090,8 @@
       "instruction": "Save this ID to track your report status at any time."
     },
     "emailSent": "We've sent a confirmation email to {email} with your tracking ID and report details.",
-    "noEmail": "Use your tracking ID to check the status of your report on the Status page."
+    "noEmail": "Use your tracking ID to check the status of your report on the Status page.",
+    "eyebrow": "Bugs, ideas & improvements"
   },
   "status": {
     "title": "Check Report Status",
@@ -866,7 +1146,8 @@
     "errors": {
       "empty": "Please enter a reporter ID or email address",
       "network": "Failed to search reports. Please try again."
-    }
+    },
+    "eyebrow": "Track your report"
   },
   "donate": {
     "goBack": "Go Back",
@@ -931,7 +1212,8 @@
     "shareText": "Check out WageWatchers - Community-driven salary transparency across European markets!",
     "footerCommunity": "🧡 Community-driven salary transparency",
     "footerMadeWith": "Made with ❤️ for the community •",
-    "footerViewOnGithub": "View on GitHub"
+    "footerViewOnGithub": "View on GitHub",
+    "eyebrow": "Support the project"
   },
   "entryDetail": {
     "backToDashboard": "Go Back",
@@ -1002,6 +1284,25 @@
         "needsReview": "This entry has been flagged and needs review",
         "rejected": "This entry was rejected and hidden from public view"
       }
+    },
+    "compensation": "Compensation",
+    "noCompensation": "No compensation reported",
+    "packageTitle": "Package & benefits",
+    "noBenefits": "No extra benefits reported",
+    "reportReasonLabel": "Reason for reporting (optional)",
+    "reportReasonPlaceholder": "Please explain why you're reporting this entry…",
+    "cancel": "Cancel",
+    "crossBorder": "Cross-border worker — lives in {residence}, works in {work}",
+    "headline": {
+      "grossSalary": "Gross / month",
+      "netSalary": "Net / month",
+      "netCompensation": "Net compensation / month",
+      "dayRate": "Day rate",
+      "hourlyRate": "Hourly rate",
+      "bursary": "Bursary / month",
+      "virtualGross": "Virtual gross / month",
+      "clientBudget": "Client budget",
+      "agencyCut": "Agency cut"
     }
   },
   "comments": {
@@ -1034,6 +1335,7 @@
       "actions": "Actions",
       "noTitle": "No title provided",
       "editableFor": "{hours}h left",
+      "editableForDays": "{days}d left",
       "readonly": "Read-only",
       "pending": "Pending"
     },
@@ -1041,7 +1343,7 @@
     "deleteError": "Failed to delete entry",
     "infoTitle": "ℹ️ How does it work?",
     "info1": "Your entries are stored anonymously in your browser using secure tokens",
-    "info2": "You can edit or delete entries for 1 day after submission",
+    "info2": "You can edit or delete entries for 7 days after submission",
     "info3": "After the edit window, entries become read-only but remain visible",
     "info4": "Clearing browser data will remove your access to manage these entries",
     "deleteDialog": {
@@ -1056,7 +1358,8 @@
       "cancel": "Cancel",
       "confirmDelete": "Yes, Delete Entry",
       "deleting": "Deleting..."
-    }
+    },
+    "eyebrow": "Your contributions"
   },
   "edit": {
     "meta": {
@@ -1074,8 +1377,14 @@
       "noToken": "You don't have permission to edit this entry. It may have been submitted from a different browser.",
       "notFound": "Entry not found. It may have been deleted.",
       "notOwner": "You don't have permission to edit this entry.",
-      "expired": "The edit window for this entry has expired (1 day after submission).",
+      "expired": "The edit window for this entry has expired (7 days after submission).",
       "generic": "Failed to load entry. Please try again."
+    },
+    "window": {
+      "remainingDays": "About {days} days left to edit",
+      "remainingHours": "About {hours}h left to edit",
+      "until": "You can make changes until {date}.",
+      "lockNote": "After that, the entry becomes read-only but stays visible."
     }
   },
   "changelog": {
@@ -1093,7 +1402,8 @@
       "success": "Successfully subscribed to newsletter!",
       "error": "Failed to subscribe",
       "networkError": "Network error. Please try again."
-    }
+    },
+    "eyebrow": "What's new"
   },
   "adminReview": {
     "title": "Entry Review Queue",

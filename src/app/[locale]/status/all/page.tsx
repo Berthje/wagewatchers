@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import {
   Bug,
   Lightbulb,
@@ -59,7 +60,6 @@ export default function AllReportsPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations("status");
-  const tNav = useTranslations("nav");
 
   const statusLabels = {
     TODO: t("statuses.TODO"),
@@ -123,168 +123,145 @@ export default function AllReportsPage() {
   }, [loadAllReports]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <Navbar
-        locale={locale}
-        translations={{
-          dashboard: tNav("dashboard"),
-          statistics: tNav("statistics"),
-          feedback: tNav("feedback"),
-          status: tNav("status"),
-          donate: tNav("donate"),
-          addEntry: tNav("addEntry"),
-          changelog: tNav("changelog"),
-        }}
+    <PageShell width="lg">
+      {/* Back Button */}
+      <div className="mb-6">
+        <Link href={`/${locale}/status`}>
+          <Button variant="outline" className="mb-4">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {t("results.backToStatus", {
+              defaultValue: "Back to Status",
+            })}
+          </Button>
+        </Link>
+      </div>
+
+      <PageHeader
+        eyebrow={t("eyebrow")}
+        title={t("results.allReportsTitle", {
+          defaultValue: "All Your Reports",
+        })}
+        subtitle={t("results.allReportsSubtitle", {
+          defaultValue: "Complete overview of all your submitted reports and their current status.",
+        })}
       />
 
-      <div className="container mx-auto p-6 max-w-6xl">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Link href={`/${locale}/status`}>
-            <Button variant="outline" className="mb-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              {t("results.backToStatus", {
-                defaultValue: "Back to Status",
-              })}
-            </Button>
-          </Link>
-        </div>
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-stone-100">
-            {t("results.allReportsTitle", {
-              defaultValue: "All Your Reports",
-            })}
-          </h1>
-          <p className="text-stone-400">
-            {t("results.allReportsSubtitle", {
-              defaultValue:
-                "Complete overview of all your submitted reports and their current status.",
-            })}
-          </p>
-        </div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
-              <p className="text-lg text-stone-400">{t("loading")}</p>
-            </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-16">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 animate-spin text-brand" />
+            <p className="text-lg text-muted-foreground">{t("loading")}</p>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Error State */}
-        {error && !loading && (
-          <Alert className="border-red-800 bg-red-950/50">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <AlertDescription className="text-red-200">{error}</AlertDescription>
-          </Alert>
-        )}
+      {/* Error State */}
+      {error && !loading && (
+        <Alert className="border-destructive/40 bg-destructive/10">
+          <AlertCircle className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-foreground">{error}</AlertDescription>
+        </Alert>
+      )}
 
-        {/* Reports Grid */}
-        {!loading && reports.length > 0 && (
-          <div>
-            <div className="mb-6">
-              <p className="text-stone-400">
-                {t("results.showingAll", {
-                  count: reports.length,
-                  defaultValue: `Showing all ${reports.length} reports`,
+      {/* Reports Grid */}
+      {!loading && reports.length > 0 && (
+        <div>
+          <div className="mb-6">
+            <p className="text-muted-foreground">
+              {t("results.showingAll", {
+                count: reports.length,
+                defaultValue: `Showing all ${reports.length} reports`,
+              })}
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {reports.map((report) => {
+              const TypeIcon = typeIcons[report.type];
+              return (
+                <Card
+                  key={report.id}
+                  className="border-border bg-card/80 backdrop-blur-sm hover:shadow-lg transition-shadow duration-200"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <TypeIcon className="w-5 h-5 text-muted-foreground mt-1" />
+                      <div className="flex gap-1">
+                        <Badge className={priorityColors[report.priority]}>{report.priority}</Badge>
+                      </div>
+                    </div>
+                    <CardTitle className="text-foreground text-lg leading-tight">
+                      {report.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-foreground/90 mb-4 text-sm leading-relaxed">
+                      {report.description}
+                    </p>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Badge className={statusColors[report.status]}>
+                          {statusLabels[report.status]}
+                        </Badge>
+                      </div>
+
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>
+                            {t("results.submittedOn")}{" "}
+                            {new Date(report.createdAt).toLocaleDateString()}{" "}
+                            {new Date(report.createdAt).toLocaleTimeString(undefined, {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          <span>
+                            {t("results.lastUpdated")}{" "}
+                            {new Date(report.updatedAt).toLocaleDateString()}{" "}
+                            {new Date(report.updatedAt).toLocaleTimeString(undefined, {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <div className="font-mono text-foreground bg-muted px-2 py-1 rounded text-xs">
+                          {report.trackingId}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && reports.length === 0 && !error && (
+        <div className="text-center py-16">
+          <div className="max-w-md mx-auto">
+            <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {t("results.noReportsTitle")}
+            </h3>
+            <p className="text-muted-foreground mb-4">{t("results.noReportsMessage")}</p>
+            <Link href={`/${locale}/status`}>
+              <Button>
+                {t("results.backToStatus", {
+                  defaultValue: "Back to Status",
                 })}
-              </p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {reports.map((report) => {
-                const TypeIcon = typeIcons[report.type];
-                return (
-                  <Card
-                    key={report.id}
-                    className="border-stone-800 bg-stone-900/60 backdrop-blur-sm hover:shadow-lg transition-shadow duration-200"
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <TypeIcon className="w-5 h-5 text-stone-400 mt-1" />
-                        <div className="flex gap-1">
-                          <Badge className={priorityColors[report.priority]}>
-                            {report.priority}
-                          </Badge>
-                        </div>
-                      </div>
-                      <CardTitle className="text-stone-100 text-lg leading-tight">
-                        {report.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-stone-300 mb-4 text-sm leading-relaxed">
-                        {report.description}
-                      </p>
-
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <Badge className={statusColors[report.status]}>
-                            {statusLabels[report.status]}
-                          </Badge>
-                        </div>
-
-                        <div className="text-xs text-stone-400 space-y-1">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            <span>
-                              {t("results.submittedOn")}{" "}
-                              {new Date(report.createdAt).toLocaleDateString()}{" "}
-                              {new Date(report.createdAt).toLocaleTimeString(undefined, {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            <span>
-                              {t("results.lastUpdated")}{" "}
-                              {new Date(report.updatedAt).toLocaleDateString()}{" "}
-                              {new Date(report.updatedAt).toLocaleTimeString(undefined, {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                          <div className="font-mono text-stone-100 bg-stone-800 px-2 py-1 rounded text-xs">
-                            {report.trackingId}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+              </Button>
+            </Link>
           </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && reports.length === 0 && !error && (
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <AlertCircle className="w-12 h-12 text-stone-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-stone-100 mb-2">
-                {t("results.noReportsTitle")}
-              </h3>
-              <p className="text-stone-400 mb-4">{t("results.noReportsMessage")}</p>
-              <Link href={`/${locale}/status`}>
-                <Button>
-                  {t("results.backToStatus", {
-                    defaultValue: "Back to Status",
-                  })}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </PageShell>
   );
 }

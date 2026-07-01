@@ -6,6 +6,8 @@ import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
 import { toTitleCase } from "@/lib/utils/format.utils";
+import { logError } from "@/lib/logger";
+import { getEntryBenefits, replaceEntryBenefits, deleteEntryBenefits } from "@/lib/entry-benefits";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +25,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Entry not found" }, { status: 404 });
     }
 
-    return NextResponse.json(entry[0]);
+    // Include catalog benefits so the edit form can repopulate the selector.
+    const benefits = await getEntryBenefits(id);
+    return NextResponse.json({ ...entry[0], benefits });
   } catch (error) {
-    console.error(error);
+    logError("Failed to fetch entry", error);
     return NextResponse.json({ error: "Failed to fetch entry" }, { status: 500 });
   }
 }
@@ -59,7 +63,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const body = await request.json();
-    const { ownerToken, ...updateData } = body;
+    const { ownerToken, benefits: submittedBenefits, ...updateData } = body;
 
     // Apply title case transformation to jobTitle if present
     if (updateData.jobTitle) {
@@ -121,9 +125,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .where(eq(salaryEntries.id, id))
       .returning();
 
+    // Replace catalog benefits + re-dual-write core benefits from the new values.
+    await replaceEntryBenefits(id, submittedBenefits, updatedEntry[0]);
+
     return NextResponse.json(updatedEntry[0]);
   } catch (error) {
-    console.error("Failed to update entry:", error);
+    logError("Failed to update entry", error);
 
     // Always return detailed error for debugging
     return NextResponse.json(
@@ -181,12 +188,13 @@ export async function DELETE(
       );
     }
 
-    // Delete the entry
+    // Remove dependent benefit rows first (FK), then the entry.
+    await deleteEntryBenefits(id);
     await db.delete(salaryEntries).where(eq(salaryEntries.id, id));
 
     return NextResponse.json({ success: true, message: "Entry deleted" });
   } catch (error) {
-    console.error(error);
+    logError("Failed to delete entry", error);
     return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
   }
 }

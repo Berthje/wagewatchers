@@ -4,6 +4,7 @@ import { newsletterSubscribers } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { Resend } from "resend";
 import { changelogEntries } from "@/lib/changelog-data";
+import { logError } from "@/lib/logger";
 
 /**
  * Get changelog entries from the past week
@@ -190,7 +191,9 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           results.failed++;
           results.errors.push(`Failed to send to ${subscriber.email}: ${error}`);
-          console.error(`Failed to send email to ${subscriber.email}:`, error);
+          logError("Failed to send changelog email to subscriber", error, {
+            email: subscriber.email,
+          });
         }
       });
 
@@ -214,7 +217,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Newsletter sending error:", error);
+    logError("Newsletter sending error", error);
     return NextResponse.json(
       { error: "Internal server error", details: String(error) },
       { status: 500 }

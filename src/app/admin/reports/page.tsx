@@ -40,6 +40,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { logError, logWarning } from "@/lib/logger";
 
 interface Report {
   id: number;
@@ -206,7 +207,7 @@ export default function AdminReportsPage() {
         setReports(data);
       }
     } catch (error) {
-      console.error("Failed to fetch reports:", error);
+      logError("Failed to fetch reports", error);
     } finally {
       setLoading(false);
     }
@@ -235,11 +236,11 @@ export default function AdminReportsPage() {
         // Update local state with the full updated report from server
         setReports(reports.map((report) => (report.id === reportId ? updatedReport : report)));
       } else {
-        console.error("Failed to update report status");
+        logWarning("Failed to update report status", { reportId, newStatus });
         alert("Failed to update report status. Please try again.");
       }
     } catch (error) {
-      console.error("Error updating report status:", error);
+      logError("Error updating report status", error, { reportId, newStatus });
       alert("Failed to update report status. Please try again.");
     }
   };

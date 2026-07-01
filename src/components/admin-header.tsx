@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Home, LogOut, ArrowLeft } from "lucide-react";
+import { logError } from "@/lib/logger";
 
 /**
  * Reusable admin header with Home, Logout, and conditional Back button
@@ -24,7 +25,7 @@ export function AdminHeader() {
         method: "POST",
       });
     } catch (error) {
-      console.error("Logout error:", error);
+      logError("Logout error", error);
     }
     localStorage.removeItem("adminAuthenticated");
     router.push("/admin/login");

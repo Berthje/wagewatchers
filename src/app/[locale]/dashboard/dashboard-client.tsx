@@ -24,7 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import {
   ChevronLeft,
   ChevronRight,
@@ -42,6 +43,7 @@ import { useFilters } from "@/hooks/use-filters";
 import { DEFAULT_SELECTED_COLUMNS } from "@/lib/columns-config";
 import { createFieldConfigs } from "@/lib/field-configs";
 import { getFieldDisplayValue } from "@/lib/utils/format.utils";
+import { getPrimaryComp } from "@/lib/utils/compensation.utils";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { createCityDisplayFormatter } from "@/lib/utils/format.utils";
 import {
@@ -51,6 +53,7 @@ import {
   convertPeriod,
 } from "@/contexts/salary-display-context";
 import type { SortField, SortDirection } from "@/types/api";
+import { logError } from "@/lib/logger";
 
 export function DashboardClient({
   locale,
@@ -58,7 +61,6 @@ export function DashboardClient({
   locale: string;
 }>) {
   const t = useTranslations("dashboard");
-  const tNav = useTranslations("nav");
   const tUi = useTranslations("ui");
   const router = useRouter();
   const pathname = usePathname();
@@ -151,6 +153,9 @@ export function DashboardClient({
     selectedCountries,
     selectedSectors,
     selectedCities,
+    selectedWorkerTypes,
+    hasCompanyCar,
+    hasEquity,
     minAge,
     maxAge,
     minWorkExperience,
@@ -167,6 +172,9 @@ export function DashboardClient({
     setSelectedCountries,
     setSelectedSectors,
     setSelectedCities,
+    setSelectedWorkerTypes,
+    setHasCompanyCar,
+    setHasEquity,
     setMinAge,
     setMaxAge,
     setMinWorkExperience,
@@ -206,7 +214,7 @@ export function DashboardClient({
           setEntries(data);
         }
       } catch (error) {
-        console.error("Failed to fetch entries:", error);
+        logError("Failed to fetch entries:", error);
       } finally {
         setLoading(false);
       }
@@ -535,16 +543,26 @@ export function DashboardClient({
   // Render sort icon helper
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
+      return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 shrink-0 opacity-40" />;
     }
     if (sortDirection === "asc") {
-      return <ArrowUp className="ml-2 h-4 w-4 shrink-0" />;
+      return <ArrowUp className="ml-1.5 h-3.5 w-3.5 shrink-0 text-brand" />;
     }
     if (sortDirection === "desc") {
-      return <ArrowDown className="ml-2 h-4 w-4 shrink-0" />;
+      return <ArrowDown className="ml-1.5 h-3.5 w-3.5 shrink-0 text-brand" />;
     }
-    return <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />;
+    return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 shrink-0 opacity-40" />;
   };
+
+  // Numeric columns are right-aligned for easy comparison/scanning
+  const NUMERIC_COLUMNS = new Set([
+    "grossSalary",
+    "netSalary",
+    "netCompensation",
+    "age",
+    "experience",
+    "teleworkDays",
+  ]);
 
   // Ensure "submittedOn" is always rendered at the far right if present
   const visibleColumns = useMemo(() => {
@@ -558,31 +576,12 @@ export function DashboardClient({
   }, [selectedColumns]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
-        <Navbar
-          locale={locale}
-          translations={{
-            dashboard: tNav("dashboard"),
-            statistics: tNav("statistics"),
-            feedback: tNav("feedback"),
-            status: tNav("status"),
-            donate: tNav("donate"),
-            addEntry: tNav("addEntry"),
-            changelog: tNav("changelog"),
-          }}
-        />
-      </div>
-
-      <main className="container mx-auto px-4 py-6 md:py-8">
-        <div className="mb-4 flex items-start justify-between">
-          <div className="flex-1">
-            <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-2">{t("title")}</h1>
-            <p className="text-sm md:text-base text-stone-400">
-              {t("subtitle", { count: filteredByFilters.length })}
-            </p>
-          </div>
+    <PageShell width="xl">
+      <PageHeader
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle", { count: filteredByFilters.length })}
+        actions={
           <Button
             onClick={() => router.push(`/${locale}/my-entries`)}
             variant="outline"
@@ -591,693 +590,803 @@ export function DashboardClient({
             <User className="w-4 h-4" />
             <span className="inline">{t("myEntries")}</span>
           </Button>
+        }
+      />
+
+      {/* Stats Cards */}
+      {loading ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={`skeleton-${i}`} className="border-border bg-card">
+              <CardHeader>
+                <div className="h-4 bg-muted rounded animate-pulse"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-6 bg-muted rounded animate-pulse"></div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-
-        {/* Stats Cards */}
-        {loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={`skeleton-${i}`} className="bg-stone-800 border-stone-700">
-                <CardHeader>
-                  <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-6 bg-stone-700 rounded animate-pulse"></div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            <Card className="bg-stone-800 border-stone-700">
-              <CardHeader>
-                <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                  {t("stats.totalEntries")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl font-bold text-stone-100">
-                  {formatNumber(filteredByFilters.length)}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-stone-800 border-stone-700">
-              <CardHeader>
-                <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                  {t("stats.topSector")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div
-                  className="text-xl font-bold text-stone-100 truncate"
-                  title={(() => {
-                    if (filteredByFilters.length === 0) return "N/A";
-                    const sectorCounts = filteredByFilters.reduce(
-                      (acc, e) => {
-                        const sector = e.sector || "Unknown";
-                        acc[sector] = (acc[sector] || 0) + 1;
-                        return acc;
-                      },
-                      {} as Record<string, number>
-                    );
-                    const topSector = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0];
-                    return topSector ? `${topSector[0]} (${topSector[1]})` : "N/A";
-                  })()}
-                >
-                  {(() => {
-                    if (filteredByFilters.length === 0) return "N/A";
-                    const sectorCounts = filteredByFilters.reduce(
-                      (acc, e) => {
-                        const sector = e.sector || "Unknown";
-                        acc[sector] = (acc[sector] || 0) + 1;
-                        return acc;
-                      },
-                      {} as Record<string, number>
-                    );
-                    const topSector = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0];
-                    return topSector
-                      ? `${topSector[0]} (${topSector[1]} ${t("stats.entries")})`
-                      : "N/A";
-                  })()}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-stone-800 border-stone-700">
-              <CardHeader>
-                <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                  {t("stats.medianGrossSalary")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl font-bold text-stone-100">
-                  {(() => {
-                    if (filteredByFilters.length === 0) return "N/A";
-                    const salariesWithCurrency = filteredByFilters
-                      .map((e) => ({
-                        salary: e.grossSalary,
-                        currency: e.currency,
-                      }))
-                      .filter(
-                        (
-                          s
-                        ): s is {
-                          salary: number;
-                          currency: string | null;
-                        } => s.salary !== null && s.salary !== undefined
-                      );
-                    if (salariesWithCurrency.length === 0) return "N/A";
-
-                    // Convert all salaries to the display currency and period
-                    const convertedSalaries = salariesWithCurrency.map((s) => {
-                      const converted = convertCurrency(s.salary, s.currency, preferences.currency);
-                      return convertPeriod(converted, "monthly", preferences.period);
-                    });
-
-                    // Calculate median using d3-array
-                    const medianValue = median(convertedSalaries) ?? 0;
-
-                    return formatSalaryWithPreferences(
-                      Math.round(medianValue),
-                      preferences.currency,
-                      preferences.period === "annual",
-                      preferences.currency,
-                      preferences.period,
-                      locale,
-                      isMobile
-                    );
-                  })()}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-stone-800 border-stone-700">
-              <CardHeader>
-                <CardTitle className="text-xs md:text-sm font-medium text-stone-400">
-                  {t("stats.medianNetSalary")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl font-bold text-stone-100">
-                  {(() => {
-                    if (filteredByFilters.length === 0) return "N/A";
-                    const salariesWithCurrency = filteredByFilters
-                      .map((e) => ({
-                        salary: e.netSalary,
-                        currency: e.currency,
-                      }))
-                      .filter(
-                        (
-                          s
-                        ): s is {
-                          salary: number;
-                          currency: string | null;
-                        } => s.salary !== null && s.salary !== undefined
-                      );
-                    if (salariesWithCurrency.length === 0) return "N/A";
-
-                    // Convert all salaries to the display currency and period
-                    const convertedSalaries = salariesWithCurrency.map((s) => {
-                      const converted = convertCurrency(s.salary, s.currency, preferences.currency);
-                      return convertPeriod(converted, "monthly", preferences.period);
-                    });
-
-                    // Calculate median using d3-array
-                    const medianValue = median(convertedSalaries) ?? 0;
-
-                    return formatSalaryWithPreferences(
-                      Math.round(medianValue),
-                      preferences.currency,
-                      preferences.period === "annual",
-                      preferences.currency,
-                      preferences.period,
-                      locale,
-                      isMobile
-                    );
-                  })()}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Entries Table with Integrated Filters */}
-        <Card className="bg-stone-800 border-stone-700">
-          <CardHeader className="space-y-4">
-            <div className="flex flex-col gap-4">
-              {/* Title and Info Row */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <CardTitle className="text-stone-100">{t("table.title")}</CardTitle>
-                <p className="text-xs md:text-sm text-stone-400 flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  {t("table.clickToViewDetails")}
-                </p>
+      ) : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="text-xs md:text-sm font-medium font-mono uppercase tracking-wide text-muted-foreground">
+                {t("stats.totalEntries")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-xl font-bold font-mono text-foreground">
+                {formatNumber(filteredByFilters.length)}
               </div>
-
-              {/* Filters and Search Row */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                {/* Filters Modal Button */}
-                <div className="flex items-center gap-2">
-                  <FiltersModal
-                    selectedCountries={selectedCountries}
-                    onCountriesChange={setSelectedCountries}
-                    availableCountries={options.countries}
-                    selectedCities={selectedCities}
-                    onCitiesChange={setSelectedCities}
-                    availableCities={options.cities}
-                    selectedSectors={selectedSectors}
-                    onSectorsChange={setSelectedSectors}
-                    availableSectors={options.sectors}
-                    minAge={minAge}
-                    maxAge={maxAge}
-                    onMinAgeChange={setMinAge}
-                    onMaxAgeChange={setMaxAge}
-                    maxAgeLimit={maxValues.maxAge}
-                    minWorkExperience={minWorkExperience}
-                    maxWorkExperience={maxWorkExperience}
-                    onMinWorkExperienceChange={setMinWorkExperience}
-                    onMaxWorkExperienceChange={setMaxWorkExperience}
-                    maxWorkExperienceLimit={maxValues.maxWorkExperience}
-                    minGrossSalary={minGrossSalary}
-                    maxGrossSalary={maxGrossSalary}
-                    onMinGrossSalaryChange={setMinGrossSalary}
-                    onMaxGrossSalaryChange={setMaxGrossSalary}
-                    maxGrossSalaryLimit={maxValues.maxGrossSalary}
-                    minNetSalary={minNetSalary}
-                    maxNetSalary={maxNetSalary}
-                    onMinNetSalaryChange={setMinNetSalary}
-                    onMaxNetSalaryChange={setMaxNetSalary}
-                    maxNetSalaryLimit={maxValues.maxNetSalary}
-                    activeFilterCount={activeFilterCount}
-                  />
-
-                  {/* Column selector */}
-                  <ColumnSelector />
-                </div>
-
-                {/* Search Bar - Takes remaining space */}
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-stone-500" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t("filters.searchPlaceholder")}
-                    className="pl-9 bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
-                  />
-                </div>
+            </CardContent>
+          </Card>
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="text-xs md:text-sm font-medium font-mono uppercase tracking-wide text-muted-foreground">
+                {t("stats.topSector")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div
+                className="text-xl font-bold text-foreground truncate"
+                title={(() => {
+                  if (filteredByFilters.length === 0) return "N/A";
+                  const sectorCounts = filteredByFilters.reduce(
+                    (acc, e) => {
+                      const sector = e.sector || "Unknown";
+                      acc[sector] = (acc[sector] || 0) + 1;
+                      return acc;
+                    },
+                    {} as Record<string, number>
+                  );
+                  const topSector = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0];
+                  return topSector ? `${topSector[0]} (${topSector[1]})` : "N/A";
+                })()}
+              >
+                {(() => {
+                  if (filteredByFilters.length === 0) return "N/A";
+                  const sectorCounts = filteredByFilters.reduce(
+                    (acc, e) => {
+                      const sector = e.sector || "Unknown";
+                      acc[sector] = (acc[sector] || 0) + 1;
+                      return acc;
+                    },
+                    {} as Record<string, number>
+                  );
+                  const topSector = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0];
+                  return topSector
+                    ? `${topSector[0]} (${topSector[1]} ${t("stats.entries")})`
+                    : "N/A";
+                })()}
               </div>
+            </CardContent>
+          </Card>
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="text-xs md:text-sm font-medium font-mono uppercase tracking-wide text-muted-foreground">
+                {t("stats.medianGrossSalary")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-xl font-bold font-mono text-foreground">
+                {(() => {
+                  if (filteredByFilters.length === 0) return "N/A";
+                  const salariesWithCurrency = filteredByFilters
+                    .map((e) => ({
+                      salary: e.grossSalary,
+                      currency: e.currency,
+                    }))
+                    .filter(
+                      (
+                        s
+                      ): s is {
+                        salary: number;
+                        currency: string | null;
+                      } => s.salary !== null && s.salary !== undefined
+                    );
+                  if (salariesWithCurrency.length === 0) return "N/A";
 
-              {/* Active Filters Display */}
-              <ActiveFiltersDisplay
-                filters={[
-                  ...selectedCountries.map((country) => ({
-                    id: `country-${country}`,
-                    label: country,
-                    value: country,
-                    category: "country" as const,
-                  })),
-                  ...selectedCities.map((city) => ({
-                    id: `city-${city}`,
-                    label: city,
-                    value: city,
-                    category: "city" as const,
-                  })),
-                  ...selectedSectors.map((sector) => ({
-                    id: `sector-${sector}`,
-                    label: sector,
-                    value: sector,
-                    category: "sector" as const,
-                  })),
-                  ...(minAge === null
-                    ? []
-                    : [
-                        {
-                          id: `min-age-${minAge}`,
-                          label: `${t("filters.minAge")}: ${minAge}`,
-                          value: minAge.toString(),
-                          category: "age" as const,
-                        },
-                      ]),
-                  ...(maxAge === null
-                    ? []
-                    : [
-                        {
-                          id: `max-age-${maxAge}`,
-                          label: `${t("filters.maxAge")}: ${maxAge}`,
-                          value: maxAge.toString(),
-                          category: "age" as const,
-                        },
-                      ]),
-                  ...(minWorkExperience === null
-                    ? []
-                    : [
-                        {
-                          id: `min-work-experience-${minWorkExperience}`,
-                          label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
-                          value: minWorkExperience.toString(),
-                          category: "workExperience" as const,
-                        },
-                      ]),
-                  ...(maxWorkExperience === null
-                    ? []
-                    : [
-                        {
-                          id: `max-work-experience-${maxWorkExperience}`,
-                          label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
-                          value: maxWorkExperience.toString(),
-                          category: "workExperience" as const,
-                        },
-                      ]),
-                  ...(minGrossSalary === null
-                    ? []
-                    : [
-                        {
-                          id: `min-gross-salary-${minGrossSalary}`,
-                          label: `Min Gross: ${getCurrencySymbol()}${minGrossSalary.toLocaleString()}`,
-                          value: minGrossSalary.toString(),
-                          category: "grossSalary" as const,
-                        },
-                      ]),
-                  ...(maxGrossSalary === null
-                    ? []
-                    : [
-                        {
-                          id: `max-gross-salary-${maxGrossSalary}`,
-                          label: `Max Gross: ${getCurrencySymbol()}${maxGrossSalary.toLocaleString()}`,
-                          value: maxGrossSalary.toString(),
-                          category: "grossSalary" as const,
-                        },
-                      ]),
-                  ...(minNetSalary === null
-                    ? []
-                    : [
-                        {
-                          id: `min-net-salary-${minNetSalary}`,
-                          label: `Min Net: ${getCurrencySymbol()}${minNetSalary.toLocaleString()}`,
-                          value: minNetSalary.toString(),
-                          category: "netSalary" as const,
-                        },
-                      ]),
-                  ...(maxNetSalary === null
-                    ? []
-                    : [
-                        {
-                          id: `max-net-salary-${maxNetSalary}`,
-                          label: `Max Net: ${getCurrencySymbol()}${maxNetSalary.toLocaleString()}`,
-                          value: maxNetSalary.toString(),
-                          category: "netSalary" as const,
-                        },
-                      ]),
-                  // Show reset columns action only when selection differs from defaults
-                  ...(!isDefaultColumns
-                    ? [
-                        {
-                          id: `columns-reset`,
-                          label: t("table.columns.resetActiveLabel", { defaultValue: t("table.columns.reset") }),
-                          value: "reset-columns",
-                          category: "columnsReset" as const,
-                        },
-                      ]
-                    : []),
-                ]}
-                onRemoveFilter={(value, category) => {
-                  if (category === "country") {
-                    setSelectedCountries(selectedCountries.filter((c) => c !== value));
-                  } else if (category === "city") {
-                    setSelectedCities(selectedCities.filter((c) => c !== value));
-                  } else if (category === "sector") {
-                    setSelectedSectors(selectedSectors.filter((s) => s !== value));
-                  } else if (category === "age") {
-                    if (minAge !== null && minAge.toString() === value) {
-                      setMinAge(null);
-                    } else if (maxAge !== null && maxAge.toString() === value) {
-                      setMaxAge(null);
-                    }
-                  } else if (category === "workExperience") {
-                    if (minWorkExperience !== null && minWorkExperience.toString() === value) {
-                      setMinWorkExperience(null);
-                    } else if (
-                      maxWorkExperience !== null &&
-                      maxWorkExperience.toString() === value
-                    ) {
-                      setMaxWorkExperience(null);
-                    }
-                  } else if (category === "grossSalary") {
-                    if (minGrossSalary !== null && minGrossSalary.toString() === value) {
-                      setMinGrossSalary(null);
-                    } else if (maxGrossSalary !== null && maxGrossSalary.toString() === value) {
-                      setMaxGrossSalary(null);
-                    }
-                  } else if (category === "netSalary") {
-                    if (minNetSalary !== null && minNetSalary.toString() === value) {
-                      setMinNetSalary(null);
-                    } else if (maxNetSalary !== null && maxNetSalary.toString() === value) {
-                      setMaxNetSalary(null);
-                    }
-                  } else if (category === "columnsReset") {
-                    // Reset selected columns to defaults
-                    setSelectedColumns(DEFAULT_SELECTED_COLUMNS);
-                  }
-                }}
-                onClearAll={() => {
-                  setSelectedCountries([]);
-                  setSelectedCities([]);
-                  setSelectedSectors([]);
-                  setMinAge(null);
-                  setMaxAge(null);
-                  setMinWorkExperience(null);
-                  setMaxWorkExperience(null);
-                  setMinGrossSalary(null);
-                  setMaxGrossSalary(null);
-                  setMinNetSalary(null);
-                  setMaxNetSalary(null);
-                }}
-              />
+                  // Convert all salaries to the display currency and period
+                  const convertedSalaries = salariesWithCurrency.map((s) => {
+                    const converted = convertCurrency(s.salary, s.currency, preferences.currency);
+                    return convertPeriod(converted, "monthly", preferences.period);
+                  });
+
+                  // Calculate median using d3-array
+                  const medianValue = median(convertedSalaries) ?? 0;
+
+                  return formatSalaryWithPreferences(
+                    Math.round(medianValue),
+                    preferences.currency,
+                    preferences.period === "annual",
+                    preferences.currency,
+                    preferences.period,
+                    locale,
+                    isMobile
+                  );
+                })()}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="text-xs md:text-sm font-medium font-mono uppercase tracking-wide text-muted-foreground">
+                {t("stats.medianNetSalary")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-xl font-bold font-mono text-foreground">
+                {(() => {
+                  if (filteredByFilters.length === 0) return "N/A";
+                  const salariesWithCurrency = filteredByFilters
+                    .map((e) => ({
+                      salary: e.netSalary,
+                      currency: e.currency,
+                    }))
+                    .filter(
+                      (
+                        s
+                      ): s is {
+                        salary: number;
+                        currency: string | null;
+                      } => s.salary !== null && s.salary !== undefined
+                    );
+                  if (salariesWithCurrency.length === 0) return "N/A";
+
+                  // Convert all salaries to the display currency and period
+                  const convertedSalaries = salariesWithCurrency.map((s) => {
+                    const converted = convertCurrency(s.salary, s.currency, preferences.currency);
+                    return convertPeriod(converted, "monthly", preferences.period);
+                  });
+
+                  // Calculate median using d3-array
+                  const medianValue = median(convertedSalaries) ?? 0;
+
+                  return formatSalaryWithPreferences(
+                    Math.round(medianValue),
+                    preferences.currency,
+                    preferences.period === "annual",
+                    preferences.currency,
+                    preferences.period,
+                    locale,
+                    isMobile
+                  );
+                })()}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Entries Table with Integrated Filters */}
+      <Card className="border-border bg-card">
+        <CardHeader className="space-y-4">
+          <div className="flex flex-col gap-4">
+            {/* Title and Info Row */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <CardTitle className="text-foreground">{t("table.title")}</CardTitle>
+              <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-2">
+                <Eye className="h-4 w-4" />
+                {t("table.clickToViewDetails")}
+              </p>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="relative overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin">
-              <Table>
-                <TableHeader className="sticky top-0 bg-stone-800 z-30">
-                  <TableRow className="border-stone-700 bg-stone-800">
-                    {/** Render table headers dynamically based on user selected columns */}
-                    {(() => {
-                      // helper render function
-                      const renderHeaderCell = (key: string) => {
-                        const labelKeyMap: Record<string, string> = {
-                          location: "table.location",
-                          jobTitle: "table.jobTitle",
-                          sector: "table.sector",
-                          experience: "table.experience",
-                          age: "table.age",
-                          grossSalary: "table.grossSalary",
-                          netSalary: "table.netSalary",
-                          submittedOn: "table.submittedOn",
-                          education: "table.education",
-                          workCity: "table.workCity",
-                          netCompensation: "table.netCompensation",
-                          teleworkDays: "table.teleworkDays",
-                          stressLevel: "table.stressLevel",
-                        };
 
-                        const sortableFieldMap: Record<string, any> = {
-                          experience: "experience",
-                          age: "age",
-                          grossSalary: "grossSalary",
-                          netSalary: "netSalary",
-                          submittedOn: "createdAt",
-                        };
+            {/* Filters and Search Row */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              {/* Filters Modal Button */}
+              <div className="flex items-center gap-2">
+                <FiltersModal
+                  selectedCountries={selectedCountries}
+                  onCountriesChange={setSelectedCountries}
+                  availableCountries={options.countries}
+                  selectedCities={selectedCities}
+                  onCitiesChange={setSelectedCities}
+                  availableCities={options.cities}
+                  selectedSectors={selectedSectors}
+                  onSectorsChange={setSelectedSectors}
+                  availableSectors={options.sectors}
+                  selectedWorkerTypes={selectedWorkerTypes}
+                  onWorkerTypesChange={setSelectedWorkerTypes}
+                  availableWorkerTypes={options.workerTypes}
+                  hasCompanyCar={hasCompanyCar}
+                  onHasCompanyCarChange={setHasCompanyCar}
+                  hasEquity={hasEquity}
+                  onHasEquityChange={setHasEquity}
+                  minAge={minAge}
+                  maxAge={maxAge}
+                  onMinAgeChange={setMinAge}
+                  onMaxAgeChange={setMaxAge}
+                  maxAgeLimit={maxValues.maxAge}
+                  minWorkExperience={minWorkExperience}
+                  maxWorkExperience={maxWorkExperience}
+                  onMinWorkExperienceChange={setMinWorkExperience}
+                  onMaxWorkExperienceChange={setMaxWorkExperience}
+                  maxWorkExperienceLimit={maxValues.maxWorkExperience}
+                  minGrossSalary={minGrossSalary}
+                  maxGrossSalary={maxGrossSalary}
+                  onMinGrossSalaryChange={setMinGrossSalary}
+                  onMaxGrossSalaryChange={setMaxGrossSalary}
+                  maxGrossSalaryLimit={maxValues.maxGrossSalary}
+                  minNetSalary={minNetSalary}
+                  maxNetSalary={maxNetSalary}
+                  onMinNetSalaryChange={setMinNetSalary}
+                  onMaxNetSalaryChange={setMaxNetSalary}
+                  maxNetSalaryLimit={maxValues.maxNetSalary}
+                  activeFilterCount={activeFilterCount}
+                />
 
-                        const sortable = !!sortableFieldMap[key];
+                {/* Column selector */}
+                <ColumnSelector />
+              </div>
 
-                        const content = (
-                          <div className={`flex items-center h-5 min-h-5 max-h-5 overflow-hidden ${sortable ? "cursor-pointer select-none" : ""}`}>
-                            {t(labelKeyMap[key] || "")}
-                            {sortable && getSortIcon(sortableFieldMap[key])}
-                          </div>
-                        );
+              {/* Search Bar - Takes remaining space */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t("filters.searchPlaceholder")}
+                  className="pl-9"
+                />
+              </div>
+            </div>
 
-                        return (
-                          <TableHead
-                            key={`header-${key}`}
-                            className={`text-stone-300 sticky top-0 bg-stone-800 z-20 ${sortable ? "cursor-pointer hover:bg-stone-800 select-none" : ""}`}
-                            onClick={sortable ? () => handleSort(sortableFieldMap[key]) : undefined}
-                          >
-                            {content}
-                          </TableHead>
-                        );
+            {/* Active Filters Display */}
+            <ActiveFiltersDisplay
+              filters={[
+                ...selectedCountries.map((country) => ({
+                  id: `country-${country}`,
+                  label: country,
+                  value: country,
+                  category: "country" as const,
+                })),
+                ...selectedCities.map((city) => ({
+                  id: `city-${city}`,
+                  label: city,
+                  value: city,
+                  category: "city" as const,
+                })),
+                ...selectedSectors.map((sector) => ({
+                  id: `sector-${sector}`,
+                  label: sector,
+                  value: sector,
+                  category: "sector" as const,
+                })),
+                ...selectedWorkerTypes.map((wt) => ({
+                  id: `workerType-${wt}`,
+                  label: tAdd(`formOptions.workerType.${wt}`),
+                  value: wt,
+                  category: "workerType" as const,
+                })),
+                ...(hasCompanyCar === null
+                  ? []
+                  : [
+                      {
+                        id: `company-car-${hasCompanyCar}`,
+                        label: `${t("filters.companyCar")}: ${hasCompanyCar ? t("filters.yes") : t("filters.no")}`,
+                        value: String(hasCompanyCar),
+                        category: "companyCar" as const,
+                      },
+                    ]),
+                ...(hasEquity === null
+                  ? []
+                  : [
+                      {
+                        id: `equity-${hasEquity}`,
+                        label: `${t("filters.equity")}: ${hasEquity ? t("filters.yes") : t("filters.no")}`,
+                        value: String(hasEquity),
+                        category: "equity" as const,
+                      },
+                    ]),
+                ...(minAge === null
+                  ? []
+                  : [
+                      {
+                        id: `min-age-${minAge}`,
+                        label: `${t("filters.minAge")}: ${minAge}`,
+                        value: minAge.toString(),
+                        category: "age" as const,
+                      },
+                    ]),
+                ...(maxAge === null
+                  ? []
+                  : [
+                      {
+                        id: `max-age-${maxAge}`,
+                        label: `${t("filters.maxAge")}: ${maxAge}`,
+                        value: maxAge.toString(),
+                        category: "age" as const,
+                      },
+                    ]),
+                ...(minWorkExperience === null
+                  ? []
+                  : [
+                      {
+                        id: `min-work-experience-${minWorkExperience}`,
+                        label: `${t("filters.minWorkExperience")}: ${minWorkExperience}`,
+                        value: minWorkExperience.toString(),
+                        category: "workExperience" as const,
+                      },
+                    ]),
+                ...(maxWorkExperience === null
+                  ? []
+                  : [
+                      {
+                        id: `max-work-experience-${maxWorkExperience}`,
+                        label: `${t("filters.maxWorkExperience")}: ${maxWorkExperience}`,
+                        value: maxWorkExperience.toString(),
+                        category: "workExperience" as const,
+                      },
+                    ]),
+                ...(minGrossSalary === null
+                  ? []
+                  : [
+                      {
+                        id: `min-gross-salary-${minGrossSalary}`,
+                        label: `Min Gross: ${getCurrencySymbol()}${minGrossSalary.toLocaleString()}`,
+                        value: minGrossSalary.toString(),
+                        category: "grossSalary" as const,
+                      },
+                    ]),
+                ...(maxGrossSalary === null
+                  ? []
+                  : [
+                      {
+                        id: `max-gross-salary-${maxGrossSalary}`,
+                        label: `Max Gross: ${getCurrencySymbol()}${maxGrossSalary.toLocaleString()}`,
+                        value: maxGrossSalary.toString(),
+                        category: "grossSalary" as const,
+                      },
+                    ]),
+                ...(minNetSalary === null
+                  ? []
+                  : [
+                      {
+                        id: `min-net-salary-${minNetSalary}`,
+                        label: `Min Net: ${getCurrencySymbol()}${minNetSalary.toLocaleString()}`,
+                        value: minNetSalary.toString(),
+                        category: "netSalary" as const,
+                      },
+                    ]),
+                ...(maxNetSalary === null
+                  ? []
+                  : [
+                      {
+                        id: `max-net-salary-${maxNetSalary}`,
+                        label: `Max Net: ${getCurrencySymbol()}${maxNetSalary.toLocaleString()}`,
+                        value: maxNetSalary.toString(),
+                        category: "netSalary" as const,
+                      },
+                    ]),
+                // Show reset columns action only when selection differs from defaults
+                ...(!isDefaultColumns
+                  ? [
+                      {
+                        id: `columns-reset`,
+                        label: t("table.columns.resetActiveLabel", {
+                          defaultValue: t("table.columns.reset"),
+                        }),
+                        value: "reset-columns",
+                        category: "columnsReset" as const,
+                      },
+                    ]
+                  : []),
+              ]}
+              onRemoveFilter={(value, category) => {
+                if (category === "country") {
+                  setSelectedCountries(selectedCountries.filter((c) => c !== value));
+                } else if (category === "city") {
+                  setSelectedCities(selectedCities.filter((c) => c !== value));
+                } else if (category === "sector") {
+                  setSelectedSectors(selectedSectors.filter((s) => s !== value));
+                } else if (category === "workerType") {
+                  setSelectedWorkerTypes(selectedWorkerTypes.filter((w) => w !== value));
+                } else if (category === "companyCar") {
+                  setHasCompanyCar(null);
+                } else if (category === "equity") {
+                  setHasEquity(null);
+                } else if (category === "age") {
+                  if (minAge !== null && minAge.toString() === value) {
+                    setMinAge(null);
+                  } else if (maxAge !== null && maxAge.toString() === value) {
+                    setMaxAge(null);
+                  }
+                } else if (category === "workExperience") {
+                  if (minWorkExperience !== null && minWorkExperience.toString() === value) {
+                    setMinWorkExperience(null);
+                  } else if (maxWorkExperience !== null && maxWorkExperience.toString() === value) {
+                    setMaxWorkExperience(null);
+                  }
+                } else if (category === "grossSalary") {
+                  if (minGrossSalary !== null && minGrossSalary.toString() === value) {
+                    setMinGrossSalary(null);
+                  } else if (maxGrossSalary !== null && maxGrossSalary.toString() === value) {
+                    setMaxGrossSalary(null);
+                  }
+                } else if (category === "netSalary") {
+                  if (minNetSalary !== null && minNetSalary.toString() === value) {
+                    setMinNetSalary(null);
+                  } else if (maxNetSalary !== null && maxNetSalary.toString() === value) {
+                    setMaxNetSalary(null);
+                  }
+                } else if (category === "columnsReset") {
+                  // Reset selected columns to defaults
+                  setSelectedColumns(DEFAULT_SELECTED_COLUMNS);
+                }
+              }}
+              onClearAll={() => {
+                setSelectedCountries([]);
+                setSelectedCities([]);
+                setSelectedSectors([]);
+                setSelectedWorkerTypes([]);
+                setHasCompanyCar(null);
+                setHasEquity(null);
+                setMinAge(null);
+                setMaxAge(null);
+                setMinWorkExperience(null);
+                setMaxWorkExperience(null);
+                setMinGrossSalary(null);
+                setMaxGrossSalary(null);
+                setMinNetSalary(null);
+                setMaxNetSalary(null);
+              }}
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="relative overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin">
+            <Table>
+              <TableHeader className="sticky top-0 bg-card z-30">
+                <TableRow className="border-border bg-card hover:bg-card">
+                  {/** Render table headers dynamically based on user selected columns */}
+                  {(() => {
+                    // helper render function
+                    const renderHeaderCell = (key: string) => {
+                      const labelKeyMap: Record<string, string> = {
+                        location: "table.location",
+                        jobTitle: "table.jobTitle",
+                        sector: "table.sector",
+                        experience: "table.experience",
+                        age: "table.age",
+                        grossSalary: "table.grossSalary",
+                        netSalary: "table.netSalary",
+                        submittedOn: "table.submittedOn",
+                        education: "table.education",
+                        workCity: "table.workCity",
+                        netCompensation: "table.netCompensation",
+                        teleworkDays: "table.teleworkDays",
+                        stressLevel: "table.stressLevel",
                       };
 
-                      return visibleColumns.map((colKey) => renderHeaderCell(colKey));
-                    })()}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    Array.from({ length: rowsPerPage }).map((_, i) => (
-                      <TableRow key={`skeleton-row-${i}`}>
-                        {visibleColumns.map((c) => (
-                          <TableCell key={`skeleton-${c}-${i}`}>
-                            <div className="h-4 bg-stone-700 rounded animate-pulse"></div>
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : filteredByFilters.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={Math.max(1, selectedColumns.length)} className="text-center py-8 text-stone-400">
-                        {t("table.noResults")}
-                      </TableCell>
+                      const sortableFieldMap: Record<string, any> = {
+                        experience: "experience",
+                        age: "age",
+                        grossSalary: "grossSalary",
+                        netSalary: "netSalary",
+                        submittedOn: "createdAt",
+                      };
+
+                      const sortable = !!sortableFieldMap[key];
+                      const isNumeric = NUMERIC_COLUMNS.has(key);
+                      const isActiveSort = sortable && sortField === sortableFieldMap[key];
+
+                      const content = (
+                        <div
+                          className={`flex items-center h-5 min-h-5 max-h-5 overflow-hidden font-mono text-[11px] font-medium uppercase tracking-wider ${isNumeric ? "justify-end" : ""} ${sortable ? "cursor-pointer select-none" : ""}`}
+                        >
+                          {t(labelKeyMap[key] || "")}
+                          {sortable && getSortIcon(sortableFieldMap[key])}
+                        </div>
+                      );
+
+                      return (
+                        <TableHead
+                          key={`header-${key}`}
+                          className={`sticky top-0 bg-card z-20 ${isNumeric ? "text-right" : ""} ${isActiveSort ? "text-foreground" : "text-muted-foreground"} ${sortable ? "cursor-pointer hover:text-foreground select-none" : ""}`}
+                          onClick={sortable ? () => handleSort(sortableFieldMap[key]) : undefined}
+                        >
+                          {content}
+                        </TableHead>
+                      );
+                    };
+
+                    return visibleColumns.map((colKey) => renderHeaderCell(colKey));
+                  })()}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: rowsPerPage }).map((_, i) => (
+                    <TableRow key={`skeleton-row-${i}`}>
+                      {visibleColumns.map((c) => (
+                        <TableCell key={`skeleton-${c}-${i}`}>
+                          <div className="h-4 bg-muted rounded animate-pulse"></div>
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  ) : (
-                    paginatedEntries.map((entry) => (
-                      <TableRow
-                        key={entry.id}
-                        className="border-stone-700 cursor-pointer hover:bg-stone-800/50 transition-all duration-200 group"
-                        onClick={() => {
-                          const qs = searchParams.toString();
-                          router.push(`${pathname}/${entry.id}${qs ? `?${qs}` : ""}`);
-                        }}
-                      >
-                        {visibleColumns.map((colKey) => {
-                          const renderCell = (key: string) => {
-                            switch (key) {
-                              case "location":
-                                return (
-                                  <Badge variant="outline" className="border-stone-600 text-stone-300 w-fit">
-                                    {entry.country ? formatCityDisplay(entry.country, entry.workCity) : "N/A"}
-                                  </Badge>
-                                );
-                              case "jobTitle":
-                                return (
-                                  <div className="font-medium text-stone-100 group-hover:text-orange-400 transition-colors">
-                                    <div className="flex items-center gap-2">
-                                      {entry.jobTitle}
-                                      <Eye className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </div>
-                                  </div>
-                                );
-                              case "sector":
-                                return <div className="text-stone-300">{entry.sector || "N/A"}</div>;
-                              case "experience":
-                                return (
-                                  <div className="text-stone-300">
-                                    {entry.workExperience !== null && entry.workExperience !== undefined
-                                      ? `${entry.workExperience} ${t("table.years")}`
-                                      : "N/A"}
-                                  </div>
-                                );
-                              case "age":
-                                return (
-                                  <div className="text-stone-300">
-                                    {entry.age !== null && entry.age !== undefined
-                                      ? `${entry.age} ${t("table.years")}`
-                                      : "N/A"}
-                                  </div>
-                                );
-                              case "grossSalary":
-                                return (
-                                  <div className="font-semibold text-stone-100">
-                                    {formatSalaryWithPreferences(
-                                      entry.grossSalary,
-                                      entry.currency,
-                                      false,
-                                      preferences.currency,
-                                      preferences.period,
-                                      locale,
-                                      isMobile
-                                    )}
-                                  </div>
-                                );
-                              case "netSalary":
-                                return (
-                                  <div className="font-semibold text-stone-100">
-                                    {formatSalaryWithPreferences(
-                                      entry.netSalary,
-                                      entry.currency,
-                                      false,
-                                      preferences.currency,
-                                      preferences.period,
-                                      locale,
-                                      isMobile
-                                    )}
-                                  </div>
-                                );
-                              case "submittedOn":
-                                return <div className="text-stone-300 text-sm whitespace-nowrap">{formatDate(entry.createdAt)}</div>;
-                              case "education":
-                                return (
-                                  <div className="text-stone-300">
-                                    {getFieldDisplayValue("education", entry.education, fieldConfigs, tAdd) || "N/A"}
-                                  </div>
-                                );
-                              case "workCity":
-                                return <div className="text-stone-300">{entry.workCity || "N/A"}</div>;
-                              case "netCompensation":
-                                return <div className="text-stone-300">{entry.netCompensation ?? "N/A"}</div>;
-                              case "teleworkDays":
-                                return <div className="text-stone-300">{entry.teleworkDays ?? "N/A"}</div>;
-                              case "stressLevel":
-                                return (
-                                  <div className="text-stone-300">
-                                    {getFieldDisplayValue("stressLevel", entry.stressLevel, fieldConfigs, tAdd) || "N/A"}
-                                  </div>
-                                );
-                              default:
-                                return <div className="text-stone-300">N/A</div>;
-                            }
-                          };
-
-                          return (
-                            <TableCell key={`cell-${colKey}-${entry.id}`}>{renderCell(colKey)}</TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Pagination Controls */}
-            {filteredByFilters.length > 0 && (
-              <div className="mt-4 flex flex-col gap-4 border-t border-stone-700 pt-4">
-                {/* Results info and rows per page */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="text-sm text-stone-400">
-                    {t("pagination.showing")} {startIndex + 1} {t("pagination.to")}{" "}
-                    {Math.min(endIndex, filteredByFilters.length)} {t("pagination.of")}{" "}
-                    {formatNumber(filteredByFilters.length)} {t("pagination.results")}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm text-stone-400 whitespace-nowrap">
-                      {t("pagination.rowsPerPage")}:
-                    </label>
-                    <Select
-                      value={rowsPerPage.toString()}
-                      onValueChange={(value) => {
-                        setRowsPerPage(Number(value));
-                        setCurrentPage(1);
+                  ))
+                ) : filteredByFilters.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={Math.max(1, selectedColumns.length)}
+                      className="text-center py-8 text-muted-foreground"
+                    >
+                      {t("table.noResults")}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedEntries.map((entry) => (
+                    <TableRow
+                      key={entry.id}
+                      className="border-border group cursor-pointer transition-colors duration-150 even:bg-muted/20 hover:bg-accent"
+                      onClick={() => {
+                        const qs = searchParams.toString();
+                        router.push(`${pathname}/${entry.id}${qs ? `?${qs}` : ""}`);
                       }}
                     >
-                      <SelectTrigger className="w-20 bg-stone-700 border-stone-600 text-stone-100">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Page navigation buttons */}
-                <div className="flex items-center justify-center gap-1 sm:gap-2 overflow-x-auto pb-2 sm:pb-0">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="bg-stone-700 border-stone-600 text-stone-100 shrink-0"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span className="hidden sm:inline ml-1">{t("pagination.previous")}</span>
-                  </Button>
-
-                  <div className="flex items-center gap-1 shrink-0">
-                    {Array.from(
-                      {
-                        length: Math.min(totalPages <= 768 ? 3 : 5, totalPages),
-                      },
-                      (_, i) => {
-                        let pageNum;
-                        const maxPages = totalPages <= 768 ? 3 : 5;
-                        if (totalPages <= maxPages) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= Math.ceil(maxPages / 2)) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalPages - Math.floor(maxPages / 2)) {
-                          pageNum = totalPages - maxPages + 1 + i;
-                        } else {
-                          pageNum = currentPage - Math.floor(maxPages / 2) + i;
-                        }
+                      {visibleColumns.map((colKey) => {
+                        const renderCell = (key: string) => {
+                          switch (key) {
+                            case "location":
+                              return (
+                                <Badge variant="outline" className="w-fit">
+                                  {entry.country
+                                    ? formatCityDisplay(entry.country, entry.workCity)
+                                    : "N/A"}
+                                </Badge>
+                              );
+                            case "jobTitle":
+                              return (
+                                <div className="font-medium text-foreground group-hover:text-brand transition-colors">
+                                  <div className="flex items-center gap-2">
+                                    {entry.jobTitle}
+                                    <Eye className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  </div>
+                                </div>
+                              );
+                            case "sector":
+                              return (
+                                <div className="text-muted-foreground">{entry.sector || "N/A"}</div>
+                              );
+                            case "experience":
+                              return (
+                                <div className="text-muted-foreground">
+                                  {entry.workExperience !== null &&
+                                  entry.workExperience !== undefined
+                                    ? `${entry.workExperience} ${t("table.years")}`
+                                    : "N/A"}
+                                </div>
+                              );
+                            case "age":
+                              return (
+                                <div className="text-muted-foreground">
+                                  {entry.age !== null && entry.age !== undefined
+                                    ? `${entry.age} ${t("table.years")}`
+                                    : "N/A"}
+                                </div>
+                              );
+                            case "grossSalary": {
+                              // Non-salaried workers have no gross — show their
+                              // primary rate (day/hour) or bursary instead of N/A.
+                              if (entry.grossSalary == null) {
+                                const pc = getPrimaryComp(entry);
+                                if (pc) {
+                                  const valueStr =
+                                    pc.kind === "rate"
+                                      ? `${getCurrencySymbol()}${Math.round(pc.amount).toLocaleString()}`
+                                      : formatSalaryWithPreferences(
+                                          pc.amount,
+                                          entry.currency,
+                                          false,
+                                          preferences.currency,
+                                          preferences.period,
+                                          locale,
+                                          isMobile
+                                        );
+                                  return (
+                                    <div className="font-mono font-semibold text-foreground">
+                                      {valueStr}
+                                      {pc.kind === "rate" && (
+                                        <span className="ml-0.5 text-xs font-normal text-muted-foreground">
+                                          {tAdd(`benefitUnits.${pc.unitKey}`)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                }
+                              }
+                              return (
+                                <div className="font-mono font-semibold text-foreground">
+                                  {formatSalaryWithPreferences(
+                                    entry.grossSalary,
+                                    entry.currency,
+                                    false,
+                                    preferences.currency,
+                                    preferences.period,
+                                    locale,
+                                    isMobile
+                                  )}
+                                </div>
+                              );
+                            }
+                            case "netSalary":
+                              return (
+                                <div className="font-mono font-semibold text-foreground">
+                                  {formatSalaryWithPreferences(
+                                    entry.netSalary,
+                                    entry.currency,
+                                    false,
+                                    preferences.currency,
+                                    preferences.period,
+                                    locale,
+                                    isMobile
+                                  )}
+                                </div>
+                              );
+                            case "submittedOn":
+                              return (
+                                <div className="text-muted-foreground text-sm whitespace-nowrap">
+                                  {formatDate(entry.createdAt)}
+                                </div>
+                              );
+                            case "education":
+                              return (
+                                <div className="text-muted-foreground">
+                                  {getFieldDisplayValue(
+                                    "education",
+                                    entry.education,
+                                    fieldConfigs,
+                                    tAdd
+                                  ) || "N/A"}
+                                </div>
+                              );
+                            case "workCity":
+                              return (
+                                <div className="text-muted-foreground">
+                                  {entry.workCity || "N/A"}
+                                </div>
+                              );
+                            case "netCompensation":
+                              return (
+                                <div className="font-mono text-muted-foreground">
+                                  {entry.netCompensation ?? "N/A"}
+                                </div>
+                              );
+                            case "teleworkDays":
+                              return (
+                                <div className="font-mono text-muted-foreground">
+                                  {entry.teleworkDays ?? "N/A"}
+                                </div>
+                              );
+                            case "stressLevel":
+                              return (
+                                <div className="text-muted-foreground">
+                                  {getFieldDisplayValue(
+                                    "stressLevel",
+                                    entry.stressLevel,
+                                    fieldConfigs,
+                                    tAdd
+                                  ) || "N/A"}
+                                </div>
+                              );
+                            default:
+                              return <div className="text-muted-foreground">N/A</div>;
+                          }
+                        };
 
                         return (
-                          <Button
-                            key={pageNum}
-                            variant={currentPage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm ${
-                              currentPage === pageNum
-                                ? "bg-stone-100 text-stone-900"
-                                : "bg-stone-700 border-stone-600 text-stone-100"
-                            }`}
+                          <TableCell
+                            key={`cell-${colKey}-${entry.id}`}
+                            className={NUMERIC_COLUMNS.has(colKey) ? "text-right" : ""}
                           >
-                            {pageNum}
-                          </Button>
+                            {renderCell(colKey)}
+                          </TableCell>
                         );
-                      }
-                    )}
-                  </div>
+                      })}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="bg-stone-700 border-stone-600 text-stone-100 shrink-0"
+          {/* Pagination Controls */}
+          {filteredByFilters.length > 0 && (
+            <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4">
+              {/* Results info and rows per page */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="text-sm text-muted-foreground">
+                  {t("pagination.showing")} {startIndex + 1} {t("pagination.to")}{" "}
+                  {Math.min(endIndex, filteredByFilters.length)} {t("pagination.of")}{" "}
+                  {formatNumber(filteredByFilters.length)} {t("pagination.results")}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-muted-foreground whitespace-nowrap">
+                    {t("pagination.rowsPerPage")}:
+                  </label>
+                  <Select
+                    value={rowsPerPage.toString()}
+                    onValueChange={(value) => {
+                      setRowsPerPage(Number(value));
+                      setCurrentPage(1);
+                    }}
                   >
-                    <span className="hidden sm:inline mr-1">{t("pagination.next")}</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </main>
-    </div>
+
+              {/* Page navigation buttons */}
+              <div className="flex items-center justify-center gap-1 sm:gap-2 overflow-x-auto pb-2 sm:pb-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="shrink-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">{t("pagination.previous")}</span>
+                </Button>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  {Array.from(
+                    {
+                      length: Math.min(totalPages <= 768 ? 3 : 5, totalPages),
+                    },
+                    (_, i) => {
+                      let pageNum;
+                      const maxPages = totalPages <= 768 ? 3 : 5;
+                      if (totalPages <= maxPages) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= Math.ceil(maxPages / 2)) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - Math.floor(maxPages / 2)) {
+                        pageNum = totalPages - maxPages + 1 + i;
+                      } else {
+                        pageNum = currentPage - Math.floor(maxPages / 2) + i;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handlePageChange(pageNum)}
+                          className="w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm shrink-0"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    }
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="shrink-0"
+                >
+                  <span className="hidden sm:inline mr-1">{t("pagination.next")}</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </PageShell>
   );
 }

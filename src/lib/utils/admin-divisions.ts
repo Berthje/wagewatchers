@@ -83,7 +83,11 @@ export const FRANCE_REGIONS: Record<string, string> = {
 /**
  * Get the province/state name from admin codes
  */
-export function getProvinceName(countryCode: string, admin1Code?: string, admin2Code?: string): string | null {
+export function getProvinceName(
+  countryCode: string,
+  admin1Code?: string,
+  admin2Code?: string
+): string | null {
   if (!admin1Code && !admin2Code) return null;
 
   switch (countryCode.toUpperCase()) {
@@ -152,7 +156,11 @@ export function getRegionName(countryCode: string, admin1Code?: string): string 
  * Get ISO 3166-2 subdivision code for mapping to geodata
  * This is used by amCharts for region identification
  */
-export function getISO3166Code(countryCode: string, admin1Code?: string, admin2Code?: string): string | null {
+export function getISO3166Code(
+  countryCode: string,
+  admin1Code?: string,
+  admin2Code?: string
+): string | null {
   if (!admin1Code && !admin2Code) return null;
 
   switch (countryCode.toUpperCase()) {

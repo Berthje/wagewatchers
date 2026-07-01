@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { comments } from "@/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
 import type { Comment } from "@/lib/db/schema";
+import { logError } from "@/lib/logger";
 
 interface CommentWithReplies extends Comment {
   replies: CommentWithReplies[];
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       totalCount: commentList.length,
     });
   } catch (error) {
-    console.error("Error fetching comments:", error);
+    logError("Error fetching comments:", error);
     return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
   }
 }

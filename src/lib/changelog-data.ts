@@ -37,6 +37,31 @@ export const changelogEntries: Array<{
   changes: string[];
 }> = [
   {
+    version: "1.9.0",
+    date: "2026-06-30",
+    changes: [
+      "Added support for different worker types — freelancer, blue-collar, white-collar, intern, and PhD researcher — each with the right pay fields",
+      "Added freelancer pay details: day rate, agency cut, and the client's total day budget",
+      "Added blue-collar hourly rate and PhD bursary (with the institute's virtual gross)",
+      "Added a clear gross/net indicator and a fixed-vs-variable salary split",
+      "Added a full benefits picker — bonus, equity/stock with vesting, insurances, pension, meal vouchers, eco-cheques, mobility budget, bike lease, allowances, and more",
+      "Added structured company car details: model, fuel or charge type, and fuel/charge card range",
+      "Added a degree picker so you can compare pay for your specific diploma (e.g. burgerlijk vs industrieel ingenieur)",
+      "Added contract type and duration for temporary, interim, internship, and freelance roles",
+      "Added cross-border worker support and a choice of kilometres or minutes for commute distance",
+      "Added 'How do I compare?' on the statistics page — see how your full package ranks against similar people",
+      "Added full Netherlands support, including Dutch cities and Dutch benefits (holiday allowance, 30%-ruling, pension, and travel & home-work allowances)",
+      "Added new filters for worker type, company car, and equity",
+      "Added a job-satisfaction rating and a 'publicly listed company' option",
+      "Improved the entry detail page with a cleaner overview of pay, benefits, company car, and equity",
+      "Improved the edit window — you can now edit your entry for 7 days, with a clear countdown",
+      "Fixed the 'Salary Distribution by Experience' chart not displaying correctly on mobile",
+      "Fixed salaries showing 'N/A' for freelancers, blue-collar, and PhD entries — they now show day rate, hourly rate, or bursary",
+      "Fixed the city filter showing cities from other countries when a country was selected",
+      "Fixed a brief page flicker that could occur when loading the site",
+    ],
+  },
+  {
     version: "1.8.3",
     date: "2026-01-21",
     changes: [

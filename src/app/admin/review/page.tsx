@@ -19,6 +19,7 @@ import { AdminAuthGuard } from "@/components/admin-auth-guard";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminEntryDetailModal } from "@/components/admin-entry-detail-modal";
 import type { SalaryEntry as FullSalaryEntry } from "@/lib/db/schema";
+import { logError } from "@/lib/logger";
 
 interface SalaryEntry {
   id: number;
@@ -76,7 +77,7 @@ export default function ReviewPage() {
         setStats(statsData);
       }
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      logError("Failed to fetch data:", error);
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,7 @@ export default function ReviewPage() {
       // Refresh data
       await fetchData();
     } catch (error) {
-      console.error(`Failed to ${action} entry:`, error);
+      logError(`Failed to ${action} entry:`, error, { entryId, action });
       alert(`Failed to ${action} entry. Please try again.`);
     } finally {
       setProcessingId(null);
@@ -117,7 +118,7 @@ export default function ReviewPage() {
       const data = await res.json();
       setDetailEntry(data);
     } catch (error) {
-      console.error("Failed to fetch entry details:", error);
+      logError("Failed to fetch entry details:", error, { entryId });
       alert("Failed to load entry details. Please try again.");
       setSelectedEntryId(null);
     } finally {

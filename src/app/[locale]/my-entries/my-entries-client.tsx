@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { useTranslations } from "next-intl";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +29,7 @@ import {
 import {
   getOwnedEntryIds,
   getEntryToken,
-  isEntryEditable,
+  getEditTimeRemaining,
   removeEntryToken,
 } from "@/lib/entry-ownership";
 import { useSalaryDisplay, formatSalaryWithPreferences } from "@/contexts/salary-display-context";
@@ -37,6 +38,7 @@ import confetti from "canvas-confetti";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { logError, logWarning } from "@/lib/logger";
 
 function MyEntriesContent() {
   const params = useParams();
@@ -44,21 +46,10 @@ function MyEntriesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("myEntries");
-  const tNav = useTranslations("nav");
   const tUi = useTranslations("ui");
   const tEntryDetail = useTranslations("entryDetail");
   const { preferences } = useSalaryDisplay();
   const formatCityDisplay = createCityDisplayFormatter(tUi);
-
-  const navTranslations = {
-    dashboard: tNav("dashboard"),
-    statistics: tNav("statistics"),
-    feedback: tNav("feedback"),
-    status: tNav("status"),
-    donate: tNav("donate"),
-    addEntry: tNav("addEntry"),
-    changelog: tNav("changelog"),
-  };
 
   const [entries, setEntries] = useState<SalaryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,10 +148,10 @@ function MyEntriesContent() {
         const data = await res.json();
         setEntries(data);
       } else {
-        console.error("Failed to load entries");
+        logWarning("Failed to load entries");
       }
     } catch (error) {
-      console.error("Error loading entries:", error);
+      logError("Error loading entries", error);
     } finally {
       setIsLoading(false);
     }
@@ -204,7 +195,7 @@ function MyEntriesContent() {
         setDeleteError(t("deleteError") + ": " + (error.error || "Unknown error"));
       }
     } catch (error) {
-      console.error("Delete error:", error);
+      logError("Delete error", error, { entryId: entryToDelete.id });
       setDeleteError(t("deleteError"));
     } finally {
       setDeletingId(null);
@@ -238,16 +229,7 @@ function MyEntriesContent() {
     );
   };
 
-  const getEditStatus = (entry: SalaryEntry) => {
-    const editable = isEntryEditable(entry.editableUntil);
-    if (editable) {
-      const hoursLeft = Math.ceil(
-        (new Date(entry.editableUntil!).getTime() - Date.now()) / (1000 * 60 * 60)
-      );
-      return { editable: true, hoursLeft };
-    }
-    return { editable: false, hoursLeft: 0 };
-  };
+  const getEditStatus = (entry: SalaryEntry) => getEditTimeRemaining(entry.editableUntil);
 
   const getReviewStatusBadge = (reviewStatus: string | null) => {
     if (!reviewStatus) {
@@ -297,167 +279,171 @@ function MyEntriesContent() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-900">
-      <Navbar locale={locale} translations={navTranslations} />
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold text-stone-100 mb-2">{t("title")}</h1>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="shrink-0">
-                  <HelpCircle className="w-4 h-4 mr-2" />
-                  {t("howItWorks")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>{t("infoTitle")}</DialogTitle>
-                </DialogHeader>
-                <div className="mt-4">
-                  <ul className="space-y-3 text-sm text-stone-300">
-                    <li className="flex gap-3">
-                      <span className="text-orange-400 shrink-0">•</span>
-                      <span>{t("info1")}</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="text-orange-400 shrink-0">•</span>
-                      <span>{t("info2")}</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="text-orange-400 shrink-0">•</span>
-                      <span>{t("info3")}</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="text-orange-400 shrink-0">•</span>
-                      <span>{t("info4")}</span>
-                    </li>
-                  </ul>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <p className="text-stone-400">{t("description")}</p>
-        </div>
-
-        {deleteError && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{deleteError}</AlertDescription>
-          </Alert>
-        )}
-
-        {isLoading ? (
-          <LoadingSpinner message={t("loading")} fullScreen={false} size="lg" />
-        ) : entries.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <AlertCircle className="mx-auto h-12 w-12 text-stone-400 mb-4" />
-              <h3 className="text-lg font-semibold text-stone-100 mb-2">{t("noEntries")}</h3>
-              <p className="text-stone-400 mb-6">{t("noEntriesDescription")}</p>
-              <Button onClick={() => router.push(`/${locale}/add`)}>{t("addFirst")}</Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("yourEntries", { count: entries.length })}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("table.location")}</TableHead>
-                      <TableHead>{t("table.jobTitle")}</TableHead>
-                      <TableHead>{t("table.salary")}</TableHead>
-                      <TableHead>{t("table.submitted")}</TableHead>
-                      <TableHead>{t("table.status")}</TableHead>
-                      <TableHead>{t("table.editStatus")}</TableHead>
-                      <TableHead className="text-right">{t("table.actions")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {entries.map((entry) => {
-                      const editStatus = getEditStatus(entry);
-                      return (
-                        <TableRow key={entry.id}>
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <Badge variant="outline">
-                                {entry.country
-                                  ? formatCityDisplay(entry.country, entry.workCity)
-                                  : "-"}
-                              </Badge>
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {entry.jobTitle || t("table.noTitle")}
-                          </TableCell>
-                          <TableCell>{formatSalary(entry.grossSalary, entry.currency)}</TableCell>
-                          <TableCell className="text-stone-400">
-                            {formatDate(entry.createdAt)}
-                          </TableCell>
-                          <TableCell>{getReviewStatusBadge(entry.reviewStatus)}</TableCell>
-                          <TableCell>
-                            {editStatus.editable ? (
-                              <Badge variant="default" className="bg-orange-300">
-                                <Calendar className="w-3 h-3 mr-1" />
-                                {t("table.editableFor", {
-                                  hours: editStatus.hoursLeft,
-                                })}
-                              </Badge>
-                            ) : (
-                              <Badge variant="secondary">{t("table.readonly")}</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleView(entry.id)}
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                              {editStatus.editable && (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => handleEdit(entry.id)}
-                                  >
-                                    <Edit className="w-4 h-4" />
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => openDeleteDialog(entry)}
-                                    disabled={deletingId === entry.id}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                </>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+    <PageShell width="xl">
+      <PageHeader
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("description")}
+        actions={
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="shrink-0">
+                <HelpCircle className="w-4 h-4 mr-2" />
+                {t("howItWorks")}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{t("infoTitle")}</DialogTitle>
+              </DialogHeader>
+              <div className="mt-4">
+                <ul className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex gap-3">
+                    <span className="text-brand shrink-0">•</span>
+                    <span>{t("info1")}</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-brand shrink-0">•</span>
+                    <span>{t("info2")}</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-brand shrink-0">•</span>
+                    <span>{t("info3")}</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-brand shrink-0">•</span>
+                    <span>{t("info4")}</span>
+                  </li>
+                </ul>
               </div>
-            </CardContent>
-          </Card>
-        )}
-      </main>
+            </DialogContent>
+          </Dialog>
+        }
+      />
+
+      {deleteError && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{deleteError}</AlertDescription>
+        </Alert>
+      )}
+
+      {isLoading ? (
+        <LoadingSpinner message={t("loading")} fullScreen={false} size="lg" />
+      ) : entries.length === 0 ? (
+        <Card className="border-border bg-card">
+          <CardContent className="py-12 text-center">
+            <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t("noEntries")}</h3>
+            <p className="text-muted-foreground mb-6">{t("noEntriesDescription")}</p>
+            <Button onClick={() => router.push(`/${locale}/add`)}>{t("addFirst")}</Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-border bg-card">
+          <CardHeader>
+            <CardTitle className="text-foreground">
+              {t("yourEntries", { count: entries.length })}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="text-muted-foreground">{t("table.location")}</TableHead>
+                    <TableHead className="text-muted-foreground">{t("table.jobTitle")}</TableHead>
+                    <TableHead className="text-muted-foreground">{t("table.salary")}</TableHead>
+                    <TableHead className="text-muted-foreground">{t("table.submitted")}</TableHead>
+                    <TableHead className="text-muted-foreground">{t("table.status")}</TableHead>
+                    <TableHead className="text-muted-foreground">{t("table.editStatus")}</TableHead>
+                    <TableHead className="text-right text-muted-foreground">
+                      {t("table.actions")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {entries.map((entry) => {
+                    const editStatus = getEditStatus(entry);
+                    return (
+                      <TableRow key={entry.id} className="border-border hover:bg-accent">
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <Badge variant="outline">
+                              {entry.country
+                                ? formatCityDisplay(entry.country, entry.workCity)
+                                : "-"}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium text-foreground">
+                          {entry.jobTitle || t("table.noTitle")}
+                        </TableCell>
+                        <TableCell className="text-foreground">
+                          {formatSalary(entry.grossSalary, entry.currency)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDate(entry.createdAt)}
+                        </TableCell>
+                        <TableCell>{getReviewStatusBadge(entry.reviewStatus)}</TableCell>
+                        <TableCell>
+                          {editStatus.editable ? (
+                            <Badge variant="default" className="bg-orange-300">
+                              <Calendar className="w-3 h-3 mr-1" />
+                              {editStatus.hoursLeft > 24
+                                ? t("table.editableForDays", { days: editStatus.daysLeft })
+                                : t("table.editableFor", { hours: editStatus.hoursLeft })}
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">{t("table.readonly")}</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleView(entry.id)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            {editStatus.editable && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEdit(entry.id)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => openDeleteDialog(entry)}
+                                  disabled={deletingId === entry.id}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="max-w-xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-400">
+            <DialogTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-5 h-5" />
               {t("deleteDialog.title")}
             </DialogTitle>
@@ -466,13 +452,13 @@ function MyEntriesContent() {
           {entryToDelete && (
             <div className="space-y-5">
               {/* Entry Details */}
-              <div className="bg-stone-800 p-4 rounded-lg border border-stone-700">
-                <p className="text-stone-400 mb-2">{t("deleteDialog.deletingEntry")}</p>
+              <div className="bg-muted p-4 rounded-lg border border-border">
+                <p className="text-muted-foreground mb-2">{t("deleteDialog.deletingEntry")}</p>
                 <div className="space-y-1">
-                  <p className="font-semibold text-stone-100">
+                  <p className="font-semibold text-foreground">
                     {entryToDelete.jobTitle || t("table.noTitle")}
                   </p>
-                  <p className="text-stone-400">
+                  <p className="text-muted-foreground">
                     {entryToDelete.country
                       ? formatCityDisplay(entryToDelete.country, entryToDelete.workCity)
                       : "-"}{" "}
@@ -482,24 +468,24 @@ function MyEntriesContent() {
               </div>
 
               {/* Simple bullet list */}
-              <div className="space-y-2.5 text-sm text-stone-300">
+              <div className="space-y-2.5 text-sm text-muted-foreground">
                 <p className="flex items-start gap-2">
-                  <span className="text-stone-500 mt-0.5">•</span>
+                  <span className="text-muted-foreground mt-0.5">•</span>
                   <span>{t("deleteDialog.canEdit")}</span>
                 </p>
                 <p className="flex items-start gap-2">
-                  <span className="text-stone-500 mt-0.5">•</span>
+                  <span className="text-muted-foreground mt-0.5">•</span>
                   <span>{t("deleteDialog.permanent")}</span>
                 </p>
                 <p className="flex items-start gap-2">
-                  <span className="text-stone-500 mt-0.5">•</span>
+                  <span className="text-muted-foreground mt-0.5">•</span>
                   <span>{t("deleteDialog.helpsOthers")}</span>
                 </p>
               </div>
 
               {/* Confirmation Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-stone-100">
+                <label className="text-sm font-medium text-foreground">
                   {t("deleteDialog.typeToConfirm")}
                 </label>
                 <Input
@@ -508,7 +494,7 @@ function MyEntriesContent() {
                   className="font-mono mt-2"
                   autoComplete="off"
                 />
-                <p className="text-xs text-stone-400">{t("deleteDialog.confirmHint")}</p>
+                <p className="text-xs text-muted-foreground">{t("deleteDialog.confirmHint")}</p>
               </div>
 
               {/* Action Buttons */}
@@ -545,7 +531,7 @@ function MyEntriesContent() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </PageShell>
   );
 }
 
