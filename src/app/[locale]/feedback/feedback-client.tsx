@@ -19,14 +19,15 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import { Bug, Lightbulb, TrendingUp, CheckCircle, AlertCircle } from "lucide-react";
+import { logError } from "@/lib/logger";
 
 export default function FeedbackClient() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations("feedback");
-  const tNav = useTranslations("nav");
 
   const feedbackSchema = z.object({
     title: z.string().min(1, t("validation.titleRequired")).max(200, t("validation.titleTooLong")),
@@ -156,7 +157,9 @@ export default function FeedbackClient() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
           }
         } catch (e) {
-          console.error("Failed to save tracking ID to localStorage", e);
+          logError("Failed to save tracking ID to localStorage", e, {
+            trackingId: result.trackingId,
+          });
         }
 
         reset();
@@ -182,215 +185,186 @@ export default function FeedbackClient() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <Navbar
-        locale={locale}
-        translations={{
-          dashboard: tNav("dashboard"),
-          statistics: tNav("statistics"),
-          feedback: tNav("feedback"),
-          status: tNav("status"),
-          donate: tNav("donate"),
-          addEntry: tNav("addEntry"),
-          changelog: tNav("changelog"),
-        }}
-      />
+    <PageShell width="sm">
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} />
 
-      <div className="container mx-auto p-6 max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-stone-100">{t("title")}</h1>
-          <p className="text-stone-400">{t("subtitle")}</p>
-        </div>
-
-        {submitStatus === "success" && trackingId && (
-          <Alert className="mb-6 border-green-800 bg-green-950/50">
-            <CheckCircle className="h-4 w-4 text-green-400" />
-            <AlertDescription className="text-green-200">
-              <div className="space-y-3">
-                <p className="font-semibold">{t("success")}</p>
-                <div className="bg-yellow-900/20 border-l-4 border-yellow-400 p-3 rounded">
-                  <p className="text-sm font-medium text-yellow-200 mb-1">
-                    {t("trackingId.title")}
-                  </p>
-                  <p className="font-mono text-lg font-bold text-yellow-100">{trackingId}</p>
-                  <p className="text-xs text-yellow-300 mt-2">{t("trackingId.instruction")}</p>
-                </div>
-                {submittedEmail ? (
-                  <p className="text-sm">
-                    {t("emailSent", {
-                      email: submittedEmail,
-                    })}
-                  </p>
-                ) : (
-                  <p className="text-sm">{t("noEmail")}</p>
-                )}
-                {rateLimitInfo && rateLimitInfo.remaining >= 0 && (
-                  <p className="text-xs text-green-300 pt-2 border-t border-green-800">
-                    {t("rateLimit.remaining", {
-                      count: rateLimitInfo.remaining,
-                    })}
-                  </p>
-                )}
+      {submitStatus === "success" && trackingId && (
+        <Alert className="mb-6 border-green-500/30 bg-green-500/10">
+          <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <AlertDescription className="text-foreground">
+            <div className="space-y-3">
+              <p className="font-semibold">{t("success")}</p>
+              <div className="rounded-lg border-l-4 border-brand bg-brand/10 p-3">
+                <p className="mb-1 text-sm font-medium text-muted-foreground">
+                  {t("trackingId.title")}
+                </p>
+                <p className="font-mono text-lg font-bold text-brand">{trackingId}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{t("trackingId.instruction")}</p>
               </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {submitStatus === "error" && (
-          <Alert className="mb-6 border-red-800 bg-red-950/50">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <AlertDescription className="text-red-200">{errorMessage}</AlertDescription>
-          </Alert>
-        )}
-
-        {submitStatus === "rateLimit" && rateLimitInfo && (
-          <Alert className="mb-6 border-amber-800 bg-amber-950/50">
-            <AlertCircle className="h-4 w-4 text-amber-400" />
-            <AlertDescription className="text-amber-200">
-              <div className="space-y-2">
-                <p className="font-semibold">{t("rateLimit.title")}</p>
-                <p className="text-sm">{t("rateLimit.message")}</p>
-                <p className="text-sm font-medium">
-                  {t("rateLimit.resetInfo", {
-                    resetTime: new Date(rateLimitInfo.resetAt).toLocaleString(locale, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    }),
+              {submittedEmail ? (
+                <p className="text-sm">
+                  {t("emailSent", {
+                    email: submittedEmail,
                   })}
                 </p>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <Card className="border-stone-800 bg-stone-900/60 backdrop-blur-sm">
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Type Selection */}
-              <div>
-                <Label className="text-base font-medium text-stone-100">{t("form.type")}</Label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
-                  {typeOptions.map((option) => {
-                    const Icon = option.icon;
-                    const isSelected = selectedType === option.value;
-                    return (
-                      <button
-                        key={option.value}
-                        type="button"
-                        className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 text-left w-full ${
-                          isSelected
-                            ? "border-stone-100 bg-stone-100 text-stone-900 shadow-md"
-                            : "border-stone-700 bg-stone-800/50 hover:border-stone-600 hover:bg-stone-800/70"
-                        }`}
-                        onClick={() => setValue("type", option.value as any)}
-                      >
-                        <div className="flex items-center gap-3 mb-2">
-                          <Icon
-                            className={`w-5 h-5 ${isSelected ? "text-stone-900" : "text-stone-400"}`}
-                          />
-                          <span
-                            className={`font-medium ${isSelected ? "text-stone-900" : "text-stone-100"}`}
-                          >
-                            {option.label}
-                          </span>
-                        </div>
-                        <p
-                          className={`text-sm ${isSelected ? "text-stone-700" : "text-stone-400"}`}
-                        >
-                          {option.description}
-                        </p>
-                      </button>
-                    );
+              ) : (
+                <p className="text-sm">{t("noEmail")}</p>
+              )}
+              {rateLimitInfo && rateLimitInfo.remaining >= 0 && (
+                <p className="border-t border-border pt-2 text-xs text-muted-foreground">
+                  {t("rateLimit.remaining", {
+                    count: rateLimitInfo.remaining,
                   })}
-                </div>
-                {errors.type && <p className="text-sm text-red-400 mt-2">{errors.type.message}</p>}
-              </div>
+                </p>
+              )}
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
-              {/* Title */}
-              <div className="space-y-2">
-                <Label htmlFor="title" className="text-stone-100">
-                  {t("form.title")}
-                </Label>
-                <Input
-                  id="title"
-                  {...register("title")}
-                  placeholder={t("form.titlePlaceholder")}
-                  className={`border-stone-700 bg-stone-800 text-stone-100 ${errors.title ? "border-red-400" : ""}`}
-                />
-                {errors.title && <p className="text-sm text-red-400">{errors.title.message}</p>}
-              </div>
+      {submitStatus === "error" && (
+        <Alert className="mb-6 border-destructive/40 bg-destructive/10">
+          <AlertCircle className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-foreground">{errorMessage}</AlertDescription>
+        </Alert>
+      )}
 
-              {/* Description */}
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-stone-100">
-                  {t("form.description")}
-                </Label>
-                <Textarea
-                  id="description"
-                  {...register("description")}
-                  placeholder={t("form.descriptionPlaceholder")}
-                  rows={6}
-                  className={`border-stone-700 bg-stone-800 text-stone-100 resize-none ${errors.description ? "border-red-400" : ""}`}
-                />
-                {errors.description && (
-                  <p className="text-sm text-red-400">{errors.description.message}</p>
-                )}
-              </div>
+      {submitStatus === "rateLimit" && rateLimitInfo && (
+        <Alert className="mb-6 border-amber-500/30 bg-amber-500/10">
+          <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <AlertDescription className="text-foreground">
+            <div className="space-y-2">
+              <p className="font-semibold">{t("rateLimit.title")}</p>
+              <p className="text-sm">{t("rateLimit.message")}</p>
+              <p className="text-sm font-medium">
+                {t("rateLimit.resetInfo", {
+                  resetTime: new Date(rateLimitInfo.resetAt).toLocaleString(locale, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }),
+                })}
+              </p>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
-              {/* Priority */}
-              <div className="space-y-2">
-                <Label htmlFor="priority" className="text-stone-100">
-                  {t("form.priority")}
-                </Label>
-                <Select
-                  onValueChange={(value) => setValue("priority", value as any)}
-                  defaultValue="MEDIUM"
-                >
-                  <SelectTrigger className="w-full border-stone-700 bg-stone-800 text-stone-100">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent className="border-stone-700 bg-stone-800">
-                    {priorityOptions.map((option) => (
-                      <SelectItem
-                        key={option.value}
-                        value={option.value}
-                        className="text-stone-100 hover:bg-stone-700"
-                      >
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.priority && (
-                  <p className="text-sm text-red-400">{errors.priority.message}</p>
-                )}
+      <Card className="border-border bg-card/80 backdrop-blur-sm">
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Type Selection */}
+            <div>
+              <Label className="text-base font-medium text-foreground">{t("form.type")}</Label>
+              <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+                {typeOptions.map((option) => {
+                  const Icon = option.icon;
+                  const isSelected = selectedType === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={`w-full cursor-pointer rounded-xl border p-4 text-left transition-all duration-200 ${
+                        isSelected
+                          ? "border-brand bg-brand/10 shadow-sm"
+                          : "border-border bg-card/60 hover:border-foreground/20 hover:bg-accent"
+                      }`}
+                      onClick={() => setValue("type", option.value as any)}
+                    >
+                      <div className="mb-2 flex items-center gap-3">
+                        <Icon
+                          className={`h-5 w-5 ${isSelected ? "text-brand" : "text-muted-foreground"}`}
+                        />
+                        <span className="font-medium text-foreground">{option.label}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{option.description}</p>
+                    </button>
+                  );
+                })}
               </div>
+              {errors.type && (
+                <p className="mt-2 text-sm text-destructive">{errors.type.message}</p>
+              )}
+            </div>
 
-              {/* Email (Optional) */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-stone-100">
-                  {t("form.email")}
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  placeholder={t("form.emailPlaceholder")}
-                  className={`border-stone-700 bg-stone-800 text-stone-100 ${errors.email ? "border-red-400" : ""}`}
-                />
-                <p className="text-sm text-stone-400">{t("form.emailHint")}</p>
-                {errors.email && <p className="text-sm text-red-400">{errors.email.message}</p>}
-              </div>
+            {/* Title */}
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-foreground">
+                {t("form.title")}
+              </Label>
+              <Input
+                id="title"
+                {...register("title")}
+                placeholder={t("form.titlePlaceholder")}
+                className={errors.title ? "border-destructive" : ""}
+              />
+              {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
+            </div>
 
-              {/* Submit Button */}
-              <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? t("form.submitting") : t("form.submit")}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-foreground">
+                {t("form.description")}
+              </Label>
+              <Textarea
+                id="description"
+                {...register("description")}
+                placeholder={t("form.descriptionPlaceholder")}
+                rows={6}
+                className={`resize-none ${errors.description ? "border-destructive" : ""}`}
+              />
+              {errors.description && (
+                <p className="text-sm text-destructive">{errors.description.message}</p>
+              )}
+            </div>
+
+            {/* Priority */}
+            <div className="space-y-2">
+              <Label htmlFor="priority" className="text-foreground">
+                {t("form.priority")}
+              </Label>
+              <Select
+                onValueChange={(value) => setValue("priority", value as any)}
+                defaultValue="MEDIUM"
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priorityOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.priority && (
+                <p className="text-sm text-destructive">{errors.priority.message}</p>
+              )}
+            </div>
+
+            {/* Email (Optional) */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-foreground">
+                {t("form.email")}
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                {...register("email")}
+                placeholder={t("form.emailPlaceholder")}
+                className={errors.email ? "border-destructive" : ""}
+              />
+              <p className="text-sm text-muted-foreground">{t("form.emailHint")}</p>
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            </div>
+
+            {/* Submit Button */}
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? t("form.submitting") : t("form.submit")}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </PageShell>
   );
 }

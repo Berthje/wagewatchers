@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { logError } from "@/lib/logger";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
@@ -34,7 +35,7 @@ export default function NewsletterSignup() {
         setMessage(data.error || t("error"));
       }
     } catch (error) {
-      console.error("Newsletter subscription error:", error);
+      logError("Newsletter subscription error:", error);
       setStatus("error");
       setMessage(t("networkError"));
     }

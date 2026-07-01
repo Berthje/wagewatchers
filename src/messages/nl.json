@@ -16,7 +16,8 @@
       "EUR": "Euro (€)",
       "USD": "Amerikaanse Dollar ($)",
       "GBP": "Britse Pond (£)"
-    }
+    },
+    "toggleTheme": "Thema wisselen"
   },
   "ui": {
     "commandPalette": "Commando Palet",
@@ -76,18 +77,36 @@
     "features": {
       "multiCountry": {
         "title": "Ondersteuning Meerdere Landen",
-        "description": "Salarisgegevens van Belgische gemeenschappen met gelokaliseerde compensatie-inzichten."
+        "description": "Salarisgegevens van Belgische gemeenschappen met gelokaliseerde compensatie-inzichten.",
+        "label": "Dekking"
       },
       "privacy": {
         "title": "Privacygericht",
-        "description": "Anoniem salaris delen met uitgebreide gegevensbescherming. Community-gedreven transparantie."
+        "description": "Anoniem salaris delen met uitgebreide gegevensbescherming. Community-gedreven transparantie.",
+        "label": "Privacy"
       },
       "analysis": {
         "title": "Uitgebreide Analyse",
-        "description": "Gedetailleerde uitsplitsing van vergoedingspakketten, voordelen, werkuren en werk-privé balans."
-      }
+        "description": "Gedetailleerde uitsplitsing van vergoedingspakketten, voordelen, werkuren en werk-privé balans.",
+        "label": "Diepgang"
+      },
+      "eyebrow": "Gemaakt voor eerlijk loon"
     },
-    "footer": "🧡 Community-gedreven salaristransparantie"
+    "footer": "🧡 Community-gedreven salaristransparantie",
+    "eyebrow": "Het cijfer waar niemand over praat",
+    "trust": {
+      "anonymous": "100% anoniem",
+      "free": "Gratis & open source",
+      "community": "Door de community"
+    },
+    "sample": {
+      "title": "Zo ziet de data eruit",
+      "caption": "Voorbeeld ter illustratie"
+    },
+    "cta": {
+      "title": "Ken je waarde. Help anderen die van hen te kennen.",
+      "subtitle": "Voeg je salaris in twee minuten toe — anoniem."
+    }
   },
   "dashboard": {
     "title": "Salaris Dashboard",
@@ -163,7 +182,16 @@
       "countriesSelected": "landen geselecteerd",
       "locationsSelected": "locaties geselecteerd",
       "citiesSelected": "steden geselecteerd",
-      "sectorsSelected": "sectoren geselecteerd"
+      "sectorsSelected": "sectoren geselecteerd",
+      "compensationSection": "Verloning",
+      "workerType": "Type werknemer",
+      "allWorkerTypes": "Alle types",
+      "workerTypesSelected": "types geselecteerd",
+      "companyCar": "Bedrijfswagen",
+      "equity": "Aandelen",
+      "any": "Alle",
+      "yes": "Ja",
+      "no": "Nee"
     },
     "table": {
       "title": "Salaris Inzendingen",
@@ -217,7 +245,8 @@
       "resetDisabledTitle": "Maakt al gebruik van standaardkolommen",
       "resetActiveLabel": "Kolommen opnieuw instellen",
       "selectedCount": "{count} geselecteerd"
-    }
+    },
+    "eyebrow": "Verken de data"
   },
   "statistics": {
     "title": "Salaris Statistieken",
@@ -326,6 +355,8 @@
     "worldMapDescription": "Klik op een land met gegevens om de regionale uitsplitsing te zien",
     "provinceMapDescription": "Regionale salarisverdeling over provincies/staten",
     "backToWorld": "Terug naar Wereldweergave",
+    "mapError": "Kon de kaart niet laden. Probeer het opnieuw.",
+    "retry": "Opnieuw proberen",
     "countries": {
       "belgium": "België",
       "netherlands": "Nederland",
@@ -333,7 +364,38 @@
       "france": "Frankrijk"
     },
     "noDataAvailable": "Geen gegevens beschikbaar",
-    "loading": "Laden"
+    "loading": "Laden",
+    "eyebrow": "Geaggregeerde salarisdata",
+    "peerComparison": {
+      "title": "Hoe verhoud ik me?",
+      "description": "Vul je loon in om te zien waar je staat tussen de collega's die aan de huidige filters voldoen.",
+      "yourSalary": "Je maandloon",
+      "placeholder": "bv. 3500",
+      "gross": "Bruto",
+      "net": "Netto",
+      "percentileLabel": "percentiel",
+      "summary": "Je pakket is hoger dan {percent}% van je ~{count} best passende profielen.",
+      "noPeers": "Nog geen profielen die aan de filters voldoen — pas de filters hierboven aan.",
+      "p25": "25e pct",
+      "median": "Mediaan",
+      "p75": "75e pct",
+      "loading": "Je vergelijking laden…",
+      "ctaTitle": "Zie hoe je loon zich verhoudt",
+      "ctaBody": "Deel één keer je loon en we tonen waar je volledige pakket staat tegenover mensen met hetzelfde soort job — anoniem.",
+      "ctaButton": "Deel je loon",
+      "basisNote": "Vergeleken op je geschatte jaarpakket (basis + 13e maand + maaltijdcheques + ecocheques). Profielen met hetzelfde type werknemer en land tellen het zwaarst wanneer ze dicht bij je leeftijd, sector en functie liggen.",
+      "yourPackage": "Je jaarpakket",
+      "perYear": "/ jaar",
+      "notEnough": "Nog niet genoeg vergelijkbare profielen (minstens {min} nodig). Verbreed de filters hierboven.",
+      "packageIncludes": "Schatting op basis van gedeelde velden; voordelen zonder waarde tellen niet mee.",
+      "workerType": {
+        "whiteCollar": "Bediende",
+        "blueCollar": "Arbeider",
+        "freelancer": "Freelancer",
+        "intern": "Stagiair",
+        "phdResearcher": "Doctoraatsonderzoeker"
+      }
+    }
   },
   "add": {
     "title": "Deel Uw Salaris",
@@ -374,14 +436,16 @@
         "education": "Opleiding",
         "workExperience": "Werkervaring",
         "civilStatus": "Burgerlijke Staat",
-        "dependents": "Afhankelijken"
+        "dependents": "Afhankelijken",
+        "degree": "Diploma"
       },
       "employer": {
         "title": "Werkgever Profiel",
         "description": "Informatie over uw werkgever",
         "sector": "Sector",
         "employeeCount": "Aantal Werknemers",
-        "multinational": "Multinational"
+        "multinational": "Multinational",
+        "publiclyListed": "Beursgenoteerd bedrijf"
       },
       "job": {
         "title": "Functie Profiel",
@@ -395,7 +459,16 @@
         "description": "Uw vergoedingsdetails",
         "grossSalary": "Bruto Salaris ({symbol}/maand)",
         "netSalary": "Netto Salaris ({symbol}/maand)",
-        "netCompensation": "Netto Vergoeding ({symbol}/maand)"
+        "netCompensation": "Netto Vergoeding ({symbol}/maand)",
+        "salaryBasis": "Salarisbasis",
+        "fixedGrossSalary": "Vast bruto ({symbol}/maand)",
+        "variableGrossSalary": "Variabel/bonus bruto ({symbol}/maand)",
+        "hourlyRate": "Uurloon ({symbol}/uur)",
+        "dayRate": "Dagtarief ({symbol}/dag)",
+        "agencyCutPercent": "Marge bureau (%)",
+        "clientDayBudget": "Dagbudget klant ({symbol}/dag)",
+        "bursaryAmount": "Beurs ({symbol}/maand)",
+        "virtualGrossSalary": "Virtueel bruto ({symbol}/maand)"
       },
       "benefits": {
         "title": "Voordelen",
@@ -406,7 +479,12 @@
         "groupInsurance": "Groepsverzekering",
         "otherInsurances": "Andere Verzekeringen",
         "otherBenefits": "Andere Voordelen",
-        "otherBenefitsPlaceholder": "bv. Bedrijfswagen, opleidingsbudget, enz."
+        "otherBenefitsPlaceholder": "bv. Bedrijfswagen, opleidingsbudget, enz.",
+        "hasCompanyCar": "Bedrijfswagen",
+        "companyCarModel": "Automodel",
+        "companyCarFuelType": "Brandstof / laadtype",
+        "companyCarCardScope": "Bereik tank-/laadkaart",
+        "hasEquity": "Aandelen (stocks / RSU's / opties)"
       },
       "workLife": {
         "title": "Werk-Privé Balans",
@@ -414,7 +492,8 @@
         "teleworkDays": "Dagen Telewerk per Week",
         "dayOffEase": "Gemak van een Dag Vrij Nemen",
         "stressLevel": "Stressniveau",
-        "reports": "Rapporteurs"
+        "reports": "Rapporteurs",
+        "jobSatisfaction": "Werkplezier (0–10)"
       },
       "workingHours": {
         "title": "Werkuren",
@@ -435,12 +514,23 @@
         "workCity": "Stad van Werk",
         "commuteDistance": "Afstand Woon-Werk (enkele reis)",
         "commuteMethod": "Vervoersmethode",
-        "commuteCompensation": "Vergoeding woon-werkverkeer"
+        "commuteCompensation": "Vergoeding woon-werkverkeer",
+        "locationGranularity": "Locatiedetail",
+        "workProvince": "Werkprovincie",
+        "residenceCountry": "Land van verblijf",
+        "commuteUnit": "Afstandseenheid",
+        "commuteTimeMinutes": "Reistijd (minuten)"
       },
       "notes": {
         "title": "Aanvullende Opmerkingen",
         "description": "Optionele opmerkingen voor deze inzending",
         "extraNotes": "Aanvullende Opmerkingen"
+      },
+      "employment": {
+        "title": "Type tewerkstelling",
+        "workerType": "Type werknemer",
+        "contractType": "Type contract",
+        "contractDurationMonths": "Contractduur (maanden)"
       }
     },
     "options": {
@@ -503,7 +593,29 @@
       "dayOffEase": "Selecteer gemak van een dag vrij nemen",
       "stressLevel": "Selecteer stressniveau",
       "reports": "bv. 5",
-      "extraNotes": "Voeg aanvullende opmerkingen toe over deze salarisinzending..."
+      "extraNotes": "Voeg aanvullende opmerkingen toe over deze salarisinzending...",
+      "workerType": "Kies type werknemer",
+      "contractType": "Kies type contract",
+      "contractDurationMonths": "bv. 12",
+      "salaryBasis": "Bruto, netto of beide",
+      "fixedGrossSalary": "bv. 3500",
+      "variableGrossSalary": "bv. 500",
+      "hourlyRate": "bv. 22,5",
+      "dayRate": "bv. 500",
+      "agencyCutPercent": "bv. 15",
+      "clientDayBudget": "bv. 650",
+      "bursaryAmount": "bv. 2200",
+      "virtualGrossSalary": "bv. 2800",
+      "companyCarModel": "bv. BMW 320e",
+      "companyCarFuelType": "Kies type",
+      "companyCarCardScope": "Kies bereik",
+      "locationGranularity": "Hoe precies?",
+      "workProvince": "Kies provincie",
+      "residenceCountry": "Kies land",
+      "commuteUnit": "km of minuten",
+      "degree": "Zoek je diploma…",
+      "jobSatisfaction": "bv. 8",
+      "commuteTimeMinutes": "bv. 35"
     },
     "help": {
       "age": "Uw huidige leeftijd in jaren",
@@ -539,7 +651,32 @@
       "dayOffEase": "Hoe gemakkelijk het is om ongepland vrij te nemen",
       "stressLevel": "Uw algehele werkgerelateerde stressniveau",
       "reports": "Aantal personen die rechtstreeks aan u rapporteren",
-      "extraNotes": "Aanvullende opmerkingen of context over deze salarisinzending"
+      "extraNotes": "Aanvullende opmerkingen of context over deze salarisinzending",
+      "workerType": "Hoe je tewerkgesteld bent. Dit bepaalt welke loonvelden je ziet.",
+      "contractType": "Het type contract waaronder je werkt.",
+      "contractDurationMonths": "Voor tijdelijke, interim- of stagecontracten: hoeveel maanden het duurt.",
+      "salaryBasis": "Verduidelijk of de ingevoerde bedragen bruto, netto of beide zijn.",
+      "fixedGrossSalary": "Het vaste deel van je maandelijks brutoloon.",
+      "variableGrossSalary": "Het variabele/bonusdeel van je bruto (sales, targets, enz.).",
+      "hourlyRate": "Je bruto uurloon.",
+      "dayRate": "Je dagtarief als freelancer.",
+      "agencyCutPercent": "Het percentage dat het bureau/de tussenpersoon inhoudt op het klantbudget.",
+      "clientDayBudget": "Het totale bedrag dat de klant per dag betaalt (vóór de marge van het bureau).",
+      "bursaryAmount": "De beurs die je effectief ontvangt (doctoraatsonderzoekers).",
+      "virtualGrossSalary": "Het 'virtuele' bruto dat de instelling gebruikt om de beurs te berekenen.",
+      "hasCompanyCar": "Of je pakket een bedrijfswagen omvat.",
+      "companyCarModel": "Het merk en model van de wagen.",
+      "companyCarFuelType": "Elektrisch, hybride of verbranding (brandstof).",
+      "companyCarCardScope": "Hoe ver je tank-/laadkaart werkt: België, Benelux of Europa.",
+      "hasEquity": "Of je aandelen ontvangt — stocks, RSU's, warrants of opties.",
+      "locationGranularity": "Kies hoe precies je je locatie wilt delen — land, provincie of stad.",
+      "workProvince": "De provincie waar je werkt (als je je stad liever niet deelt).",
+      "residenceCountry": "Als je in een ander land woont dan waar je werkt (grenswerker).",
+      "commuteUnit": "Of je woon-werkafstand in kilometer of minuten wordt gemeten.",
+      "degree": "Kies je specifieke diploma uit de lijst zodat je loon vergeleken kan worden met hetzelfde diploma.",
+      "publiclyListed": "Is je werkgever beursgenoteerd? (vaak relevant voor aandelen).",
+      "jobSatisfaction": "Hoe leuk je je baan vindt, van 0 (haat het) tot 10 (geweldig).",
+      "commuteTimeMinutes": "Reistijd enkele rit in minuten."
     },
     "formOptions": {
       "education": {
@@ -633,6 +770,64 @@
         "veryHard": "Zeer Moeilijk",
         "situational": "Afhankelijk van de situatie",
         "impossible": "Bijna Onmogelijk"
+      },
+      "workerType": {
+        "whiteCollar": "Bediende (loon)",
+        "blueCollar": "Arbeider (uurloon)",
+        "freelancer": "Freelancer",
+        "intern": "Stagiair",
+        "phdResearcher": "Doctoraatsonderzoeker"
+      },
+      "contractType": {
+        "permanent": "Vast",
+        "fixedTerm": "Bepaalde duur",
+        "interim": "Interim",
+        "internship": "Stage",
+        "freelance": "Freelance"
+      },
+      "salaryBasis": {
+        "gross": "Bruto",
+        "net": "Netto",
+        "both": "Beide"
+      },
+      "carFuelType": {
+        "electric": "Elektrisch",
+        "hybrid": "Hybride",
+        "fuel": "Brandstof (benzine/diesel)"
+      },
+      "carCardScope": {
+        "belgium": "België",
+        "benelux": "Benelux",
+        "europe": "Europa"
+      },
+      "locationGranularity": {
+        "country": "Alleen land",
+        "province": "Provincie",
+        "city": "Stad"
+      },
+      "commuteUnit": {
+        "km": "Kilometer",
+        "minutes": "Minuten"
+      },
+      "beProvince": {
+        "antwerp": "Antwerpen",
+        "eastFlanders": "Oost-Vlaanderen",
+        "flemishBrabant": "Vlaams-Brabant",
+        "limburg": "Limburg",
+        "westFlanders": "West-Vlaanderen",
+        "hainaut": "Henegouwen",
+        "liege": "Luik",
+        "luxembourg": "Luxemburg",
+        "namur": "Namen",
+        "walloonBrabant": "Waals-Brabant",
+        "brussels": "Brussel-Hoofdstad"
+      },
+      "residenceCountry": {
+        "belgium": "België",
+        "netherlands": "Nederland",
+        "germany": "Duitsland",
+        "france": "Frankrijk",
+        "luxembourg": "Luxemburg"
       }
     },
     "validation": {
@@ -667,8 +862,11 @@
       "shiftDescriptionMax": "Beschrijving ploegendienst mag niet langer zijn dan 1000 tekens",
       "vacationDaysMax": "Vakantiedagen mogen niet hoger zijn dan 365 per jaar",
       "vacationDaysStep": "Vakantiedagen moeten in stappen van 0.5 zijn",
+      "vacationDaysRequired": "Vul je aantal vakantiedagen per jaar in",
       "teleworkMax": "Telewerkdagen mogen niet hoger zijn dan 7 per week",
       "grossSalaryPositive": "Bruto salaris moet positief zijn",
+      "grossSalaryRequired": "Vul je bruto maandsalaris in",
+      "netSalaryRequired": "Vul je netto maandsalaris in",
       "salaryMax": "Salaris mag niet hoger zijn dan €1.000.000",
       "mealVouchersMax": "Maaltijdcheques mogen niet hoger zijn dan €12 per dag",
       "ecoChequesMax": "Ecocheques mogen niet hoger zijn dan €10.000 per jaar",
@@ -690,7 +888,10 @@
       "netSalaryVsGross": "Netto salaris mag het bruto salaris niet overschrijden",
       "contentContainsBadWords": "Inhoud bevat ongepaste taal",
       "contentContainsUrls": "URL's zijn niet toegestaan in dit veld",
-      "honestyRequired": "U moet bevestigen dat de verstrekte informatie nauwkeurig en eerlijk is"
+      "honestyRequired": "U moet bevestigen dat de verstrekte informatie nauwkeurig en eerlijk is",
+      "dayRateRequired": "Geef je dagtarief in",
+      "hourlyRateRequired": "Geef je uurloon in (of een salaris)",
+      "bursaryRequired": "Geef je beurs of virtueel bruto in"
     },
     "salaryAlert": {
       "netHigherThanGross": "Controleer uw invoer van het nettoloon nogmaals. Voer alleen uw nettoloon in dat wordt berekend uit uw bruto salaris minus belastingen. Neem geen bonussen, toeslagen of andere vormen van vergoeding op (bijv. internettoeslag, maaltijdcheques of andere voordelen). Deze moeten indien van toepassing apart worden gemeld. Het opnemen ervan in uw nettoloon kan leiden tot onnauwkeurige gegevens.",
@@ -701,6 +902,87 @@
     "validationSummary": {
       "title": "Gelieve de volgende fouten te corrigeren:",
       "errorCount": "{count, plural, one {1 fout gevonden} other {# fouten gevonden}}"
+    },
+    "eyebrow": "Voeg je salaris toe, anoniem",
+    "countryFirst": "Selecteer hierboven je land om de salarisvelden voor jouw regio te laden.",
+    "discardTitle": "Wijzigingen verwijderen?",
+    "discardMessage": "Je hebt niet-opgeslagen wijzigingen. Als je nu weggaat, gaan ze verloren.",
+    "discardKeep": "Blijf bewerken",
+    "discardConfirm": "Verwijderen",
+    "benefitsSelector": {
+      "description": "Selecteer extra voordelen die je ontvangt en vul waar mogelijk een waarde in.",
+      "amountPlaceholder": "Bedrag",
+      "selectOption": "Kies"
+    },
+    "benefitCategories": {
+      "cash": "Cash & vergoedingen",
+      "equity": "Aandelen",
+      "insurance": "Verzekeringen",
+      "retirement": "Pensioen & sparen",
+      "mobility": "Mobiliteit",
+      "timeOff": "Verlof",
+      "other": "Andere"
+    },
+    "benefitUnits": {
+      "perMonth": "per maand",
+      "perYear": "per jaar",
+      "perDay": "per dag",
+      "oneOff": "dagen",
+      "days": "dagen",
+      "perHour": "per uur"
+    },
+    "benefitOptions": {
+      "salaryIncreaseFrequency": {
+        "none": "Geen",
+        "yearly": "Jaarlijks",
+        "everyTwoYears": "Om de twee jaar",
+        "adHoc": "Ad hoc"
+      },
+      "eindejaarsuitkering": {
+        "full": "Volledig",
+        "partial": "Gedeeltelijk",
+        "none": "Geen"
+      }
+    },
+    "benefitDetails": {
+      "bonus": "Frequentie / type (bv. jaarlijks, prestatie)",
+      "equity": "Instrument + vesting (bv. RSU, 4 jaar)",
+      "pensionPlan": "Type plan / werkgeversbijdrage",
+      "other": "Beschrijf het voordeel"
+    },
+    "benefitsCatalog": {
+      "bonus": "Bonus",
+      "thirteenthMonth": "13e maand",
+      "salaryIncreaseFrequency": "Frequentie loonsverhoging",
+      "equity": "Aandelen (stocks / RSU's / opties)",
+      "hospitalizationInsurance": "Hospitalisatieverzekering",
+      "dentalInsurance": "Tandverzekering",
+      "ambulatoryInsurance": "Ambulante verzekering",
+      "guaranteedIncomeInsurance": "Gewaarborgd inkomen (verzekering)",
+      "pensionPlan": "Pensioenplan",
+      "phone": "Telefoon",
+      "laptop": "Laptop",
+      "internetAllowance": "Internetvergoeding",
+      "homeworkingAllowance": "Thuiswerkvergoeding",
+      "extraLeaveDays": "Extra verlofdagen",
+      "other": "Andere",
+      "mealVouchers": "Maaltijdcheques",
+      "ecoCheques": "Ecocheques",
+      "groupInsurance": "Groepsverzekering",
+      "cafeteriaPlan": "Cafetariaplan",
+      "bikeLease": "Fietslease",
+      "mobilityBudget": "Mobiliteitsbudget",
+      "netExpenseAllowance": "Onkostenvergoeding",
+      "ipCopyrightRemuneration": "Auteursrechten",
+      "advDays": "ADV-dagen",
+      "publicTransportReimbursement": "Vergoeding openbaar vervoer",
+      "vakantiegeld8pct": "Vakantiegeld (8%)",
+      "eindejaarsuitkering": "13e maand / eindejaarsuitkering",
+      "thirtyPercentRuling": "30%-regeling",
+      "pensioenregeling": "Pensioenregeling",
+      "reiskostenvergoeding": "Reiskostenvergoeding",
+      "thuiswerkvergoeding": "Thuiswerkvergoeding",
+      "trainingBudget": "Opleidingsbudget"
     }
   },
   "common": {
@@ -811,7 +1093,8 @@
       "instruction": "Bewaar dit ID om de status van uw melding op elk moment te volgen."
     },
     "emailSent": "We hebben een bevestigingsmail naar {email} gestuurd met uw tracking ID en meldingsdetails.",
-    "noEmail": "Gebruik uw tracking ID om de status van uw melding te controleren op de Statuspagina."
+    "noEmail": "Gebruik uw tracking ID om de status van uw melding te controleren op de Statuspagina.",
+    "eyebrow": "Bugs, ideeën & verbeteringen"
   },
   "status": {
     "title": "Rapport Status Controleren",
@@ -866,7 +1149,8 @@
     "errors": {
       "empty": "Voer een reporter ID of e-mailadres in",
       "network": "Zoeken naar meldingen mislukt. Probeer het opnieuw."
-    }
+    },
+    "eyebrow": "Volg je melding"
   },
   "donate": {
     "goBack": "Teruggaan",
@@ -931,7 +1215,8 @@
     "shareText": "Bekijk WageWatchers - Community-gedreven salaristransparantie in Europese markten!",
     "footerCommunity": "🧡 Community-gedreven salaristransparantie",
     "footerMadeWith": "Gemaakt met ❤️ voor de community •",
-    "footerViewOnGithub": "Bekijk op GitHub"
+    "footerViewOnGithub": "Bekijk op GitHub",
+    "eyebrow": "Steun het project"
   },
   "entryDetail": {
     "backToDashboard": "Terug naar Dashboard",
@@ -1002,6 +1287,25 @@
         "needsReview": "Deze inzending is gemarkeerd en vereist beoordeling",
         "rejected": "Deze inzending is afgekeurd en verborgen voor publieke weergave"
       }
+    },
+    "compensation": "Verloning",
+    "noCompensation": "Geen verloning opgegeven",
+    "packageTitle": "Pakket & voordelen",
+    "noBenefits": "Geen extra voordelen opgegeven",
+    "reportReasonLabel": "Reden voor melding (optioneel)",
+    "reportReasonPlaceholder": "Leg uit waarom je deze inzending meldt…",
+    "cancel": "Annuleren",
+    "crossBorder": "Grenswerker — woont in {residence}, werkt in {work}",
+    "headline": {
+      "grossSalary": "Bruto / maand",
+      "netSalary": "Netto / maand",
+      "netCompensation": "Nettovergoeding / maand",
+      "dayRate": "Dagtarief",
+      "hourlyRate": "Uurloon",
+      "bursary": "Beurs / maand",
+      "virtualGross": "Virtueel bruto / maand",
+      "clientBudget": "Klantbudget",
+      "agencyCut": "Marge bureau"
     }
   },
   "comments": {
@@ -1034,6 +1338,7 @@
       "actions": "Acties",
       "noTitle": "Geen titel verstrekt",
       "editableFor": "Nog {hours}u",
+      "editableForDays": "Nog {days}d",
       "readonly": "Alleen-lezen",
       "pending": "In afwachting"
     },
@@ -1041,7 +1346,7 @@
     "deleteError": "Verwijderen van inzending mislukt",
     "infoTitle": "ℹ️ Hoe werkt het?",
     "info1": "Uw inzendingen worden anoniem in uw browser opgeslagen met behulp van beveiligde tokens",
-    "info2": "U kunt inzendingen 1 dag na indiening bewerken of verwijderen",
+    "info2": "U kunt inzendingen 7 dagen na indiening bewerken of verwijderen",
     "info3": "Na de bewerkingsperiode worden inzendingen alleen-lezen, maar blijven zichtbaar",
     "info4": "Het wissen van browsergegevens verwijdert uw toegang om deze inzendingen te beheren",
     "deleteDialog": {
@@ -1056,7 +1361,8 @@
       "cancel": "Annuleren",
       "confirmDelete": "Ja, Verwijder Inzending",
       "deleting": "Verwijderen..."
-    }
+    },
+    "eyebrow": "Jouw bijdragen"
   },
   "edit": {
     "meta": {
@@ -1074,8 +1380,14 @@
       "noToken": "U heeft geen toestemming om deze inzending te bewerken. Deze is mogelijk ingediend vanaf een andere browser.",
       "notFound": "Inzending niet gevonden. Deze is mogelijk verwijderd.",
       "notOwner": "U heeft geen toestemming om deze inzending te bewerken.",
-      "expired": "De bewerkingsperiode voor deze inzending is verlopen (1 dag na indiening).",
+      "expired": "De bewerkingsperiode voor deze inzending is verlopen (7 dagen na indiening).",
       "generic": "Laden van inzending mislukt. Probeer het opnieuw."
+    },
+    "window": {
+      "remainingDays": "Nog ongeveer {days} dagen om te bewerken",
+      "remainingHours": "Nog ongeveer {hours}u om te bewerken",
+      "until": "U kunt wijzigingen aanbrengen tot {date}.",
+      "lockNote": "Daarna wordt de inzending alleen-lezen maar blijft zichtbaar."
     }
   },
   "changelog": {
@@ -1093,7 +1405,8 @@
       "success": "Succesvol geabonneerd op de nieuwsbrief!",
       "error": "Abonneren mislukt",
       "networkError": "Netwerkfout. Probeer het opnieuw."
-    }
+    },
+    "eyebrow": "Wat is er nieuw"
   },
   "adminReview": {
     "title": "Wachtrij voor Inzending Review",

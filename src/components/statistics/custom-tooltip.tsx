@@ -22,7 +22,6 @@ interface CustomTooltipProps {
 }
 
 export function CustomTooltip({
-  active,
   payload,
   label,
   chartType = "default",
@@ -34,9 +33,10 @@ export function CustomTooltip({
   const { preferences } = useSalaryDisplay();
 
   // Filter payload for box plot charts to avoid duplicate median entries
-  const filteredPayload = chartType === "experience" && payload
-    ? payload.filter(entry => entry.dataKey !== "median" || entry.type !== "line")
-    : payload;
+  const filteredPayload =
+    chartType === "experience" && payload
+      ? payload.filter((entry) => entry.dataKey !== "median" || entry.type !== "line")
+      : payload;
 
   const formatLabel = (label: any) => {
     if (chartType === "experience") {
@@ -57,7 +57,18 @@ export function CustomTooltip({
   };
 
   const formatValue = (value: any, dataKey: string) => {
-    if (dataKey === "avgSalary" || dataKey === "avgGross" || dataKey === "medianSalary" || dataKey === "medianGross" || dataKey === "grossSalary" || dataKey === "min" || dataKey === "q1" || dataKey === "median" || dataKey === "q3" || dataKey === "max") {
+    if (
+      dataKey === "avgSalary" ||
+      dataKey === "avgGross" ||
+      dataKey === "medianSalary" ||
+      dataKey === "medianGross" ||
+      dataKey === "grossSalary" ||
+      dataKey === "min" ||
+      dataKey === "q1" ||
+      dataKey === "median" ||
+      dataKey === "q3" ||
+      dataKey === "max"
+    ) {
       return formatSalaryWithPreferences(
         value,
         "EUR",
@@ -149,18 +160,18 @@ export function CustomTooltip({
     if (!dataPoint) return null;
 
     return (
-      <div className="bg-stone-800 border border-stone-600 rounded-lg shadow-lg p-4 min-w-[220px]">
-        <div className="text-stone-200 font-semibold text-sm mb-3 text-center border-b border-stone-600 pb-2">
+      <div className="bg-card border border-border rounded-lg shadow-lg p-4 min-w-[220px]">
+        <div className="text-foreground font-semibold text-sm mb-3 text-center border-b border-border pb-2">
           {t("charts.scatterPlot.dataPointLabel")}
         </div>
         <div className="flex items-center justify-between px-4">
           {/* Experience */}
           <div className="flex flex-col items-center gap-1">
             <div className="text-center">
-              <div className="text-stone-300 text-xs font-medium">
+              <div className="text-muted-foreground text-xs font-medium">
                 {t("charts.tooltips.experience")}
               </div>
-              <div className="text-stone-100 fontx²²-bold text-sm">
+              <div className="text-foreground font-bold text-sm">
                 {dataPoint.experience} {t("charts.experienceGrowth.xAxisLabel")}
               </div>
             </div>
@@ -169,10 +180,10 @@ export function CustomTooltip({
           {/* Salary */}
           <div className="flex flex-col items-center gap-1">
             <div className="text-center">
-              <div className="text-stone-300 text-xs font-medium">
+              <div className="text-muted-foreground text-xs font-medium">
                 {t("charts.tooltips.salary")}
               </div>
-              <div className="text-stone-100 font-bold text-sm">
+              <div className="text-foreground font-bold text-sm">
                 {formatSalaryWithPreferences(
                   dataPoint.salary,
                   "EUR",
@@ -188,9 +199,44 @@ export function CustomTooltip({
     );
   }
 
+  // Box plot: the bar segments carry internal delta keys (_whiskerLow, _boxLow, …),
+  // so render the absolute five-number summary straight from the datum instead.
+  if (chartType === "experience") {
+    const datum = payload?.[0]?.payload;
+    if (!datum) return null;
+    const rows: Array<["max" | "q3" | "median" | "q1" | "min", number]> = [
+      ["max", datum.max],
+      ["q3", datum.q3],
+      ["median", datum.median],
+      ["q1", datum.q1],
+      ["min", datum.min],
+    ];
+    return (
+      <div className="bg-card border border-border rounded-lg shadow-lg p-3 min-w-[200px]">
+        <div className="text-foreground font-medium text-sm mb-2 border-b border-border pb-1">
+          {formatLabel(label)}
+        </div>
+        <div className="space-y-1">
+          {rows.map(([key, value]) => (
+            <div key={key} className="flex items-center justify-between gap-4">
+              <span className="text-muted-foreground text-sm">{getLabelText(key)}</span>
+              <span className="text-foreground font-medium text-sm">{formatValue(value, key)}</span>
+            </div>
+          ))}
+          {typeof datum.count === "number" && (
+            <div className="flex items-center justify-between gap-4 border-t border-border pt-1 mt-1">
+              <span className="text-muted-foreground text-sm">{getLabelText("count")}</span>
+              <span className="text-foreground font-medium text-sm">{datum.count}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-stone-800 border border-stone-600 rounded-lg shadow-lg p-3 min-w-[200px]">
-      <div className="text-stone-200 font-medium text-sm mb-2 border-b border-stone-600 pb-1">
+    <div className="bg-card border border-border rounded-lg shadow-lg p-3 min-w-[200px]">
+      <div className="text-foreground font-medium text-sm mb-2 border-b border-border pb-1">
         {formatLabel(label)}
       </div>
       <div className="space-y-1">
@@ -204,9 +250,9 @@ export function CustomTooltip({
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: getCorrectColor(entry, index) }}
               />
-              <span className="text-stone-300 text-sm">{getLabelText(entry.dataKey)}</span>
+              <span className="text-muted-foreground text-sm">{getLabelText(entry.dataKey)}</span>
             </div>
-            <span className="text-stone-100 font-medium text-sm">
+            <span className="text-foreground font-medium text-sm">
               {formatValue(entry.value, entry.dataKey)}
             </span>
           </div>

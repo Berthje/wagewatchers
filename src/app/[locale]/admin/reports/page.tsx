@@ -43,6 +43,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { logError, logWarning } from "@/lib/logger";
 
 interface Report {
   id: number;
@@ -210,7 +211,7 @@ export default function AdminReportsPage() {
         setReports(data);
       }
     } catch (error) {
-      console.error("Failed to fetch reports:", error);
+      logError("Failed to fetch reports", error);
     } finally {
       setLoading(false);
     }
@@ -230,7 +231,7 @@ export default function AdminReportsPage() {
 
         fetchReports();
       } catch (error) {
-        console.error("Auth check failed:", error);
+        logError("Auth check failed", error);
         router.push("/admin/login");
       }
     };
@@ -252,10 +253,10 @@ export default function AdminReportsPage() {
         const updatedReport = await response.json();
         setReports(reports.map((report) => (report.id === reportId ? updatedReport : report)));
       } else {
-        console.error("Failed to update report status");
+        logWarning("Failed to update report status", { reportId, newStatus });
       }
     } catch (error) {
-      console.error("Error updating report status:", error);
+      logError("Error updating report status", error, { reportId, newStatus });
     }
   };
 
@@ -273,10 +274,10 @@ export default function AdminReportsPage() {
         setReports(reports.filter((report) => report.id !== reportId));
         setSelectedReport(null);
       } else {
-        console.error("Failed to delete report");
+        logWarning("Failed to delete report", { reportId });
       }
     } catch (error) {
-      console.error("Error deleting report:", error);
+      logError("Error deleting report", error, { reportId });
     }
   };
 
@@ -364,7 +365,7 @@ export default function AdminReportsPage() {
                     method: "POST",
                   });
                 } catch (error) {
-                  console.error("Logout error:", error);
+                  logError("Logout error", error);
                 }
                 localStorage.removeItem("adminAuthenticated");
                 router.push("/admin/login");

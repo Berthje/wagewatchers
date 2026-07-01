@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface AdminAuthGuardProps {
   children: React.ReactNode;
@@ -30,7 +31,7 @@ export function AdminAuthGuard({ children }: Readonly<AdminAuthGuardProps>) {
 
         setIsAuthenticated(true);
       } catch (error) {
-        console.error("Auth check failed:", error);
+        logError("Auth check failed:", error);
         router.push("/admin/login");
       } finally {
         setIsLoading(false);
@@ -42,10 +43,12 @@ export function AdminAuthGuard({ children }: Readonly<AdminAuthGuardProps>) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
+      <div className="lp-ledger flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
-          <p className="text-sm text-stone-400">Verifying authentication...</p>
+          <Loader2 className="h-7 w-7 animate-spin text-brand" />
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Verifying access…
+          </p>
         </div>
       </div>
     );

@@ -54,21 +54,21 @@ export function SearchableSelect({
         open={isOpen}
         onOpenChange={setIsOpen}
       >
-        <SelectTrigger className={cn("bg-stone-700 border-stone-600 text-stone-100", className)}>
+        <SelectTrigger className={cn(className)}>
           <SelectValue placeholder={placeholder}>
             {selectedOption ? selectedOption.label : placeholder}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-stone-800 border-stone-600">
+        <SelectContent className="bg-popover border-border">
           {/* Search Input */}
-          <div className="flex items-center border-b border-stone-600 px-3 pb-2">
-            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-stone-400" />
+          <div className="flex items-center border-b border-border px-3 pb-2">
+            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-muted-foreground" />
             <input
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={(e) => e.stopPropagation()}
-              className="flex h-8 w-full rounded-md bg-transparent text-sm outline-none placeholder:text-stone-400 text-stone-100"
+              className="flex h-8 w-full rounded-md bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
             />
             {searchQuery && (
               <button
@@ -76,9 +76,9 @@ export function SearchableSelect({
                   e.stopPropagation();
                   setSearchQuery("");
                 }}
-                className="ml-2 hover:bg-stone-600 rounded p-1"
+                className="ml-2 hover:bg-accent rounded p-1"
               >
-                <X className="h-3 w-3 text-stone-400" />
+                <X className="h-3 w-3 text-muted-foreground" />
               </button>
             )}
           </div>
@@ -86,13 +86,13 @@ export function SearchableSelect({
           {/* Options List */}
           <div className="max-h-[300px] overflow-y-auto scrollbar-thin">
             {filteredOptions.length === 0 ? (
-              <div className="py-6 text-center text-sm text-stone-400">{emptyMessage}</div>
+              <div className="py-6 text-center text-sm text-muted-foreground">{emptyMessage}</div>
             ) : (
               filteredOptions.map((option) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}
-                  className="text-stone-100 focus:bg-stone-700"
+                  className="text-foreground focus:bg-accent"
                 >
                   <div className="flex items-center">
                     <Check

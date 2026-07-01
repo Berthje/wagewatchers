@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq, inArray, desc } from "drizzle-orm";
-import { generateOwnerToken, getEditableUntilDate } from "@/lib/entry-ownership";
+import { persistEntryBenefits } from "@/lib/entry-benefits";
+import { generateOwnerToken, getEditableUntilDate, withoutOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
 import { toTitleCase } from "@/lib/utils/format.utils";
+import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +43,7 @@ export async function GET(request: NextRequest) {
           }
         }
       } catch (e) {
-        console.error("Token parsing error:", e);
+        logError("Token parsing error", e);
         return NextResponse.json({ error: "Invalid tokens format" }, { status: 400 });
       }
 
@@ -56,7 +58,7 @@ export async function GET(request: NextRequest) {
         return providedToken && providedToken === entry.ownerToken;
       });
 
-      return NextResponse.json(validatedEntries);
+      return NextResponse.json(validatedEntries.map(withoutOwnerToken));
     }
 
     // Otherwise return only approved entries (default behavior)
@@ -65,9 +67,10 @@ export async function GET(request: NextRequest) {
       .from(salaryEntries)
       .where(eq(salaryEntries.reviewStatus, "APPROVED"))
       .orderBy(desc(salaryEntries.createdAt));
-    return NextResponse.json(entries);
+    // Never expose ownership tokens on the public listing.
+    return NextResponse.json(entries.map(withoutOwnerToken));
   } catch (error) {
-    console.error(error);
+    logError("Failed to fetch entries", error);
     return NextResponse.json(
       { error: "Failed to fetch entries" },
       {
@@ -101,12 +104,16 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // `benefits` is an array persisted to EntryBenefit, not a column — strip it
+    // out of the values spread into the salaryEntries insert.
+    const { benefits: submittedBenefits, ...entryBody } = body;
+
     const bodyTyped: Omit<
       typeof salaryEntries.$inferInsert,
       "id" | "createdAt" | "ownerToken" | "editableUntil"
     > = {
-      ...body,
-      jobTitle: body.jobTitle ? toTitleCase(body.jobTitle) : body.jobTitle,
+      ...entryBody,
+      jobTitle: entryBody.jobTitle ? toTitleCase(entryBody.jobTitle) : entryBody.jobTitle,
     };
 
     // Generate ownership token and editable window
@@ -116,6 +123,9 @@ export async function POST(request: NextRequest) {
       .insert(salaryEntries)
       .values({
         ...bodyTyped,
+        // Stamp the structure version server-side so it can't be spoofed by the
+        // client. New entries are v2; legacy rows stay null (v1).
+        entryVersion: 2,
         ownerToken: "", // Temporary, will update after getting ID
         editableUntil,
       })
@@ -139,13 +149,17 @@ export async function POST(request: NextRequest) {
       .where(eq(salaryEntries.id, entry[0].id))
       .returning();
 
+    // Persist catalog benefits (Layer C) + dual-write the column-backed core
+    // benefits as catalog rows so the EntryBenefit table is a complete view.
+    await persistEntryBenefits(entry[0].id, submittedBenefits, entry[0]);
+
     // Return entry with the owner token (client will store it)
     return NextResponse.json({
       ...updatedEntry[0],
       ownerToken, // Include token in response for client storage
     });
   } catch (error) {
-    console.error("Failed to create entry:", error);
+    logError("Failed to create entry", error);
 
     // Always return detailed error for debugging
     return NextResponse.json(

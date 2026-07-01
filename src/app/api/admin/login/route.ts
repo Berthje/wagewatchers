@@ -4,6 +4,8 @@ import { admins } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { getJwtSecret } from "@/lib/admin-auth";
+import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,11 +32,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create JWT token
-    const token = jwt.sign(
-      { adminId: admin[0].id, email: admin[0].email },
-      process.env.JWT_SECRET || "fallback-secret-key",
-      { expiresIn: "24h" }
-    );
+    const token = jwt.sign({ adminId: admin[0].id, email: admin[0].email }, getJwtSecret(), {
+      expiresIn: "24h",
+    });
 
     // Create response with token
     const response = NextResponse.json({
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Admin login error:", error);
+    logError("Admin login error", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -7,9 +7,17 @@ export interface FieldConfig {
   helpKey?: string;
   width?: "full" | "half" | "third";
   optional?: boolean;
+  /** v2: worker types this field applies to. Omitted = shown for all worker types. */
+  workerTypes?: string[];
 }
 
 export type FieldConfigs = Record<string, FieldConfig>;
+
+// Worker types that render (and therefore can supply) the vacation-days field.
+// Self-employed freelancers have no statutory paid leave, so the field is hidden
+// for them. Exported so the validation schema requires vacationDays for EXACTLY
+// the worker types that can see it — keeping the schema and the form in lockstep.
+export const VACATION_DAYS_WORKER_TYPES = ["whiteCollar", "blueCollar", "intern", "phdResearcher"];
 
 // Field configurations function generator that accepts translation function
 export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => ({
@@ -54,6 +62,15 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     ],
     helpKey: "help.education",
     width: "half",
+  },
+  degreeId: {
+    labelKey: "sections.personal.degree",
+    type: "combobox",
+    placeholder: t("placeholders.degree"),
+    helpKey: "help.degree",
+    width: "full",
+    optional: true,
+    allowCustom: false,
   },
   workExperience: {
     labelKey: "sections.personal.workExperience",
@@ -154,6 +171,16 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     ],
     helpKey: "help.multinational",
   },
+  publiclyListed: {
+    labelKey: "sections.employer.publiclyListed",
+    type: "boolean",
+    options: [
+      { value: "yes", label: t("options.yes") },
+      { value: "no", label: t("options.no") },
+    ],
+    helpKey: "help.publiclyListed",
+    optional: true,
+  },
   jobTitle: {
     labelKey: "sections.job.jobTitle",
     type: "text",
@@ -211,6 +238,60 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.vacationDays"),
     helpKey: "help.vacationDays",
     width: "half",
+    // Self-employed freelancers have no statutory paid leave.
+    workerTypes: VACATION_DAYS_WORKER_TYPES,
+  },
+  workerType: {
+    labelKey: "sections.employment.workerType",
+    type: "select",
+    placeholder: t("placeholders.workerType"),
+    options: [
+      { value: "whiteCollar", label: t("formOptions.workerType.whiteCollar") },
+      { value: "blueCollar", label: t("formOptions.workerType.blueCollar") },
+      { value: "freelancer", label: t("formOptions.workerType.freelancer") },
+      { value: "intern", label: t("formOptions.workerType.intern") },
+      { value: "phdResearcher", label: t("formOptions.workerType.phdResearcher") },
+    ],
+    helpKey: "help.workerType",
+    width: "half",
+  },
+  contractType: {
+    labelKey: "sections.employment.contractType",
+    type: "select",
+    placeholder: t("placeholders.contractType"),
+    options: [
+      { value: "permanent", label: t("formOptions.contractType.permanent") },
+      { value: "fixedTerm", label: t("formOptions.contractType.fixedTerm") },
+      { value: "interim", label: t("formOptions.contractType.interim") },
+      { value: "internship", label: t("formOptions.contractType.internship") },
+      { value: "freelance", label: t("formOptions.contractType.freelance") },
+    ],
+    helpKey: "help.contractType",
+    width: "half",
+    optional: true,
+  },
+  contractDurationMonths: {
+    labelKey: "sections.employment.contractDurationMonths",
+    type: "number",
+    placeholder: t("placeholders.contractDurationMonths"),
+    helpKey: "help.contractDurationMonths",
+    width: "half",
+    optional: true,
+  },
+  salaryBasis: {
+    labelKey: "sections.salary.salaryBasis",
+    type: "select",
+    placeholder: t("placeholders.salaryBasis"),
+    options: [
+      { value: "gross", label: t("formOptions.salaryBasis.gross") },
+      { value: "net", label: t("formOptions.salaryBasis.net") },
+      { value: "both", label: t("formOptions.salaryBasis.both") },
+    ],
+    helpKey: "help.salaryBasis",
+    width: "third",
+    // Freelancers bill day rates ex-VAT and PhD bursaars receive a (tax-exempt)
+    // bursary — the gross/net basis only applies to salaried employees.
+    workerTypes: ["whiteCollar", "blueCollar", "intern"],
   },
   grossSalary: {
     labelKey: "sections.salary.grossSalary",
@@ -218,6 +299,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.grossSalary"),
     helpKey: "help.grossSalary",
     width: "third",
+    workerTypes: ["whiteCollar", "intern"],
   },
   netSalary: {
     labelKey: "sections.salary.netSalary",
@@ -225,6 +307,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.netSalary"),
     helpKey: "help.netSalary",
     width: "third",
+    workerTypes: ["whiteCollar", "intern", "blueCollar"],
   },
   netCompensation: {
     labelKey: "sections.salary.netCompensation",
@@ -232,6 +315,76 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.netCompensation"),
     helpKey: "help.netCompensation",
     width: "third",
+    workerTypes: ["whiteCollar", "intern"],
+  },
+  fixedGrossSalary: {
+    labelKey: "sections.salary.fixedGrossSalary",
+    type: "number",
+    placeholder: t("placeholders.fixedGrossSalary"),
+    helpKey: "help.fixedGrossSalary",
+    width: "third",
+    optional: true,
+    workerTypes: ["whiteCollar", "intern"],
+  },
+  variableGrossSalary: {
+    labelKey: "sections.salary.variableGrossSalary",
+    type: "number",
+    placeholder: t("placeholders.variableGrossSalary"),
+    helpKey: "help.variableGrossSalary",
+    width: "third",
+    optional: true,
+    workerTypes: ["whiteCollar", "intern"],
+  },
+  hourlyRate: {
+    labelKey: "sections.salary.hourlyRate",
+    type: "number",
+    placeholder: t("placeholders.hourlyRate"),
+    helpKey: "help.hourlyRate",
+    width: "third",
+    workerTypes: ["blueCollar"],
+  },
+  dayRate: {
+    labelKey: "sections.salary.dayRate",
+    type: "number",
+    placeholder: t("placeholders.dayRate"),
+    helpKey: "help.dayRate",
+    width: "third",
+    workerTypes: ["freelancer"],
+  },
+  agencyCutPercent: {
+    labelKey: "sections.salary.agencyCutPercent",
+    type: "number",
+    placeholder: t("placeholders.agencyCutPercent"),
+    helpKey: "help.agencyCutPercent",
+    width: "third",
+    optional: true,
+    workerTypes: ["freelancer"],
+  },
+  clientDayBudget: {
+    labelKey: "sections.salary.clientDayBudget",
+    type: "number",
+    placeholder: t("placeholders.clientDayBudget"),
+    helpKey: "help.clientDayBudget",
+    width: "third",
+    optional: true,
+    workerTypes: ["freelancer"],
+  },
+  bursaryAmount: {
+    labelKey: "sections.salary.bursaryAmount",
+    type: "number",
+    placeholder: t("placeholders.bursaryAmount"),
+    helpKey: "help.bursaryAmount",
+    width: "third",
+    workerTypes: ["phdResearcher"],
+  },
+  virtualGrossSalary: {
+    labelKey: "sections.salary.virtualGrossSalary",
+    type: "number",
+    placeholder: t("placeholders.virtualGrossSalary"),
+    helpKey: "help.virtualGrossSalary",
+    width: "third",
+    optional: true,
+    workerTypes: ["phdResearcher"],
   },
   thirteenthMonth: {
     labelKey: "sections.benefits.thirteenthMonth",
@@ -247,6 +400,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     ],
     helpKey: "help.thirteenthMonth",
     width: "third",
+    workerTypes: ["whiteCollar", "blueCollar", "intern", "phdResearcher"],
   },
   mealVouchers: {
     labelKey: "sections.benefits.mealVouchers",
@@ -254,6 +408,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.mealVouchers"),
     helpKey: "help.mealVouchers",
     width: "third",
+    workerTypes: ["whiteCollar", "blueCollar", "intern", "phdResearcher"],
   },
   ecoCheques: {
     labelKey: "sections.benefits.ecoCheques",
@@ -261,6 +416,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.ecoCheques"),
     helpKey: "help.ecoCheques",
     width: "third",
+    workerTypes: ["whiteCollar", "blueCollar", "intern", "phdResearcher"],
   },
   groupInsurance: {
     labelKey: "sections.benefits.groupInsurance",
@@ -268,6 +424,59 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.groupInsurance"),
     helpKey: "help.groupInsurance",
     width: "half",
+    workerTypes: ["whiteCollar", "blueCollar", "intern", "phdResearcher"],
+  },
+  hasCompanyCar: {
+    labelKey: "sections.benefits.hasCompanyCar",
+    type: "boolean",
+    options: [
+      { value: "yes", label: t("options.yes") },
+      { value: "no", label: t("options.no") },
+    ],
+    helpKey: "help.hasCompanyCar",
+    width: "full",
+  },
+  companyCarModel: {
+    labelKey: "sections.benefits.companyCarModel",
+    type: "text",
+    placeholder: t("placeholders.companyCarModel"),
+    helpKey: "help.companyCarModel",
+    width: "third",
+    optional: true,
+  },
+  companyCarFuelType: {
+    labelKey: "sections.benefits.companyCarFuelType",
+    type: "select",
+    placeholder: t("placeholders.companyCarFuelType"),
+    options: [
+      { value: "electric", label: t("formOptions.carFuelType.electric") },
+      { value: "hybrid", label: t("formOptions.carFuelType.hybrid") },
+      { value: "fuel", label: t("formOptions.carFuelType.fuel") },
+    ],
+    helpKey: "help.companyCarFuelType",
+    width: "third",
+  },
+  companyCarCardScope: {
+    labelKey: "sections.benefits.companyCarCardScope",
+    type: "select",
+    placeholder: t("placeholders.companyCarCardScope"),
+    options: [
+      { value: "belgium", label: t("formOptions.carCardScope.belgium") },
+      { value: "benelux", label: t("formOptions.carCardScope.benelux") },
+      { value: "europe", label: t("formOptions.carCardScope.europe") },
+    ],
+    helpKey: "help.companyCarCardScope",
+    width: "third",
+  },
+  hasEquity: {
+    labelKey: "sections.benefits.hasEquity",
+    type: "boolean",
+    options: [
+      { value: "yes", label: t("options.yes") },
+      { value: "no", label: t("options.no") },
+    ],
+    helpKey: "help.hasEquity",
+    width: "full",
   },
   otherInsurances: {
     labelKey: "sections.benefits.otherInsurances",
@@ -284,11 +493,74 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     helpKey: "help.otherBenefits",
     optional: true,
   },
+  locationGranularity: {
+    labelKey: "sections.commute.locationGranularity",
+    type: "select",
+    placeholder: t("placeholders.locationGranularity"),
+    options: [
+      { value: "country", label: t("formOptions.locationGranularity.country") },
+      { value: "province", label: t("formOptions.locationGranularity.province") },
+      { value: "city", label: t("formOptions.locationGranularity.city") },
+    ],
+    helpKey: "help.locationGranularity",
+    width: "half",
+    optional: true,
+  },
+  workProvince: {
+    labelKey: "sections.commute.workProvince",
+    type: "select",
+    placeholder: t("placeholders.workProvince"),
+    options: [
+      { value: "Antwerp", label: t("formOptions.beProvince.antwerp") },
+      { value: "East Flanders", label: t("formOptions.beProvince.eastFlanders") },
+      { value: "Flemish Brabant", label: t("formOptions.beProvince.flemishBrabant") },
+      { value: "Limburg", label: t("formOptions.beProvince.limburg") },
+      { value: "West Flanders", label: t("formOptions.beProvince.westFlanders") },
+      { value: "Hainaut", label: t("formOptions.beProvince.hainaut") },
+      { value: "Liège", label: t("formOptions.beProvince.liege") },
+      { value: "Luxembourg", label: t("formOptions.beProvince.luxembourg") },
+      { value: "Namur", label: t("formOptions.beProvince.namur") },
+      { value: "Walloon Brabant", label: t("formOptions.beProvince.walloonBrabant") },
+      { value: "Brussels-Capital", label: t("formOptions.beProvince.brussels") },
+    ],
+    helpKey: "help.workProvince",
+    width: "half",
+    optional: true,
+  },
+  residenceCountry: {
+    labelKey: "sections.commute.residenceCountry",
+    type: "select",
+    placeholder: t("placeholders.residenceCountry"),
+    // Cross-border workers: residence may differ from the work country, so this
+    // includes neighbours, not just the countries we currently collect data for.
+    options: [
+      { value: "Belgium", label: t("formOptions.residenceCountry.belgium") },
+      { value: "Netherlands", label: t("formOptions.residenceCountry.netherlands") },
+      { value: "Germany", label: t("formOptions.residenceCountry.germany") },
+      { value: "France", label: t("formOptions.residenceCountry.france") },
+      { value: "Luxembourg", label: t("formOptions.residenceCountry.luxembourg") },
+    ],
+    helpKey: "help.residenceCountry",
+    width: "half",
+    optional: true,
+  },
   workCity: {
     labelKey: "sections.commute.workCity",
     type: "text",
     placeholder: t("placeholders.workCity"),
     helpKey: "help.workCity",
+    width: "half",
+    optional: true,
+  },
+  commuteUnit: {
+    labelKey: "sections.commute.commuteUnit",
+    type: "select",
+    placeholder: t("placeholders.commuteUnit"),
+    options: [
+      { value: "km", label: t("formOptions.commuteUnit.km") },
+      { value: "minutes", label: t("formOptions.commuteUnit.minutes") },
+    ],
+    helpKey: "help.commuteUnit",
     width: "half",
     optional: true,
   },
@@ -298,6 +570,14 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     placeholder: t("placeholders.commuteDistance"),
     helpKey: "help.commuteDistance",
     width: "half",
+  },
+  commuteTimeMinutes: {
+    labelKey: "sections.commute.commuteTimeMinutes",
+    type: "number",
+    placeholder: t("placeholders.commuteTimeMinutes"),
+    helpKey: "help.commuteTimeMinutes",
+    width: "half",
+    optional: true,
   },
   commuteMethod: {
     labelKey: "sections.commute.commuteMethod",
@@ -352,6 +632,14 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     helpKey: "help.stressLevel",
     width: "half",
   },
+  jobSatisfaction: {
+    labelKey: "sections.workLife.jobSatisfaction",
+    type: "number",
+    placeholder: t("placeholders.jobSatisfaction"),
+    helpKey: "help.jobSatisfaction",
+    width: "half",
+    optional: true,
+  },
   reports: {
     labelKey: "sections.workLife.reports",
     type: "number",
@@ -373,14 +661,19 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
 // Define which fields are available for each country
 export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
   Belgium: [
+    "workerType",
+    "contractType",
+    "contractDurationMonths",
     "age",
     "education",
+    "degreeId",
     "workExperience",
     "civilStatus",
     "dependents",
     "sector",
     "employeeCount",
     "multinational",
+    "publiclyListed",
     "jobTitle",
     "seniority",
     "jobDescription",
@@ -391,14 +684,32 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
     "grossSalary",
     "netSalary",
     "netCompensation",
+    "fixedGrossSalary",
+    "variableGrossSalary",
+    "hourlyRate",
+    "dayRate",
+    "agencyCutPercent",
+    "clientDayBudget",
+    "bursaryAmount",
+    "virtualGrossSalary",
     "thirteenthMonth",
     "mealVouchers",
     "ecoCheques",
     "groupInsurance",
+    "hasCompanyCar",
+    "companyCarModel",
+    "companyCarFuelType",
+    "companyCarCardScope",
+    "hasEquity",
     "otherInsurances",
     "otherBenefits",
+    "locationGranularity",
+    "workProvince",
+    "residenceCountry",
     "workCity",
+    "commuteUnit",
     "commuteDistance",
+    "commuteTimeMinutes",
     "commuteMethod",
     "commuteCompensation",
     "teleworkDays",
@@ -406,6 +717,62 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
     "reports",
     "dayOffEase",
     "stressLevel",
+    "jobSatisfaction",
+    "extraNotes",
+  ],
+  Netherlands: [
+    "workerType",
+    "contractType",
+    "contractDurationMonths",
+    "age",
+    "education",
+    "degreeId",
+    "workExperience",
+    "civilStatus",
+    "dependents",
+    "sector",
+    "employeeCount",
+    "multinational",
+    "publiclyListed",
+    "jobTitle",
+    "seniority",
+    "jobDescription",
+    "officialHours",
+    "averageHours",
+    "shiftDescription",
+    "onCall",
+    "grossSalary",
+    "netSalary",
+    "netCompensation",
+    "fixedGrossSalary",
+    "variableGrossSalary",
+    "hourlyRate",
+    "dayRate",
+    "agencyCutPercent",
+    "clientDayBudget",
+    "bursaryAmount",
+    "virtualGrossSalary",
+    "hasCompanyCar",
+    "companyCarModel",
+    "companyCarFuelType",
+    "companyCarCardScope",
+    "hasEquity",
+    "otherInsurances",
+    "otherBenefits",
+    "locationGranularity",
+    "residenceCountry",
+    "workCity",
+    "commuteUnit",
+    "commuteDistance",
+    "commuteTimeMinutes",
+    "commuteMethod",
+    "commuteCompensation",
+    "teleworkDays",
+    "vacationDays",
+    "reports",
+    "dayOffEase",
+    "stressLevel",
+    "jobSatisfaction",
     "extraNotes",
   ],
 };
@@ -427,4 +794,22 @@ export const getFieldConfigsForCountry = (
       obj[key] = allFieldConfigs[key];
       return obj;
     }, {} as FieldConfigs);
+};
+
+/**
+ * Whether a given country's form actually collects (renders an input for) a
+ * field. Mirrors the render-time country filter in getFieldConfigsForCountry:
+ * an unknown country (or none chosen yet) falls back to "collects everything",
+ * exactly as the form does. The validation schema uses this so it never marks a
+ * field required for a country that has no way to enter it (which would make the
+ * form silently un-submittable — the errors would attach to non-rendered inputs).
+ */
+export const countryCollectsField = (
+  country: string | undefined | null,
+  field: string
+): boolean => {
+  if (!country) return true;
+  const allowed = COUNTRY_FIELD_CONFIGS[country];
+  if (!allowed) return true;
+  return allowed.includes(field);
 };

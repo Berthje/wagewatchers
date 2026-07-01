@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales } from "../../i18n";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
 import { SalaryDisplayProvider } from "@/contexts/salary-display-context";
 
 const geistSans = Geist({
@@ -15,6 +15,13 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export function generateStaticParams() {
@@ -40,7 +47,11 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <SalaryDisplayProvider>
-        <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</div>
+        <div
+          className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
+        >
+          {children}
+        </div>
       </SalaryDisplayProvider>
     </NextIntlClientProvider>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -14,19 +14,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Bug,
-  Lightbulb,
-  TrendingUp,
-  X,
-  Calendar,
-  User,
-  Mail,
-  GripVertical,
-  Search,
-  Loader2,
-} from "lucide-react";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Bug, Lightbulb, TrendingUp, X, Calendar, Mail, Hash, GripVertical, Search, Loader2 } from "lucide-react";
 import { AdminAuthGuard } from "@/components/admin-auth-guard";
-import { AdminHeader } from "@/components/admin-header";
+import { AdminShell } from "@/components/admin/admin-shell";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import {
   DndContext,
   DragEndEvent,
@@ -40,6 +36,8 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
+import { logError, logWarning } from "@/lib/logger";
 
 interface Report {
   id: number;
@@ -54,12 +52,23 @@ interface Report {
   email?: string;
 }
 
-const statusColumns = ["TODO", "IN_PROGRESS", "DONE", "CANCELLED"] as const;
-const priorityColors = {
-  LOW: "bg-stone-700 text-stone-200",
-  MEDIUM: "bg-amber-900/50 text-amber-200",
-  HIGH: "bg-orange-900/50 text-orange-200",
-  CRITICAL: "bg-red-900/50 text-red-200",
+type Status = Report["status"];
+
+const statusColumns: Status[] = ["TODO", "IN_PROGRESS", "DONE", "CANCELLED"];
+const statusLabels: Record<Status, string> = {
+  TODO: "To do",
+  IN_PROGRESS: "In progress",
+  DONE: "Done",
+  CANCELLED: "Cancelled",
+};
+
+// Restrained priority scale: brand for what's urgent, destructive only for
+// critical, muted otherwise — no rainbow of semantic colors.
+const priorityBadgeClass: Record<Report["priority"], string> = {
+  LOW: "border-border text-muted-foreground",
+  MEDIUM: "border-border text-foreground",
+  HIGH: "border-brand/40 text-brand",
+  CRITICAL: "border-destructive/40 text-destructive",
 };
 
 const typeIcons = {
@@ -68,38 +77,44 @@ const typeIcons = {
   IMPROVEMENT: TrendingUp,
 };
 
-// Droppable Column Component
+function PriorityBadge({ priority }: Readonly<{ priority: Report["priority"] }>) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "font-mono text-[10px] uppercase tracking-wider",
+        priorityBadgeClass[priority]
+      )}
+    >
+      {priority}
+    </Badge>
+  );
+}
+
+// Droppable column
 function DroppableColumn({
   status,
   children,
   count,
-}: Readonly<{
-  status: string;
-  children: React.ReactNode;
-  count: number;
-}>) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: status,
-  });
+}: Readonly<{ status: Status; children: React.ReactNode; count: number }>) {
+  const { setNodeRef, isOver } = useDroppable({ id: status });
 
   return (
     <div
-      className={`bg-stone-800/50 rounded-lg border-2 transition-colors flex flex-col ${
-        isOver ? "border-amber-500 bg-amber-900/20" : "border-stone-700"
-      }`}
+      className={cn(
+        "flex flex-col rounded-xl border bg-card transition-colors",
+        isOver ? "border-brand bg-brand/5" : "border-border"
+      )}
     >
-      <div className="p-4 pb-3 border-b border-stone-700 bg-stone-800/70 rounded-t-lg sticky top-0 z-10">
-        <h2 className="text-lg font-semibold capitalize text-stone-100">
-          {status.replace("_", " ").toLowerCase()}
-          <span className="ml-2 text-sm font-normal text-stone-400">({count})</span>
-        </h2>
+      <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-border bg-card/95 px-4 py-3 backdrop-blur">
+        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          {statusLabels[status]}
+        </span>
+        <span className="font-mono text-xs tabular-nums text-muted-foreground">{count}</span>
       </div>
       <div
         ref={setNodeRef}
-        className="p-4 overflow-y-auto flex-1 max-h-[calc(100vh-350px)] scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-transparent"
-        style={{
-          scrollbarWidth: "thin",
-        }}
+        className="max-h-[calc(100vh-320px)] flex-1 overflow-y-auto p-3 scrollbar-thin"
       >
         {children}
       </div>
@@ -107,14 +122,13 @@ function DroppableColumn({
   );
 }
 
-// Sortable Card Component
+// Sortable card — drag lives on the grip handle only, so a click on the body
+// unambiguously opens the detail sheet.
 function SortableReportCard({
   report,
   onSelect,
-}: Readonly<{
-  report: Report;
-  onSelect: (report: Report) => void;
-}>) {
+  pending,
+}: Readonly<{ report: Report; onSelect: (id: number) => void; pending: boolean }>) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: report.id,
   });
@@ -128,46 +142,54 @@ function SortableReportCard({
   const TypeIcon = typeIcons[report.type];
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className="mb-3">
       <Card
-        className="cursor-grab active:cursor-grabbing hover:shadow-lg transition-all hover:border-amber-500 border-stone-700 bg-stone-900 mb-0"
-        onClick={() => {
-          // Only open detail view on single click without dragging
-          if (!isDragging) {
-            onSelect(report);
+        role="button"
+        tabIndex={0}
+        onClick={() => onSelect(report.id)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onSelect(report.id);
           }
         }}
+        className="cursor-pointer border-border bg-card p-3.5 transition-colors hover:border-brand/50 focus-visible:border-brand focus-visible:outline-none"
       >
-        <CardHeader className="pb-2.5 pt-3 px-3.5 space-y-0">
-          <div className="flex items-center gap-2 mb-2 min-w-0">
-            <GripVertical className="w-4 h-4 text-stone-600 shrink-0" />
-            <TypeIcon className="w-4 h-4 text-stone-400 shrink-0" />
-            <CardTitle className="text-sm font-semibold text-stone-100 truncate flex-1 min-w-0">
-              {report.title}
-            </CardTitle>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge className={`${priorityColors[report.priority]} text-xs px-2 py-0.5 font-medium`}>
-              {report.priority}
-            </Badge>
-            <span className="text-xs text-stone-500">#{report.id}</span>
-          </div>
-        </CardHeader>
-        <CardContent className="px-3.5 pb-3 pt-1.5">
-          <p className="text-sm text-stone-400 mb-2.5 line-clamp-2 leading-relaxed">
-            {report.description}
+        <div className="mb-2 flex items-start gap-2">
+          <button
+            type="button"
+            aria-label="Drag to move"
+            className="mt-0.5 cursor-grab touch-none text-muted-foreground/50 transition-colors hover:text-muted-foreground active:cursor-grabbing"
+            onClick={(e) => e.stopPropagation()}
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+          <TypeIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+          <p className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
+            {report.title}
           </p>
-          <div className="flex items-center text-xs text-stone-400">
-            <Calendar className="w-3.5 h-3.5 mr-1.5" />
-            <span>
-              {new Date(report.createdAt).toLocaleDateString()}{" "}
-              {new Date(report.createdAt).toLocaleTimeString(undefined, {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
+        </div>
+        <p className="mb-2.5 line-clamp-2 pl-6 text-sm leading-relaxed text-muted-foreground">
+          {report.description}
+        </p>
+        <div className="flex items-center justify-between gap-2 pl-6">
+          <div className="flex items-center gap-2">
+            <PriorityBadge priority={report.priority} />
+            <span className="font-mono text-[11px] text-muted-foreground/70">#{report.id}</span>
           </div>
-        </CardContent>
+          <span className="flex items-center gap-1 font-mono text-[10px] text-muted-foreground/70">
+            {pending ? (
+              <>
+                <Loader2 className="h-3 w-3 animate-spin" />
+                saving
+              </>
+            ) : (
+              new Date(report.createdAt).toLocaleDateString()
+            )}
+          </span>
+        </div>
       </Card>
     </div>
   );
@@ -176,21 +198,21 @@ function SortableReportCard({
 export default function AdminReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<{
-    status?: string;
-    type?: string;
-    priority?: string;
-  }>({});
+  const [filter, setFilter] = useState<{ status?: string; type?: string; priority?: string }>({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
   const [activeId, setActiveId] = useState<number | null>(null);
+  const [pendingIds, setPendingIds] = useState<Set<number>>(new Set());
+
+  // Mirror latest reports into a ref so the optimistic updater can read the
+  // pre-image without closing over a stale array (the source of the old race).
+  const reportsRef = useRef<Report[]>([]);
+  useEffect(() => {
+    reportsRef.current = reports;
+  }, [reports]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
 
   const fetchReports = useCallback(async () => {
@@ -202,11 +224,10 @@ export default function AdminReportsPage() {
 
       const response = await fetch(`/api/reports?${params}`);
       if (response.ok) {
-        const data = await response.json();
-        setReports(data);
+        setReports(await response.json());
       }
     } catch (error) {
-      console.error("Failed to fetch reports:", error);
+      logError("Failed to fetch reports", error);
     } finally {
       setLoading(false);
     }
@@ -216,430 +237,340 @@ export default function AdminReportsPage() {
     fetchReports();
   }, [fetchReports]);
 
-  const updateReportStatus = async (reportId: number, newStatus: string) => {
-    try {
-      // Update the database first
-      const response = await fetch("/api/reports", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: reportId,
-          status: newStatus,
-        }),
+  // Optimistic status change with rollback. Applies locally first, reconciles
+  // with the server response, and reverts just this report on failure.
+  const applyStatus = useCallback((id: number, status: Status) => {
+    const prev = reportsRef.current.find((r) => r.id === id);
+    if (!prev || prev.status === status) return; // same column / unknown → no-op
+
+    setReports((rs) =>
+      rs.map((r) => (r.id === id ? { ...r, status, updatedAt: new Date().toISOString() } : r))
+    );
+    setPendingIds((p) => new Set(p).add(id));
+
+    fetch("/api/reports", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const server = (await res.json()) as Report;
+        setReports((rs) => rs.map((r) => (r.id === id ? server : r)));
+      })
+      .catch((error) => {
+        logWarning("Failed to update report status; rolling back", { id, status });
+        logError("Error updating report status", error, { id, status });
+        setReports((rs) => rs.map((r) => (r.id === id ? prev : r)));
+      })
+      .finally(() => {
+        setPendingIds((p) => {
+          const next = new Set(p);
+          next.delete(id);
+          return next;
+        });
       });
+  }, []);
 
-      if (response.ok) {
-        const updatedReport = await response.json();
-        // Update local state with the full updated report from server
-        setReports(reports.map((report) => (report.id === reportId ? updatedReport : report)));
-      } else {
-        console.error("Failed to update report status");
-        alert("Failed to update report status. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error updating report status:", error);
-      alert("Failed to update report status. Please try again.");
+  // Group + search in one memoized pass instead of re-filtering per column per render.
+  const byStatus = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    const matches = (r: Report) =>
+      q === "" ||
+      r.title.toLowerCase().includes(q) ||
+      r.description.toLowerCase().includes(q) ||
+      r.id.toString().includes(q);
+    const groups: Record<Status, Report[]> = {
+      TODO: [],
+      IN_PROGRESS: [],
+      DONE: [],
+      CANCELLED: [],
+    };
+    for (const r of reports) {
+      if (matches(r)) groups[r.status].push(r);
     }
-  };
+    return groups;
+  }, [reports, searchQuery]);
 
-  const getReportsByStatus = (status: string) => {
-    return reports.filter((report) => {
-      const matchesStatus = report.status === status;
-      const matchesSearch =
-        searchQuery.trim() === "" ||
-        report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        report.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        report.id.toString().includes(searchQuery);
-      return matchesStatus && matchesSearch;
-    });
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as number);
-  };
+  const handleDragStart = (event: DragStartEvent) => setActiveId(event.active.id as number);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
-
     if (!over) return;
 
-    const activeReport = reports.find((r) => r.id === active.id);
+    const activeReport = reportsRef.current.find((r) => r.id === active.id);
     if (!activeReport) return;
 
     const overId = over.id;
+    // Dropped on a column, or on a card — resolve the target status either way.
+    const targetStatus = statusColumns.includes(overId as Status)
+      ? (overId as Status)
+      : reportsRef.current.find((r) => r.id === overId)?.status;
 
-    // Check if dropped over a status column directly
-    if (statusColumns.includes(overId as any)) {
-      updateReportStatus(activeReport.id, overId as string);
-    } else {
-      // Dropped over another card - find which column that card is in
-      const overReport = reports.find((r) => r.id === overId);
-      if (overReport && overReport.status !== activeReport.status) {
-        updateReportStatus(activeReport.id, overReport.status);
-      }
-    }
+    if (targetStatus) applyStatus(activeReport.id, targetStatus);
   };
 
-  const activeReport = activeId ? reports.find((r) => r.id === activeId) : null;
-
-  if (loading) {
-    return (
-      <AdminAuthGuard>
-        <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
-            <p className="text-sm text-stone-400">Loading reports...</p>
-          </div>
-        </div>
-      </AdminAuthGuard>
-    );
-  }
+  const selectedReport =
+    selectedReportId != null ? reports.find((r) => r.id === selectedReportId) ?? null : null;
+  const activeReport = activeId != null ? reports.find((r) => r.id === activeId) ?? null : null;
+  const ActiveIcon = activeReport ? typeIcons[activeReport.type] : null;
+  const hasFilters = Boolean(searchQuery || filter.status || filter.type || filter.priority);
 
   return (
     <AdminAuthGuard>
-      <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-        <div className="container mx-auto px-4 py-6">
-          {/* Admin Header with Home, Logout, and Back button */}
-          <AdminHeader />
+      <AdminShell>
+        <AdminPageHeader
+          eyebrow="Moderation / Feedback"
+          title="Reports"
+          subtitle="Bug reports, feature requests, and improvements from the feedback form."
+        />
 
-          <div className="mt-6">
-            <h1 className="text-3xl font-bold mb-4 text-stone-100">Bug & Feature Reports</h1>
-
-            {/* Filters */}
-            <div className="space-y-4 mb-6">
-              {/* Search Bar */}
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-500" />
-                <Input
-                  type="text"
-                  placeholder="Search by title, description, or ID..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-stone-800 border-stone-700"
-                />
-              </div>
-
-              {/* Filter Dropdowns */}
-              <div className="flex flex-wrap gap-3">
-                <Select
-                  onValueChange={(value) =>
-                    setFilter({
-                      ...filter,
-                      status: value === "all" ? undefined : value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="TODO">To Do</SelectItem>
-                    <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                    <SelectItem value="DONE">Done</SelectItem>
-                    <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  onValueChange={(value) =>
-                    setFilter({
-                      ...filter,
-                      type: value === "all" ? undefined : value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Filter by type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="BUG">Bug</SelectItem>
-                    <SelectItem value="FEATURE">Feature</SelectItem>
-                    <SelectItem value="IMPROVEMENT">Improvement</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  onValueChange={(value) =>
-                    setFilter({
-                      ...filter,
-                      priority: value === "all" ? undefined : value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Filter by priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Priorities</SelectItem>
-                    <SelectItem value="LOW">Low</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HIGH">High</SelectItem>
-                    <SelectItem value="CRITICAL">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {(searchQuery || filter.status || filter.type || filter.priority) && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setFilter({});
-                    }}
-                    className="text-stone-400"
-                  >
-                    <X className="w-4 h-4 mr-1" />
-                    Clear filters
-                  </Button>
-                )}
-              </div>
-            </div>
+        {/* Filters */}
+        <div className="mb-6 space-y-3">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search title, description, or #ID…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
 
-          {/* Kanban Board */}
+          <div className="flex flex-wrap gap-3">
+            <Select
+              value={filter.status ?? "all"}
+              onValueChange={(v) => setFilter({ ...filter, status: v === "all" ? undefined : v })}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All status</SelectItem>
+                <SelectItem value="TODO">To do</SelectItem>
+                <SelectItem value="IN_PROGRESS">In progress</SelectItem>
+                <SelectItem value="DONE">Done</SelectItem>
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filter.type ?? "all"}
+              onValueChange={(v) => setFilter({ ...filter, type: v === "all" ? undefined : v })}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                <SelectItem value="BUG">Bug</SelectItem>
+                <SelectItem value="FEATURE">Feature</SelectItem>
+                <SelectItem value="IMPROVEMENT">Improvement</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filter.priority ?? "all"}
+              onValueChange={(v) => setFilter({ ...filter, priority: v === "all" ? undefined : v })}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All priorities</SelectItem>
+                <SelectItem value="LOW">Low</SelectItem>
+                <SelectItem value="MEDIUM">Medium</SelectItem>
+                <SelectItem value="HIGH">High</SelectItem>
+                <SelectItem value="CRITICAL">Critical</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {hasFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSearchQuery("");
+                  setFilter({});
+                }}
+                className="text-muted-foreground"
+              >
+                <X className="mr-1 h-4 w-4" />
+                Clear
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="h-7 w-7 animate-spin text-brand" />
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Loading reports…
+              </p>
+            </div>
+          </div>
+        ) : (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
               {statusColumns.map((status) => {
-                const statusReports = getReportsByStatus(status);
+                const columnReports = byStatus[status];
                 return (
-                  <DroppableColumn key={status} status={status} count={statusReports.length}>
+                  <DroppableColumn key={status} status={status} count={columnReports.length}>
                     <SortableContext
-                      items={statusReports.map((r) => r.id)}
+                      items={columnReports.map((r) => r.id)}
                       strategy={verticalListSortingStrategy}
                     >
-                      {statusReports.length > 0 ? (
-                        <div className="space-y-3">
-                          {statusReports.map((report) => (
-                            <SortableReportCard
-                              key={report.id}
-                              report={report}
-                              onSelect={setSelectedReport}
-                            />
-                          ))}
-                        </div>
+                      {columnReports.length > 0 ? (
+                        columnReports.map((report) => (
+                          <SortableReportCard
+                            key={report.id}
+                            report={report}
+                            onSelect={setSelectedReportId}
+                            pending={pendingIds.has(report.id)}
+                          />
+                        ))
                       ) : (
-                        <div className="flex flex-col items-center justify-center py-8 text-stone-600">
-                          <p className="text-sm text-center">
-                            {searchQuery || filter.status || filter.type || filter.priority
-                              ? "No reports match your filters"
-                              : "No reports in this column"}
-                          </p>
-                        </div>
+                        <p className="py-8 text-center font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground/60">
+                          {hasFilters ? "No matches" : "Empty"}
+                        </p>
                       )}
                     </SortableContext>
                   </DroppableColumn>
                 );
               })}
             </div>
+
             <DragOverlay>
-              {activeReport ? (
-                <Card className="cursor-grabbing shadow-2xl border-stone-700 bg-stone-900 rotate-3">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {React.createElement(typeIcons[activeReport.type], {
-                          className: "w-5 h-5 text-stone-400",
-                        })}
-                        <CardTitle className="text-sm font-medium text-stone-100">
-                          {activeReport.title}
-                        </CardTitle>
-                      </div>
-                    </div>
-                    <Badge className={priorityColors[activeReport.priority]}>
-                      {activeReport.priority}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-stone-400 line-clamp-3">
-                      {activeReport.description}
+              {activeReport && ActiveIcon ? (
+                <Card className="rotate-2 border-brand/50 bg-card p-3.5 shadow-2xl">
+                  <div className="mb-2 flex items-center gap-2">
+                    <ActiveIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {activeReport.title}
                     </p>
-                  </CardContent>
+                  </div>
+                  <PriorityBadge priority={activeReport.priority} />
                 </Card>
               ) : null}
             </DragOverlay>
           </DndContext>
-        </div>
+        )}
 
-        {/* Ticket Detail Sidebar */}
-        {selectedReport && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end"
-            onClick={() => setSelectedReport(null)}
-          >
-            <div
-              className="w-full max-w-2xl bg-stone-900 shadow-2xl h-full overflow-y-auto border-l border-stone-700 scrollbar-thin"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="sticky top-0 bg-stone-900/95 backdrop-blur-md border-b border-stone-700 p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {React.createElement(typeIcons[selectedReport.type], {
-                    className: "w-5 h-5 text-stone-400",
-                  })}
-                  <div>
-                    <h2 className="text-lg font-semibold text-stone-100">
-                      Ticket #{selectedReport.id}
-                    </h2>
-                    <p className="text-sm text-stone-400">
-                      {selectedReport.type.charAt(0).toUpperCase() +
-                        selectedReport.type.slice(1).toLowerCase()}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedReport(null)}
-                  className="text-stone-400 hover:text-stone-100 hover:bg-stone-800 rounded-full w-8 h-8 p-0"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
+        {/* Detail drawer */}
+        <Sheet
+          open={selectedReport != null}
+          onOpenChange={(open) => {
+            if (!open) setSelectedReportId(null);
+          }}
+        >
+          <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
+            {selectedReport && (
+              <>
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2 font-display text-lg">
+                    <span className="font-mono text-sm text-muted-foreground">
+                      #{selectedReport.id}
+                    </span>
+                    {selectedReport.title}
+                  </SheetTitle>
+                </SheetHeader>
 
-              <div className="p-6 space-y-8">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {React.createElement(typeIcons[selectedReport.type], {
-                      className: "w-6 h-6 text-stone-400",
-                    })}
-                    <div>
-                      <h3 className="text-lg font-semibold text-stone-100">
-                        {selectedReport.title}
-                      </h3>
-                      <p className="text-sm text-stone-400">#{selectedReport.id}</p>
-                    </div>
-                  </div>
-                  <Badge className={priorityColors[selectedReport.priority]}>
-                    {selectedReport.priority}
-                  </Badge>
-                </div>
-
-                {/* Status */}
-                <div>
-                  <Label className="text-sm font-medium text-stone-300">Status</Label>
-                  <div className="mt-1">
-                    <Badge variant="outline" className="capitalize text-stone-100 border-stone-600">
-                      {selectedReport.status.replace("_", " ").toLowerCase()}
+                <div className="mt-6 space-y-6">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <PriorityBadge priority={selectedReport.priority} />
+                    <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider">
+                      {selectedReport.type}
+                    </Badge>
+                    <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {statusLabels[selectedReport.status]}
                     </Badge>
                   </div>
-                </div>
 
-                {/* Description */}
-                <div>
-                  <Label className="text-sm font-medium text-stone-300">Description</Label>
-                  <div className="mt-2 p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                    <p className="text-stone-100 whitespace-pre-wrap">
+                  <div>
+                    <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Description
+                    </Label>
+                    <p className="mt-2 whitespace-pre-wrap rounded-lg border border-border bg-muted/30 p-4 text-sm leading-relaxed text-foreground">
                       {selectedReport.description}
                     </p>
                   </div>
-                </div>
 
-                {/* Reporter Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium text-stone-300 flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      Reporter ID
-                    </Label>
-                    <p className="mt-1 text-stone-100 font-mono text-sm">
-                      {selectedReport.trackingId}
-                    </p>
-                  </div>
-                  {selectedReport.email && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <Label className="text-sm font-medium text-stone-300 flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Email
+                      <Label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                        <Hash className="h-3.5 w-3.5" />
+                        Tracking ID
                       </Label>
-                      <p className="mt-1 text-stone-100">{selectedReport.email}</p>
+                      <p className="mt-1 font-mono text-sm text-foreground">
+                        {selectedReport.trackingId}
+                      </p>
                     </div>
-                  )}
-                </div>
-
-                {/* Dates */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium text-stone-300 flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      Created
-                    </Label>
-                    <p className="mt-1 text-stone-100">
-                      {new Date(selectedReport.createdAt).toLocaleString()}
-                    </p>
+                    {selectedReport.email && (
+                      <div>
+                        <Label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                          <Mail className="h-3.5 w-3.5" />
+                          Email
+                        </Label>
+                        <p className="mt-1 truncate text-sm text-foreground">{selectedReport.email}</p>
+                      </div>
+                    )}
+                    <div>
+                      <Label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                        <Calendar className="h-3.5 w-3.5" />
+                        Created
+                      </Label>
+                      <p className="mt-1 font-mono text-sm text-foreground">
+                        {new Date(selectedReport.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                        <Calendar className="h-3.5 w-3.5" />
+                        Updated
+                      </Label>
+                      <p className="mt-1 font-mono text-sm text-foreground">
+                        {new Date(selectedReport.updatedAt).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <Label className="text-sm font-medium text-stone-300 flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      Updated
+
+                  <div className="space-y-2 border-t border-border pt-6">
+                    <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Update status
                     </Label>
-                    <p className="mt-1 text-stone-100">
-                      {new Date(selectedReport.updatedAt).toLocaleString()}
-                    </p>
+                    <Select
+                      value={selectedReport.status}
+                      onValueChange={(newStatus) =>
+                        applyStatus(selectedReport.id, newStatus as Status)
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusColumns.map((s) => (
+                          <SelectItem key={s} value={s}>
+                            {statusLabels[s]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-
-                {/* Status Management */}
-                <div className="pt-6 border-t border-stone-700 space-y-3">
-                  <Label className="text-xs font-medium text-stone-400 uppercase tracking-wide">
-                    Update Status
-                  </Label>
-                  <Select
-                    value={selectedReport.status}
-                    onValueChange={(newStatus) => {
-                      updateReportStatus(selectedReport.id, newStatus);
-                      setSelectedReport({
-                        ...selectedReport,
-                        status: newStatus as any,
-                        updatedAt: new Date().toISOString(),
-                      });
-                    }}
-                  >
-                    <SelectTrigger className="w-full border-stone-700 bg-stone-800 text-stone-100 h-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-stone-700 bg-stone-800">
-                      <SelectItem
-                        value="TODO"
-                        className="text-stone-100 hover:bg-stone-700 focus:bg-stone-700"
-                      >
-                        To Do
-                      </SelectItem>
-                      <SelectItem
-                        value="IN_PROGRESS"
-                        className="text-stone-100 hover:bg-stone-700 focus:bg-stone-700"
-                      >
-                        In Progress
-                      </SelectItem>
-                      <SelectItem
-                        value="DONE"
-                        className="text-stone-100 hover:bg-stone-700 focus:bg-stone-700"
-                      >
-                        Done
-                      </SelectItem>
-                      <SelectItem
-                        value="CANCELLED"
-                        className="text-stone-100 hover:bg-stone-700 focus:bg-stone-700"
-                      >
-                        Cancelled
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+              </>
+            )}
+          </SheetContent>
+        </Sheet>
+      </AdminShell>
     </AdminAuthGuard>
   );
 }

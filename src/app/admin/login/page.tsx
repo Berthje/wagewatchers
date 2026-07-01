@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, Shield } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { logError } from "@/lib/logger";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -18,17 +19,16 @@ export default function AdminLoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if already authenticated and redirect to reports
+    // If already signed in, go straight to the command center.
     const checkAuth = async () => {
       try {
         const response = await fetch("/api/admin/verify");
         const data = await response.json();
-
         if (data.authenticated) {
-          router.push("/admin/reports");
+          router.push("/admin");
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        logError("Auth check error", error);
       }
     };
 
@@ -43,13 +43,8 @@ export default function AdminLoginPage() {
     try {
       const response = await fetch("/api/admin/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-          password: password.trim(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password: password.trim() }),
       });
 
       const data = await response.json();
@@ -62,7 +57,7 @@ export default function AdminLoginPage() {
         setError(data.error || "Login failed");
       }
     } catch (error) {
-      console.error("Login error:", error);
+      logError("Login error", error);
       setError("An error occurred during login");
     } finally {
       setIsLoading(false);
@@ -70,83 +65,119 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <header className="relative z-10 container mx-auto px-4 py-4 md:py-6">
-        <nav className="flex items-center justify-between">
-          <Link href="/en">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-stone-300 hover:text-stone-100 text-sm md:text-base"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Homepage
-            </Button>
-          </Link>
-        </nav>
+    <div className="lp-ledger relative flex min-h-screen flex-col bg-background text-foreground">
+      {/* Minimal top bar — no sidebar on the auth screen */}
+      <header className="mx-auto flex w-full max-w-6xl items-center px-6 py-5">
+        <Link
+          href="/en"
+          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Homepage
+        </Link>
       </header>
 
-      <div className="container mx-auto p-6 max-w-md">
-        <div className="mb-8 text-center">
-          <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Shield className="w-8 h-8 text-stone-900" />
+      <div className="flex flex-1 items-center justify-center px-6 pb-20">
+        <div className="w-full max-w-md">
+          {/* Brand + heading */}
+          <div className="mb-8">
+            <div
+              className="lp-rise mb-6 flex items-center gap-2.5"
+              style={{ animationDelay: "0.02s" }}
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground">
+                <span className="text-sm font-bold text-background">WW</span>
+              </div>
+              <span className="font-display text-lg font-semibold">WageWatchers</span>
+            </div>
+
+            <p
+              className="lp-rise mb-3 flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground"
+              style={{ animationDelay: "0.08s" }}
+            >
+              <span className="inline-block h-1.5 w-1.5 bg-brand" aria-hidden="true" />
+              Restricted · Staff only
+            </p>
+
+            <h1
+              className="lp-rise font-display text-3xl font-extrabold leading-[1.05] tracking-[-0.02em] md:text-4xl"
+              style={{ animationDelay: "0.14s" }}
+            >
+              Admin{" "}
+              <span className="relative inline-block">
+                access
+                <span className="lp-marker" aria-hidden="true" />
+              </span>
+            </h1>
+
+            <p
+              className="lp-rise mt-3 text-sm text-muted-foreground"
+              style={{ animationDelay: "0.2s" }}
+            >
+              Sign in to review entries, triage reports, and manage the platform.
+            </p>
           </div>
-          <h1 className="text-3xl font-bold mb-2 text-stone-100">Admin Login</h1>
-          <p className="text-stone-400">
-            Access the admin panel to manage bug reports and features.
+
+          {error && (
+            <Alert variant="destructive" className="lp-rise mb-6" style={{ animationDelay: "0.24s" }}>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <Card className="lp-rise" style={{ animationDelay: "0.28s" }}>
+            <CardContent className="p-6">
+              <form onSubmit={handleLogin} className="space-y-5">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground"
+                  >
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@wagewatchers.com"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="password"
+                    className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground"
+                  >
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
+
+                <Button type="submit" disabled={isLoading} className="w-full">
+                  {isLoading ? "Signing in…" : "Sign in"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <p
+            className="lp-rise mt-6 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+            style={{ animationDelay: "0.34s" }}
+          >
+            WageWatchers · Control room
           </p>
         </div>
-
-        {error && (
-          <Alert className="mb-6 border-red-800 bg-red-950/50">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <AlertDescription className="text-red-200">{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <Card className="border-stone-800 bg-stone-900/60 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-stone-100 text-lg">Login</CardTitle>
-          </CardHeader>
-          <CardContent className="mt-4">
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-stone-100">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="border-stone-700 bg-stone-800 text-stone-100"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-stone-100">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
-                  className="border-stone-700 bg-stone-800 text-stone-100"
-                  required
-                />
-              </div>
-
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

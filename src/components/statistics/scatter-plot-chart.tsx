@@ -35,28 +35,28 @@ export function ScatterPlotChart({ data, loading = false, onPointClick }: Scatte
 
   if (loading) {
     return (
-      <Card className="bg-stone-800 border-stone-700 space-y-3">
+      <Card className="border-border bg-card space-y-3">
         <CardHeader>
-          <CardTitle className="text-stone-100">{t("charts.scatterPlot.title")}</CardTitle>
-          <CardDescription className="text-stone-400">
+          <CardTitle className="text-foreground">{t("charts.scatterPlot.title")}</CardTitle>
+          <CardDescription className="text-muted-foreground">
             {t("charts.scatterPlot.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full h-64 md:h-96 bg-stone-800 rounded p-4">
+          <div className="w-full h-64 md:h-96 bg-muted rounded p-4">
             <div className="relative h-full">
               {/* Grid lines */}
               {[0, 1, 2, 3, 4].map((i) => (
                 <div
                   key={`scatter-grid-h-${i}`}
-                  className="absolute w-full h-px bg-stone-700"
+                  className="absolute w-full h-px bg-muted"
                   style={{ top: `${20 + i * 15}%` }}
                 ></div>
               ))}
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={`scatter-grid-v-${i}`}
-                  className="absolute h-full w-px bg-stone-700"
+                  className="absolute h-full w-px bg-muted"
                   style={{ left: `${15 + i * 14}%` }}
                 ></div>
               ))}
@@ -64,7 +64,7 @@ export function ScatterPlotChart({ data, loading = false, onPointClick }: Scatte
               {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].map((i) => (
                 <div
                   key={`scatter-point-${i}`}
-                  className="absolute w-2 h-2 bg-stone-500 rounded-full animate-pulse"
+                  className="absolute w-2 h-2 bg-muted rounded-full animate-pulse"
                   style={{
                     left: `${10 + Math.random() * 80}%`,
                     top: `${10 + Math.random() * 80}%`,
@@ -77,7 +77,7 @@ export function ScatterPlotChart({ data, loading = false, onPointClick }: Scatte
                 {[0, 1, 2, 3, 4].map((i) => (
                   <div
                     key={`scatter-x-label-${i}`}
-                    className="h-3 bg-stone-700 rounded animate-pulse w-6 md:w-8"
+                    className="h-3 bg-muted rounded animate-pulse w-6 md:w-8"
                   ></div>
                 ))}
               </div>
@@ -85,7 +85,7 @@ export function ScatterPlotChart({ data, loading = false, onPointClick }: Scatte
                 {[0, 1, 2, 3].map((i) => (
                   <div
                     key={`scatter-y-label-${i}`}
-                    className="h-3 bg-stone-700 rounded animate-pulse w-4 md:w-6"
+                    className="h-3 bg-muted rounded animate-pulse w-4 md:w-6"
                   ></div>
                 ))}
               </div>
@@ -97,15 +97,15 @@ export function ScatterPlotChart({ data, loading = false, onPointClick }: Scatte
   }
 
   return (
-    <Card className="bg-stone-800 border-stone-700 space-y-3">
+    <Card className="border-border bg-card space-y-3">
       <CardHeader>
-        <CardTitle className="text-stone-100">{t("charts.scatterPlot.title")}</CardTitle>
-        <CardDescription className="text-stone-400">
+        <CardTitle className="text-foreground">{t("charts.scatterPlot.title")}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {t("charts.scatterPlot.description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="w-full h-64 md:h-96">
+        <div className="w-full h-64 md:h-96 text-muted-foreground">
           <ResponsiveContainer
             key={`${preferences.currency}-${preferences.period}`}
             width="100%"
@@ -119,19 +119,21 @@ export function ScatterPlotChart({ data, loading = false, onPointClick }: Scatte
                 bottom: 25,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#44403c" />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.15} />
               <XAxis
                 type="number"
                 dataKey="experience"
                 name="experience"
-                stroke="#78716c"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
                 axisLine={false}
               />
               <YAxis
                 type="number"
                 dataKey="salary"
                 name="salary"
-                stroke="#78716c"
+                stroke="currentColor"
+                tick={{ fill: "currentColor" }}
                 axisLine={false}
                 tickFormatter={(value) =>
                   formatSalaryWithPreferences(

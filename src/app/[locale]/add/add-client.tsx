@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, useMemo, Suspense, type ReactNode, type Ref } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HelpCircle, ArrowLeft, Lock } from "lucide-react";
+import { HelpCircle, ArrowLeft, Lock, MapPin, CalendarClock, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -24,8 +25,17 @@ import { Combobox } from "@/components/ui/combobox";
 import { CityCombobox } from "@/components/ui/city-combobox";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useTranslations } from "next-intl";
-import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
+import { PageHeader } from "@/components/page-header";
 import { getAllCountries, getFormConfigForCountry } from "@/lib/salary-config";
 import { createFieldConfigs, getFieldConfigsForCountry } from "@/lib/field-configs";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -34,12 +44,58 @@ import {
   createSalaryEntrySchema,
   SalaryEntryFormData,
 } from "@/lib/validations/salary-entry.schema";
-import { getEntryToken, isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
+import {
+  getEntryToken,
+  isEntryEditable,
+  getEditTimeRemaining,
+} from "@/lib/entry-ownership";
+import { logError, logWarning } from "@/lib/logger";
+import { parseNumeric } from "@/lib/utils/parse-numeric";
+import { BenefitsSelector, type EntryBenefitValue } from "@/components/benefits-selector";
+import { getDegreesForEducation } from "@/lib/degrees-catalog";
 
-// Utility function to clean commute distance by keeping only numbers and dashes
+// Fields that render with a currency prefix and store a float.
+const MONEY_FIELDS = [
+  "grossSalary",
+  "netSalary",
+  "netCompensation",
+  "mealVouchers",
+  "ecoCheques",
+  "fixedGrossSalary",
+  "variableGrossSalary",
+  "hourlyRate",
+  "dayRate",
+  "clientDayBudget",
+  "bursaryAmount",
+  "virtualGrossSalary",
+];
+
+// Company-car detail fields only shown once "has company car" is selected.
+const COMPANY_CAR_DETAIL_FIELDS = ["companyCarModel", "companyCarFuelType", "companyCarCardScope"];
+
+// Salary-basis gating: choosing "gross" or "net" hides the fields belonging to
+// the other basis. "both" (or no choice yet) shows everything.
+const GROSS_SALARY_FIELDS = ["grossSalary", "fixedGrossSalary", "variableGrossSalary"];
+const NET_SALARY_FIELDS = ["netSalary", "netCompensation"];
+
+// Contract types that make sense per worker type (Belgian context): freelancers
+// work under a freelance agreement, interns under an internship, employees under
+// permanent/fixed-term/interim, and PhD researchers under fixed-term mandates.
+const CONTRACT_TYPES_BY_WORKER: Record<string, string[]> = {
+  whiteCollar: ["permanent", "fixedTerm", "interim"],
+  blueCollar: ["permanent", "fixedTerm", "interim"],
+  freelancer: ["freelance"],
+  intern: ["internship"],
+  phdResearcher: ["fixedTerm", "permanent"],
+};
+
+// Utility function to clean commute distance by keeping only numbers, decimal
+// points and dashes. The decimal point MUST be preserved: the schema validates
+// values like "10.5" and "5.5-12.5", so stripping the dot here would store
+// "105" for a validated "10.5" — silent 10x corruption. Keeping "." and "-"
+// makes the cleaned (stored) value identical to the validated value.
 const cleanCommuteDistance = (value: string): string => {
-  // Keep only numbers and dashes, remove all other characters
-  return value.replace(/[^0-9-]/g, "").trim();
+  return value.replace(/[^0-9.-]/g, "").trim();
 };
 
 const getSubmitButtonText = (
@@ -53,24 +109,93 @@ const getSubmitButtonText = (
   return isEditMode ? t("updateEntry") : t("submitEntry");
 };
 
+/**
+ * A numeric input backed by react-hook-form that stores a `number | undefined`.
+ *
+ * Uses type="text" + inputMode so browsers render a numeric keypad on mobile
+ * WITHOUT the inconsistent value-sanitization of type="number" (Firefox keeps
+ * the raw text; Chromium blanks an unparseable "2500,50", silently dropping the
+ * value). Local text state lets the user see exactly what they typed — including
+ * a comma decimal or an in-progress "38," — while parseNumeric() feeds the form
+ * a real number. Empty / invalid text becomes `undefined` so required-field
+ * validation still fires (and its error is now surfaced by the summary banner).
+ */
+function NumericField({
+  field,
+  placeholder,
+  inputMode,
+  className,
+  prefix,
+}: {
+  field: {
+    value: unknown;
+    name: string;
+    onChange: (value: number | undefined) => void;
+    onBlur: () => void;
+    ref?: Ref<HTMLInputElement>;
+  };
+  placeholder?: string;
+  inputMode: "decimal" | "numeric";
+  className?: string;
+  prefix?: ReactNode;
+}) {
+  const toText = (v: unknown) => (v === undefined || v === null || v === "" ? "" : String(v));
+  const [text, setText] = useState<string>(() => toText(field.value));
+
+  // Re-sync the visible text when the form value changes programmatically
+  // (edit-mode form.reset, post-submit reset, or the effects that clear a field
+  // when salary-basis / education change). Skip when the shown text already
+  // parses to the same number, so a mid-typing value like "38," isn't clobbered.
+  useEffect(() => {
+    if (parseNumeric(text) !== field.value) {
+      setText(toText(field.value));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [field.value]);
+
+  return (
+    <div className="relative">
+      {prefix}
+      <Input
+        type="text"
+        inputMode={inputMode}
+        placeholder={placeholder}
+        name={field.name}
+        ref={field.ref}
+        onBlur={field.onBlur}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          field.onChange(parseNumeric(e.target.value));
+        }}
+        className={className}
+      />
+    </div>
+  );
+}
+
 function AddEntryContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const locale = params.locale as string;
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSectionHelp, setShowSectionHelp] = useState<string | null>(null);
+  const [showDiscard, setShowDiscard] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editEntryId, setEditEntryId] = useState<number | null>(null);
+  const [editableUntil, setEditableUntil] = useState<string | null>(null);
   const [isLoadingEntry, setIsLoadingEntry] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryAfter, setRetryAfter] = useState<Date | null>(null);
   const [debouncedAlerts, setDebouncedAlerts] = useState<string[]>([]);
+  const [activeSection, setActiveSection] = useState<string>("location");
   const t = useTranslations("add");
-  const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
   const tEdit = useTranslations("edit");
   const confettiRef = useRef<number | null>(null);
+  // Scroll target for the validation-error summary shown when a submit is
+  // blocked by invalid input (see onInvalid).
+  const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
   // Ensure confetti interval cleared on unmount if navigation happens before animation ends
   useEffect(() => {
@@ -78,33 +203,6 @@ function AddEntryContent() {
       if (confettiRef.current) clearInterval(confettiRef.current);
     };
   }, []);
-
-  const getSectionHelpContent = (sectionKey: string, sectionFields: string[]) => {
-    // Dynamically generate help content based on the section's fields
-    return {
-      title: t(`sections.${sectionKey}.title`),
-      fields: sectionFields.map((fieldName) => {
-        const moneyFields = [
-          "grossSalary",
-          "netSalary",
-          "netCompensation",
-          "mealVouchers",
-          "ecoCheques",
-        ];
-
-        const labelKey = fieldConfigs[fieldName]?.labelKey || fieldName;
-        const name = moneyFields.includes(fieldName)
-          ? t(labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
-          : t(labelKey);
-
-        return {
-          name,
-          description: t(fieldConfigs[fieldName]?.helpKey || `help.${fieldName}`),
-          example: fieldConfigs[fieldName]?.placeholder || "",
-        };
-      }),
-    };
-  };
 
   // Helper function to get currency symbol
   const getCurrencySymbol = (currency: string) => {
@@ -115,22 +213,96 @@ function AddEntryContent() {
     return currencies.find((c) => c.value === currency)?.symbol || "€";
   };
 
-  // Create the validation schema with translations
-  const salaryEntrySchema = createSalaryEntrySchema(t);
+  // Build the validation schema once per locale. Rebuilding it on every render
+  // (the factory eagerly resolves every t() message) churns the resolver and
+  // means a single missing translation key throws on each keystroke.
+  const salaryEntrySchema = useMemo(() => createSalaryEntrySchema(t), [t]);
 
   const form = useForm<SalaryEntryFormData>({
     resolver: zodResolver(salaryEntrySchema),
     defaultValues: {
       multinational: false,
       currency: "EUR",
+      workerType: "whiteCollar",
+      benefits: [],
+      // Salary basis is no longer user-selectable — gross and net are both always
+      // collected — so it's fixed to "both". This keeps the stored value coherent
+      // and means neither NET_SALARY_FIELDS nor GROSS_SALARY_FIELDS is ever hidden.
+      salaryBasis: "both",
+      // Controlled from the first render so the honesty checkbox never flips
+      // uncontrolled->controlled, and its "must be checked" error behaves normally.
+      honestyConfirmation: false,
     },
   });
 
   const selectedCountry = form.watch("country");
   const selectedCurrency = form.watch("currency");
+  const selectedWorkerType = (form.watch("workerType") as string) || "whiteCollar";
+  const selectedContractType = form.watch("contractType") as string | undefined;
+  const selectedEducation = form.watch("education") as string | undefined;
+  const selectedSalaryBasis = form.watch("salaryBasis") as string | undefined;
+  const selectedLocationGranularity = form.watch("locationGranularity") as string | undefined;
+  const hasCompanyCar = form.watch("hasCompanyCar");
   const grossSalary = form.watch("grossSalary");
   const netSalary = form.watch("netSalary");
   const formConfig = selectedCountry ? getFormConfigForCountry(selectedCountry) : null;
+
+  // When the education level changes, drop a previously-picked degree that no
+  // longer matches the filtered list so the picker never shows a stale value.
+  useEffect(() => {
+    const current = form.getValues("degreeId");
+    if (current == null) return;
+    const stillValid = getDegreesForEducation(selectedCountry, selectedEducation).some(
+      (d) => d.id === current
+    );
+    if (!stillValid) {
+      form.setValue("degreeId", undefined, { shouldDirty: true });
+    }
+  }, [selectedEducation, selectedCountry, form]);
+
+  // Clear salary fields the chosen basis hides, so a stale value from the other
+  // basis is never submitted after switching gross <-> net.
+  useEffect(() => {
+    const toClear =
+      selectedSalaryBasis === "gross"
+        ? NET_SALARY_FIELDS
+        : selectedSalaryBasis === "net"
+          ? GROSS_SALARY_FIELDS
+          : [];
+    toClear.forEach((f) => form.setValue(f as keyof SalaryEntryFormData, undefined));
+  }, [selectedSalaryBasis, form]);
+
+  // Clear the finer-grained location fields the chosen granularity hides.
+  useEffect(() => {
+    if (selectedLocationGranularity === "country") {
+      form.setValue("workProvince", undefined);
+      form.setValue("workCity", undefined);
+    } else if (selectedLocationGranularity === "province") {
+      form.setValue("workCity", undefined);
+    } else if (selectedLocationGranularity === "city") {
+      form.setValue("workProvince", undefined);
+    }
+  }, [selectedLocationGranularity, form]);
+  const isDirty = form.formState.isDirty;
+
+  // Warn before leaving (refresh / close / back) with unsaved changes
+  useEffect(() => {
+    if (!isDirty || isSubmitting) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty, isSubmitting]);
+
+  const handleCancel = () => {
+    if (isDirty && !isSubmitting) {
+      setShowDiscard(true);
+    } else {
+      router.push(`/${locale}/dashboard`);
+    }
+  };
 
   // Debounced alerts calculation
   useEffect(() => {
@@ -174,6 +346,26 @@ function AddEntryContent() {
     return () => clearTimeout(timeoutId);
   }, [netSalary, grossSalary, formConfig]);
 
+  // Scroll-spy: highlight the section currently in view in the side navigator
+  useEffect(() => {
+    if (!selectedCountry || !formConfig) return;
+    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-section]"));
+    if (els.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        const id = visible[0]?.target.getAttribute("data-section");
+        if (id) setActiveSection(id);
+      },
+      { rootMargin: "-25% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] }
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [selectedCountry, formConfig]);
+
   // Load entry data when in edit mode
   useEffect(() => {
     const editId = searchParams.get("edit");
@@ -203,31 +395,59 @@ function AddEntryContent() {
           return res.json();
         })
         .then((data) => {
-          // Verify ownership using proper token verification
-          if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
-            setError(tEdit("errors.notOwner"));
-            setIsLoadingEntry(false);
-            return;
-          }
-
-          // Check if entry is still editable
+          // Ownership is enforced server-side when the edit is saved; the stored
+          // token was already confirmed above. Here we only check the edit window.
           if (!isEntryEditable(data.editableUntil)) {
             setError(tEdit("errors.expired"));
             setIsLoadingEntry(false);
             return;
           }
 
+          setEditableUntil(data.editableUntil);
+
           // Populate the form with the entry data
           form.reset({
             country: data.country || undefined,
+            // v2 worker-type + compensation model
+            workerType: data.workerType || "whiteCollar",
+            contractType: data.contractType || undefined,
+            contractDurationMonths: data.contractDurationMonths ?? undefined,
+            // Basis is fixed to "both" (the selector was removed). Forcing it
+            // here means editing an older entry that was stored as gross- or
+            // net-only still shows BOTH salary inputs, so the now-required net
+            // field is never hidden mid-edit.
+            salaryBasis: "both",
+            fixedGrossSalary: data.fixedGrossSalary ?? undefined,
+            variableGrossSalary: data.variableGrossSalary ?? undefined,
+            hourlyRate: data.hourlyRate ?? undefined,
+            dayRate: data.dayRate ?? undefined,
+            agencyCutPercent: data.agencyCutPercent ?? undefined,
+            clientDayBudget: data.clientDayBudget ?? undefined,
+            bursaryAmount: data.bursaryAmount ?? undefined,
+            virtualGrossSalary: data.virtualGrossSalary ?? undefined,
+            hasCompanyCar: data.hasCompanyCar ?? undefined,
+            companyCarModel: data.companyCarModel || undefined,
+            companyCarFuelType: data.companyCarFuelType || undefined,
+            companyCarCardScope: data.companyCarCardScope || undefined,
+            hasEquity: data.hasEquity ?? undefined,
+            benefits: Array.isArray(data.benefits)
+              ? data.benefits.map((b: any) => ({
+                  benefitKey: b.benefitKey,
+                  valueNumeric: b.valueNumeric ?? undefined,
+                  valueText: b.valueText ?? undefined,
+                  currency: b.currency ?? undefined,
+                }))
+              : [],
             age: data.age || undefined,
             education: data.education || undefined,
+            degreeId: data.degreeId ?? undefined,
             workExperience: data.workExperience ?? undefined,
             civilStatus: data.civilStatus || undefined,
             dependents: data.dependents ?? undefined,
             sector: data.sector || undefined,
             employeeCount: data.employeeCount || undefined,
             multinational: data.multinational || false,
+            publiclyListed: data.publiclyListed ?? undefined,
             jobTitle: data.jobTitle || undefined,
             jobDescription: data.jobDescription || undefined,
             seniority: data.seniority ?? undefined,
@@ -246,22 +466,28 @@ function AddEntryContent() {
             groupInsurance: data.groupInsurance || undefined,
             otherInsurances: data.otherInsurances || undefined,
             otherBenefits: data.otherBenefits || undefined,
+            locationGranularity: data.locationGranularity || undefined,
+            workProvince: data.workProvince || undefined,
+            residenceCountry: data.residenceCountry || undefined,
+            commuteUnit: data.commuteUnit || undefined,
             workCity: data.workCity || undefined,
             commuteDistance: data.commuteDistance
               ? cleanCommuteDistance(data.commuteDistance.toString())
               : undefined,
+            commuteTimeMinutes: data.commuteTimeMinutes ?? undefined,
             commuteMethod: data.commuteMethod || undefined,
             commuteCompensation: data.commuteCompensation || undefined,
             teleworkDays: data.teleworkDays ?? undefined,
             dayOffEase: data.dayOffEase || undefined,
             stressLevel: data.stressLevel || undefined,
+            jobSatisfaction: data.jobSatisfaction ?? undefined,
             reports: data.reports ?? undefined,
             extraNotes: data.extraNotes || undefined,
           });
           setIsLoadingEntry(false);
         })
         .catch((error) => {
-          console.error("Error loading entry:", error);
+          logError("Error loading entry:", error, { entryId });
           setError(error.message || tEdit("errors.generic"));
           setIsLoadingEntry(false);
         });
@@ -360,7 +586,7 @@ function AddEntryContent() {
         router.push(`/${locale}/my-entries?${successMessage}`);
       } else {
         const errorData = await res.json().catch(() => ({}));
-        console.error("Submission failed:", errorData);
+        logWarning("Submission failed:", { errorData, status: res.status });
 
         // Handle rate limit errors with retry timing
         if (res.status === 429 && errorData.retryAfter) {
@@ -372,11 +598,33 @@ function AddEntryContent() {
         }
       }
     } catch (err) {
-      console.error("Submission error:", err);
+      logError("Submission error:", err);
       setError(t("errorGeneric"));
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Safety net: react-hook-form's handleSubmit NEVER calls onSubmit when zod
+  // validation fails — it only writes into formState.errors. Without this
+  // handler a failure produced no message, no console log and no network call,
+  // and if the failing field wasn't currently rendered (hidden by worker-type /
+  // country / salary-basis gating) its inline error had nowhere to show, so the
+  // submit appeared to do absolutely nothing. onInvalid guarantees the user
+  // always gets feedback: it logs, then scrolls the error summary into view.
+  const onInvalid = (errors: FieldErrors<SalaryEntryFormData>) => {
+    const fields = Object.keys(errors);
+    logWarning("Salary entry submit blocked by client validation", {
+      fields,
+      isEditMode,
+    });
+    // The summary banner is rendered from formState.errors on the re-render that
+    // this failed submit triggers; defer the scroll until that node is in the
+    // DOM. scrollIntoView with these options is supported in all evergreen
+    // browsers (Chromium, Firefox, WebKit).
+    requestAnimationFrame(() => {
+      errorSummaryRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   };
 
   // Field rendering configurations - now loaded from external config
@@ -388,6 +636,7 @@ function AddEntryContent() {
 
   const getSectionKey = (title: string): string => {
     const sectionMappings: Record<string, string> = {
+      "Employment Type": "employment",
       "Personal Information": "personal",
       "Employer Profile": "employer",
       "Job Profile": "job",
@@ -402,6 +651,45 @@ function AddEntryContent() {
   };
 
   const getFieldElement = (config: any, field: any, fieldName?: string) => {
+    // Degree picker: combobox over the curated catalog, storing the numeric id.
+    if (fieldName === "degreeId") {
+      const degreeOptions = getDegreesForEducation(selectedCountry, selectedEducation).map((d) => ({
+        value: String(d.id),
+        label: d.name,
+      }));
+      return (
+        <Combobox
+          options={degreeOptions}
+          value={field.value != null ? String(field.value) : undefined}
+          onValueChange={(v: string) => field.onChange(v ? Number(v) : undefined)}
+          placeholder={config.placeholder}
+          allowCustom={false}
+        />
+      );
+    }
+
+    // Contract-type options depend on the selected worker type.
+    if (fieldName === "contractType") {
+      const allowed =
+        CONTRACT_TYPES_BY_WORKER[selectedWorkerType] ??
+        (config.options || []).map((o: any) => o.value);
+      const opts = (config.options || []).filter((o: any) => allowed.includes(o.value));
+      return (
+        <Select onValueChange={field.onChange} value={field.value?.toString() || undefined}>
+          <SelectTrigger>
+            <SelectValue placeholder={config.placeholder || "Select option"} />
+          </SelectTrigger>
+          <SelectContent>
+            {opts.map((option: any) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    }
+
     // Special handling for workCity field with city combobox
     if (fieldName === "workCity") {
       return (
@@ -415,25 +703,17 @@ function AddEntryContent() {
     }
 
     // Special handling for money fields with currency selector
-    const moneyFields = [
-      "grossSalary",
-      "netSalary",
-      "netCompensation",
-      "mealVouchers",
-      "ecoCheques",
-    ];
-    if (fieldName && moneyFields.includes(fieldName)) {
+    if (fieldName && MONEY_FIELDS.includes(fieldName)) {
       return (
-        <Input
-          type="number"
-          min="0"
-          step="0.01"
+        <NumericField
+          field={field}
           placeholder={config.placeholder}
-          className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
-          {...field}
-          value={field.value?.toString() || ""}
-          onChange={(e) =>
-            field.onChange(e.target.value ? Number.parseFloat(e.target.value) : undefined)
+          inputMode="decimal"
+          className="pl-7 font-mono"
+          prefix={
+            <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 font-mono text-sm text-muted-foreground">
+              {getCurrencySymbol(selectedCurrency)}
+            </span>
           }
         />
       );
@@ -443,18 +723,7 @@ function AddEntryContent() {
     const decimalFields = ["officialHours", "averageHours", "vacationDays", "teleworkDays"];
     if (fieldName && decimalFields.includes(fieldName)) {
       return (
-        <Input
-          type="number"
-          min="0"
-          step="0.5"
-          placeholder={config.placeholder}
-          className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
-          {...field}
-          value={field.value?.toString() || ""}
-          onChange={(e) =>
-            field.onChange(e.target.value ? Number.parseFloat(e.target.value) : undefined)
-          }
-        />
+        <NumericField field={field} placeholder={config.placeholder} inputMode="decimal" />
       );
     }
 
@@ -463,31 +732,23 @@ function AddEntryContent() {
         return (
           <Input
             placeholder={config.placeholder}
-            className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
             {...field}
             value={field.value?.toString() || ""}
           />
         );
       case "number": {
+        // inputMode="numeric" (no decimal key), but we still parse with
+        // parseNumeric rather than parseInt: a typed decimal like "38.5" then
+        // reaches the schema's .int() check and shows an error, instead of being
+        // silently truncated to 38.
         return (
-          <Input
-            type="number"
-            min="0"
-            placeholder={config.placeholder}
-            className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
-            {...field}
-            onChange={(e) =>
-              field.onChange(e.target.value ? Number.parseInt(e.target.value) : undefined)
-            }
-            value={field.value?.toString() || ""}
-          />
+          <NumericField field={field} placeholder={config.placeholder} inputMode="numeric" />
         );
       }
       case "textarea":
         return (
           <Textarea
             placeholder={config.placeholder}
-            className="bg-stone-700 border-stone-600 text-stone-100 placeholder:text-stone-400"
             {...field}
             value={field.value?.toString() || ""}
           />
@@ -508,16 +769,15 @@ function AddEntryContent() {
             onValueChange={field.onChange}
             placeholder={config.placeholder}
             allowCustom={config.allowCustom}
-            className="bg-stone-700 border-stone-600 text-stone-100"
           />
         );
       case "select":
         return (
           <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-            <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
+            <SelectTrigger>
               <SelectValue placeholder={config.placeholder || "Select option"} />
             </SelectTrigger>
-            <SelectContent className="bg-stone-700 border-stone-600">
+            <SelectContent>
               {config.options?.map((option: any) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
@@ -528,21 +788,28 @@ function AddEntryContent() {
         );
       case "boolean":
         return (
-          <Select
-            onValueChange={(value) => field.onChange(value === "yes")}
-            defaultValue={field.value ? "yes" : "no"}
-          >
-            <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-stone-700 border-stone-600">
-              {config.options?.map((option: any) => (
-                <SelectItem key={option.value} value={option.value}>
+          <div className="inline-flex rounded-lg border border-input p-0.5">
+            {config.options?.map((option: any) => {
+              const optYes = option.value === "yes";
+              const selected = optYes ? field.value === true : field.value !== true;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => field.onChange(optYes)}
+                  aria-pressed={selected}
+                  className={cn(
+                    "rounded-md px-5 py-1.5 text-sm font-medium transition-colors",
+                    selected
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
                   {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                </button>
+              );
+            })}
+          </div>
         );
       default:
         return <div>Unknown field type</div>;
@@ -556,11 +823,11 @@ function AddEntryContent() {
     const getWidthClass = (width?: string) => {
       switch (width) {
         case "half":
-          return "w-full md:w-[calc(50%-0.5rem)]";
+          return "col-span-6 md:col-span-3";
         case "third":
-          return "w-full md:w-[calc(33.333%-0.667rem)]";
+          return "col-span-6 md:col-span-2";
         default:
-          return "w-full";
+          return "col-span-6";
       }
     };
 
@@ -572,320 +839,542 @@ function AddEntryContent() {
         control={form.control}
         name={fieldName as keyof SalaryEntryFormData}
         render={({ field, fieldState }) => (
-          <FormItem className={widthClass}>
-            <FormLabel className="text-stone-300">
-              {(() => {
-                const moneyFields = [
-                  "grossSalary",
-                  "netSalary",
-                  "netCompensation",
-                  "mealVouchers",
-                  "ecoCheques",
-                ];
-
-                if (moneyFields.includes(fieldName)) {
-                  return t(config.labelKey, { symbol: getCurrencySymbol(selectedCurrency) });
-                }
-
-                return t(config.labelKey);
-              })()}
+          <FormItem className={cn(widthClass, "space-y-2")}>
+            <FormLabel className="flex items-center gap-1.5 text-foreground">
+              <span>
+                {MONEY_FIELDS.includes(fieldName)
+                  ? t(config.labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
+                  : t(config.labelKey)}
+              </span>
               {config.optional && (
-                <span className="text-stone-400 text-xs">({tCommon("optional")})</span>
+                <span className="text-xs font-normal text-muted-foreground">
+                  ({tCommon("optional")})
+                </span>
+              )}
+              {config.helpKey && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label={t("fieldExplanations")}
+                      className="text-muted-foreground transition-colors hover:text-brand"
+                    >
+                      <HelpCircle className="h-3.5 w-3.5" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent side="top" align="start" className="w-72">
+                    <p className="text-sm text-muted-foreground">{t(config.helpKey)}</p>
+                    {config.placeholder && (
+                      <p className="mt-2 rounded bg-muted px-2 py-1 font-mono text-xs text-muted-foreground">
+                        {t("example")}: {config.placeholder}
+                      </p>
+                    )}
+                  </PopoverContent>
+                </Popover>
               )}
             </FormLabel>
             <FormControl>
-              <div className="relative group" title={fieldState.error?.message}>
-                {getFieldElement(config, field, fieldName)}
-              </div>
+              <div className="relative">{getFieldElement(config, field, fieldName)}</div>
             </FormControl>
+            {fieldState.error && (
+              <p className="text-sm font-medium text-destructive">{fieldState.error.message}</p>
+            )}
           </FormItem>
         )}
       />
     );
   };
 
+  // Worker-type-aware visibility: hide fields not applicable to the selected
+  // worker type, and hide company-car detail fields until "has company car".
+  const isFieldVisible = (fieldName: string): boolean => {
+    const config = fieldConfigs[fieldName];
+    if (!config) return false;
+    if (config.workerTypes && !config.workerTypes.includes(selectedWorkerType)) return false;
+    if (COMPANY_CAR_DETAIL_FIELDS.includes(fieldName) && hasCompanyCar !== true) return false;
+    // Contract duration only matters for non-permanent contracts (fixed-term,
+    // interim, internship, freelance). Hidden for permanent / unspecified.
+    if (
+      fieldName === "contractDurationMonths" &&
+      (!selectedContractType || selectedContractType === "permanent")
+    ) {
+      return false;
+    }
+    // Salary basis is fixed to "both" (the selector was removed), so gross and
+    // net are always shown together — both are required for salaried workers.
+    // Location granularity picks a single precision level, so hide the finer-
+    // grained fields the user opted out of. Unset shows both (backward compatible).
+    if (selectedLocationGranularity === "country" && (fieldName === "workProvince" || fieldName === "workCity")) {
+      return false;
+    }
+    if (selectedLocationGranularity === "province" && fieldName === "workCity") return false;
+    if (selectedLocationGranularity === "city" && fieldName === "workProvince") return false;
+    return true;
+  };
+
+  const navSections = selectedCountry && formConfig ? formConfig.sections : [];
+  const navItems = [
+    { key: "location", label: t("sections.location.title"), num: null as number | null },
+    ...navSections.map((s, i) => ({
+      key: getSectionKey(s.title),
+      label: t(`sections.${getSectionKey(s.title)}.title`),
+      num: i + 1,
+    })),
+  ];
+  const activeIndex = navItems.findIndex((x) => x.key === activeSection);
+
+  // Human-readable label for a field name, for the validation summary. Returns
+  // null when there's no dedicated label (e.g. honestyConfirmation) so the
+  // summary falls back to the (already descriptive) error message.
+  const getErrorFieldLabel = (name: string): string | null => {
+    if (name === "country") return t("fields.country.label");
+    if (name === "currency") return t("fields.currency.label");
+    const cfg = allFieldConfigs[name];
+    if (cfg?.labelKey) {
+      return MONEY_FIELDS.includes(name)
+        ? t(cfg.labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
+        : t(cfg.labelKey);
+    }
+    return null;
+  };
+
+  // Flatten the current validation errors into a display list. Reading
+  // form.formState.errors here subscribes the component, so the summary appears
+  // on the failed-submit re-render and updates live as fields are corrected.
+  // Crucially this includes errors on fields hidden by the current gating — the
+  // whole point is that a blocked submit is never silent.
+  const validationErrorList = Object.entries(form.formState.errors).map(([name, err]) => {
+    const label = getErrorFieldLabel(name);
+    const message = (err as { message?: string } | undefined)?.message;
+    return { name, text: [label, message].filter(Boolean).join(": ") || name };
+  });
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-950 to-stone-900">
-      {/* Header */}
-      <div className="bg-stone-900 border-b border-stone-700 sticky top-0 z-50">
-        <Navbar
-          locale={locale}
-          translations={{
-            dashboard: tNav("dashboard"),
-            statistics: tNav("statistics"),
-            feedback: tNav("feedback"),
-            status: tNav("status"),
-            donate: tNav("donate"),
-            addEntry: tNav("addEntry"),
-            changelog: tNav("changelog"),
+    <PageShell width="lg">
+      {/* Show error UI for edit mode */}
+      {error && isEditMode && (
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <Card className="w-full max-w-md border-border bg-card/80 backdrop-blur-sm">
+            <CardContent className="py-12 text-center">
+              <Lock className="mx-auto mb-4 h-12 w-12 text-destructive" />
+              <h2 className="mb-2 text-2xl font-bold text-foreground">{tEdit("errorTitle")}</h2>
+              <p className="mb-4 text-muted-foreground">{error}</p>
+              {retryAfter && (
+                <p className="mb-6 rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-600 dark:text-amber-400">
+                  {t("rateLimitRetry", {
+                    time: (() => {
+                      const now = new Date();
+                      const diffMs = retryAfter.getTime() - now.getTime();
+                      if (diffMs <= 0) return "now";
+                      const diffMins = Math.floor(diffMs / 60000);
+                      const diffHours = Math.floor(diffMins / 60);
+                      const remainingMins = diffMins % 60;
+                      if (diffHours > 0) {
+                        const hourText = diffHours === 1 ? "hour" : "hours";
+                        const minText = remainingMins === 1 ? "minute" : "minutes";
+                        return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
+                      } else if (diffMins > 0) {
+                        const minText = diffMins === 1 ? "minute" : "minutes";
+                        return `${diffMins} ${minText}`;
+                      } else {
+                        return "less than a minute";
+                      }
+                    })(),
+                  })}
+                </p>
+              )}
+              <div className="space-x-4">
+                <Button variant="outline" onClick={() => router.push(`/${locale}/dashboard`)}>
+                  {tEdit("goBack")}
+                </Button>
+                <Button onClick={() => router.push(`/${locale}/my-entries`)}>
+                  {tEdit("goToMyEntries")}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Show error UI for add mode */}
+      {error && !isEditMode && (
+        <ErrorPage
+          title={t("error")}
+          message={error}
+          retryAfter={retryAfter}
+          onRetry={() => {
+            // Retry submission with the same form data
+            const formData = form.getValues();
+            onSubmit(formData);
           }}
+          onGoHome={() => router.push(`/${locale}/dashboard`)}
         />
-      </div>
+      )}
 
-      <main className="container mx-auto px-4 py-6 md:py-8 max-w-4xl">
-        {/* Show error UI for edit mode */}
-        {error && isEditMode && (
-          <div className="min-h-[60vh] flex items-center justify-center">
-            <Card className="bg-stone-800 border-stone-700 max-w-md w-full">
-              <CardContent className="py-12 text-center">
-                <Lock className="mx-auto h-12 w-12 text-red-500 mb-4" />
-                <h2 className="text-2xl font-bold text-stone-100 mb-2">{tEdit("errorTitle")}</h2>
-                <p className="text-stone-400 mb-4">{error}</p>
-                {retryAfter && (
-                  <p className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded-md border border-amber-800/30 mb-6">
-                    {t("rateLimitRetry", {
-                      time: (() => {
-                        const now = new Date();
-                        const diffMs = retryAfter.getTime() - now.getTime();
-                        if (diffMs <= 0) return "now";
-                        const diffMins = Math.floor(diffMs / 60000);
-                        const diffHours = Math.floor(diffMins / 60);
-                        const remainingMins = diffMins % 60;
-                        if (diffHours > 0) {
-                          const hourText = diffHours === 1 ? "hour" : "hours";
-                          const minText = remainingMins === 1 ? "minute" : "minutes";
-                          return `${diffHours} ${hourText} ${remainingMins} ${minText}`;
-                        } else if (diffMins > 0) {
-                          const minText = diffMins === 1 ? "minute" : "minutes";
-                          return `${diffMins} ${minText}`;
-                        } else {
-                          return "less than a minute";
-                        }
-                      })(),
-                    })}
-                  </p>
-                )}
-                <div className="space-x-4">
-                  <Button variant="outline" onClick={() => router.push(`/${locale}/dashboard`)}>
-                    {tEdit("goBack")}
-                  </Button>
-                  <Button onClick={() => router.push(`/${locale}/my-entries`)}>
-                    {tEdit("goToMyEntries")}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Show error UI for add mode */}
-        {error && !isEditMode && (
-          <ErrorPage
-            title={t("error")}
-            message={error}
-            retryAfter={retryAfter}
-            onRetry={() => {
-              // Retry submission with the same form data
-              const formData = form.getValues();
-              onSubmit(formData);
-            }}
-            onGoHome={() => router.push(`/${locale}/dashboard`)}
+      {/* Show title/description only when not in edit mode error */}
+      {!error && (
+        <>
+          {isEditMode && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push(`/${locale}/dashboard`)}
+              className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("goBack")}
+            </Button>
+          )}
+          <PageHeader
+            eyebrow={t("eyebrow")}
+            title={isEditMode ? t("editTitle") : t("title")}
+            subtitle={isEditMode ? t("editSubtitle") : t("subtitle")}
           />
-        )}
+          {isEditMode &&
+            editableUntil &&
+            (() => {
+              const remaining = getEditTimeRemaining(new Date(editableUntil));
+              if (!remaining.editable) return null;
+              const untilDate = new Date(editableUntil).toLocaleDateString(locale, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const remainingLabel =
+                remaining.hoursLeft > 24
+                  ? tEdit("window.remainingDays", { days: remaining.daysLeft })
+                  : tEdit("window.remainingHours", { hours: remaining.hoursLeft });
+              return (
+                <Alert className="mb-6 border-brand/30 bg-brand/5">
+                  <CalendarClock className="h-4 w-4 text-brand" />
+                  <AlertDescription className="text-foreground">
+                    <span className="font-medium">{remainingLabel}</span>{" "}
+                    {tEdit("window.until", { date: untilDate })}{" "}
+                    <span className="text-muted-foreground">{tEdit("window.lockNote")}</span>
+                  </AlertDescription>
+                </Alert>
+              );
+            })()}
+        </>
+      )}
 
-        {/* Show title/description only when not in edit mode error */}
-        {!error && (
-          <div className="mb-6 md:mb-8">
-            {isEditMode && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push(`/${locale}/dashboard`)}
-                className="mb-4 -ml-2 text-stone-400 hover:text-stone-100"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {t("goBack")}
-              </Button>
-            )}
-            <h1 className="text-2xl md:text-3xl font-bold text-stone-100 mb-2">
-              {isEditMode ? t("editTitle") : t("title")}
-            </h1>
-            <p className="text-sm md:text-base text-stone-400">
-              {isEditMode ? t("editSubtitle") : t("subtitle")}
-            </p>
+      {!error &&
+        (isLoadingEntry ? (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <LoadingSpinner message={t("loadingEntry")} fullScreen={false} size="lg" />
           </div>
-        )}
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit, onInvalid)}>
+              <div className="grid gap-8 lg:grid-cols-[200px_minmax(0,1fr)]">
+                {/* Section navigator (desktop) */}
+                <aside className="hidden lg:block">
+                  <nav className="sticky top-24">
+                    <div className="relative">
+                      {/* progress rail */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute bottom-5 left-6 top-5 w-px -translate-x-1/2 bg-border"
+                      />
+                      <div className="relative space-y-1">
+                        {navItems.map((item, i) => {
+                          const isActive = activeSection === item.key;
+                          const isDone = activeIndex > -1 && i < activeIndex;
+                          return (
+                            <a
+                              key={item.key}
+                              href={`#sec-${item.key}`}
+                              className={cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                                isActive
+                                  ? "font-medium text-foreground"
+                                  : "text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-[11px] transition-colors",
+                                  isActive
+                                    ? "border-brand bg-brand text-brand-foreground"
+                                    : isDone
+                                      ? "border-brand bg-brand/15 text-brand"
+                                      : "border-border bg-background text-muted-foreground"
+                                )}
+                              >
+                                {item.num ?? <MapPin className="h-3 w-3" />}
+                              </span>
+                              <span className="truncate">{item.label}</span>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </nav>
+                </aside>
 
-        {!error &&
-          (isLoadingEntry ? (
-            <div className="min-h-[40vh] flex items-center justify-center">
-              <LoadingSpinner message={t("loadingEntry")} fullScreen={false} size="lg" />
-            </div>
-          ) : (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* Location Information */}
-                <Card className="bg-stone-800 border-stone-700">
-                  <CardHeader>
-                    <CardTitle className="text-stone-100 mb-3">
-                      {t("sections.location.title")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-[4fr_1fr] gap-4">
-                      <FormField
-                        control={form.control}
-                        name="country"
-                        render={({ field, fieldState }) => (
-                          <FormItem>
-                            <FormLabel className="text-stone-300">
-                              {t("fields.country.label")}
-                            </FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <div className="relative" title={fieldState.error?.message}>
-                                  <SelectTrigger className="bg-stone-700 border-stone-600 text-stone-100">
+                {/* Form column */}
+                <div className="min-w-0 space-y-6">
+                  {/* Location */}
+                  <Card
+                    id="sec-location"
+                    data-section="location"
+                    className="scroll-mt-24 border-border bg-card/80 backdrop-blur-sm"
+                  >
+                    <CardHeader className="border-b border-border">
+                      <CardTitle className="text-foreground">
+                        {t("sections.location.title")}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                      <div className="grid grid-cols-6 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="country"
+                          render={({ field, fieldState }) => (
+                            <FormItem className="col-span-6 space-y-2 md:col-span-4">
+                              <FormLabel className="text-foreground">
+                                {t("fields.country.label")}
+                              </FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
                                     <SelectValue placeholder={t("fields.country.placeholder")} />
                                   </SelectTrigger>
-                                </div>
-                              </FormControl>
-                              <SelectContent className="bg-stone-700 border-stone-600">
-                                {getAllCountries().map((country) => (
-                                  <SelectItem
-                                    key={country}
-                                    className="text-stone-100 focus:bg-stone-600"
-                                    value={country}
-                                  >
-                                    {t(`countries.${country.toLowerCase()}`)}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="currency"
-                        render={({ field, fieldState }) => (
-                          <FormItem>
-                            <FormLabel className="text-stone-300">
-                              {t("fields.currency.label")}
-                            </FormLabel>
-                            <FormControl>
-                              <div className="relative" title={fieldState.error?.message}>
+                                </FormControl>
+                                <SelectContent>
+                                  {getAllCountries().map((country) => (
+                                    <SelectItem key={country} value={country}>
+                                      {t(`countries.${country.toLowerCase()}`)}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              {fieldState.error && (
+                                <p className="text-sm font-medium text-destructive">
+                                  {fieldState.error.message}
+                                </p>
+                              )}
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="currency"
+                          render={({ field, fieldState }) => (
+                            <FormItem className="col-span-6 space-y-2 md:col-span-2">
+                              <FormLabel className="text-foreground">
+                                {t("fields.currency.label")}
+                              </FormLabel>
+                              <FormControl>
                                 <CurrencySelector
                                   value={field.value}
                                   onValueChange={field.onChange}
                                   placeholder={t("fields.currency.placeholder")}
                                   showFullLabel={true}
+                                  className="w-full"
                                 />
-                              </div>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Show remaining sections only when country is selected */}
-                {selectedCountry && formConfig && (
-                  <>
-                    {formConfig.sections.map((section, index) => (
-                      <Card key={section.title} className="bg-stone-800 border-stone-700 relative">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute top-3 right-3 h-9 w-9 p-0 bg-stone-700 border-stone-600 rounded-lg hover:bg-stone-600 transition-colors z-10"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowSectionHelp(
-                              showSectionHelp === getSectionKey(section.title)
-                                ? null
-                                : getSectionKey(section.title)
-                            );
-                          }}
-                        >
-                          <HelpCircle className="h-5 w-5" />
-                        </Button>
-                        <CardHeader>
-                          <CardTitle className="text-stone-100 mb-3">
-                            {index + 1}. {t(`sections.${getSectionKey(section.title)}.title`)}
-                          </CardTitle>
-                        </CardHeader>
-                        {getSectionKey(section.title) === "salary" &&
-                          debouncedAlerts.length > 0 && (
-                            <div className="px-6 pb-4 space-y-4">
-                              {debouncedAlerts.map((alertKey) => (
-                                <Alert key={alertKey} variant="destructive">
-                                  <AlertDescription>
-                                    {t(`salaryAlert.${alertKey}`)}
-                                  </AlertDescription>
-                                </Alert>
-                              ))}
-                            </div>
-                          )}
-                        {showSectionHelp === getSectionKey(section.title) && (
-                          <div className="px-6 pb-4 my-4 border-stone-700">
-                            <div className="bg-stone-800/50 rounded-lg p-4 border border-stone-600">
-                              <h4 className="font-semibold text-stone-100 mb-3">
-                                {t("fieldExplanations")}
-                              </h4>
-                              <div className="space-y-3">
-                                {getSectionHelpContent(
-                                  getSectionKey(section.title),
-                                  section.fields
-                                )?.fields.map((field) => (
-                                  <div key={field.name} className="text-sm">
-                                    <div className="font-medium text-stone-200">{field.name}</div>
-                                    <div className="text-stone-300 mt-1">{field.description}</div>
-                                    <div className="text-stone-400 mt-1 font-mono text-xs bg-stone-700/50 px-2 py-1 rounded">
-                                      {t("example")}: {field.example}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        <CardContent className="flex flex-wrap gap-4">
-                          {section.fields.map((fieldName) => renderField(fieldName))}
-                        </CardContent>
-                      </Card>
-                    ))}
-
-                    {/* Honesty Confirmation */}
-                    <Card className="bg-stone-800 border-stone-700">
-                      <CardContent>
-                        <FormField
-                          control={form.control}
-                          name="honestyConfirmation"
-                          render={({ field }) => (
-                            <FormItem className="flex space-x-2">
-                              <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
-                              <FormLabel className="text-stone-300">
-                                {t("honestyConfirmation")}
-                              </FormLabel>
+                              {fieldState.error && (
+                                <p className="text-sm font-medium text-destructive">
+                                  {fieldState.error.message}
+                                </p>
+                              )}
                             </FormItem>
                           )}
                         />
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                    <div className="flex justify-end space-x-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => router.push(`/${locale}/dashboard`)}
-                      >
-                        {tCommon("cancel")}
-                      </Button>
-                      <Button type="submit" disabled={isSubmitting}>
-                        {getSubmitButtonText(isSubmitting, isEditMode, t)}
-                      </Button>
+                  {/* Prompt to choose a country before the rest loads */}
+                  {!selectedCountry && (
+                    <div className="rounded-xl border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
+                      <MapPin className="mx-auto mb-3 h-7 w-7 text-muted-foreground" />
+                      <p className="mx-auto max-w-sm text-sm text-muted-foreground">
+                        {t("countryFirst")}
+                      </p>
                     </div>
-                  </>
-                )}
-              </form>
-            </Form>
-          ))}
-      </main>
-    </div>
+                  )}
+
+                  {/* Country-specific sections */}
+                  {selectedCountry && formConfig && (
+                    <>
+                      {formConfig.sections.map((section, index) => {
+                        const sectionKey = getSectionKey(section.title);
+                        return (
+                          <Card
+                            key={section.title}
+                            id={`sec-${sectionKey}`}
+                            data-section={sectionKey}
+                            className="relative scroll-mt-24 border-border bg-card/80 backdrop-blur-sm"
+                          >
+                            <CardHeader className="border-b border-border">
+                              <CardTitle className="flex items-center gap-3 text-foreground">
+                                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand font-mono text-xs text-brand-foreground">
+                                  {index + 1}
+                                </span>
+                                {t(`sections.${sectionKey}.title`)}
+                              </CardTitle>
+                            </CardHeader>
+                            {sectionKey === "salary" && debouncedAlerts.length > 0 && (
+                              <div className="space-y-3 px-6 pt-6">
+                                {debouncedAlerts.map((alertKey) => (
+                                  <Alert key={alertKey} variant="destructive">
+                                    <AlertDescription>
+                                      {t(`salaryAlert.${alertKey}`)}
+                                    </AlertDescription>
+                                  </Alert>
+                                ))}
+                              </div>
+                            )}
+                            <CardContent className="pt-6">
+                              <div className="grid grid-cols-6 gap-x-4 gap-y-5">
+                                {section.fields
+                                  .filter((fieldName) => isFieldVisible(fieldName))
+                                  // "Other benefits" is a catch-all for perks not in the
+                                  // checkbox catalog, so it renders after the selector below.
+                                  .filter(
+                                    (fieldName) =>
+                                      !(sectionKey === "benefits" && fieldName === "otherBenefits")
+                                  )
+                                  .map((fieldName) => renderField(fieldName))}
+                              </div>
+                              {sectionKey === "benefits" && (
+                                <div className="mt-6 border-t border-border pt-6">
+                                  <FormField
+                                    control={form.control}
+                                    name="benefits"
+                                    render={({ field }) => (
+                                      <BenefitsSelector
+                                        country={selectedCountry}
+                                        workerType={selectedWorkerType}
+                                        currency={selectedCurrency}
+                                        currencySymbol={getCurrencySymbol(selectedCurrency)}
+                                        value={(field.value as EntryBenefitValue[]) || []}
+                                        onChange={(next) =>
+                                          field.onChange(next as EntryBenefitValue[])
+                                        }
+                                      />
+                                    )}
+                                  />
+                                  {/* Free-text catch-all, shown last so users reach for it only
+                                      after scanning the full catalog above. */}
+                                  {isFieldVisible("otherBenefits") && (
+                                    <div className="mt-6 grid grid-cols-6 gap-x-4 gap-y-5">
+                                      {renderField("otherBenefits")}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+
+                      {/* Honesty confirmation */}
+                      <Card className="border-border bg-card/80 backdrop-blur-sm">
+                        <CardContent>
+                          <FormField
+                            control={form.control}
+                            name="honestyConfirmation"
+                            render={({ field, fieldState }) => (
+                              <FormItem className="space-y-2">
+                                <div className="flex items-start gap-3">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                      className="mt-0.5"
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal leading-relaxed text-muted-foreground">
+                                    {t("honestyConfirmation")}
+                                  </FormLabel>
+                                </div>
+                                {fieldState.error && (
+                                  <p className="text-sm font-medium text-destructive">
+                                    {fieldState.error.message}
+                                  </p>
+                                )}
+                              </FormItem>
+                            )}
+                          />
+                        </CardContent>
+                      </Card>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Validation-error summary: appears whenever a submit is blocked
+                  by invalid input, so clicking submit is never a silent no-op.
+                  Lists every failing field — including any hidden by the current
+                  gating — with the reason. */}
+              {validationErrorList.length > 0 && (
+                <div ref={errorSummaryRef} className="mt-8" role="alert" aria-live="assertive">
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>{t("validationSummary.title")}</AlertTitle>
+                    <AlertDescription>
+                      <p className="mb-2 font-medium">
+                        {t("validationSummary.errorCount", { count: validationErrorList.length })}
+                      </p>
+                      <ul className="list-disc space-y-1 pl-5">
+                        {validationErrorList.map((e) => (
+                          <li key={e.name}>{e.text}</li>
+                        ))}
+                      </ul>
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              )}
+
+              {/* Actions */}
+              {selectedCountry && formConfig && (
+                <div className="mt-10 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
+                  <Button type="button" variant="outline" size="lg" onClick={handleCancel}>
+                    {tCommon("cancel")}
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isSubmitting}
+                    className="bg-brand px-8 font-semibold text-brand-foreground hover:bg-brand/90"
+                  >
+                    {getSubmitButtonText(isSubmitting, isEditMode, t)}
+                  </Button>
+                </div>
+              )}
+            </form>
+          </Form>
+        ))}
+
+      {/* Discard-changes guard */}
+      <Dialog open={showDiscard} onOpenChange={setShowDiscard}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t("discardTitle")}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{t("discardMessage")}</p>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setShowDiscard(false)}>
+              {t("discardKeep")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setShowDiscard(false);
+                router.push(`/${locale}/dashboard`);
+              }}
+            >
+              {t("discardConfirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </PageShell>
   );
 }
 

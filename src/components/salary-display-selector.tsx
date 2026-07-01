@@ -46,7 +46,7 @@ export function SalaryDisplaySelector() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel className="text-xs font-normal text-stone-400">
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
           {t("nav.currency")}
         </DropdownMenuLabel>
         <DropdownMenuRadioGroup
@@ -62,7 +62,7 @@ export function SalaryDisplaySelector() {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuLabel className="text-xs font-normal text-stone-400">
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
           {t("nav.period")}
         </DropdownMenuLabel>
         <DropdownMenuRadioGroup
