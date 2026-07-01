@@ -50,7 +50,11 @@ const BASE_BE_WHITE_COLLAR = {
   averageHours: 40,
   vacationDays: 20,
   currency: "EUR",
+  // Salaried worker types (whiteCollar / intern) now require BOTH gross and net
+  // — the salary-basis selector was removed and both fields are always shown, so
+  // stored entries never have an N/A net.
   grossSalary: 3500,
+  netSalary: 2400,
   thirteenthMonth: "full",
   groupInsurance: "yes",
   commuteDistance: "15",
@@ -68,6 +72,7 @@ const BASE_BE_BLUE_COLLAR = {
   thirteenthMonth: undefined,
   groupInsurance: undefined,
   grossSalary: undefined,
+  netSalary: undefined,
   hourlyRate: 18,
 };
 
@@ -77,6 +82,9 @@ const BASE_BE_FREELANCER = {
   thirteenthMonth: undefined,
   groupInsurance: undefined,
   grossSalary: undefined,
+  netSalary: undefined,
+  // Freelancers don't see the vacationDays field, so a real submission omits it.
+  vacationDays: undefined,
   dayRate: 650,
 };
 
@@ -91,15 +99,19 @@ const BASE_BE_PHD = {
   thirteenthMonth: undefined,
   groupInsurance: undefined,
   grossSalary: undefined,
+  netSalary: undefined,
   bursaryAmount: 2500,
 };
 
 const BASE_NL_WHITE_COLLAR = {
   ...BASE_BE_WHITE_COLLAR,
   country: "Netherlands",
-  // NL doesn't require thirteenthMonth / groupInsurance via the schema — the
-  // superRefine only targets SALARIED_WORKER_TYPES. The schema itself has no
-  // per-country branching, so a Netherlands entry with these fields still passes.
+  // The NL form does NOT collect thirteenthMonth / groupInsurance (they come from
+  // the benefits catalog), so the schema no longer requires them for NL — the
+  // superRefine gates that rule on countryCollectsField. Drop them here so this
+  // payload matches exactly what the NL form actually submits.
+  thirteenthMonth: undefined,
+  groupInsurance: undefined,
 };
 
 // ---------------------------------------------------------------------------
@@ -110,12 +122,19 @@ describe("Happy paths", () => {
     expect(pass(BASE_BE_WHITE_COLLAR)).toBeDefined();
   });
 
-  it("passes for Belgium whiteCollar with netSalary instead of grossSalary", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netSalary: 2400 });
+  it("passes for Belgium whiteCollar with gross + net + optional netCompensation", () => {
+    pass({ ...BASE_BE_WHITE_COLLAR, netCompensation: 2200 });
   });
 
-  it("passes for Belgium whiteCollar with netCompensation only", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netCompensation: 2200 });
+  it("fails for Belgium whiteCollar with only netSalary (gross now also required)", () => {
+    fail({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined }, "grossSalary");
+  });
+
+  it("fails for Belgium whiteCollar with only netCompensation (gross + net required)", () => {
+    fail(
+      { ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netSalary: undefined, netCompensation: 2200 },
+      "grossSalary"
+    );
   });
 
   it("passes for Belgium blueCollar with hourlyRate", () => {
@@ -348,11 +367,13 @@ describe("seniority", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 7. Salary — whiteCollar / intern (at least one of gross/net/netCompensation)
+// 7. Salary — whiteCollar / intern require BOTH gross and net
+// (the salary-basis selector was removed; both are always collected, so stored
+// entries never have an N/A net).
 // ---------------------------------------------------------------------------
-describe("salary — whiteCollar requires at least one salary", () => {
-  it("fails when all salary fields are absent", () => {
-    fail(
+describe("salary — whiteCollar requires both gross and net", () => {
+  it("fails when all salary fields are absent (reports both gross and net)", () => {
+    const result = fail(
       {
         ...BASE_BE_WHITE_COLLAR,
         grossSalary: undefined,
@@ -361,6 +382,9 @@ describe("salary — whiteCollar requires at least one salary", () => {
       },
       "grossSalary"
     );
+    const paths = result.success ? [] : result.error.issues.map((i) => i.path.join("."));
+    expect(paths).toContain("grossSalary");
+    expect(paths).toContain("netSalary");
   });
 
   it("fails when grossSalary is 0 (must be positive)", () => {
@@ -371,24 +395,27 @@ describe("salary — whiteCollar requires at least one salary", () => {
     fail({ ...BASE_BE_WHITE_COLLAR, grossSalary: -100 }, "grossSalary");
   });
 
-  it("passes with only grossSalary", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, netSalary: undefined, netCompensation: undefined });
+  it("fails with only grossSalary (net now required too)", () => {
+    fail({ ...BASE_BE_WHITE_COLLAR, netSalary: undefined, netCompensation: undefined }, "netSalary");
   });
 
-  it("passes with only netSalary", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netSalary: 2200 });
+  it("fails with only netSalary (gross now required too)", () => {
+    fail({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined }, "grossSalary");
   });
 
-  it("passes with only netCompensation", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netCompensation: 2200 });
+  it("fails with only netCompensation (gross + net required)", () => {
+    fail(
+      { ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netSalary: undefined, netCompensation: 2200 },
+      "grossSalary"
+    );
   });
 
-  it("passes with all three salary fields set", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, netSalary: 2200, netCompensation: 2300 });
+  it("passes with gross + net (+ optional netCompensation)", () => {
+    pass({ ...BASE_BE_WHITE_COLLAR, netCompensation: 2300 });
   });
 });
 
-describe("salary — intern requires at least one salary", () => {
+describe("salary — intern requires both gross and net", () => {
   it("fails when all salary fields absent for intern", () => {
     fail(
       {
@@ -399,6 +426,10 @@ describe("salary — intern requires at least one salary", () => {
       },
       "grossSalary"
     );
+  });
+
+  it("fails when intern has gross but no net", () => {
+    fail({ ...BASE_BE_INTERN, netSalary: undefined }, "netSalary");
   });
 });
 
@@ -1041,18 +1072,25 @@ describe("contractType", () => {
 
 // ---------------------------------------------------------------------------
 // 25. Salary basis enum
+// The selector was removed from the form (basis is always "both"), but the
+// schema still accepts the enum for backward compatibility with stored data.
+// Regardless of basis, salaried workers must provide BOTH gross and net.
 // ---------------------------------------------------------------------------
 describe("salaryBasis", () => {
-  it("passes for 'gross'", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, salaryBasis: "gross" });
+  it("passes for 'both' (the fixed value new entries submit)", () => {
+    pass({ ...BASE_BE_WHITE_COLLAR, salaryBasis: "both" });
   });
 
-  it("passes for 'net'", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netSalary: 2200, salaryBasis: "net" });
+  it("still requires gross + net even when a legacy basis is 'net'", () => {
+    // Editing an old net-only entry must now also collect gross.
+    fail(
+      { ...BASE_BE_WHITE_COLLAR, grossSalary: undefined, netSalary: 2200, salaryBasis: "net" },
+      "grossSalary"
+    );
   });
 
-  it("passes for 'both'", () => {
-    pass({ ...BASE_BE_WHITE_COLLAR, netSalary: 2200, salaryBasis: "both" });
+  it("still requires gross + net even when a legacy basis is 'gross'", () => {
+    fail({ ...BASE_BE_WHITE_COLLAR, netSalary: undefined, salaryBasis: "gross" }, "netSalary");
   });
 
   it("fails for invalid value", () => {
@@ -1266,16 +1304,24 @@ describe("jobTitle", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 33. Netherlands — no Belgium-specific column requirements beyond schema
+// 33. Netherlands — the Belgian benefit columns are NOT required (regression
+// guard for the "NL submit does nothing" bug).
 // ---------------------------------------------------------------------------
 describe("Netherlands specifics", () => {
-  it("passes a full NL whiteCollar entry", () => {
+  it("passes a full NL whiteCollar entry WITHOUT thirteenthMonth / groupInsurance", () => {
+    // This is the exact bug that made every NL salaried submission silently fail:
+    // the schema used to require these two fields that the NL form never renders.
+    expect((BASE_NL_WHITE_COLLAR as Record<string, unknown>).thirteenthMonth).toBeUndefined();
+    expect((BASE_NL_WHITE_COLLAR as Record<string, unknown>).groupInsurance).toBeUndefined();
     pass(BASE_NL_WHITE_COLLAR);
   });
 
-  it("passes NL without thirteenthMonth and groupInsurance (schema is not NL-specific)", () => {
-    // Schema doesn't carve out NL; salaried check still applies. Provide them.
+  it("still accepts them when present (Belgium-style payload on NL)", () => {
     pass({ ...BASE_NL_WHITE_COLLAR, thirteenthMonth: "none", groupInsurance: "no" });
+  });
+
+  it("passes NL intern without the Belgian benefit columns", () => {
+    pass({ ...BASE_NL_WHITE_COLLAR, workerType: "intern" });
   });
 
   it("passes NL freelancer with dayRate", () => {

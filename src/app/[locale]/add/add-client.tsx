@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, useMemo, Suspense, type ReactNode, type Ref } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HelpCircle, ArrowLeft, Lock, MapPin, CalendarClock } from "lucide-react";
+import { HelpCircle, ArrowLeft, Lock, MapPin, CalendarClock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -50,6 +50,7 @@ import {
   getEditTimeRemaining,
 } from "@/lib/entry-ownership";
 import { logError, logWarning } from "@/lib/logger";
+import { parseNumeric } from "@/lib/utils/parse-numeric";
 import { BenefitsSelector, type EntryBenefitValue } from "@/components/benefits-selector";
 import { getDegreesForEducation } from "@/lib/degrees-catalog";
 
@@ -88,10 +89,13 @@ const CONTRACT_TYPES_BY_WORKER: Record<string, string[]> = {
   phdResearcher: ["fixedTerm", "permanent"],
 };
 
-// Utility function to clean commute distance by keeping only numbers and dashes
+// Utility function to clean commute distance by keeping only numbers, decimal
+// points and dashes. The decimal point MUST be preserved: the schema validates
+// values like "10.5" and "5.5-12.5", so stripping the dot here would store
+// "105" for a validated "10.5" — silent 10x corruption. Keeping "." and "-"
+// makes the cleaned (stored) value identical to the validated value.
 const cleanCommuteDistance = (value: string): string => {
-  // Keep only numbers and dashes, remove all other characters
-  return value.replace(/[^0-9-]/g, "").trim();
+  return value.replace(/[^0-9.-]/g, "").trim();
 };
 
 const getSubmitButtonText = (
@@ -104,6 +108,71 @@ const getSubmitButtonText = (
   }
   return isEditMode ? t("updateEntry") : t("submitEntry");
 };
+
+/**
+ * A numeric input backed by react-hook-form that stores a `number | undefined`.
+ *
+ * Uses type="text" + inputMode so browsers render a numeric keypad on mobile
+ * WITHOUT the inconsistent value-sanitization of type="number" (Firefox keeps
+ * the raw text; Chromium blanks an unparseable "2500,50", silently dropping the
+ * value). Local text state lets the user see exactly what they typed — including
+ * a comma decimal or an in-progress "38," — while parseNumeric() feeds the form
+ * a real number. Empty / invalid text becomes `undefined` so required-field
+ * validation still fires (and its error is now surfaced by the summary banner).
+ */
+function NumericField({
+  field,
+  placeholder,
+  inputMode,
+  className,
+  prefix,
+}: {
+  field: {
+    value: unknown;
+    name: string;
+    onChange: (value: number | undefined) => void;
+    onBlur: () => void;
+    ref?: Ref<HTMLInputElement>;
+  };
+  placeholder?: string;
+  inputMode: "decimal" | "numeric";
+  className?: string;
+  prefix?: ReactNode;
+}) {
+  const toText = (v: unknown) => (v === undefined || v === null || v === "" ? "" : String(v));
+  const [text, setText] = useState<string>(() => toText(field.value));
+
+  // Re-sync the visible text when the form value changes programmatically
+  // (edit-mode form.reset, post-submit reset, or the effects that clear a field
+  // when salary-basis / education change). Skip when the shown text already
+  // parses to the same number, so a mid-typing value like "38," isn't clobbered.
+  useEffect(() => {
+    if (parseNumeric(text) !== field.value) {
+      setText(toText(field.value));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [field.value]);
+
+  return (
+    <div className="relative">
+      {prefix}
+      <Input
+        type="text"
+        inputMode={inputMode}
+        placeholder={placeholder}
+        name={field.name}
+        ref={field.ref}
+        onBlur={field.onBlur}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          field.onChange(parseNumeric(e.target.value));
+        }}
+        className={className}
+      />
+    </div>
+  );
+}
 
 function AddEntryContent() {
   const params = useParams();
@@ -124,6 +193,9 @@ function AddEntryContent() {
   const tCommon = useTranslations("common");
   const tEdit = useTranslations("edit");
   const confettiRef = useRef<number | null>(null);
+  // Scroll target for the validation-error summary shown when a submit is
+  // blocked by invalid input (see onInvalid).
+  const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
   // Ensure confetti interval cleared on unmount if navigation happens before animation ends
   useEffect(() => {
@@ -141,8 +213,10 @@ function AddEntryContent() {
     return currencies.find((c) => c.value === currency)?.symbol || "€";
   };
 
-  // Create the validation schema with translations
-  const salaryEntrySchema = createSalaryEntrySchema(t);
+  // Build the validation schema once per locale. Rebuilding it on every render
+  // (the factory eagerly resolves every t() message) churns the resolver and
+  // means a single missing translation key throws on each keystroke.
+  const salaryEntrySchema = useMemo(() => createSalaryEntrySchema(t), [t]);
 
   const form = useForm<SalaryEntryFormData>({
     resolver: zodResolver(salaryEntrySchema),
@@ -151,6 +225,13 @@ function AddEntryContent() {
       currency: "EUR",
       workerType: "whiteCollar",
       benefits: [],
+      // Salary basis is no longer user-selectable — gross and net are both always
+      // collected — so it's fixed to "both". This keeps the stored value coherent
+      // and means neither NET_SALARY_FIELDS nor GROSS_SALARY_FIELDS is ever hidden.
+      salaryBasis: "both",
+      // Controlled from the first render so the honesty checkbox never flips
+      // uncontrolled->controlled, and its "must be checked" error behaves normally.
+      honestyConfirmation: false,
     },
   });
 
@@ -331,7 +412,11 @@ function AddEntryContent() {
             workerType: data.workerType || "whiteCollar",
             contractType: data.contractType || undefined,
             contractDurationMonths: data.contractDurationMonths ?? undefined,
-            salaryBasis: data.salaryBasis || undefined,
+            // Basis is fixed to "both" (the selector was removed). Forcing it
+            // here means editing an older entry that was stored as gross- or
+            // net-only still shows BOTH salary inputs, so the now-required net
+            // field is never hidden mid-edit.
+            salaryBasis: "both",
             fixedGrossSalary: data.fixedGrossSalary ?? undefined,
             variableGrossSalary: data.variableGrossSalary ?? undefined,
             hourlyRate: data.hourlyRate ?? undefined,
@@ -520,6 +605,28 @@ function AddEntryContent() {
     }
   };
 
+  // Safety net: react-hook-form's handleSubmit NEVER calls onSubmit when zod
+  // validation fails — it only writes into formState.errors. Without this
+  // handler a failure produced no message, no console log and no network call,
+  // and if the failing field wasn't currently rendered (hidden by worker-type /
+  // country / salary-basis gating) its inline error had nowhere to show, so the
+  // submit appeared to do absolutely nothing. onInvalid guarantees the user
+  // always gets feedback: it logs, then scrolls the error summary into view.
+  const onInvalid = (errors: FieldErrors<SalaryEntryFormData>) => {
+    const fields = Object.keys(errors);
+    logWarning("Salary entry submit blocked by client validation", {
+      fields,
+      isEditMode,
+    });
+    // The summary banner is rendered from formState.errors on the re-render that
+    // this failed submit triggers; defer the scroll until that node is in the
+    // DOM. scrollIntoView with these options is supported in all evergreen
+    // browsers (Chromium, Firefox, WebKit).
+    requestAnimationFrame(() => {
+      errorSummaryRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  };
+
   // Field rendering configurations - now loaded from external config
   // and filtered by country to only show relevant fields
   const allFieldConfigs = createFieldConfigs(t);
@@ -598,23 +705,17 @@ function AddEntryContent() {
     // Special handling for money fields with currency selector
     if (fieldName && MONEY_FIELDS.includes(fieldName)) {
       return (
-        <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
-            {getCurrencySymbol(selectedCurrency)}
-          </span>
-          <Input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder={config.placeholder}
-            {...field}
-            value={field.value?.toString() || ""}
-            onChange={(e) =>
-              field.onChange(e.target.value ? Number.parseFloat(e.target.value) : undefined)
-            }
-            className="pl-7 font-mono"
-          />
-        </div>
+        <NumericField
+          field={field}
+          placeholder={config.placeholder}
+          inputMode="decimal"
+          className="pl-7 font-mono"
+          prefix={
+            <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 font-mono text-sm text-muted-foreground">
+              {getCurrencySymbol(selectedCurrency)}
+            </span>
+          }
+        />
       );
     }
 
@@ -622,17 +723,7 @@ function AddEntryContent() {
     const decimalFields = ["officialHours", "averageHours", "vacationDays", "teleworkDays"];
     if (fieldName && decimalFields.includes(fieldName)) {
       return (
-        <Input
-          type="number"
-          min="0"
-          step="0.5"
-          placeholder={config.placeholder}
-          {...field}
-          value={field.value?.toString() || ""}
-          onChange={(e) =>
-            field.onChange(e.target.value ? Number.parseFloat(e.target.value) : undefined)
-          }
-        />
+        <NumericField field={field} placeholder={config.placeholder} inputMode="decimal" />
       );
     }
 
@@ -646,17 +737,12 @@ function AddEntryContent() {
           />
         );
       case "number": {
+        // inputMode="numeric" (no decimal key), but we still parse with
+        // parseNumeric rather than parseInt: a typed decimal like "38.5" then
+        // reaches the schema's .int() check and shows an error, instead of being
+        // silently truncated to 38.
         return (
-          <Input
-            type="number"
-            min="0"
-            placeholder={config.placeholder}
-            {...field}
-            onChange={(e) =>
-              field.onChange(e.target.value ? Number.parseInt(e.target.value) : undefined)
-            }
-            value={field.value?.toString() || ""}
-          />
+          <NumericField field={field} placeholder={config.placeholder} inputMode="numeric" />
         );
       }
       case "textarea":
@@ -814,10 +900,8 @@ function AddEntryContent() {
     ) {
       return false;
     }
-    // Salary basis: "gross" hides the net fields, "net" hides the gross fields.
-    // "both" and the unset default show everything.
-    if (selectedSalaryBasis === "gross" && NET_SALARY_FIELDS.includes(fieldName)) return false;
-    if (selectedSalaryBasis === "net" && GROSS_SALARY_FIELDS.includes(fieldName)) return false;
+    // Salary basis is fixed to "both" (the selector was removed), so gross and
+    // net are always shown together — both are required for salaried workers.
     // Location granularity picks a single precision level, so hide the finer-
     // grained fields the user opted out of. Unset shows both (backward compatible).
     if (selectedLocationGranularity === "country" && (fieldName === "workProvince" || fieldName === "workCity")) {
@@ -838,6 +922,32 @@ function AddEntryContent() {
     })),
   ];
   const activeIndex = navItems.findIndex((x) => x.key === activeSection);
+
+  // Human-readable label for a field name, for the validation summary. Returns
+  // null when there's no dedicated label (e.g. honestyConfirmation) so the
+  // summary falls back to the (already descriptive) error message.
+  const getErrorFieldLabel = (name: string): string | null => {
+    if (name === "country") return t("fields.country.label");
+    if (name === "currency") return t("fields.currency.label");
+    const cfg = allFieldConfigs[name];
+    if (cfg?.labelKey) {
+      return MONEY_FIELDS.includes(name)
+        ? t(cfg.labelKey, { symbol: getCurrencySymbol(selectedCurrency) })
+        : t(cfg.labelKey);
+    }
+    return null;
+  };
+
+  // Flatten the current validation errors into a display list. Reading
+  // form.formState.errors here subscribes the component, so the summary appears
+  // on the failed-submit re-render and updates live as fields are corrected.
+  // Crucially this includes errors on fields hidden by the current gating — the
+  // whole point is that a blocked submit is never silent.
+  const validationErrorList = Object.entries(form.formState.errors).map(([name, err]) => {
+    const label = getErrorFieldLabel(name);
+    const message = (err as { message?: string } | undefined)?.message;
+    return { name, text: [label, message].filter(Boolean).join(": ") || name };
+  });
 
   return (
     <PageShell width="lg">
@@ -957,7 +1067,7 @@ function AddEntryContent() {
           </div>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit, onInvalid)}>
               <div className="grid gap-8 lg:grid-cols-[200px_minmax(0,1fr)]">
                 {/* Section navigator (desktop) */}
                 <aside className="hidden lg:block">
@@ -1197,6 +1307,29 @@ function AddEntryContent() {
                   )}
                 </div>
               </div>
+
+              {/* Validation-error summary: appears whenever a submit is blocked
+                  by invalid input, so clicking submit is never a silent no-op.
+                  Lists every failing field — including any hidden by the current
+                  gating — with the reason. */}
+              {validationErrorList.length > 0 && (
+                <div ref={errorSummaryRef} className="mt-8" role="alert" aria-live="assertive">
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>{t("validationSummary.title")}</AlertTitle>
+                    <AlertDescription>
+                      <p className="mb-2 font-medium">
+                        {t("validationSummary.errorCount", { count: validationErrorList.length })}
+                      </p>
+                      <ul className="list-disc space-y-1 pl-5">
+                        {validationErrorList.map((e) => (
+                          <li key={e.name}>{e.text}</li>
+                        ))}
+                      </ul>
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              )}
 
               {/* Actions */}
               {selectedCountry && formConfig && (
