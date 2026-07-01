@@ -12,6 +12,17 @@ export type {
   ScatterData,
   YearlyData,
   LocationHeatmapData,
+  SatisfactionBucket,
+  SatisfactionVsPay,
+  SectorSatisfaction,
+  WorkerTypeSatisfaction,
+  PerkSatisfaction,
+  CommuteSatisfaction,
+  WorkerTypeStat,
+  ContractTypeStat,
+  FixedVariablePay,
+  FuelMix,
+  EquityAdoption,
 } from "./statistics.types";
 
 // Sorting types for dashboard

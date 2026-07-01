@@ -395,6 +395,97 @@
         "intern": "Intern",
         "phdResearcher": "PhD researcher"
       }
+    },
+    "beyondPay": {
+      "title": "Work & Wellbeing",
+      "subtitle": "Satisfaction and structural insights from our newest, more detailed salary entries.",
+      "placeholder": "More insights unlock as we collect structured entries — {count} so far, {needed} needed.",
+      "basedOn": "Based on {count} entries",
+      "workerType": {
+        "whiteCollar": "White-collar",
+        "blueCollar": "Blue-collar",
+        "freelancer": "Freelancer",
+        "intern": "Intern",
+        "phdResearcher": "PhD researcher"
+      },
+      "contractType": {
+        "permanent": "Permanent",
+        "fixedTerm": "Fixed-term",
+        "interim": "Interim",
+        "internship": "Internship",
+        "freelance": "Freelance"
+      },
+      "fuelType": {
+        "electric": "Electric",
+        "hybrid": "Hybrid",
+        "fuel": "Fuel"
+      },
+      "axis": {
+        "score": "Satisfaction (0–10)",
+        "avgSatisfaction": "Avg satisfaction",
+        "medianPay": "Median pay",
+        "entries": "Entries",
+        "share": "Share",
+        "adoption": "Adoption",
+        "avgFixed": "Fixed",
+        "avgVariable": "Variable"
+      },
+      "perk": {
+        "with": "With",
+        "without": "Without",
+        "companyCar": "Company car",
+        "equity": "Equity"
+      },
+      "charts": {
+        "satisfactionDistribution": {
+          "title": "How happy are people?",
+          "description": "Distribution of job-satisfaction scores (0–10)"
+        },
+        "satisfactionVsPay": {
+          "title": "Does pay buy happiness?",
+          "description": "Median salary at each satisfaction score"
+        },
+        "happiestSectors": {
+          "title": "Happiest sectors",
+          "description": "Average job satisfaction by sector"
+        },
+        "satisfactionByWorkerType": {
+          "title": "Satisfaction by worker type",
+          "description": "Average job satisfaction across worker types"
+        },
+        "perkSatisfaction": {
+          "title": "Do perks make people happier?",
+          "description": "Average satisfaction with vs without each perk"
+        },
+        "commuteSatisfaction": {
+          "title": "Commute vs satisfaction",
+          "description": "Average job satisfaction by commute time"
+        },
+        "workerTypeMix": {
+          "title": "Worker-type mix",
+          "description": "Share of entries and median pay by worker type"
+        },
+        "contractType": {
+          "title": "Contract types",
+          "description": "Entries and median pay by contract type"
+        },
+        "fixedVsVariable": {
+          "title": "Fixed vs variable pay",
+          "description": "Average base and variable monthly gross"
+        },
+        "companyCarFuel": {
+          "title": "Company-car fuel mix",
+          "description": "Fuel type among company-car holders"
+        },
+        "equityAdoption": {
+          "title": "Equity adoption",
+          "description": "Share of entries that include equity"
+        }
+      },
+      "equity": {
+        "haveEquity": "have equity",
+        "ofEntries": "of {total} entries with equity info"
+      }
     }
   },
   "add": {

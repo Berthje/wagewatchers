@@ -27,6 +27,7 @@ import {
   InteractiveWorldMap,
   ExperienceBoxPlotChart,
   TaxRateAnalysisChart,
+  BeyondPaySection,
 } from "@/components/statistics";
 import { exportToCSV, exportToPDF } from "@/lib/utils/export.utils";
 import {
@@ -530,6 +531,9 @@ export default function StatisticsClient() {
 
               {/* Interactive World Map with Drill-Down */}
               <InteractiveWorldMap filters={filters} />
+
+              {/* Beyond Pay — satisfaction & v2-property statistics (self-gated) */}
+              <BeyondPaySection entries={filteredEntries} loading={false} />
             </>
           )}
         </div>
