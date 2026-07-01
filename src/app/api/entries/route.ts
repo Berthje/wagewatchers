@@ -6,6 +6,7 @@ import { persistEntryBenefits } from "@/lib/entry-benefits";
 import { generateOwnerToken, getEditableUntilDate, withoutOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
+import { validateSalaryEntryPayload } from "@/lib/validations/salary-entry.schema";
 import { toTitleCase } from "@/lib/utils/format.utils";
 import { logError } from "@/lib/logger";
 
@@ -103,6 +104,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+
+    // Never trust the client: re-run the full form validation server-side. The
+    // Zod schema is otherwise only enforced in the browser, so a scripted POST
+    // could insert an entry with no gross salary (stored NULL → "N/A").
+    const validation = validateSalaryEntryPayload(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Validation failed", fieldErrors: validation.fieldErrors },
+        { status: 400 }
+      );
+    }
 
     // `benefits` is an array persisted to EntryBenefit, not a column — strip it
     // out of the values spread into the salaryEntries insert.

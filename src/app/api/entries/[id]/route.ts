@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { isEntryEditable, verifyOwnerToken, withoutOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
+import { validateSalaryEntryPayload } from "@/lib/validations/salary-entry.schema";
 import { toTitleCase } from "@/lib/utils/format.utils";
 import { logError } from "@/lib/logger";
 import { getEntryBenefits, replaceEntryBenefits, deleteEntryBenefits } from "@/lib/entry-benefits";
@@ -101,6 +102,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           error: "This entry is no longer editable (edit window expired)",
         },
         { status: 403 }
+      );
+    }
+
+    // Never trust the client: re-run the full form validation server-side. An
+    // edit is a full-object submit (same shape as create), so the same guard
+    // applies — a scripted PUT must not be able to null out gross salary.
+    const validation = validateSalaryEntryPayload(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Validation failed", fieldErrors: validation.fieldErrors },
+        { status: 400 }
       );
     }
 

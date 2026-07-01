@@ -425,3 +425,34 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
 };
 
 export type SalaryEntryFormData = z.infer<ReturnType<typeof createSalaryEntrySchema>>;
+
+// Identity translator for server-side validation: the API returns raw message
+// keys (the browser already renders localized copy), so no i18n is needed here.
+const identityTranslator = (key: string) => key;
+
+export type SalaryEntryValidationResult =
+  | { success: true }
+  | { success: false; fieldErrors: Record<string, string[]>; formErrors: string[] };
+
+/**
+ * Server-side guard for the create (POST) and edit (PUT) entry endpoints.
+ *
+ * The comprehensive validation in {@link createSalaryEntrySchema} runs only in
+ * the browser via react-hook-form. The API must never trust the client: a
+ * scripted request, disabled JavaScript, or a stale build could otherwise
+ * insert/update an entry that skips required fields — most notably a salaried
+ * entry with no gross salary, which is stored as NULL and shows up as "N/A".
+ * This re-runs the exact same rules on the server.
+ *
+ * Gating only: on success the caller keeps its ORIGINAL body for the DB write
+ * (the schema strips server-only extras like `source` / `ownerToken`, so the
+ * parsed output must not be used for persistence).
+ */
+export function validateSalaryEntryPayload(payload: unknown): SalaryEntryValidationResult {
+  const result = createSalaryEntrySchema(identityTranslator).safeParse(payload);
+  if (result.success) {
+    return { success: true };
+  }
+  const { fieldErrors, formErrors } = z.flattenError(result.error);
+  return { success: false, fieldErrors, formErrors };
+}
