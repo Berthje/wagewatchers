@@ -31,12 +31,22 @@ const SALARIED_WORKER_TYPES = new Set<string>(["whiteCollar", "intern"]);
 const optionalMoney = z.union([z.number().positive(), z.string()]).optional();
 const hasValue = (v: unknown) => v !== undefined && v !== null && v !== "";
 
+// Matches a URL anywhere inside a string: an explicit scheme (http://, https://,
+// ftp://, …) or a bare "www." host. This scans substrings, unlike z.url() which
+// only matches when the ENTIRE value is a URL — so embedded links like
+// "see https://spam.com" are caught, while ordinary text with dots or
+// abbreviations ("e.g.", "i.e.", "9.00") is left alone.
+const URL_IN_STRING = /(?:[a-z][a-z0-9+.-]*:\/\/|www\.)/i;
+
 // Custom URL validation - checks for common URL patterns
 const noUrls = (fieldName: string) =>
   z.string().refine(
     (value) => {
       if (!value) return true; // Allow empty strings
-      return !z.url().safeParse(value).success;
+      // Reject when the whole value is a URL (original behavior)…
+      if (z.url().safeParse(value).success) return false;
+      // …or when a URL appears embedded within the text.
+      return !URL_IN_STRING.test(value);
     },
     {
       message: `URLs are not allowed in ${fieldName}`,
