@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
+import { isEntryEditable, verifyOwnerToken, withoutOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
 import { toTitleCase } from "@/lib/utils/format.utils";
@@ -27,7 +27,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Include catalog benefits so the edit form can repopulate the selector.
     const benefits = await getEntryBenefits(id);
-    return NextResponse.json({ ...entry[0], benefits });
+    // Strip the secret ownership token — it is edit/delete credential material
+    // and must never be exposed to callers.
+    return NextResponse.json({ ...withoutOwnerToken(entry[0]), benefits });
   } catch (error) {
     logError("Failed to fetch entry", error);
     return NextResponse.json({ error: "Failed to fetch entry" }, { status: 500 });

@@ -47,7 +47,6 @@ import {
 import {
   getEntryToken,
   isEntryEditable,
-  verifyOwnerToken,
   getEditTimeRemaining,
 } from "@/lib/entry-ownership";
 import { logError, logWarning } from "@/lib/logger";
@@ -315,14 +314,8 @@ function AddEntryContent() {
           return res.json();
         })
         .then((data) => {
-          // Verify ownership using proper token verification
-          if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
-            setError(tEdit("errors.notOwner"));
-            setIsLoadingEntry(false);
-            return;
-          }
-
-          // Check if entry is still editable
+          // Ownership is enforced server-side when the edit is saved; the stored
+          // token was already confirmed above. Here we only check the edit window.
           if (!isEntryEditable(data.editableUntil)) {
             setError(tEdit("errors.expired"));
             setIsLoadingEntry(false);

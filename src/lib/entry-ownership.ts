@@ -153,6 +153,19 @@ export function clearAllEntryTokens(): void {
 }
 
 /**
+ * Server-side: strip the secret ownership token from an entry before sending it
+ * to a client. `ownerToken` is edit/delete credential material and must never be
+ * exposed to arbitrary callers — leaking it lets anyone edit or delete the entry.
+ */
+export function withoutOwnerToken<T extends { ownerToken?: unknown }>(
+  entry: T
+): Omit<T, "ownerToken"> {
+  const rest = { ...entry };
+  delete (rest as Partial<T>).ownerToken;
+  return rest as Omit<T, "ownerToken">;
+}
+
+/**
  * Verify an owner token (JWT or legacy plain token)
  */
 export function verifyOwnerToken(

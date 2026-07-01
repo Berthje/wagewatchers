@@ -2,55 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq, or, desc } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { verify } from "jsonwebtoken";
+import { requireAdmin } from "@/lib/admin-auth";
 import { logError } from "@/lib/logger";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key";
-
-// Verify admin authentication
-async function verifyAdmin(): Promise<boolean> {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin-token");
-
-    if (!token) {
-      return false;
-    }
-
-    verify(token.value, JWT_SECRET);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// Get admin ID from token
-async function getAdminId(): Promise<number | null> {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin-token");
-
-    if (!token) {
-      return null;
-    }
-
-    const decoded = verify(token.value, JWT_SECRET) as { userId: number };
-    return decoded.userId;
-  } catch {
-    return null;
-  }
-}
+export const dynamic = "force-dynamic";
 
 /**
  * GET - Fetch entries pending review
  */
 export async function GET(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
-
-  if (!isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAdmin();
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -90,11 +52,8 @@ export async function GET(request: NextRequest) {
  * POST - Approve or reject an entry
  */
 export async function POST(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
-
-  if (!isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAdmin();
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const body = await request.json();
@@ -111,14 +70,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const adminId = await getAdminId();
     const newStatus = action === "approve" ? "APPROVED" : "REJECTED";
 
     const updatedEntry = await db
       .update(salaryEntries)
       .set({
         reviewStatus: newStatus,
-        reviewedBy: adminId,
+        reviewedBy: auth.adminId,
         reviewedAt: new Date(),
       })
       .where(eq(salaryEntries.id, entryId))
