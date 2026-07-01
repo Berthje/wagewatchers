@@ -613,10 +613,26 @@ function AddEntryContent() {
   // submit appeared to do absolutely nothing. onInvalid guarantees the user
   // always gets feedback: it logs, then scrolls the error summary into view.
   const onInvalid = (errors: FieldErrors<SalaryEntryFormData>) => {
-    const fields = Object.keys(errors);
+    // Per-field reason — WHAT failed and WHY — so a blocked submit is debuggable
+    // in Sentry without reproducing it. `type` is the zod/RHF rule that tripped
+    // (e.g. "custom", "too_small", "invalid_type").
+    const reasons = Object.entries(errors).map(([field, err]) => ({
+      field,
+      message: (err as { message?: string } | undefined)?.message ?? "invalid value",
+      type: (err as { type?: string } | undefined)?.type,
+    }));
+    // The exact values the client tried to submit, attached to the Sentry event
+    // so you can see the offending payload at a glance. NOTE: this is user-entered
+    // salary/personal data (PII) and is only sent on a *blocked* submit.
+    const attemptedPayload = form.getValues();
+
     logWarning("Salary entry submit blocked by client validation", {
-      fields,
       isEditMode,
+      editEntryId,
+      errorCount: reasons.length,
+      invalidFields: reasons.map((r) => r.field),
+      reasons,
+      attemptedPayload,
     });
     // The summary banner is rendered from formState.errors on the re-render that
     // this failed submit triggers; defer the scroll until that node is in the
