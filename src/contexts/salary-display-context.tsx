@@ -16,6 +16,11 @@ interface SalaryDisplayContextType {
   preferences: SalaryDisplayPreferences;
   setCurrency: (currency: DisplayCurrency) => void;
   setPeriod: (period: SalaryPeriod) => void;
+  // True once preferences have been loaded from localStorage after mount. Until
+  // then `preferences` still holds the SSR defaults, so consumers that convert
+  // values on preference changes must not treat the initial settle as a real
+  // user-initiated switch.
+  isHydrated: boolean;
   // Column visibility preferences
   selectedColumns: string[];
   setSelectedColumns: (cols: string[]) => void;
@@ -48,6 +53,9 @@ export function SalaryDisplayProvider({
   // initial render) to avoid a hydration mismatch; stored columns are loaded in
   // the effect below after mount.
   const [selectedColumns, setSelectedColumns] = React.useState<string[]>(DEFAULT_SELECTED_COLUMNS);
+  // Flips true once the post-mount effect has read localStorage, so consumers
+  // can tell the initial default->stored settle apart from a real user change.
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Fetch exchange rates from API on mount with local cache (1 hour)
   useEffect(() => {
@@ -105,6 +113,9 @@ export function SalaryDisplayProvider({
     } catch (error) {
       logError("Failed to load selected columns", error);
     }
+    // Mark hydrated regardless of whether anything was stored: from here on,
+    // `preferences` reflects the user's persisted choice.
+    setIsHydrated(true);
   }, []);
 
   // Save preferences to localStorage whenever they change
@@ -142,10 +153,11 @@ export function SalaryDisplayProvider({
       preferences,
       setCurrency,
       setPeriod,
+      isHydrated,
       selectedColumns,
       setSelectedColumns: setColumns,
     }),
-    [preferences, setCurrency, setPeriod, selectedColumns, setColumns]
+    [preferences, setCurrency, setPeriod, isHydrated, selectedColumns, setColumns]
   );
 
   return <SalaryDisplayContext.Provider value={value}>{children}</SalaryDisplayContext.Provider>;

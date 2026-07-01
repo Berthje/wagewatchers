@@ -90,7 +90,12 @@ export function useFilters(
   allEntries: SalaryEntry[],
   initialFilters?: Partial<FilterState>,
   displayCurrency: DisplayCurrency = "EUR",
-  displayPeriod: SalaryPeriod = "monthly"
+  displayPeriod: SalaryPeriod = "monthly",
+  // Whether display preferences have been loaded from localStorage yet. Salary
+  // filter values are persisted in the URL in the user's *displayed* unit, so
+  // the initial default->stored settle must adopt that unit as the baseline
+  // rather than converting the (already-correct) restored values.
+  isHydrated: boolean = true
 ): UseFiltersReturn {
   // Initialize state with defaults or provided initial values
   const [selectedCountries, setSelectedCountries] = useState<string[]>(
@@ -131,10 +136,25 @@ export function useFilters(
   );
   const [searchQuery, setSearchQuery] = useState<string>(initialFilters?.searchQuery || "");
 
-  // Track previous currency and convert filter values when currency changes
+  // Track previous currency and convert filter values when the user switches
+  // currency. Gated by `isHydrated`: the first settle of display preferences
+  // (SSR default -> value persisted in localStorage) must NOT convert, because
+  // filter values restored from the URL are already in the persisted unit.
   const previousCurrency = useRef(displayCurrency);
+  const currencyConversionArmed = useRef(false);
 
   useEffect(() => {
+    // Wait until preferences are loaded from storage before doing anything.
+    if (!isHydrated) return;
+
+    // First hydrated render: adopt the persisted currency as the baseline
+    // without converting the (already-correct) restored filter values.
+    if (!currencyConversionArmed.current) {
+      currencyConversionArmed.current = true;
+      previousCurrency.current = displayCurrency;
+      return;
+    }
+
     const prevCurrency = previousCurrency.current;
     const currentCurrency = displayCurrency;
 
@@ -167,12 +187,23 @@ export function useFilters(
       // Update the ref for next time
       previousCurrency.current = currentCurrency;
     }
-  }, [displayCurrency, minGrossSalary, maxGrossSalary, minNetSalary, maxNetSalary]);
+  }, [isHydrated, displayCurrency, minGrossSalary, maxGrossSalary, minNetSalary, maxNetSalary]);
 
-  // Track previous period and convert filter values when period changes
+  // Track previous period and convert filter values when the user switches
+  // period. Gated by `isHydrated` for the same reason as currency above: the
+  // initial default->stored settle must not double-convert URL-restored values.
   const previousPeriod = useRef(displayPeriod);
+  const periodConversionArmed = useRef(false);
 
   useEffect(() => {
+    if (!isHydrated) return;
+
+    if (!periodConversionArmed.current) {
+      periodConversionArmed.current = true;
+      previousPeriod.current = displayPeriod;
+      return;
+    }
+
     const prevPeriod = previousPeriod.current;
     const currentPeriod = displayPeriod;
 
@@ -201,7 +232,7 @@ export function useFilters(
       // Update the ref for next time
       previousPeriod.current = currentPeriod;
     }
-  }, [displayPeriod, minGrossSalary, maxGrossSalary, minNetSalary, maxNetSalary]);
+  }, [isHydrated, displayPeriod, minGrossSalary, maxGrossSalary, minNetSalary, maxNetSalary]);
 
   // Generate filter options from all entries
   const filterOptions = useMemo((): FilterOptions => {

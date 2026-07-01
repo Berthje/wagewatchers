@@ -41,7 +41,7 @@ import {
 
 export default function StatisticsClient() {
   const t = useTranslations("statistics");
-  const { preferences } = useSalaryDisplay();
+  const { preferences, isHydrated } = useSalaryDisplay();
   const [allEntries, setAllEntries] = useState<SalaryEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -50,7 +50,8 @@ export default function StatisticsClient() {
     allEntries,
     undefined,
     preferences.currency,
-    preferences.period
+    preferences.period,
+    isHydrated
   );
 
   // Extract filter values for easier access

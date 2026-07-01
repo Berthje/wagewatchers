@@ -65,7 +65,7 @@ export function DashboardClient({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { preferences, selectedColumns, setSelectedColumns } = useSalaryDisplay();
+  const { preferences, isHydrated, selectedColumns, setSelectedColumns } = useSalaryDisplay();
   const tAdd = useTranslations("add");
   const fieldConfigs = createFieldConfigs(tAdd);
 
@@ -146,7 +146,7 @@ export function DashboardClient({
     activeFilterCount,
     options,
     maxValues,
-  } = useFilters(entries, initialFilters, preferences.currency, preferences.period);
+  } = useFilters(entries, initialFilters, preferences.currency, preferences.period, isHydrated);
 
   // Extract filter values for easier access
   const {
