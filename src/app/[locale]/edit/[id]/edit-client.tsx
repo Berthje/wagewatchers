@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Lock } from "lucide-react";
-import { getEntryToken, isEntryEditable, verifyOwnerToken } from "@/lib/entry-ownership";
+import { getEntryToken, isEntryEditable } from "@/lib/entry-ownership";
 import { logError } from "@/lib/logger";
 
 export default function EditEntryClient() {
@@ -48,14 +48,8 @@ export default function EditEntryClient() {
 
         const data: SalaryEntry = await res.json();
 
-        // Verify ownership using proper token verification
-        if (!verifyOwnerToken(token, entryId, data.ownerToken, data.editableUntil)) {
-          setError(t("errors.notOwner"));
-          setIsLoading(false);
-          return;
-        }
-
-        // Check if editable
+        // Ownership is enforced server-side when the edit is saved; the stored
+        // token was already confirmed above. Here we only check the edit window.
         if (!isEntryEditable(data.editableUntil)) {
           setError(t("errors.expired"));
           setIsLoading(false);

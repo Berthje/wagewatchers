@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { salaryEntries } from "@/lib/db/schema";
 import { eq, inArray, desc } from "drizzle-orm";
 import { persistEntryBenefits } from "@/lib/entry-benefits";
-import { generateOwnerToken, getEditableUntilDate } from "@/lib/entry-ownership";
+import { generateOwnerToken, getEditableUntilDate, withoutOwnerToken } from "@/lib/entry-ownership";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { detectAnomaly } from "@/lib/anomaly-detector";
 import { toTitleCase } from "@/lib/utils/format.utils";
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         return providedToken && providedToken === entry.ownerToken;
       });
 
-      return NextResponse.json(validatedEntries);
+      return NextResponse.json(validatedEntries.map(withoutOwnerToken));
     }
 
     // Otherwise return only approved entries (default behavior)
@@ -67,7 +67,8 @@ export async function GET(request: NextRequest) {
       .from(salaryEntries)
       .where(eq(salaryEntries.reviewStatus, "APPROVED"))
       .orderBy(desc(salaryEntries.createdAt));
-    return NextResponse.json(entries);
+    // Never expose ownership tokens on the public listing.
+    return NextResponse.json(entries.map(withoutOwnerToken));
   } catch (error) {
     logError("Failed to fetch entries", error);
     return NextResponse.json(

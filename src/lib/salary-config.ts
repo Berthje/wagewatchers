@@ -102,7 +102,6 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
         title: "Salary",
         description: "Your compensation details",
         fields: [
-          "salaryBasis",
           "grossSalary",
           "netSalary",
           "netCompensation",
@@ -195,7 +194,6 @@ export const COUNTRY_FORM_CONFIGS: Record<string, CountryFormConfig> = {
         title: "Salary",
         description: "Your compensation details",
         fields: [
-          "salaryBasis",
           "grossSalary",
           "netSalary",
           "netCompensation",

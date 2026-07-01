@@ -13,6 +13,12 @@ export interface FieldConfig {
 
 export type FieldConfigs = Record<string, FieldConfig>;
 
+// Worker types that render (and therefore can supply) the vacation-days field.
+// Self-employed freelancers have no statutory paid leave, so the field is hidden
+// for them. Exported so the validation schema requires vacationDays for EXACTLY
+// the worker types that can see it — keeping the schema and the form in lockstep.
+export const VACATION_DAYS_WORKER_TYPES = ["whiteCollar", "blueCollar", "intern", "phdResearcher"];
+
 // Field configurations function generator that accepts translation function
 export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => ({
   age: {
@@ -233,7 +239,7 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
     helpKey: "help.vacationDays",
     width: "half",
     // Self-employed freelancers have no statutory paid leave.
-    workerTypes: ["whiteCollar", "blueCollar", "intern", "phdResearcher"],
+    workerTypes: VACATION_DAYS_WORKER_TYPES,
   },
   workerType: {
     labelKey: "sections.employment.workerType",
@@ -675,7 +681,6 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
     "averageHours",
     "shiftDescription",
     "onCall",
-    "salaryBasis",
     "grossSalary",
     "netSalary",
     "netCompensation",
@@ -736,7 +741,6 @@ export const COUNTRY_FIELD_CONFIGS: Record<string, string[]> = {
     "averageHours",
     "shiftDescription",
     "onCall",
-    "salaryBasis",
     "grossSalary",
     "netSalary",
     "netCompensation",
@@ -790,4 +794,22 @@ export const getFieldConfigsForCountry = (
       obj[key] = allFieldConfigs[key];
       return obj;
     }, {} as FieldConfigs);
+};
+
+/**
+ * Whether a given country's form actually collects (renders an input for) a
+ * field. Mirrors the render-time country filter in getFieldConfigsForCountry:
+ * an unknown country (or none chosen yet) falls back to "collects everything",
+ * exactly as the form does. The validation schema uses this so it never marks a
+ * field required for a country that has no way to enter it (which would make the
+ * form silently un-submittable — the errors would attach to non-rendered inputs).
+ */
+export const countryCollectsField = (
+  country: string | undefined | null,
+  field: string
+): boolean => {
+  if (!country) return true;
+  const allowed = COUNTRY_FIELD_CONFIGS[country];
+  if (!allowed) return true;
+  return allowed.includes(field);
 };

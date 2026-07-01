@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limiter";
 import { logError } from "@/lib/logger";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -206,6 +207,9 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/reports - Update a report (for admin)
 export async function PATCH(request: NextRequest) {
+  const auth = await requireAdmin();
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { id, status, priority } = body;
@@ -261,6 +265,9 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE /api/reports - Delete a report (for admin)
 export async function DELETE(request: NextRequest) {
+  const auth = await requireAdmin();
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

@@ -7,6 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -99,6 +102,7 @@
     "@types/node": "^20",
     "@types/react": "^19.2.11",
     "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.9",
     "cross-env": "^10.1.0",
     "drizzle-kit": "^0.31.6",
     "eslint": "^9",
@@ -106,6 +110,7 @@
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "tsx": "^4.7.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.9"
   }
 }

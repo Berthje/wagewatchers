@@ -1,8 +1,16 @@
 import { z } from "zod";
+import { countryCollectsField, VACATION_DAYS_WORKER_TYPES } from "@/lib/field-configs";
 
 /**
  * Salary Entry Form Validation Schema
  * Comprehensive validation for manual salary entry submissions
+ *
+ * INVARIANT: only mark a field required (here or in superRefine) when the form
+ * actually renders an input for it in the current (country, workerType,
+ * salaryBasis) context. If the schema requires a field the form does not show,
+ * react-hook-form fails validation but the error attaches to a non-rendered
+ * input — producing a submit that silently does nothing (no message, no
+ * network). The country / worker-type gates below exist to keep this invariant.
  */
 
 // v2 enum values — duplicated locally (not imported from db/schema) so this
@@ -31,12 +39,22 @@ const SALARIED_WORKER_TYPES = new Set<string>(["whiteCollar", "intern"]);
 const optionalMoney = z.union([z.number().positive(), z.string()]).optional();
 const hasValue = (v: unknown) => v !== undefined && v !== null && v !== "";
 
+// Matches a URL anywhere inside a string: an explicit scheme (http://, https://,
+// ftp://, …) or a bare "www." host. This scans substrings, unlike z.url() which
+// only matches when the ENTIRE value is a URL — so embedded links like
+// "see https://spam.com" are caught, while ordinary text with dots or
+// abbreviations ("e.g.", "i.e.", "9.00") is left alone.
+const URL_IN_STRING = /(?:[a-z][a-z0-9+.-]*:\/\/|www\.)/i;
+
 // Custom URL validation - checks for common URL patterns
 const noUrls = (fieldName: string) =>
   z.string().refine(
     (value) => {
       if (!value) return true; // Allow empty strings
-      return !z.url().safeParse(value).success;
+      // Reject when the whole value is a URL (original behavior)…
+      if (z.url().safeParse(value).success) return false;
+      // …or when a URL appears embedded within the text.
+      return !URL_IN_STRING.test(value);
     },
     {
       message: `URLs are not allowed in ${fieldName}`,
@@ -123,12 +141,16 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .max(1000, { message: t("validation.shiftDescriptionMax") })
           .optional(),
         onCall: z.string().optional(),
-        // Vacation
+        // Vacation. Optional at the base level — the form hides this field for
+        // freelancers (no statutory paid leave), so requiring it unconditionally
+        // makes a freelancer submission silently un-submittable. Presence is
+        // required only for the worker types that render it (see superRefine).
         vacationDays: z
           .number({ message: t("validation.numberExpected") })
           .min(0)
           .max(365, { message: t("validation.vacationDaysMax") })
-          .refine((val) => val % 0.5 === 0, { message: t("validation.vacationDaysStep") }),
+          .refine((val) => val % 0.5 === 0, { message: t("validation.vacationDaysStep") })
+          .optional(),
 
         // Salary & Currency
         currency: z.string().min(1, { message: t("validation.currencyRequired") }),
@@ -306,26 +328,64 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
               path: ["bursaryAmount"],
             });
           }
-        } else if (!hasAnySalary) {
-          // whiteCollar | intern — classic salaried model
+        } else {
+          // whiteCollar | intern — classic salaried model. The salary-basis
+          // selector was removed (basis is always "both"), so BOTH gross and net
+          // are always shown and both are required. This is why some rows had an
+          // N/A net: the old rule only needed ONE of gross/net, so gross-only
+          // submissions stored a null net. Both fields render for these worker
+          // types, so requiring them never strands an error on a hidden input.
+          if (!hasValue(data.grossSalary)) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.grossSalaryRequired"),
+              path: ["grossSalary"],
+            });
+          }
+          if (!hasValue(data.netSalary)) {
+            ctx.addIssue({
+              code: "custom",
+              message: t("validation.netSalaryRequired"),
+              path: ["netSalary"],
+            });
+          }
+        }
+
+        // Vacation days: required for the worker types that render the field
+        // (freelancers don't see it), and only where the country collects it.
+        if (
+          VACATION_DAYS_WORKER_TYPES.includes(workerType) &&
+          countryCollectsField(data.country, "vacationDays") &&
+          !hasValue(data.vacationDays)
+        ) {
           ctx.addIssue({
             code: "custom",
-            message: t("validation.atLeastOneSalary"),
-            path: ["grossSalary"],
+            message: t("validation.vacationDaysRequired"),
+            path: ["vacationDays"],
           });
         }
 
-        // 13th month + group insurance are only required for salaried worker types
-        // (preserves the original white-collar requirement exactly).
+        // 13th month + group insurance are required for salaried worker types,
+        // but ONLY in countries whose form collects them (Belgium). The
+        // Netherlands form omits these fields entirely (its benefits come from
+        // the catalog), so requiring them there attached the error to inputs the
+        // NL user could never fill — making every NL salaried submission silently
+        // fail. Gate on countryCollectsField so the requirement tracks the form.
         if (SALARIED_WORKER_TYPES.has(workerType)) {
-          if (!hasValue(data.thirteenthMonth)) {
+          if (
+            countryCollectsField(data.country, "thirteenthMonth") &&
+            !hasValue(data.thirteenthMonth)
+          ) {
             ctx.addIssue({
               code: "custom",
               message: t("validation.thirteenthMonthRequired"),
               path: ["thirteenthMonth"],
             });
           }
-          if (!hasValue(data.groupInsurance)) {
+          if (
+            countryCollectsField(data.country, "groupInsurance") &&
+            !hasValue(data.groupInsurance)
+          ) {
             ctx.addIssue({
               code: "custom",
               message: t("validation.groupInsuranceRequired"),
