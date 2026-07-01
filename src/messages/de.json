@@ -395,6 +395,97 @@
         "intern": "Praktikant(in)",
         "phdResearcher": "Doktorand(in)"
       }
+    },
+    "beyondPay": {
+      "title": "Arbeit & Wohlbefinden",
+      "subtitle": "Zufriedenheit und strukturelle Einblicke aus unseren neuesten, detaillierteren Gehaltsdaten.",
+      "placeholder": "Weitere Einblicke werden freigeschaltet, sobald wir strukturierte Einträge sammeln — {count} bisher, {needed} nötig.",
+      "basedOn": "Basierend auf {count} Einträgen",
+      "workerType": {
+        "whiteCollar": "Angestellte",
+        "blueCollar": "Arbeiter",
+        "freelancer": "Freiberufler",
+        "intern": "Praktikant",
+        "phdResearcher": "Doktorand"
+      },
+      "contractType": {
+        "permanent": "Unbefristet",
+        "fixedTerm": "Befristet",
+        "interim": "Zeitarbeit",
+        "internship": "Praktikum",
+        "freelance": "Freiberuflich"
+      },
+      "fuelType": {
+        "electric": "Elektrisch",
+        "hybrid": "Hybrid",
+        "fuel": "Kraftstoff"
+      },
+      "axis": {
+        "score": "Zufriedenheit (0–10)",
+        "avgSatisfaction": "Ø Zufriedenheit",
+        "medianPay": "Median-Gehalt",
+        "entries": "Einträge",
+        "share": "Anteil",
+        "adoption": "Anteil",
+        "avgFixed": "Fix",
+        "avgVariable": "Variabel"
+      },
+      "perk": {
+        "with": "Mit",
+        "without": "Ohne",
+        "companyCar": "Firmenwagen",
+        "equity": "Beteiligung"
+      },
+      "charts": {
+        "satisfactionDistribution": {
+          "title": "Wie zufrieden sind die Leute?",
+          "description": "Verteilung der Zufriedenheitswerte (0–10)"
+        },
+        "satisfactionVsPay": {
+          "title": "Macht Gehalt glücklich?",
+          "description": "Median-Gehalt je Zufriedenheitswert"
+        },
+        "happiestSectors": {
+          "title": "Zufriedenste Branchen",
+          "description": "Durchschnittliche Zufriedenheit nach Branche"
+        },
+        "satisfactionByWorkerType": {
+          "title": "Zufriedenheit nach Beschäftigungsart",
+          "description": "Durchschnittliche Zufriedenheit nach Beschäftigungsart"
+        },
+        "perkSatisfaction": {
+          "title": "Machen Zusatzleistungen glücklicher?",
+          "description": "Durchschnittliche Zufriedenheit mit vs. ohne Zusatzleistung"
+        },
+        "commuteSatisfaction": {
+          "title": "Pendeln vs. Zufriedenheit",
+          "description": "Durchschnittliche Zufriedenheit nach Pendelzeit"
+        },
+        "workerTypeMix": {
+          "title": "Verteilung nach Beschäftigungsart",
+          "description": "Anteil der Einträge und Median-Gehalt nach Art"
+        },
+        "contractType": {
+          "title": "Vertragsarten",
+          "description": "Einträge und Median-Gehalt nach Vertragsart"
+        },
+        "fixedVsVariable": {
+          "title": "Fixes vs. variables Gehalt",
+          "description": "Durchschnittliches fixes und variables Bruttogehalt pro Monat"
+        },
+        "companyCarFuel": {
+          "title": "Antriebsmix Firmenwagen",
+          "description": "Kraftstoffart bei Firmenwagen-Nutzern"
+        },
+        "equityAdoption": {
+          "title": "Beteiligung",
+          "description": "Anteil der Einträge mit Unternehmensbeteiligung"
+        }
+      },
+      "equity": {
+        "haveEquity": "haben Beteiligung",
+        "ofEntries": "von {total} Einträgen mit Beteiligungsinfo"
+      }
     }
   },
   "add": {

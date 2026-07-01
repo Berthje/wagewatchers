@@ -64,3 +64,70 @@ export interface LocationHeatmapData {
   lat?: number;
   lng?: number;
 }
+
+// "Beyond Pay" section — statistics built on v2 entry properties
+// (satisfaction, worker type, contract type, company car, equity, commute).
+
+export interface SatisfactionBucket {
+  score: number;
+  count: number;
+}
+
+export interface SatisfactionVsPay {
+  score: number;
+  medianSalary: number;
+  count: number;
+}
+
+export interface SectorSatisfaction {
+  sector: string;
+  avgSatisfaction: number;
+  count: number;
+}
+
+export interface WorkerTypeSatisfaction {
+  workerType: string;
+  avgSatisfaction: number;
+  count: number;
+}
+
+export interface PerkSatisfaction {
+  perk: "companyCar" | "equity";
+  withPerk: number;
+  withoutPerk: number;
+}
+
+export interface CommuteSatisfaction {
+  band: string;
+  avgSatisfaction: number;
+  count: number;
+}
+
+export interface WorkerTypeStat {
+  workerType: string;
+  count: number;
+  medianSalary: number;
+}
+
+export interface ContractTypeStat {
+  contractType: string;
+  count: number;
+  medianSalary: number;
+}
+
+export interface FixedVariablePay {
+  label: string;
+  avgFixed: number;
+  avgVariable: number;
+}
+
+export interface FuelMix {
+  fuelType: string;
+  count: number;
+}
+
+export interface EquityAdoption {
+  withEquityPct: number;
+  total: number;
+  byWorkerType: { workerType: string; pct: number; count: number }[];
+}

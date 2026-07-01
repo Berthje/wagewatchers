@@ -395,6 +395,97 @@
         "intern": "Stagiair",
         "phdResearcher": "Doctoraatsonderzoeker"
       }
+    },
+    "beyondPay": {
+      "title": "Werk & Welzijn",
+      "subtitle": "Tevredenheid en structurele inzichten uit onze nieuwste, meer gedetailleerde loongegevens.",
+      "placeholder": "Meer inzichten komen vrij naarmate we gestructureerde inzendingen verzamelen — {count} tot nu toe, {needed} nodig.",
+      "basedOn": "Op basis van {count} inzendingen",
+      "workerType": {
+        "whiteCollar": "Bediende",
+        "blueCollar": "Arbeider",
+        "freelancer": "Freelancer",
+        "intern": "Stagiair",
+        "phdResearcher": "Doctoraatsonderzoeker"
+      },
+      "contractType": {
+        "permanent": "Vast",
+        "fixedTerm": "Bepaalde duur",
+        "interim": "Interim",
+        "internship": "Stage",
+        "freelance": "Freelance"
+      },
+      "fuelType": {
+        "electric": "Elektrisch",
+        "hybrid": "Hybride",
+        "fuel": "Brandstof"
+      },
+      "axis": {
+        "score": "Tevredenheid (0–10)",
+        "avgSatisfaction": "Gem. tevredenheid",
+        "medianPay": "Mediaanloon",
+        "entries": "Inzendingen",
+        "share": "Aandeel",
+        "adoption": "Aandeel",
+        "avgFixed": "Vast",
+        "avgVariable": "Variabel"
+      },
+      "perk": {
+        "with": "Met",
+        "without": "Zonder",
+        "companyCar": "Bedrijfswagen",
+        "equity": "Aandelen"
+      },
+      "charts": {
+        "satisfactionDistribution": {
+          "title": "Hoe tevreden zijn mensen?",
+          "description": "Verdeling van tevredenheidsscores (0–10)"
+        },
+        "satisfactionVsPay": {
+          "title": "Koopt loon geluk?",
+          "description": "Mediaanloon per tevredenheidsscore"
+        },
+        "happiestSectors": {
+          "title": "Gelukkigste sectoren",
+          "description": "Gemiddelde tevredenheid per sector"
+        },
+        "satisfactionByWorkerType": {
+          "title": "Tevredenheid per type werknemer",
+          "description": "Gemiddelde tevredenheid per type werknemer"
+        },
+        "perkSatisfaction": {
+          "title": "Maken extralegale voordelen gelukkiger?",
+          "description": "Gemiddelde tevredenheid met vs. zonder elk voordeel"
+        },
+        "commuteSatisfaction": {
+          "title": "Woon-werkverkeer vs. tevredenheid",
+          "description": "Gemiddelde tevredenheid per pendeltijd"
+        },
+        "workerTypeMix": {
+          "title": "Verdeling per type werknemer",
+          "description": "Aandeel inzendingen en mediaanloon per type"
+        },
+        "contractType": {
+          "title": "Contracttypes",
+          "description": "Inzendingen en mediaanloon per contracttype"
+        },
+        "fixedVsVariable": {
+          "title": "Vast vs. variabel loon",
+          "description": "Gemiddeld vast en variabel brutoloon per maand"
+        },
+        "companyCarFuel": {
+          "title": "Brandstofmix bedrijfswagens",
+          "description": "Brandstoftype bij houders van een bedrijfswagen"
+        },
+        "equityAdoption": {
+          "title": "Aandelen",
+          "description": "Aandeel inzendingen met aandelenvergoeding"
+        }
+      },
+      "equity": {
+        "haveEquity": "hebben aandelen",
+        "ofEntries": "van {total} inzendingen met info over aandelen"
+      }
     }
   },
   "add": {

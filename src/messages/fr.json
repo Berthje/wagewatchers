@@ -395,6 +395,97 @@
         "intern": "Stagiaire",
         "phdResearcher": "Doctorant"
       }
+    },
+    "beyondPay": {
+      "title": "Travail & Bien-être",
+      "subtitle": "Satisfaction et informations structurelles issues de nos données salariales les plus récentes et détaillées.",
+      "placeholder": "D'autres analyses se débloquent à mesure que nous collectons des entrées structurées — {count} à ce jour, {needed} nécessaires.",
+      "basedOn": "Basé sur {count} entrées",
+      "workerType": {
+        "whiteCollar": "Employé",
+        "blueCollar": "Ouvrier",
+        "freelancer": "Indépendant",
+        "intern": "Stagiaire",
+        "phdResearcher": "Doctorant"
+      },
+      "contractType": {
+        "permanent": "CDI",
+        "fixedTerm": "CDD",
+        "interim": "Intérim",
+        "internship": "Stage",
+        "freelance": "Indépendant"
+      },
+      "fuelType": {
+        "electric": "Électrique",
+        "hybrid": "Hybride",
+        "fuel": "Carburant"
+      },
+      "axis": {
+        "score": "Satisfaction (0–10)",
+        "avgSatisfaction": "Satisfaction moy.",
+        "medianPay": "Salaire médian",
+        "entries": "Entrées",
+        "share": "Part",
+        "adoption": "Part",
+        "avgFixed": "Fixe",
+        "avgVariable": "Variable"
+      },
+      "perk": {
+        "with": "Avec",
+        "without": "Sans",
+        "companyCar": "Voiture de société",
+        "equity": "Actions"
+      },
+      "charts": {
+        "satisfactionDistribution": {
+          "title": "Les gens sont-ils satisfaits ?",
+          "description": "Répartition des scores de satisfaction (0–10)"
+        },
+        "satisfactionVsPay": {
+          "title": "Le salaire achète-t-il le bonheur ?",
+          "description": "Salaire médian par score de satisfaction"
+        },
+        "happiestSectors": {
+          "title": "Secteurs les plus satisfaits",
+          "description": "Satisfaction moyenne par secteur"
+        },
+        "satisfactionByWorkerType": {
+          "title": "Satisfaction par type de travailleur",
+          "description": "Satisfaction moyenne par type de travailleur"
+        },
+        "perkSatisfaction": {
+          "title": "Les avantages rendent-ils plus heureux ?",
+          "description": "Satisfaction moyenne avec vs sans chaque avantage"
+        },
+        "commuteSatisfaction": {
+          "title": "Trajet vs satisfaction",
+          "description": "Satisfaction moyenne selon le temps de trajet"
+        },
+        "workerTypeMix": {
+          "title": "Répartition par type de travailleur",
+          "description": "Part des entrées et salaire médian par type"
+        },
+        "contractType": {
+          "title": "Types de contrat",
+          "description": "Entrées et salaire médian par type de contrat"
+        },
+        "fixedVsVariable": {
+          "title": "Salaire fixe vs variable",
+          "description": "Salaire brut mensuel fixe et variable moyen"
+        },
+        "companyCarFuel": {
+          "title": "Motorisation des voitures de société",
+          "description": "Type de carburant chez les détenteurs d'une voiture de société"
+        },
+        "equityAdoption": {
+          "title": "Actions",
+          "description": "Part des entrées incluant des actions"
+        }
+      },
+      "equity": {
+        "haveEquity": "ont des actions",
+        "ofEntries": "sur {total} entrées avec info sur les actions"
+      }
     }
   },
   "add": {
