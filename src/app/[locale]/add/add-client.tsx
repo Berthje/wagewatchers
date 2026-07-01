@@ -52,7 +52,7 @@ import {
 } from "@/lib/entry-ownership";
 import { logError, logWarning } from "@/lib/logger";
 import { BenefitsSelector, type EntryBenefitValue } from "@/components/benefits-selector";
-import { getDegreesFor } from "@/lib/degrees-catalog";
+import { getDegreesForEducation } from "@/lib/degrees-catalog";
 
 // Fields that render with a currency prefix and store a float.
 const MONEY_FIELDS = [
@@ -72,6 +72,11 @@ const MONEY_FIELDS = [
 
 // Company-car detail fields only shown once "has company car" is selected.
 const COMPANY_CAR_DETAIL_FIELDS = ["companyCarModel", "companyCarFuelType", "companyCarCardScope"];
+
+// Salary-basis gating: choosing "gross" or "net" hides the fields belonging to
+// the other basis. "both" (or no choice yet) shows everything.
+const GROSS_SALARY_FIELDS = ["grossSalary", "fixedGrossSalary", "variableGrossSalary"];
+const NET_SALARY_FIELDS = ["netSalary", "netCompensation"];
 
 // Contract types that make sense per worker type (Belgian context): freelancers
 // work under a freelance agreement, interns under an internship, employees under
@@ -154,10 +159,50 @@ function AddEntryContent() {
   const selectedCurrency = form.watch("currency");
   const selectedWorkerType = (form.watch("workerType") as string) || "whiteCollar";
   const selectedContractType = form.watch("contractType") as string | undefined;
+  const selectedEducation = form.watch("education") as string | undefined;
+  const selectedSalaryBasis = form.watch("salaryBasis") as string | undefined;
+  const selectedLocationGranularity = form.watch("locationGranularity") as string | undefined;
   const hasCompanyCar = form.watch("hasCompanyCar");
   const grossSalary = form.watch("grossSalary");
   const netSalary = form.watch("netSalary");
   const formConfig = selectedCountry ? getFormConfigForCountry(selectedCountry) : null;
+
+  // When the education level changes, drop a previously-picked degree that no
+  // longer matches the filtered list so the picker never shows a stale value.
+  useEffect(() => {
+    const current = form.getValues("degreeId");
+    if (current == null) return;
+    const stillValid = getDegreesForEducation(selectedCountry, selectedEducation).some(
+      (d) => d.id === current
+    );
+    if (!stillValid) {
+      form.setValue("degreeId", undefined, { shouldDirty: true });
+    }
+  }, [selectedEducation, selectedCountry, form]);
+
+  // Clear salary fields the chosen basis hides, so a stale value from the other
+  // basis is never submitted after switching gross <-> net.
+  useEffect(() => {
+    const toClear =
+      selectedSalaryBasis === "gross"
+        ? NET_SALARY_FIELDS
+        : selectedSalaryBasis === "net"
+          ? GROSS_SALARY_FIELDS
+          : [];
+    toClear.forEach((f) => form.setValue(f as keyof SalaryEntryFormData, undefined));
+  }, [selectedSalaryBasis, form]);
+
+  // Clear the finer-grained location fields the chosen granularity hides.
+  useEffect(() => {
+    if (selectedLocationGranularity === "country") {
+      form.setValue("workProvince", undefined);
+      form.setValue("workCity", undefined);
+    } else if (selectedLocationGranularity === "province") {
+      form.setValue("workCity", undefined);
+    } else if (selectedLocationGranularity === "city") {
+      form.setValue("workProvince", undefined);
+    }
+  }, [selectedLocationGranularity, form]);
   const isDirty = form.formState.isDirty;
 
   // Warn before leaving (refresh / close / back) with unsaved changes
@@ -508,7 +553,7 @@ function AddEntryContent() {
   const getFieldElement = (config: any, field: any, fieldName?: string) => {
     // Degree picker: combobox over the curated catalog, storing the numeric id.
     if (fieldName === "degreeId") {
-      const degreeOptions = getDegreesFor(selectedCountry).map((d) => ({
+      const degreeOptions = getDegreesForEducation(selectedCountry, selectedEducation).map((d) => ({
         value: String(d.id),
         label: d.name,
       }));
@@ -776,6 +821,17 @@ function AddEntryContent() {
     ) {
       return false;
     }
+    // Salary basis: "gross" hides the net fields, "net" hides the gross fields.
+    // "both" and the unset default show everything.
+    if (selectedSalaryBasis === "gross" && NET_SALARY_FIELDS.includes(fieldName)) return false;
+    if (selectedSalaryBasis === "net" && GROSS_SALARY_FIELDS.includes(fieldName)) return false;
+    // Location granularity picks a single precision level, so hide the finer-
+    // grained fields the user opted out of. Unset shows both (backward compatible).
+    if (selectedLocationGranularity === "country" && (fieldName === "workProvince" || fieldName === "workCity")) {
+      return false;
+    }
+    if (selectedLocationGranularity === "province" && fieldName === "workCity") return false;
+    if (selectedLocationGranularity === "city" && fieldName === "workProvince") return false;
     return true;
   };
 
@@ -1074,6 +1130,12 @@ function AddEntryContent() {
                               <div className="grid grid-cols-6 gap-x-4 gap-y-5">
                                 {section.fields
                                   .filter((fieldName) => isFieldVisible(fieldName))
+                                  // "Other benefits" is a catch-all for perks not in the
+                                  // checkbox catalog, so it renders after the selector below.
+                                  .filter(
+                                    (fieldName) =>
+                                      !(sectionKey === "benefits" && fieldName === "otherBenefits")
+                                  )
                                   .map((fieldName) => renderField(fieldName))}
                               </div>
                               {sectionKey === "benefits" && (
@@ -1094,6 +1156,13 @@ function AddEntryContent() {
                                       />
                                     )}
                                   />
+                                  {/* Free-text catch-all, shown last so users reach for it only
+                                      after scanning the full catalog above. */}
+                                  {isFieldVisible("otherBenefits") && (
+                                    <div className="mt-6 grid grid-cols-6 gap-x-4 gap-y-5">
+                                      {renderField("otherBenefits")}
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </CardContent>

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { quantile } from "d3-array";
 import type { SalaryEntry } from "@/lib/db/schema";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,52 @@ interface PeerComparisonProps {
 
 const MIN_PEERS = 2; // need at least this many comparable peers to be meaningful
 const toEUR = (amount: number, currency: string | null) => convertCurrency(amount, currency, "EUR");
+
+// ── Similarity weighting ─────────────────────────────────────────────────────
+// Worker type + country are hard prerequisites (you can't fairly compare a
+// freelancer day rate to a salaried gross, or a Belgian salary to a Dutch one).
+// Age, sector and job title are *soft* weights: peers most like the viewer count
+// most, but the cohort never collapses to zero — distant peers just whisper.
+const AGE_SIGMA = 2; // gaussian falloff in years: ±1y≈0.88, ±2y≈0.61, ±3y≈0.32
+const AGE_FLOOR = 0.05; // very-different ages still count a little
+const SECTOR_MISMATCH = 0.5; // "slight tad" — sector matters but doesn't exclude
+const TITLE_MISMATCH = 0.7; // job title is free-text, so weight it gently
+
+type WeightedPeer = { pkg: number; w: number };
+
+function normalizeTitle(s: string | null | undefined): string {
+  return (s ?? "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+/** How much a peer counts toward the viewer's distribution (0–1+). */
+function similarityWeight(peer: SalaryEntry, me: SalaryEntry): number {
+  let w = 1;
+  if (me.age != null && peer.age != null) {
+    const d = peer.age - me.age;
+    w *= Math.max(AGE_FLOOR, Math.exp(-(d * d) / (2 * AGE_SIGMA * AGE_SIGMA)));
+  }
+  if (me.sector && peer.sector) {
+    w *= peer.sector === me.sector ? 1 : SECTOR_MISMATCH;
+  }
+  const myTitle = normalizeTitle(me.jobTitle);
+  const peerTitle = normalizeTitle(peer.jobTitle);
+  if (myTitle && peerTitle) {
+    w *= peerTitle === myTitle ? 1 : TITLE_MISMATCH;
+  }
+  return w;
+}
+
+/** Weighted quantile over peers pre-sorted ascending by package. */
+function weightedQuantile(sorted: WeightedPeer[], q: number, totalW: number): number {
+  if (totalW <= 0) return 0;
+  const target = q * totalW;
+  let cum = 0;
+  for (const x of sorted) {
+    cum += x.w;
+    if (cum >= target) return x.pkg;
+  }
+  return sorted[sorted.length - 1].pkg;
+}
 
 /**
  * "How do I compare?" — compares the viewer's own shared entry (loaded from the
@@ -78,16 +123,21 @@ export function PeerComparison({ entries, currencySymbol }: PeerComparisonProps)
 
   const myWorkerType = myEntry?.workerType ?? "whiteCollar";
 
-  // Comparable peers: same worker type, excludes the viewer's own entry, with a
-  // computable package. (Worker type matters most — you can't fairly compare a
-  // freelancer day rate to a salaried gross.)
-  const peerPackages = useMemo(() => {
+  // Comparable peers: hard-matched on worker type + country, then similarity-
+  // weighted so people close to the viewer's age / sector / job title dominate
+  // the distribution. Pre-sorted ascending by package for the weighted quantiles.
+  const weightedPeers = useMemo<WeightedPeer[]>(() => {
     if (!myEntry) return [];
     return entries
-      .filter((e) => e.id !== myEntry.id && (e.workerType ?? "whiteCollar") === myWorkerType)
-      .map((e) => estimateAnnualPackageEUR(e, toEUR))
-      .filter((v): v is number => v != null && v > 0)
-      .sort((a, b) => a - b);
+      .filter(
+        (e) =>
+          e.id !== myEntry.id &&
+          (e.workerType ?? "whiteCollar") === myWorkerType &&
+          (!myEntry.country || !e.country || e.country === myEntry.country)
+      )
+      .map((e) => ({ pkg: estimateAnnualPackageEUR(e, toEUR), w: similarityWeight(e, myEntry) }))
+      .filter((x): x is WeightedPeer => x.pkg != null && x.pkg > 0 && x.w > 0)
+      .sort((a, b) => a.pkg - b.pkg);
   }, [entries, myEntry, myWorkerType]);
 
   const myPackage = useMemo(
@@ -96,19 +146,26 @@ export function PeerComparison({ entries, currencySymbol }: PeerComparisonProps)
   );
 
   const stats = useMemo(() => {
-    const n = peerPackages.length;
+    const n = weightedPeers.length;
     if (n < MIN_PEERS || myPackage == null) return null;
-    const below = peerPackages.filter((v) => v <= myPackage).length;
+    const totalW = weightedPeers.reduce((s, x) => s + x.w, 0);
+    const sumW2 = weightedPeers.reduce((s, x) => s + x.w * x.w, 0);
+    // Kish effective sample size — an honest "how many peers is this really worth".
+    const effectiveN = Math.max(1, Math.round((totalW * totalW) / sumW2));
+    const belowW = weightedPeers
+      .filter((x) => x.pkg <= myPackage)
+      .reduce((s, x) => s + x.w, 0);
     return {
       n,
-      percentile: Math.round((below / n) * 100),
-      p25: quantile(peerPackages, 0.25) ?? 0,
-      median: quantile(peerPackages, 0.5) ?? 0,
-      p75: quantile(peerPackages, 0.75) ?? 0,
-      min: peerPackages[0],
-      max: peerPackages[n - 1],
+      effectiveN,
+      percentile: Math.round((belowW / totalW) * 100),
+      p25: weightedQuantile(weightedPeers, 0.25, totalW),
+      median: weightedQuantile(weightedPeers, 0.5, totalW),
+      p75: weightedQuantile(weightedPeers, 0.75, totalW),
+      min: weightedPeers[0].pkg,
+      max: weightedPeers[n - 1].pkg,
     };
-  }, [peerPackages, myPackage]);
+  }, [weightedPeers, myPackage]);
 
   // Display annual EUR package in the user's chosen currency (period = annual).
   const fmtPackage = (annualEUR: number) => {
@@ -198,7 +255,7 @@ export function PeerComparison({ entries, currencySymbol }: PeerComparisonProps)
                 </span>
               </div>
               <p className="mt-1 text-sm text-foreground">
-                {t("peerComparison.summary", { percent: stats.percentile, count: stats.n })}
+                {t("peerComparison.summary", { percent: stats.percentile, count: stats.effectiveN })}
               </p>
             </div>
 

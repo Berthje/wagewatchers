@@ -40,22 +40,37 @@ export function Combobox({
   ...props
 }: Readonly<ComboboxProps>) {
   const [open, setOpen] = React.useState(false);
+  // `inputValue` is the label shown on the trigger button (reflects the current
+  // selection). `search` is what the user types in the dropdown — kept separate
+  // so typing to filter never overwrites the selected label, and vice versa.
   const [inputValue, setInputValue] = React.useState("");
+  const [search, setSearch] = React.useState("");
   const t = useTranslations("ui");
 
   const displayPlaceholder = placeholder || t("selectOption");
 
-  // Update input value when value changes
+  // Keep the trigger label in sync with the selected value.
   React.useEffect(() => {
     if (value) {
       const option = options.find((opt) => opt.value === value);
       setInputValue(option ? option.label : value);
+    } else {
+      setInputValue("");
     }
   }, [value, options]);
 
+  // When the parent owns search (async option lists via onSearchChange) we render
+  // whatever options it hands us. Otherwise filter the static list locally so
+  // typing actually narrows the list. `Command` runs with shouldFilter={false},
+  // so this is the only place filtering happens.
+  const filteredOptions = onSearchChange
+    ? options
+    : options.filter((o) => o.label.toLowerCase().includes(search.trim().toLowerCase()));
+
   const handleInputChange = (searchValue: string) => {
-    setInputValue(searchValue);
+    setSearch(searchValue);
     if (allowCustom) {
+      setInputValue(searchValue);
       onValueChange(searchValue);
     }
     if (onSearchChange) {
@@ -68,6 +83,7 @@ export function Combobox({
     e.stopPropagation();
     onValueChange("");
     setInputValue("");
+    setSearch("");
     if (onSearchChange) {
       onSearchChange("");
     }
@@ -82,7 +98,13 @@ export function Combobox({
 
   return (
     <div className={cn("relative", className)}>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(o) => {
+          setOpen(o);
+          if (!o) setSearch(""); // reset filter so the next open shows the full list
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -106,13 +128,13 @@ export function Combobox({
             <CommandInput
               placeholder={commandInputPlaceholder || t("searchOptions")}
               className="text-foreground placeholder:text-muted-foreground"
-              value={inputValue}
+              value={search}
               onValueChange={handleInputChange}
             />
             <CommandList>
               <CommandEmpty>{emptyMessage || t("noOptionsFound")}</CommandEmpty>
               <CommandGroup>
-                {options.map((option) => (
+                {filteredOptions.map((option) => (
                   <CommandItem
                     key={option.value}
                     value={option.label}
