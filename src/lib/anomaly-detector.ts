@@ -19,7 +19,7 @@ export interface AnomalyDetectionResult {
   sampleSize: number;
 }
 
-interface StatisticalProfile {
+export interface StatisticalProfile {
   mean: number;
   median: number;
   std: number;
@@ -458,5 +458,230 @@ export async function getAnomalyStats() {
       Number(pending[0]?.count || 0) +
       Number(needsReview[0]?.count || 0) +
       Number(rejected[0]?.count || 0),
+  };
+}
+
+// ============================================================
+// Anomaly explanation — read-only, for the admin review dossier
+// ------------------------------------------------------------
+// Recomputes the breakdown behind an entry's score on demand, reusing the
+// helpers above. It does NOT change detection or persistence — it exists purely
+// to make "why was this flagged" legible in the review UI. Because it uses the
+// current corpus, the numbers reflect today's comparison group (which is what a
+// reviewer wants to judge against).
+// ============================================================
+
+export interface AnomalyMethod {
+  key: "zscore" | "iqr" | "percentile" | "absoluteRange" | "ratio";
+  label: string;
+  triggered: boolean;
+  subScore: number;
+  detail: string;
+}
+
+export interface SimilarEntry {
+  id: number;
+  jobTitle: string | null;
+  grossSalary: number | null;
+  workExperience: number | null;
+  age: number | null;
+  currency: string | null;
+  createdAt: string;
+}
+
+export interface AnomalyExplanation {
+  entryValue: number | null;
+  score: number;
+  topReason: string;
+  comparison: {
+    level: "strict" | "moderate" | "loose" | "insufficient";
+    description: string;
+    sampleSize: number;
+  };
+  profile: StatisticalProfile | null;
+  methods: AnomalyMethod[];
+  histogram: { bucketStart: number; count: number }[];
+  similar: SimilarEntry[];
+}
+
+/** Structured per-method breakdown, mirroring analyzeAnomalyScore's five checks. */
+function analyzeAnomalyMethods(salary: number, profile: StatisticalProfile): AnomalyMethod[] {
+  const methods: AnomalyMethod[] = [];
+
+  // 1. Z-score
+  const zScore = profile.std > 0 ? Math.abs((salary - profile.mean) / profile.std) : 0;
+  const zSub =
+    zScore >= THRESHOLDS.EXTREME_Z_SCORE
+      ? 95
+      : zScore >= THRESHOLDS.SIGNIFICANT_Z_SCORE
+        ? 75
+        : zScore >= THRESHOLDS.MODERATE_Z_SCORE
+          ? 50
+          : 0;
+  methods.push({
+    key: "zscore",
+    label: "Z-score (distance from mean)",
+    triggered: zSub > 0,
+    subScore: zSub,
+    detail: `${zScore.toFixed(2)}σ from mean · flags at ${THRESHOLDS.MODERATE_Z_SCORE}σ`,
+  });
+
+  // 2. IQR fences (Tukey)
+  const lowerFence = profile.q1 - THRESHOLDS.SIGNIFICANT_IQR_MULTIPLIER * profile.iqr;
+  const upperFence = profile.q3 + THRESHOLDS.SIGNIFICANT_IQR_MULTIPLIER * profile.iqr;
+  const extremeLowerFence = profile.q1 - THRESHOLDS.EXTREME_IQR_MULTIPLIER * profile.iqr;
+  const extremeUpperFence = profile.q3 + THRESHOLDS.EXTREME_IQR_MULTIPLIER * profile.iqr;
+  const iqrSub =
+    salary < extremeLowerFence || salary > extremeUpperFence
+      ? 90
+      : salary < lowerFence || salary > upperFence
+        ? 60
+        : 0;
+  methods.push({
+    key: "iqr",
+    label: "IQR fences (Tukey)",
+    triggered: iqrSub > 0,
+    subScore: iqrSub,
+    detail: `${iqrSub > 0 ? "Outside" : "Inside"} €${Math.round(lowerFence).toLocaleString()}–€${Math.round(upperFence).toLocaleString()}`,
+  });
+
+  // 3. Deviation from median
+  const pctFromMedian = profile.median > 0 ? Math.abs(salary - profile.median) / profile.median : 0;
+  const pctSub = pctFromMedian > 3 ? 85 : pctFromMedian > 2 ? 55 : 0;
+  methods.push({
+    key: "percentile",
+    label: "Deviation from median",
+    triggered: pctSub > 0,
+    subScore: pctSub,
+    detail: `${(pctFromMedian * 100).toFixed(0)}% from median · flags at 200%`,
+  });
+
+  // 4. Absolute plausibility range
+  const absSub = salary < 1000 ? 80 : salary > 1_000_000 ? 85 : 0;
+  methods.push({
+    key: "absoluteRange",
+    label: "Absolute plausibility",
+    triggered: absSub > 0,
+    subScore: absSub,
+    detail:
+      absSub > 0
+        ? salary < 1000
+          ? "Below €1,000"
+          : "Above €1,000,000"
+        : "Within €1,000–€1,000,000",
+  });
+
+  // 5. Ratio to mean / median
+  const ratioToMean = profile.mean > 0 ? salary / profile.mean : 0;
+  const ratioToMedian = profile.median > 0 ? salary / profile.median : 0;
+  const ratioSub = Math.max(
+    ratioToMean > 5 || ratioToMean < 0.2 ? 70 : 0,
+    ratioToMedian > 4 || ratioToMedian < 0.25 ? 65 : 0
+  );
+  methods.push({
+    key: "ratio",
+    label: "Ratio to mean / median",
+    triggered: ratioSub > 0,
+    subScore: ratioSub,
+    detail: `${ratioToMean.toFixed(2)}× mean · ${ratioToMedian.toFixed(2)}× median`,
+  });
+
+  return methods;
+}
+
+function buildSalaryHistogram(
+  salaries: number[],
+  buckets = 16
+): { bucketStart: number; count: number }[] {
+  if (salaries.length === 0) return [];
+  const min = Math.min(...salaries);
+  const max = Math.max(...salaries);
+  if (min === max) return [{ bucketStart: min, count: salaries.length }];
+  const size = (max - min) / buckets;
+  const hist = Array.from({ length: buckets }, (_, i) => ({ bucketStart: min + i * size, count: 0 }));
+  for (const s of salaries) {
+    let idx = Math.floor((s - min) / size);
+    if (idx >= buckets) idx = buckets - 1;
+    if (idx < 0) idx = 0;
+    hist[idx].count++;
+  }
+  return hist;
+}
+
+/**
+ * Recompute the anomaly breakdown for a single entry, for the admin review
+ * dossier. Uses the same progressive-fallback comparison groups as detection
+ * but returns the full structured picture instead of a flat score.
+ */
+export async function explainAnomaly(entry: Partial<SalaryEntry>): Promise<AnomalyExplanation> {
+  const grossList = (rows: SalaryEntry[]) =>
+    rows.map((e) => e.grossSalary).filter((s): s is number => s !== null);
+
+  // Mirror detectAnomaly's fallback: strict → moderate (if <30) → loose (if <15).
+  let level: "strict" | "moderate" | "loose" = "strict";
+  let filters = buildComparisonFilters(entry, "strict");
+  let entries = await fetchComparisonEntries(filters, entry.id);
+  if (grossList(entries).length < THRESHOLDS.MIN_SAMPLE_SIZE_STRICT) {
+    level = "moderate";
+    filters = buildComparisonFilters(entry, "moderate");
+    entries = await fetchComparisonEntries(filters, entry.id);
+  }
+  if (grossList(entries).length < THRESHOLDS.MIN_SAMPLE_SIZE_MODERATE) {
+    level = "loose";
+    filters = buildComparisonFilters(entry, "loose");
+    entries = await fetchComparisonEntries(filters, entry.id);
+  }
+
+  const salaries = grossList(entries);
+  const entryValue = entry.grossSalary ?? null;
+
+  if (salaries.length < THRESHOLDS.MIN_SAMPLE_SIZE_LOOSE || entryValue === null) {
+    return {
+      entryValue,
+      score: 0,
+      topReason:
+        entryValue === null
+          ? "No gross salary on this entry"
+          : "Insufficient comparable data — flagged for manual review, not because the value is extreme",
+      comparison: { level: "insufficient", description: filters.description, sampleSize: salaries.length },
+      profile: null,
+      methods: [],
+      histogram: [],
+      similar: [],
+    };
+  }
+
+  const profile = calculateStatisticalProfile(salaries);
+  const methods = analyzeAnomalyMethods(entryValue, profile);
+  const score = methods.reduce((m, x) => Math.max(m, x.subScore), 0);
+  const top = [...methods].sort((a, b) => b.subScore - a.subScore)[0];
+  const topReason = score > 0 ? `${top.label}: ${top.detail}` : "Within normal range for this group";
+
+  const similar: SimilarEntry[] = entries
+    .filter((e) => e.grossSalary !== null)
+    .sort(
+      (a, b) =>
+        Math.abs((a.grossSalary ?? 0) - entryValue) - Math.abs((b.grossSalary ?? 0) - entryValue)
+    )
+    .slice(0, 8)
+    .map((e) => ({
+      id: e.id,
+      jobTitle: e.jobTitle,
+      grossSalary: e.grossSalary,
+      workExperience: e.workExperience,
+      age: e.age,
+      currency: e.currency,
+      createdAt: e.createdAt instanceof Date ? e.createdAt.toISOString() : String(e.createdAt),
+    }));
+
+  return {
+    entryValue,
+    score,
+    topReason,
+    comparison: { level, description: filters.description, sampleSize: profile.count },
+    profile,
+    methods,
+    histogram: buildSalaryHistogram(salaries),
+    similar,
   };
 }

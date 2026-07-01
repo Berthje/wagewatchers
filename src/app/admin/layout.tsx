@@ -3,8 +3,8 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Admin is not part of the themed rollout yet — pin it to dark so its
-  // hardcoded dark styling and token-based components stay consistent
-  // regardless of the visitor's light/dark preference.
-  return <div className="dark">{children}</div>;
+  // Admin follows the site theme (light default + dark toggle) via the root
+  // ThemeProvider — no forced dark. The per-page AdminShell provides the sidebar
+  // chrome; the login page renders standalone without it.
+  return <>{children}</>;
 }
