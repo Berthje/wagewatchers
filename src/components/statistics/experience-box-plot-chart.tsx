@@ -139,7 +139,7 @@ export function ExperienceBoxPlotChart({ data, loading = false }: ExperienceBoxP
                   )
                 }
               />
-              <Tooltip content={<CustomTooltip chartType="experience" />} />
+              <Tooltip content={<CustomTooltip chartType="experience-boxplot" />} />
 
               {/* Stacked segments are DELTAS, not absolute values: each bar's height is the
                   gap to the next quartile, so the stack reconstructs a true box-and-whisker.

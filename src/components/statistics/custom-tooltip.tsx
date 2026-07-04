@@ -9,6 +9,7 @@ interface CustomTooltipProps {
   readonly label?: any;
   readonly chartType?:
     | "experience"
+    | "experience-boxplot"
     | "year"
     | "sector"
     | "country"
@@ -34,12 +35,12 @@ export function CustomTooltip({
 
   // Filter payload for box plot charts to avoid duplicate median entries
   const filteredPayload =
-    chartType === "experience" && payload
+    chartType === "experience-boxplot" && payload
       ? payload.filter((entry) => entry.dataKey !== "median" || entry.type !== "line")
       : payload;
 
   const formatLabel = (label: any) => {
-    if (chartType === "experience") {
+    if (chartType === "experience" || chartType === "experience-boxplot") {
       return `${label} ${t("charts.experienceGrowth.yearsLabel")}`;
     }
     if (chartType === "age-demographics") {
@@ -201,7 +202,7 @@ export function CustomTooltip({
 
   // Box plot: the bar segments carry internal delta keys (_whiskerLow, _boxLow, …),
   // so render the absolute five-number summary straight from the datum instead.
-  if (chartType === "experience") {
+  if (chartType === "experience-boxplot") {
     const datum = payload?.[0]?.payload;
     if (!datum) return null;
     const rows: Array<["max" | "q3" | "median" | "q1" | "min", number]> = [
