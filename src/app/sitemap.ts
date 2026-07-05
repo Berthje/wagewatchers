@@ -4,18 +4,29 @@ import { db } from "../lib/db";
 import { salaryEntries } from "../lib/db/schema";
 import { desc } from "drizzle-orm";
 
+// Generate the sitemap at request time, not during `next build`. The build
+// container has no database access, so prerendering here would fail with
+// ECONNREFUSED. At runtime the DB is reachable.
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://wagewatchers.com";
 
   // Generate sitemap entries for all locales and main pages
   const sitemapEntries: MetadataRoute.Sitemap = [];
 
-  // Get recent entries for sitemap (limit to avoid huge sitemaps)
-  const recentEntries = await db
-    .select({ id: salaryEntries.id, createdAt: salaryEntries.createdAt })
-    .from(salaryEntries)
-    .orderBy(desc(salaryEntries.createdAt))
-    .limit(1000);
+  // Get recent entries for sitemap (limit to avoid huge sitemaps). If the DB is
+  // transiently unavailable, still serve a valid sitemap of the static pages.
+  let recentEntries: { id: number; createdAt: Date }[] = [];
+  try {
+    recentEntries = await db
+      .select({ id: salaryEntries.id, createdAt: salaryEntries.createdAt })
+      .from(salaryEntries)
+      .orderBy(desc(salaryEntries.createdAt))
+      .limit(1000);
+  } catch (error) {
+    console.error("sitemap: failed to load salary entries", error);
+  }
 
   // Add entries for each locale
   for (const locale of locales) {
