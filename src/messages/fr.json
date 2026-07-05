@@ -927,6 +927,7 @@
     },
     "validation": {
       "numberExpected": "Nombre attendu",
+      "fieldRequired": "Ce champ est obligatoire",
       "integerExpected": "Nombre entier attendu",
       "stringExpected": "Texte attendu",
       "countryRequired": "Le pays est requis",

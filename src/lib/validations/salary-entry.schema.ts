@@ -46,9 +46,11 @@ const hasValue = (v: unknown) => v !== undefined && v !== null && v !== "";
 // abbreviations ("e.g.", "i.e.", "9.00") is left alone.
 const URL_IN_STRING = /(?:[a-z][a-z0-9+.-]*:\/\/|www\.)/i;
 
-// Custom URL validation - checks for common URL patterns
-const noUrls = (fieldName: string) =>
-  z.string().refine(
+// Custom URL validation - checks for common URL patterns. `requiredMessage`, when
+// given, becomes the type-level message so a MISSING value (undefined) shows it
+// instead of Zod's raw "Invalid input: expected string, received undefined".
+const noUrls = (fieldName: string, requiredMessage?: string) =>
+  (requiredMessage ? z.string({ message: requiredMessage }) : z.string()).refine(
     (value) => {
       if (!value) return true; // Allow empty strings
       // Reject when the whole value is a URL (original behavior)…
@@ -60,6 +62,12 @@ const noUrls = (fieldName: string) =>
       message: `URLs are not allowed in ${fieldName}`,
     }
   );
+
+// A required free-text field. `message` shows for BOTH the missing (undefined,
+// via the type-level message) and blank ("", via .min(1)) cases, so a blocked
+// submit never surfaces Zod's raw "Invalid input: expected string, received
+// undefined" — which is untranslated developer gibberish to a user.
+const requiredString = (message: string) => z.string({ message }).min(1, { message });
 
 export const createSalaryEntrySchema = (t: (key: string) => string) => {
   return z.preprocess(
@@ -76,7 +84,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
     z
       .object({
         // Country (Required)
-        country: z.string().min(1, { message: t("validation.countryRequired") }),
+        country: requiredString(t("validation.countryRequired")),
 
         // Worker type (v2 discriminator). Defaults to whiteCollar so existing
         // payloads that omit it behave exactly as before.
@@ -84,56 +92,53 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
 
         // Personal Information
         age: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .int({ message: t("validation.integerExpected") })
           .min(18, { message: t("validation.ageMin") })
           .max(100, { message: t("validation.ageMax") }),
-        education: z
-          .string()
-          .min(1, { message: t("validation.educationRequired") })
-          .max(200),
+        education: requiredString(t("validation.educationRequired")).max(200),
         // Canonical degree from the curated list (v2, optional). Loosely references
         // Degree.id; complements the free-text `education` level.
         degreeId: z.number().int().positive().optional(),
         workExperience: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .int({ message: t("validation.integerExpected") })
           .min(0)
           .max(82, { message: t("validation.workExperienceMax") }),
-        civilStatus: z.string().min(1, { message: t("validation.civilStatusRequired") }),
+        civilStatus: requiredString(t("validation.civilStatusRequired")),
         dependents: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .int({ message: t("validation.integerExpected") })
           .min(0)
           .max(20, { message: t("validation.dependentsMax") }),
 
         // Employer Profile
-        sector: z.string().min(1, { message: t("validation.sectorRequired") }),
-        employeeCount: z.string().min(1, { message: t("validation.employeeCountRequired") }),
-        multinational: z.boolean(),
+        sector: requiredString(t("validation.sectorRequired")),
+        employeeCount: requiredString(t("validation.employeeCountRequired")),
+        multinational: z.boolean({ message: t("validation.fieldRequired") }),
         publiclyListed: z.boolean().optional(), // Beursgenoteerd bedrijf?
 
         // Job Profile
-        jobTitle: noUrls("job title")
+        jobTitle: noUrls("job title", t("validation.jobTitleRequired"))
           .min(1, { message: t("validation.jobTitleRequired") })
           .max(200, { message: t("validation.jobTitleMax") }),
         jobDescription: noUrls("job description")
           .max(5000, { message: t("validation.jobDescriptionMax") })
           .optional(),
         seniority: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .int({ message: t("validation.integerExpected") })
           .min(0)
           .max(50, { message: t("validation.seniorityMax") }),
 
         // Working Hours
         officialHours: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .min(1, { message: t("validation.hoursMin") })
           .max(80, { message: t("validation.hoursMax") })
           .refine((val) => val % 0.5 === 0, { message: t("validation.hoursStep") }),
         averageHours: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .min(1, { message: t("validation.hoursMin") })
           .max(80, { message: t("validation.hoursMax") })
           .refine((val) => val % 0.5 === 0, { message: t("validation.hoursStep") }),
@@ -153,7 +158,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .optional(),
 
         // Salary & Currency
-        currency: z.string().min(1, { message: t("validation.currencyRequired") }),
+        currency: requiredString(t("validation.currencyRequired")),
         // Optional at base so non-salaried worker-type forms (which don't render
         // these inputs) validate; the "at least one salary" rule for salaried
         // types is enforced in superRefine below.
@@ -236,7 +241,7 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .max(200, { message: t("validation.workCityMax") })
           .optional(),
         commuteDistance: z
-          .string()
+          .string({ message: t("validation.commuteDistanceRequired") })
           .min(1, { message: t("validation.commuteDistanceRequired") })
           .max(50, { message: t("validation.commuteDistanceMax") })
           .refine(
@@ -248,18 +253,21 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
             },
             { message: t("validation.commuteDistanceFormat") }
           ),
-        commuteMethod: z.string().min(1, { message: t("validation.commuteMethodRequired") }),
-        commuteCompensation: noUrls("commute compensation")
+        commuteMethod: requiredString(t("validation.commuteMethodRequired")),
+        commuteCompensation: noUrls(
+          "commute compensation",
+          t("validation.commuteCompensationRequired")
+        )
           .min(1, { message: t("validation.commuteCompensationRequired") })
           .max(1000, { message: t("validation.commuteCompensationMax") }),
         // Work-Life Balance
         teleworkDays: z
-          .number({ message: t("validation.numberExpected") })
+          .number({ message: t("validation.fieldRequired") })
           .min(0)
           .max(7, { message: t("validation.teleworkMax") })
           .refine((val) => val % 0.5 === 0, { message: t("validation.hoursStep") }),
-        dayOffEase: z.string().min(1, { message: t("validation.dayOffEaseRequired") }),
-        stressLevel: z.string().min(1, { message: t("validation.stressLevelRequired") }),
+        dayOffEase: requiredString(t("validation.dayOffEaseRequired")),
+        stressLevel: requiredString(t("validation.stressLevelRequired")),
         // 0–10 "how much do you enjoy your job" (NLSalaris); optional, applies everywhere.
         jobSatisfaction: z.number().int().min(0).max(10).optional(),
         commuteTimeMinutes: z.union([z.number().int().min(0).max(600), z.string()]).optional(),
@@ -290,9 +298,11 @@ export const createSalaryEntrySchema = (t: (key: string) => string) => {
           .optional(),
 
         // Validation
-        honestyConfirmation: z.boolean().refine((val) => val === true, {
-          message: t("validation.honestyRequired"),
-        }),
+        honestyConfirmation: z
+          .boolean({ message: t("validation.honestyRequired") })
+          .refine((val) => val === true, {
+            message: t("validation.honestyRequired"),
+          }),
       })
       .superRefine((data, ctx) => {
         const workerType = data.workerType ?? "whiteCollar";

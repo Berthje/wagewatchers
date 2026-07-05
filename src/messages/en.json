@@ -927,6 +927,7 @@
     },
     "validation": {
       "numberExpected": "Number expected",
+      "fieldRequired": "This field is required",
       "integerExpected": "Integer expected",
       "stringExpected": "Text expected",
       "countryRequired": "Country is required",

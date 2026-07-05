@@ -927,6 +927,7 @@
     },
     "validation": {
       "numberExpected": "Zahl erwartet",
+      "fieldRequired": "Dieses Feld ist erforderlich",
       "integerExpected": "Ganze Zahl erwartet",
       "stringExpected": "Text erwartet",
       "countryRequired": "Land ist erforderlich",

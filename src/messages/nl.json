@@ -927,6 +927,7 @@
     },
     "validation": {
       "numberExpected": "Nummer verwacht",
+      "fieldRequired": "Dit veld is verplicht",
       "integerExpected": "Heel getal verwacht",
       "stringExpected": "Tekst verwacht",
       "countryRequired": "Land is verplicht",

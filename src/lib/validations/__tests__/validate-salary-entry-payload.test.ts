@@ -104,3 +104,52 @@ describe("validateSalaryEntryPayload (server guard)", () => {
     expect(result.success).toBe(true);
   });
 });
+
+/**
+ * Regression: a blocked submit must surface a clear "required" message for every
+ * empty required field — never Zod's raw internal type error. A user who left
+ * `commuteCompensation` blank was shown the literal string
+ * "Invalid input: expected string, received undefined" (Sentry: client-blocked
+ * submit), which reads as gibberish and made the block feel silent.
+ *
+ * These assert on the message KEYS because the server guard translates with an
+ * identity function; the browser renders the localized copy behind each key.
+ */
+describe("friendly required-field messages (no raw Zod type errors)", () => {
+  const RAW_ZOD_TYPE_ERROR = /expected \w+, received (undefined|null|nan)/i;
+
+  it("an empty required string field yields its localized required message, not raw Zod", () => {
+    const result = validateSalaryEntryPayload({
+      ...VALID_BE_WHITE_COLLAR,
+      commuteCompensation: undefined,
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const msgs = result.fieldErrors.commuteCompensation ?? [];
+      expect(msgs.join(" | ")).not.toMatch(RAW_ZOD_TYPE_ERROR);
+      expect(msgs).toContain("validation.commuteCompensationRequired");
+    }
+  });
+
+  it("an empty required number field yields a clear required message, not 'number expected'", () => {
+    const result = validateSalaryEntryPayload({
+      ...VALID_BE_WHITE_COLLAR,
+      dependents: undefined,
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const msgs = result.fieldErrors.dependents ?? [];
+      expect(msgs).toContain("validation.fieldRequired");
+    }
+  });
+
+  it("no field on a fully-empty payload reports a raw Zod type error", () => {
+    const result = validateSalaryEntryPayload({});
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const allMessages = Object.values(result.fieldErrors).flat();
+      const leaked = allMessages.filter((m) => RAW_ZOD_TYPE_ERROR.test(m));
+      expect(leaked).toEqual([]);
+    }
+  });
+});
