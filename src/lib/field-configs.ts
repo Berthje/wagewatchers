@@ -9,6 +9,12 @@ export interface FieldConfig {
   optional?: boolean;
   /** v2: worker types this field applies to. Omitted = shown for all worker types. */
   workerTypes?: string[];
+  /**
+   * Render hint for `select`-type fields. "cards" = a card-radio group, "segmented"
+   * = a pill toggle. Omitted = a standard dropdown. Only apply to short option lists
+   * (2–5 options) — long lists (sector, city) stay as dropdowns.
+   */
+  variant?: "cards" | "segmented";
 }
 
 export type FieldConfigs = Record<string, FieldConfig>;
@@ -253,7 +259,8 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
       { value: "phdResearcher", label: t("formOptions.workerType.phdResearcher") },
     ],
     helpKey: "help.workerType",
-    width: "half",
+    width: "full",
+    variant: "cards",
   },
   contractType: {
     labelKey: "sections.employment.contractType",
@@ -267,8 +274,9 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
       { value: "freelance", label: t("formOptions.contractType.freelance") },
     ],
     helpKey: "help.contractType",
-    width: "half",
+    width: "full",
     optional: true,
+    variant: "cards",
   },
   contractDurationMonths: {
     labelKey: "sections.employment.contractDurationMonths",
@@ -399,7 +407,8 @@ export const createFieldConfigs = (t: (key: string) => string): FieldConfigs => 
       { value: "None", label: t("formOptions.thirteenthMonth.none") },
     ],
     helpKey: "help.thirteenthMonth",
-    width: "third",
+    width: "full",
+    variant: "segmented",
     workerTypes: ["whiteCollar", "blueCollar", "intern", "phdResearcher"],
   },
   mealVouchers: {

@@ -4,7 +4,16 @@ import { useState, useEffect, useRef, useMemo, Suspense, type ReactNode, type Re
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HelpCircle, ArrowLeft, Lock, MapPin, CalendarClock, AlertCircle } from "lucide-react";
+import {
+  HelpCircle,
+  ArrowLeft,
+  Lock,
+  MapPin,
+  CalendarClock,
+  AlertCircle,
+  Plus,
+  Check,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
@@ -25,6 +34,8 @@ import { Combobox } from "@/components/ui/combobox";
 import { CityCombobox } from "@/components/ui/city-combobox";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CardRadioGroup } from "@/components/ui/card-radio-group";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Dialog,
@@ -72,6 +83,12 @@ const MONEY_FIELDS = [
 
 // Company-car detail fields only shown once "has company car" is selected.
 const COMPANY_CAR_DETAIL_FIELDS = ["companyCarModel", "companyCarFuelType", "companyCarCardScope"];
+
+// Flags for the country card selector, keyed by the display name getAllCountries() returns.
+const COUNTRY_FLAGS: Record<string, string> = {
+  Belgium: "🇧🇪",
+  Netherlands: "🇳🇱",
+};
 
 // Salary-basis gating: choosing "gross" or "net" hides the fields belonging to
 // the other basis. "both" (or no choice yet) shows everything.
@@ -174,6 +191,57 @@ function NumericField({
   );
 }
 
+/**
+ * A per-section disclosure that hides optional fields behind an "add more detail"
+ * toggle, so each section shows only its required fields by default. Opens
+ * automatically when it contains a filled field (edit mode) or, via `forceOpen`,
+ * a field with a validation error (so a blocked submit never hides the culprit).
+ */
+function OptionalDisclosure({
+  addLabel,
+  hideLabel,
+  defaultOpen,
+  forceOpen,
+  children,
+}: {
+  addLabel: string;
+  hideLabel: string;
+  defaultOpen: boolean;
+  forceOpen: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  useEffect(() => {
+    if (forceOpen) setOpen(true);
+  }, [forceOpen]);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mt-5 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
+      >
+        <Plus className="h-4 w-4" />
+        {addLabel}
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-5 border-t border-dashed border-border pt-5">
+      <div className="grid grid-cols-6 gap-x-4 gap-y-5">{children}</div>
+      <button
+        type="button"
+        onClick={() => setOpen(false)}
+        className="mt-4 text-xs font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline"
+      >
+        {hideLabel}
+      </button>
+    </div>
+  );
+}
+
 function AddEntryContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -245,6 +313,9 @@ function AddEntryContent() {
   const hasCompanyCar = form.watch("hasCompanyCar");
   const grossSalary = form.watch("grossSalary");
   const netSalary = form.watch("netSalary");
+  // Full snapshot of form values — subscribes the component so the progress bar
+  // and "add detail" disclosures react as fields are filled.
+  const allValues = form.watch();
   const formConfig = selectedCountry ? getFormConfigForCountry(selectedCountry) : null;
 
   // When the education level changes, drop a previously-picked degree that no
@@ -667,6 +738,48 @@ function AddEntryContent() {
   };
 
   const getFieldElement = (config: any, field: any, fieldName?: string) => {
+    // A single-choice field (select / card-radio / segmented), picked by
+    // config.variant. Keeps the three renderings in lockstep for both the generic
+    // "select" case and the worker-type-filtered contractType branch below.
+    const renderChoice = (opts: { value: string; label: string }[], cfg: any, f: any) => {
+      if (cfg.variant === "cards") {
+        return (
+          <CardRadioGroup
+            options={opts}
+            value={f.value?.toString()}
+            onValueChange={f.onChange}
+            columns={opts.length > 4 ? 3 : 2}
+            aria-label={t(cfg.labelKey)}
+          />
+        );
+      }
+      if (cfg.variant === "segmented") {
+        return (
+          <SegmentedControl
+            options={opts}
+            value={f.value?.toString()}
+            onValueChange={f.onChange}
+            fullWidth
+            aria-label={t(cfg.labelKey)}
+          />
+        );
+      }
+      return (
+        <Select onValueChange={f.onChange} value={f.value?.toString() || undefined}>
+          <SelectTrigger>
+            <SelectValue placeholder={cfg.placeholder || "Select option"} />
+          </SelectTrigger>
+          <SelectContent>
+            {opts.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    };
+
     // Degree picker: combobox over the curated catalog, storing the numeric id.
     if (fieldName === "degreeId") {
       const degreeOptions = getDegreesForEducation(selectedCountry, selectedEducation).map((d) => ({
@@ -690,20 +803,7 @@ function AddEntryContent() {
         CONTRACT_TYPES_BY_WORKER[selectedWorkerType] ??
         (config.options || []).map((o: any) => o.value);
       const opts = (config.options || []).filter((o: any) => allowed.includes(o.value));
-      return (
-        <Select onValueChange={field.onChange} value={field.value?.toString() || undefined}>
-          <SelectTrigger>
-            <SelectValue placeholder={config.placeholder || "Select option"} />
-          </SelectTrigger>
-          <SelectContent>
-            {opts.map((option: any) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      );
+      return renderChoice(opts, config, field);
     }
 
     // Special handling for workCity field with city combobox
@@ -788,44 +888,16 @@ function AddEntryContent() {
           />
         );
       case "select":
-        return (
-          <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-            <SelectTrigger>
-              <SelectValue placeholder={config.placeholder || "Select option"} />
-            </SelectTrigger>
-            <SelectContent>
-              {config.options?.map((option: any) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
+        return renderChoice(config.options || [], config, field);
       case "boolean":
         return (
-          <div className="inline-flex rounded-lg border border-input p-0.5">
-            {config.options?.map((option: any) => {
-              const optYes = option.value === "yes";
-              const selected = optYes ? field.value === true : field.value !== true;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => field.onChange(optYes)}
-                  aria-pressed={selected}
-                  className={cn(
-                    "rounded-md px-5 py-1.5 text-sm font-medium transition-colors",
-                    selected
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
+          <SegmentedControl
+            options={config.options || []}
+            // Map the boolean form value onto the yes/no option values.
+            value={field.value === true ? "yes" : "no"}
+            onValueChange={(v) => field.onChange(v === "yes")}
+            aria-label={t(config.labelKey)}
+          />
         );
       default:
         return <div>Unknown field type</div>;
@@ -863,8 +935,8 @@ function AddEntryContent() {
                   : t(config.labelKey)}
               </span>
               {config.optional && (
-                <span className="text-xs font-normal text-muted-foreground">
-                  ({tCommon("optional")})
+                <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  {tCommon("optional")}
                 </span>
               )}
               {config.helpKey && (
@@ -927,6 +999,42 @@ function AddEntryContent() {
     if (selectedLocationGranularity === "city" && fieldName === "workProvince") return false;
     return true;
   };
+
+  // Core vs. optional tiering. "Core" fields render immediately; optional ones are
+  // tucked behind a per-section "add detail" disclosure. Optional fields that are
+  // *revealed by a core trigger* (company-car details appear once "has company car"
+  // is on) stay inline so toggling the trigger never reveals a hidden disclosure.
+  const isCoreField = (fieldName: string): boolean => {
+    const config = fieldConfigs[fieldName];
+    if (!config) return false;
+    if (COMPANY_CAR_DETAIL_FIELDS.includes(fieldName)) return true;
+    return !config.optional;
+  };
+
+  // Reactive "is this field filled?" — reads the watched snapshot so the progress
+  // bar and disclosure default-open state update as the user types. A boolean only
+  // counts as filled when true (undefined/false both read as an unanswered "No").
+  const fieldHasValue = (name: string): boolean => {
+    const v = allValues[name as keyof SalaryEntryFormData] as unknown;
+    if (v === undefined || v === null || v === "") return false;
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "boolean") return v === true;
+    return true;
+  };
+
+  // Required, currently-visible fields still needing input — powers the progress bar.
+  const requiredFieldNames =
+    selectedCountry && formConfig
+      ? [
+          "country",
+          "currency",
+          ...formConfig.sections.flatMap((s) =>
+            s.fields.filter((f) => isFieldVisible(f) && !fieldConfigs[f]?.optional)
+          ),
+          "honestyConfirmation",
+        ]
+      : [];
+  const requiredRemaining = requiredFieldNames.filter((name) => !fieldHasValue(name)).length;
 
   const navSections = selectedCountry && formConfig ? formConfig.sections : [];
   const navItems = [
@@ -1153,20 +1261,19 @@ function AddEntryContent() {
                               <FormLabel className="text-foreground">
                                 {t("fields.country.label")}
                               </FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder={t("fields.country.placeholder")} />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {getAllCountries().map((country) => (
-                                    <SelectItem key={country} value={country}>
-                                      {t(`countries.${country.toLowerCase()}`)}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              <FormControl>
+                                <CardRadioGroup
+                                  options={getAllCountries().map((country) => ({
+                                    value: country,
+                                    label: t(`countries.${country.toLowerCase()}`),
+                                    icon: COUNTRY_FLAGS[country],
+                                  }))}
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                  columns={2}
+                                  aria-label={t("fields.country.label")}
+                                />
+                              </FormControl>
                               {fieldState.error && (
                                 <p className="text-sm font-medium text-destructive">
                                   {fieldState.error.message}
@@ -1246,17 +1353,38 @@ function AddEntryContent() {
                               </div>
                             )}
                             <CardContent className="pt-6">
-                              <div className="grid grid-cols-6 gap-x-4 gap-y-5">
-                                {section.fields
+                              {(() => {
+                                const visible = section.fields
                                   .filter((fieldName) => isFieldVisible(fieldName))
                                   // "Other benefits" is a catch-all for perks not in the
                                   // checkbox catalog, so it renders after the selector below.
                                   .filter(
                                     (fieldName) =>
                                       !(sectionKey === "benefits" && fieldName === "otherBenefits")
-                                  )
-                                  .map((fieldName) => renderField(fieldName))}
-                              </div>
+                                  );
+                                const coreFields = visible.filter(isCoreField);
+                                const optionalFields = visible.filter((f) => !isCoreField(f));
+                                return (
+                                  <>
+                                    <div className="grid grid-cols-6 gap-x-4 gap-y-5">
+                                      {coreFields.map((fieldName) => renderField(fieldName))}
+                                    </div>
+                                    {optionalFields.length > 0 && (
+                                      <OptionalDisclosure
+                                        addLabel={t("addDetail", { count: optionalFields.length })}
+                                        hideLabel={t("hideDetail")}
+                                        defaultOpen={optionalFields.some(fieldHasValue)}
+                                        forceOpen={optionalFields.some(
+                                          (f) =>
+                                            !!form.formState.errors[f as keyof SalaryEntryFormData]
+                                        )}
+                                      >
+                                        {optionalFields.map((fieldName) => renderField(fieldName))}
+                                      </OptionalDisclosure>
+                                    )}
+                                  </>
+                                );
+                              })()}
                               {sectionKey === "benefits" && (
                                 <div className="mt-6 border-t border-border pt-6">
                                   <FormField
@@ -1347,20 +1475,38 @@ function AddEntryContent() {
                 </div>
               )}
 
-              {/* Actions */}
+              {/* Sticky progress + actions bar — always shows the finish line */}
               {selectedCountry && formConfig && (
-                <div className="mt-10 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
-                  <Button type="button" variant="outline" size="lg" onClick={handleCancel}>
-                    {tCommon("cancel")}
-                  </Button>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isSubmitting}
-                    className="bg-brand px-8 font-semibold text-brand-foreground hover:bg-brand/90"
-                  >
-                    {getSubmitButtonText(isSubmitting, isEditMode, t)}
-                  </Button>
+                <div className="sticky bottom-0 z-20 mt-10 border-t border-border bg-background/95 py-4 backdrop-blur supports-backdrop-filter:bg-background/80">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-2 text-sm" aria-live="polite">
+                      {requiredRemaining === 0 ? (
+                        <>
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand/15 text-brand">
+                            <Check className="h-3.5 w-3.5" />
+                          </span>
+                          <span className="font-medium text-foreground">{t("readyToSubmit")}</span>
+                        </>
+                      ) : (
+                        <span className="font-mono text-muted-foreground">
+                          {t("requiredLeft", { count: requiredRemaining })}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                      <Button type="button" variant="outline" size="lg" onClick={handleCancel}>
+                        {tCommon("cancel")}
+                      </Button>
+                      <Button
+                        type="submit"
+                        size="lg"
+                        disabled={isSubmitting}
+                        className="bg-brand px-8 font-semibold text-brand-foreground hover:bg-brand/90"
+                      >
+                        {getSubmitButtonText(isSubmitting, isEditMode, t)}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </form>
